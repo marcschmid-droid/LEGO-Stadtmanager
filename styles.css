@@ -492,3 +492,30 @@ tbody tr:hover{background:#fafbfc}
  .citygrid{grid-template-columns:1fr 1fr}
  .modulegrid{gap:5px}
 }
+
+
+/* v50 home visual focal point */
+.homeCityPreviewV50{position:relative;min-height:290px;border-radius:24px;overflow:hidden;margin:0 0 16px;box-shadow:0 18px 44px #17202b18;background:#111}
+.homeCityPreviewV50 img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;filter:saturate(.92) contrast(1.03)}
+.homeCityPreviewShadeV50{position:absolute;inset:0;background:linear-gradient(90deg,rgba(16,17,19,.9) 0%,rgba(16,17,19,.62) 42%,rgba(16,17,19,.08) 78%,rgba(16,17,19,.04) 100%)}
+.homeCityPreviewContentV50{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;min-height:290px;max-width:500px;padding:30px;color:#fff}
+.homeCityPreviewContentV50 h2{font-size:32px;line-height:1.05;margin:7px 0 9px;letter-spacing:-1px}
+.homeCityPreviewContentV50 p{max-width:430px;margin:0 0 16px;color:#ffffffc5;line-height:1.45}
+.homeCityPreviewContentV50 .btn{align-self:flex-start}
+.homeSectionTitleV50{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:2px 2px 10px}
+.homeSectionTitleV50 span{font-size:10px;font-weight:950;text-transform:uppercase;letter-spacing:1px;color:var(--red)}
+.homeSectionTitleV50 h3{margin:2px 0 0;font-size:18px;letter-spacing:-.35px}
+.homeSectionTitleV50 small{color:var(--muted);font-size:10px}
+@media(max-width:720px){
+ .homeCityPreviewV50,.homeCityPreviewContentV50{min-height:240px}
+ .homeCityPreviewContentV50{padding:20px;max-width:78%}
+ .homeCityPreviewContentV50 h2{font-size:25px}
+ .homeSectionTitleV50{align-items:flex-start}
+ .homeSectionTitleV50 small{display:none}
+}
+@media(max-width:480px){
+ .homeCityPreviewV50{min-height:225px}
+ .homeCityPreviewShadeV50{background:linear-gradient(90deg,rgba(16,17,19,.9) 0%,rgba(16,17,19,.7) 60%,rgba(16,17,19,.18) 100%)}
+ .homeCityPreviewContentV50{min-height:225px;max-width:86%;padding:17px}
+ .homeCityPreviewContentV50 h2{font-size:23px}
+}
