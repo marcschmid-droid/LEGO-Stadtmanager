@@ -640,3 +640,75 @@ const loadEnrichmentBaseV35=loadEnrichmentV3;
 loadEnrichmentV3=async function(force=false){const r=await loadEnrichmentBaseV35(force);updateCatalogSuggestionsV35();renderQualityAssistantV35();renderPricesV31();return r};
 
 bindCatalogSearchV35();bindQualityV35();bindModuleFilterV35();renderQualityAssistantV35();renderPricesV31();renderModulesV3();
+
+
+/* v36 statistics + operator admin */
+const ADMIN_EMAIL_V36="marcschmid@t-online.de";
+function renderStatsV36(){
+ const topV=$("topValueV36"),topG=$("topGainV36"),areaBox=$("areaValueV36"),cov=$("coverageV36");
+ if(!(topV&&topG&&areaBox&&cov))return;
+ const rows=(state.collection||[]).map(x=>{
+   const qty=pV3(x.quantity),market=pV3(x.currentValue),purchase=pV3(x.purchasePrice),value=qty*market,gain=qty*(market-purchase);
+   return {...x,qty,market,purchase,value,gain,pct:purchase?((market-purchase)/purchase*100):0};
+ });
+ const bestValue=[...rows].sort((a,b)=>b.value-a.value).slice(0,10);
+ const bestGain=[...rows].filter(x=>x.market&&x.purchase).sort((a,b)=>b.gain-a.gain).slice(0,10);
+ topV.innerHTML=bestValue.length?bestValue.map((x,i)=>'<div class="rankRowV36"><span>#'+(i+1)+' <b>'+esc(x.setNumber)+'</b> · '+esc(x.name)+'</span><b>'+euro(x.value)+'</b></div>').join(""):'<p class="hint">Keine Werte vorhanden.</p>';
+ topG.innerHTML=bestGain.length?bestGain.map((x,i)=>'<div class="rankRowV36"><span>#'+(i+1)+' <b>'+esc(x.setNumber)+'</b> · '+esc(x.name)+'</span><b class="'+(x.gain>=0?'goodTxt':'badTxt')+'">'+(x.gain>=0?'+':'')+euro(x.gain)+' · '+(x.pct>=0?'+':'')+x.pct.toFixed(1).replace(".",",")+' %</b></div>').join(""):'<p class="hint">Noch keine vergleichbaren Werte vorhanden.</p>';
+ const areas={};
+ rows.forEach(x=>{const a=shortAreaV3(x.cityArea||"Ohne Bereich");areas[a]=(areas[a]||0)+x.value});
+ const mx=Math.max(...Object.values(areas),1);
+ areaBox.innerHTML=Object.entries(areas).sort((a,b)=>b[1]-a[1]).map(([k,v])=>'<div class="barrow"><span>'+esc(k)+'</span><div class="bar"><i style="width:'+(v/mx*100)+'%"></i></div><b>'+euro(v)+'</b></div>').join("");
+ const total=state.collection.length||1;
+ const q=[
+   ["Marktwert",state.collection.filter(x=>pV3(x.currentValue)).length],
+   ["Bild",state.collection.filter(x=>x.imageUrl).length],
+   ["Maße",state.collection.filter(x=>pV3(x.width)&&pV3(x.depth)&&pV3(x.height)).length],
+   ["Barcode",state.collection.filter(x=>x.barcode).length],
+   ["Kaufpreis",state.collection.filter(x=>pV3(x.purchasePrice)).length],
+   ["Zustand",state.collection.filter(x=>x.condition&&x.condition!=="Unbekannt").length]
+ ];
+ cov.innerHTML=q.map(([k,v])=>'<div class="coverageRowV36"><span>'+k+'</span><div class="bar"><i style="width:'+(v/total*100)+'%"></i></div><b>'+v+'/'+total+'</b></div>').join("");
+}
+const analysisBaseV36=renderAnalysisV3;
+renderAnalysisV3=function(){analysisBaseV36();renderStatsV36()};
+
+function isAdminV36(){return String(cloudUserV3?.email||"").toLowerCase()===ADMIN_EMAIL_V36}
+function updateAdminVisibilityV36(){
+ if($("adminTabV36"))$("adminTabV36").classList.toggle("hidden",!isAdminV36());
+ if(!isAdminV36()&&document.querySelector("#admin.active"))switchTab("home");
+}
+async function renderAdminV36(){
+ if(!$("adminSummaryV36")||!isAdminV36())return;
+ const vals=Object.values(enrichmentV3?.sets||{}),meta=enrichmentV3?.meta||{};
+ const withPrice=vals.filter(x=>pV3(x.marketNewEUR)||pV3(x.marketUsedEUR)).length;
+ const withImage=vals.filter(x=>x.imageUrl).length;
+ const withBarcode=vals.filter(x=>x.ean||x.upc).length;
+ let users=null,lastCloud=null,rpcError="";
+ try{
+   if(cloudV3){
+     const {data,error}=await cloudV3.rpc("admin_metrics");
+     if(error)rpcError=error.message; else if(data){const r=Array.isArray(data)?data[0]:data;users=r?.user_count??null;lastCloud=r?.last_state_update??null}
+   }
+ }catch(e){rpcError=String(e?.message||e)}
+ $("adminSummaryV36").innerHTML=
+  '<div class="miniStat"><span>Registrierte Nutzer</span><b>'+(users??"–")+'</b></div>'+
+  '<div class="miniStat"><span>Katalog-Sets</span><b>'+vals.length+'</b></div>'+
+  '<div class="miniStat"><span>mit Marktwert</span><b>'+withPrice+'</b></div>'+
+  '<div class="miniStat"><span>mit Bild</span><b>'+withImage+'</b></div>'+
+  '<div class="miniStat"><span>mit Barcode</span><b>'+withBarcode+'</b></div>';
+ $("adminCatalogV36").innerHTML='<h3>Katalogstatus</h3><div class="qualitylist"><div class="qualityitem"><span>Letzte Katalogaktualisierung</span><b>'+(meta.lastUpdated?new Date(meta.lastUpdated).toLocaleString("de-DE"):"–")+'</b></div><div class="qualityitem"><span>Letzte Cloud-Aktivität</span><b>'+(lastCloud?new Date(lastCloud).toLocaleString("de-DE"):"–")+'</b></div><div class="qualityitem"><span>Rebrickable</span><b>'+(meta.rebrickableEnabled?"aktiv":"–")+'</b></div><div class="qualityitem"><span>BrickEconomy</span><b>'+(meta.brickeconomyEnabled?"aktiv":"–")+'</b></div></div>';
+ const errs=meta.errors||[];
+ $("adminErrorsV36").innerHTML='<h3>Letzte Katalogfehler</h3>'+(errs.length?'<div class="adminErrorsV36">'+errs.slice(-10).map(e=>'<div>'+esc(e)+'</div>').join("")+'</div>':'<p class="hint">Keine gespeicherten Katalogfehler.</p>');
+ $("adminNoteV36").textContent=rpcError?'Nutzerzahl noch nicht verfügbar: '+rpcError:"Admin-Metriken aktiv. Fremde Sammlungsinhalte werden nicht angezeigt.";
+}
+function bindAdminV36(){
+ if($("adminRefreshV36"))$("adminRefreshV36").onclick=async()=>{await loadEnrichmentV3(true);await renderAdminV36()};
+ const oldSwitchV36=switchTab;switchTab=function(id){oldSwitchV36(id);if(id==="analysis")renderStatsV36();if(id==="admin")renderAdminV36()};
+ updateAdminVisibilityV36();
+}
+const cloudSessionBaseV36=cloudSessionV3;
+cloudSessionV3=async function(session){const r=await cloudSessionBaseV36(session);updateAdminVisibilityV36();if(isAdminV36())renderAdminV36();return r};
+const refreshBaseV36=refresh;
+refresh=function(){refreshBaseV36();renderStatsV36();updateAdminVisibilityV36()};
+bindAdminV36();renderStatsV36();
