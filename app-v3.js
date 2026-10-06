@@ -498,6 +498,9 @@ async function fillSetFromCatalogV32(){
  if($("fImage")&&!$("fImage").value.trim()&&e.imageUrl)$("fImage").value=e.imageUrl;
  if($("fBarcode")&&!$("fBarcode").value.trim()&&(e.ean||e.upc))$("fBarcode").value=e.ean||e.upc;
  if($("fCat")&&!$("fCat").value.trim())$("fCat").value=[e.theme,e.subtheme].filter(Boolean).join(" / ");
+ if($("fWidth")&&!pV3($("fWidth").value)&&pV3(e.width))$("fWidth").value=e.width;
+ if($("fDepth")&&!pV3($("fDepth").value)&&pV3(e.depth))$("fDepth").value=e.depth;
+ if($("fHeight")&&!pV3($("fHeight").value)&&pV3(e.height))$("fHeight").value=e.height;
 }
 function bindSetAutofillV32(){
  const el=$("fSet");if(!el||el.dataset.autofillV32)return;el.dataset.autofillV32="1";
