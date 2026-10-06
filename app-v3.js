@@ -979,3 +979,126 @@ const adminCoreV38=renderAdminV36;
 renderAdminV36=async function(){const r=await adminCoreV38();await renderAdminV38();return r};
 
 bindOnboardingV38();setTimeout(()=>{if(cloudUserV3){maybeShowOnboardingV38();loadServerAlertsV38()}},500);
+
+
+/* v37 online catalog requests, charts, recycle bin and exemplar editor */
+let exemplarEditV37={setNumber:"",index:-1};
+
+function ensureV37(){
+ state.trash=state.trash||[];
+ state.meta=state.meta||{};
+ state.meta.portfolioHistory=state.meta.portfolioHistory||[];
+ const cutoff=Date.now()-30*24*60*60*1000;
+ state.trash=state.trash.filter(x=>new Date(x.deletedAt||0).getTime()>=cutoff);
+ for(const x of state.collection||[]){
+   x.exemplars=x.exemplars||[];
+   for(const e of x.exemplars){if(e.storage===undefined)e.storage=x.storage||""}
+ }
+}
+function recordPortfolioV37(){
+ const day=new Date().toISOString().slice(0,10);
+ const value=(state.collection||[]).reduce((s,x)=>s+pV3(x.quantity)*pV3(x.currentValue),0);
+ const investment=totalsV3().inv;
+ const h=state.meta.portfolioHistory=state.meta.portfolioHistory||[];
+ const last=h[h.length-1];
+ const row={date:day,value,investment};
+ if(!last||last.date!==day)h.push(row);else Object.assign(last,row);
+ if(h.length>365)h.splice(0,h.length-365);
+}
+function sparklineV37(points,width=520,height=150){
+ const vals=points.map(p=>Number(p||0)).filter(Number.isFinite);
+ if(!vals.length)return '<p class="hint">Noch keine Verlaufsdaten.</p>';
+ const min=Math.min(...vals),max=Math.max(...vals),span=(max-min)||1,pad=12;
+ const coords=points.map((v,i)=>{
+   const x=pad+(width-2*pad)*(points.length===1?0.5:i/(points.length-1));
+   const y=height-pad-(height-2*pad)*((Number(v||0)-min)/span);
+   return x.toFixed(1)+','+y.toFixed(1)
+ }).join(' ');
+ return '<svg class="priceChartV37" viewBox="0 0 '+width+' '+height+'" role="img" aria-label="Preisverlauf"><polyline fill="none" stroke="currentColor" stroke-width="3" points="'+coords+'"></polyline><text x="'+pad+'" y="'+(height-2)+'">'+esc(euro(min))+'</text><text x="'+(width-120)+'" y="14">'+esc(euro(max))+'</text></svg>';
+}
+
+async function requestCatalogV37(n){
+ n=String(n||"").trim().replace(/-1$/,"");if(!n||!cloudV3||!cloudUserV3)return false;
+ try{
+   const {error}=await cloudV3.from("catalog_requests").upsert({set_number:n,requested_at:new Date().toISOString()},{onConflict:"set_number"});
+   return !error;
+ }catch{return false}
+}
+const lookupCatalogBaseV37=lookupCatalogV35;
+lookupCatalogV35=async function(n,statusId){
+ const e=await lookupCatalogBaseV37(n,statusId);
+ if(e)return e;
+ const queued=await requestCatalogV37(n);
+ const s=$(statusId);
+ if(s&&queued)s.textContent="Noch keine Daten vorhanden · automatische Online-Nachladung angefordert.";
+ return null;
+};
+
+window.delSet=n=>{
+ const i=state.collection.findIndex(x=>String(x.setNumber)===String(n));if(i<0)return;
+ if(!confirm("Set in den Papierkorb verschieben? Es kann 30 Tage wiederhergestellt werden."))return;
+ const [item]=state.collection.splice(i,1);
+ state.trash=state.trash||[];state.trash.unshift({deletedAt:new Date().toISOString(),item});
+ persist();refresh();
+};
+window.restoreTrashV37=i=>{
+ const row=state.trash?.[i];if(!row)return;
+ const x=row.item,existing=state.collection.find(y=>String(y.setNumber)===String(x.setNumber));
+ if(existing){existing.quantity=pV3(existing.quantity)+pV3(x.quantity);existing.exemplars=[...(existing.exemplars||[]),...(x.exemplars||[])]}
+ else state.collection.push(x);
+ state.trash.splice(i,1);persist();refresh();
+};
+window.deleteTrashV37=i=>{if(!confirm("Endgültig löschen?"))return;state.trash.splice(i,1);persist();refresh()};
+function renderTrashV37(){
+ const box=$("trashListV37");if(!box)return;
+ ensureV37();
+ box.innerHTML=state.trash.length?state.trash.map((r,i)=>'<div class="trashRowV37"><div><b>'+esc(r.item?.setNumber||"")+' · '+esc(r.item?.name||"")+'</b><small>gelöscht '+new Date(r.deletedAt).toLocaleDateString("de-DE")+'</small></div><div class="actions"><button class="btn secondary" onclick="restoreTrashV37('+i+')">Wiederherstellen</button><button class="rowbtn" onclick="deleteTrashV37('+i+')">🗑 endgültig</button></div></div>').join(""):'<p class="hint">Papierkorb ist leer.</p>';
+ if($("emptyTrashV37"))$("emptyTrashV37").onclick=()=>{if(state.trash.length&&confirm("Papierkorb endgültig leeren?")){state.trash=[];persist();refresh()}};
+}
+
+window.editExemplarV28=(setNumber,index)=>{
+ const x=state.collection.find(y=>String(y.setNumber)===String(setNumber)),e=x?.exemplars?.[index];if(!e)return;
+ exemplarEditV37={setNumber:String(setNumber),index};
+ $("exemplarTitleV37").textContent="Exemplar #"+(index+1)+" bearbeiten";
+ $("exDateV37").value=e.date||"";$("exSellerV37").value=e.seller||"";$("exConditionV37").value=e.condition||"Unbekannt";
+ $("exPriceV37").value=e.price??"";$("exShippingV37").value=e.shipping??"";$("exBoxV37").value=e.box||"";$("exCompleteV37").value=e.complete||"";
+ $("exStorageV37").value=e.storage||x.storage||"";$("exNoteV37").value=e.note||"";$("exemplarModalV37").classList.add("show");
+};
+function closeExemplarV37(){$("exemplarModalV37")?.classList.remove("show");exemplarEditV37={setNumber:"",index:-1}}
+function bindExemplarV37(){
+ if($("closeExemplarV37"))$("closeExemplarV37").onclick=closeExemplarV37;
+ if($("cancelExemplarV37"))$("cancelExemplarV37").onclick=closeExemplarV37;
+ if($("saveExemplarV37"))$("saveExemplarV37").onclick=()=>{
+  const x=state.collection.find(y=>String(y.setNumber)===exemplarEditV37.setNumber),e=x?.exemplars?.[exemplarEditV37.index];if(!e)return closeExemplarV37();
+  Object.assign(e,{date:$("exDateV37").value,seller:$("exSellerV37").value.trim(),condition:$("exConditionV37").value,price:pV3($("exPriceV37").value),shipping:pV3($("exShippingV37").value),box:$("exBoxV37").value,complete:$("exCompleteV37").value,storage:$("exStorageV37").value.trim(),note:$("exNoteV37").value.trim(),legacy:false});
+  const vals=(x.exemplars||[]).map(v=>pV3(v.price)).filter(v=>v>0);if(vals.length)x.purchasePrice=vals.reduce((a,b)=>a+b,0)/vals.length;
+  persist();refresh();closeExemplarV37();showDetailV3(x.setNumber);
+ };
+}
+
+const detailBaseV37=showDetailV3;
+showDetailV3=function(n){
+ detailBaseV37(n);
+ const x=state.collection.find(y=>String(y.setNumber)===String(n));if(!x)return;
+ const history=(state.priceHistory?.[String(n)]||[]);
+ const card=document.createElement("div");card.className="card wide";
+ card.innerHTML='<h3>Preisverlauf</h3>'+sparklineV37(history.map(r=>pV3(r.currentEUR)||pV3(r.newEUR)||pV3(r.usedEUR)))+'<p class="hint">'+(history.length?history.length+' Messpunkt'+(history.length===1?'':'e'):'Historie startet, sobald neue Marktstände geladen werden.')+'</p>';
+ $("detailContent")?.appendChild(card);
+ const ex=$("detailContent")?.querySelector(".exemplars");
+ if(ex){ex.innerHTML='<h3>Einzel-Exemplare / Käufe</h3>'+((x.exemplars||[]).length?x.exemplars.map((e,i)=>'<div class="exemplar"><div><b>#'+(i+1)+'</b> · '+esc(e.date||"ohne Datum")+' · '+esc(e.condition||"Unbekannt")+' · '+esc(e.seller||"Quelle unbekannt")+' · '+euro(e.price)+' · '+esc(e.storage||x.storage||"kein Lagerort")+'</div><div class="actions"><button class="rowbtn" onclick="editExemplarV28(\''+esc(x.setNumber)+'\','+i+')">✏️ Bearbeiten</button><button class="rowbtn" onclick="deleteExemplarV28(\''+esc(x.setNumber)+'\','+i+')">🗑 Löschen</button></div></div>').join(""):'<p class="hint">Noch keine Einzelkäufe separat erfasst.</p>')}
+};
+
+const renderAnalysisBaseV37=renderAnalysisV3;
+renderAnalysisV3=function(){
+ renderAnalysisBaseV37();
+ let box=$("portfolioChartV37");if(!box){box=document.createElement("div");box.id="portfolioChartV37";box.className="card wide";$("analysis")?.appendChild(box)}
+ const h=state.meta?.portfolioHistory||[];
+ box.innerHTML='<h2>Sammlungswert im Zeitverlauf</h2>'+sparklineV37(h.map(r=>r.value))+'<p class="hint">'+(h.length?h[0].date+' bis '+h[h.length-1].date:'Noch keine historischen Gesamtwerte.')+'</p>';
+};
+
+const persistBaseV37=persist;
+persist=function(){ensureV37();recordPortfolioV37();persistBaseV37()};
+const refreshBaseV37=refresh;
+refresh=function(){ensureV37();recordPortfolioV37();refreshBaseV37();renderTrashV37();if(document.querySelector("#analysis.active"))renderAnalysisV3()};
+
+ensureV37();bindExemplarV37();renderTrashV37();recordPortfolioV37();
