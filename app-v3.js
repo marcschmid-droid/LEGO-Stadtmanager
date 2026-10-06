@@ -1,4 +1,34 @@
 
+/* v20 Supabase authentication + private cloud state */
+let cloudV3=null,cloudUserV3=null,cloudSaveTimerV3=null,cloudApplyingV3=false;
+function cloudStatusV3(t){if($("cloudStatus"))$("cloudStatus").textContent=t||""}
+async function initCloudV3(){
+ const cfg=window.LEGO_SUPABASE;if(!cfg||!window.supabase)return;
+ cloudV3=window.supabase.createClient(cfg.url,cfg.publishableKey);
+ const {data}=await cloudV3.auth.getSession();await cloudSessionV3(data.session);
+ cloudV3.auth.onAuthStateChange((_e,s)=>setTimeout(()=>cloudSessionV3(s),0));
+ if($("cloudLogin"))$("cloudLogin").onclick=async()=>{const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;const {error}=await cloudV3.auth.signInWithPassword({email,password});if(error)alert(error.message)};
+ if($("cloudRegister"))$("cloudRegister").onclick=async()=>{const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;if(!email||password.length<6)return alert("Bitte E-Mail und mindestens 6 Zeichen Passwort eingeben.");const {data,error}=await cloudV3.auth.signUp({email,password});if(error)return alert(error.message);alert(data.session?"Konto erstellt und angemeldet.":"Konto erstellt. Bitte bestätige gegebenenfalls die E-Mail und melde dich danach an.")};
+ if($("cloudLogout"))$("cloudLogout").onclick=()=>cloudV3.auth.signOut();
+ if($("cloudSync"))$("cloudSync").onclick=()=>cloudSaveV3(true);
+}
+async function cloudSessionV3(session){
+ cloudUserV3=session?.user||null;$("cloudSignedOut")?.classList.toggle("hidden",!!cloudUserV3);$("cloudSignedIn")?.classList.toggle("hidden",!cloudUserV3);
+ if($("cloudUserEmail"))$("cloudUserEmail").textContent=cloudUserV3?.email||"";
+ if(!cloudUserV3){cloudStatusV3("");return}
+ cloudStatusV3("Cloud-Daten werden geladen…");
+ const {data,error}=await cloudV3.from("user_state").select("state").eq("user_id",cloudUserV3.id).maybeSingle();
+ if(error){cloudStatusV3("Datenbank noch nicht eingerichtet: "+error.message);return}
+ if(data?.state){cloudApplyingV3=true;state=data.state;migrate();migrateV3();cloudApplyingV3=false;persistBaseV3();persistUserV3();refresh();cloudStatusV3("Cloud-Daten geladen.");}
+ else {await cloudSaveV3(true);cloudStatusV3("Deine bestehende Sammlung wurde diesem Konto zugeordnet.");}
+}
+async function cloudSaveV3(show=false){
+ if(!cloudV3||!cloudUserV3||cloudApplyingV3)return;
+ const {error}=await cloudV3.from("user_state").upsert({user_id:cloudUserV3.id,state,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+ if(show)cloudStatusV3(error?"Synchronisierung fehlgeschlagen: "+error.message:"Synchronisiert: "+new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}));
+}
+function queueCloudSaveV3(){if(!cloudUserV3||cloudApplyingV3)return;clearTimeout(cloudSaveTimerV3);cloudSaveTimerV3=setTimeout(()=>cloudSaveV3(false),700)}
+
 /* v19 local multi-user profiles */
 const USERS_KEY_V3="lego-stadtmanager-users-v19",ACTIVE_USER_KEY_V3="lego-stadtmanager-active-user-v19";
 function usersV3(){try{return JSON.parse(localStorage.getItem(USERS_KEY_V3))||[]}catch{return[]}}
@@ -42,7 +72,7 @@ function bindUsersV3(){
  if($("saveUser"))$("saveUser").onclick=()=>{const name=$("userName").value.trim();if(!name)return alert("Bitte einen Namen eingeben.");const a=usersV3(),id="u"+Date.now().toString(36);a.push({id,name,created:new Date().toISOString()});saveUsersV3(a);localStorage.setItem(userStoreV3(id),JSON.stringify({collection:[],wishlist:[],trackShopping:JSON.parse(JSON.stringify(DEFAULT_TRACKS)),classifiedOffers:[],meta:{}}));close();switchUserV3(id)};
 }
 const persistBaseV3=persist;
-persist=function(){persistBaseV3();persistUserV3()};
+persist=function(){persistBaseV3();persistUserV3();queueCloudSaveV3()};
 
 // LEGO Stadtmanager v3 enhancement layer
 let collectionModeV3="list",purchaseFromWishV3=null,scanStreamV3=null;
@@ -240,3 +270,5 @@ async function loadEnrichmentV3(force=false){
    if($("catalogSyncNote"))$("catalogSyncNote").textContent='Online-Daten konnten gerade nicht geladen werden.';
  }
 }
+
+initCloudV3();
