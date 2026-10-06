@@ -1833,3 +1833,145 @@ function migrateCityLayoutV503(){
  bindRebalanceV503();
 }
 setTimeout(migrateCityLayoutV503,650);
+
+
+/* v50.4 collector catalog */
+let collectorCurrentV504=null;
+
+function collectorStatusForV504(setNumber){
+ const n=String(setNumber);
+ if((state.collection||[]).some(x=>String(x.setNumber)===n))return "owned";
+ if((state.wishlist||[]).some(x=>String(x.setNumber)===n))return "wishlist";
+ return "missing";
+}
+function collectorFeaturedDefsV504(){
+ return [
+  {key:"harry-potter",label:"Harry Potter",icon:"⚡",keywords:["Harry Potter"]},
+  {key:"christmas",label:"Weihnachten / Winter Village",icon:"❄",keywords:["Christmas","Winter Village","Advent"]},
+  {key:"creator-icons",label:"Creator Expert / Icons",icon:"◆",keywords:["Creator Expert","Icons"]},
+  {key:"modular-buildings",label:"Modular Buildings",icon:"▦",keywords:["Modular Buildings"]},
+  {key:"disney",label:"Disney",icon:"★",keywords:["Disney"]},
+  {key:"star-wars",label:"Star Wars",icon:"✦",keywords:["Star Wars"]},
+  {key:"technic",label:"Technic",icon:"⚙",keywords:["Technic"]},
+  {key:"architecture",label:"Architecture",icon:"▥",keywords:["Architecture"]}
+ ];
+}
+function collectorThemePathV504(all,row){
+ const t=all?.themes?.[String(row?.[5]||"")];
+ return {name:t?.[0]||"",path:t?.[2]||"",root:t?.[3]||t?.[0]||""};
+}
+function collectorMatchesDefV504(all,row,def){
+ const t=collectorThemePathV504(all,row);
+ if(def.root)return t.root===def.root;
+ const hay=(t.path+" "+t.name+" "+t.root).toLowerCase();
+ return (def.keywords||[]).some(k=>hay.includes(String(k).toLowerCase()));
+}
+function collectorRowsV504(all,def){
+ return Object.entries(all?.sets||{}).filter(([,row])=>collectorMatchesDefV504(all,row,def));
+}
+function collectorThemeDefsV504(all){
+ const roots=new Map();
+ for(const row of Object.values(all?.sets||{})){
+   const t=collectorThemePathV504(all,row);
+   if(t.root)roots.set(t.root,(roots.get(t.root)||0)+1);
+ }
+ const featured=collectorFeaturedDefsV504();
+ const featuredRoots=new Set(featured.map(d=>d.label.toLowerCase()));
+ const dynamic=[...roots.entries()]
+   .filter(([name])=>!featuredRoots.has(name.toLowerCase()))
+   .map(([root,count])=>({key:"root:"+root,label:root,root,count,icon:"◻"}))
+   .sort((a,b)=>b.count-a.count||a.label.localeCompare(b.label,"de"));
+ return [...featured,...dynamic];
+}
+function collectorProgressV504(rows){
+ const total=rows.length;
+ const owned=rows.filter(([n])=>collectorStatusForV504(n)==="owned").length;
+ const wished=rows.filter(([n])=>collectorStatusForV504(n)==="wishlist").length;
+ return {total,owned,wished,missing:Math.max(0,total-owned),pct:total?Math.round(owned/total*100):0};
+}
+function collectorCardHtmlV504(all,def){
+ const rows=collectorRowsV504(all,def),p=collectorProgressV504(rows);
+ if(!p.total)return "";
+ return '<button class="collectorThemeCardV504" onclick="openCollectorThemeV504(\''+esc(def.key)+'\')">'+
+   '<span class="collectorThemeIconV504">'+esc(def.icon||"◻")+'</span>'+
+   '<span class="collectorThemeCardMainV504"><b>'+esc(def.label)+'</b><small>'+p.owned+' von '+p.total+' vorhanden · '+p.missing+' fehlen</small><span class="collectorMiniProgressV504"><i style="width:'+p.pct+'%"></i></span></span>'+
+   '<strong>'+p.pct+'%</strong></button>';
+}
+async function renderCollectorThemesV504(){
+ const box=$("collectorFeaturedV504");if(!box)return;
+ const all=await loadAllSetsV46(false);
+ if(!all?.sets){box.innerHTML='<div class="card"><p>Sammler-Katalog wird gerade geladen. Bitte die App gleich noch einmal öffnen.</p></div>';return}
+ if($("collectorThemeCountV504"))$("collectorThemeCountV504").textContent=all.meta?.themeCount||Object.keys(all.themes||{}).length||"–";
+ if($("collectorSetCountV504"))$("collectorSetCountV504").textContent=all.meta?.uniqueSetNumbers||Object.keys(all.sets||{}).length||"–";
+ const q=nV3($("collectorSearchV504")?.value);
+ const defs=collectorThemeDefsV504(all);
+ const featured=defs.slice(0,8).filter(d=>!q||nV3(d.label).includes(q));
+ const rest=defs.slice(8).filter(d=>!q||nV3(d.label).includes(q)).slice(0,q?100:36);
+ let html="";
+ if(featured.length)html+='<div class="collectorSectionTitleV504"><span>Beliebte Sammlerwelten</span><small>Direkter Vergleich mit deiner Sammlung</small></div><div class="collectorThemeGridV504">'+featured.map(d=>collectorCardHtmlV504(all,d)).join("")+'</div>';
+ if(rest.length)html+='<div class="collectorSectionTitleV504"><span>'+(q?'Gefundene Themen':'Weitere Themen')+'</span><small>'+rest.length+' angezeigt</small></div><div class="collectorThemeGridV504 compact">'+rest.map(d=>collectorCardHtmlV504(all,d)).join("")+'</div>';
+ if(!html)html='<div class="card"><p>Kein passendes Thema gefunden.</p></div>';
+ box.innerHTML=html;
+}
+function collectorDefByKeyV504(all,key){
+ return collectorThemeDefsV504(all).find(d=>d.key===key)||null;
+}
+window.openCollectorThemeV504=async key=>{
+ const all=await loadAllSetsV46(false),def=collectorDefByKeyV504(all,key);if(!def)return;
+ collectorCurrentV504=def;
+ $("collectorFeaturedV504")?.classList.add("hidden");
+ $("collectorThemeViewV504")?.classList.remove("hidden");
+ renderCollectorSetViewV504();
+};
+async function renderCollectorSetViewV504(){
+ if(!collectorCurrentV504)return;
+ const all=await loadAllSetsV46(false);if(!all)return;
+ let rows=collectorRowsV504(all,collectorCurrentV504);
+ const years=[...new Set(rows.map(([,r])=>Number(r[1]||0)).filter(Boolean))].sort((a,b)=>b-a);
+ const yearEl=$("collectorYearV504"),oldYear=yearEl?.value||"";
+ if(yearEl){
+   yearEl.innerHTML='<option value="">Alle Jahre</option>'+years.map(y=>'<option value="'+y+'">'+y+'</option>').join("");
+   if(years.includes(Number(oldYear)))yearEl.value=oldYear;
+ }
+ const status=$("collectorStatusV504")?.value||"all",year=Number($("collectorYearV504")?.value||0);
+ rows=rows.filter(([n,r])=>(status==="all"||collectorStatusForV504(n)===status)&&(!year||Number(r[1])===year));
+ rows.sort((a,b)=>Number(b[1][1]||0)-Number(a[1][1]||0)||String(a[0]).localeCompare(String(b[0]),undefined,{numeric:true}));
+ const fullRows=collectorRowsV504(all,collectorCurrentV504),p=collectorProgressV504(fullRows);
+ if($("collectorThemeTitleV504"))$("collectorThemeTitleV504").textContent=collectorCurrentV504.label;
+ if($("collectorThemeMetaV504"))$("collectorThemeMetaV504").textContent=p.owned+" vorhanden · "+p.wished+" auf Wunschliste · "+Math.max(0,p.total-p.owned-p.wished)+" noch offen · "+p.total+" Sets insgesamt";
+ if($("collectorProgressTextV504"))$("collectorProgressTextV504").textContent=p.pct+" %";
+ if($("collectorProgressBarV504"))$("collectorProgressBarV504").style.width=p.pct+"%";
+ const grid=$("collectorSetGridV504");if(!grid)return;
+ grid.innerHTML=rows.length?rows.map(([n,r])=>{
+   const st=collectorStatusForV504(n),label=st==="owned"?"✓ Vorhanden":st==="wishlist"?"♥ Wunschliste":"Fehlt";
+   const action=st==="missing"?'<button class="btn collectorWishBtnV504" onclick="event.stopPropagation();addCollectorWishV504(\''+esc(n)+'\')">Auf Wunschliste</button>':
+     st==="owned"?'<span class="collectorStatusV504 owned">✓ Vorhanden</span>':'<span class="collectorStatusV504 wishlist">♥ Wunschliste</span>';
+   return '<article class="collectorSetCardV504 '+st+'">'+
+     '<div class="collectorSetImageV504">'+(r[3]?'<img src="'+esc(r[3])+'" loading="lazy" alt="">':'<span>LEGO<br>'+esc(n)+'</span>')+'</div>'+
+     '<div class="collectorSetBodyV504"><div class="collectorSetTopV504"><span>'+esc(n)+'</span><em>'+esc(String(r[1]||"–"))+'</em></div><h3>'+esc(r[0]||("Set "+n))+'</h3><p>'+pV3(r[2])+' Teile</p>'+action+'</div>'+
+   '</article>';
+ }).join(""):'<div class="card"><p>Für diesen Filter wurden keine Sets gefunden.</p></div>';
+}
+window.addCollectorWishV504=async n=>{
+ n=String(n);
+ if((state.collection||[]).some(x=>String(x.setNumber)===n))return;
+ if((state.wishlist||[]).some(x=>String(x.setNumber)===n)){renderCollectorSetViewV504();return}
+ const all=await loadAllSetsV46(false),r=all?.sets?.[n];if(!r)return;
+ state.wishlist.push({
+   priority:"Normal",setNumber:n,name:r[0]||("Set "+n),area:collectorCurrentV504?.label||"",
+   rrp:0,price:0,limit:0,offer:0,imageUrl:r[3]||"",
+   reason:"Sammler-Katalog · "+(collectorCurrentV504?.label||"Thema")
+ });
+ persist();refresh();renderCollectorSetViewV504();
+};
+function bindCollectorV504(){
+ const search=$("collectorSearchV504"),status=$("collectorStatusV504"),year=$("collectorYearV504"),back=$("collectorBackV504");
+ if(search)search.oninput=()=>{if(collectorCurrentV504){collectorCurrentV504=null;$("collectorThemeViewV504")?.classList.add("hidden");$("collectorFeaturedV504")?.classList.remove("hidden")}renderCollectorThemesV504()};
+ if(status)status.onchange=()=>collectorCurrentV504?renderCollectorSetViewV504():renderCollectorThemesV504();
+ if(year)year.onchange=()=>collectorCurrentV504&&renderCollectorSetViewV504();
+ if(back)back.onclick=()=>{collectorCurrentV504=null;$("collectorThemeViewV504")?.classList.add("hidden");$("collectorFeaturedV504")?.classList.remove("hidden");if(year)year.value="";renderCollectorThemesV504()};
+}
+const switchTabBaseV504=switchTab;
+switchTab=function(id){switchTabBaseV504(id);if(id==="collector"){renderCollectorThemesV504();if(collectorCurrentV504)renderCollectorSetViewV504()}};
+bindCollectorV504();
+renderCollectorThemesV504();
