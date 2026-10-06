@@ -1933,8 +1933,17 @@ async function renderCollectorSetViewV504(){
    yearEl.innerHTML='<option value="">Alle Jahre</option>'+years.map(y=>'<option value="'+y+'">'+y+'</option>').join("");
    if(years.includes(Number(oldYear)))yearEl.value=oldYear;
  }
- const status=$("collectorStatusV504")?.value||"all",year=Number($("collectorYearV504")?.value||0);
- rows=rows.filter(([n,r])=>(status==="all"||collectorStatusForV504(n)===status)&&(!year||Number(r[1])===year));
+ const subEl=$("collectorSubthemeV505"),oldSub=subEl?.value||"";
+ const subs=[...new Set(rows.map(([,r])=>collectorThemePathV504(all,r).path).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"de"));
+ if(subEl){
+   subEl.innerHTML='<option value="">Alle Unterthemen</option>'+subs.map(s=>'<option value="'+esc(s)+'">'+esc(s.split(" › ").slice(-1)[0])+'</option>').join("");
+   if(subs.includes(oldSub))subEl.value=oldSub;
+ }
+ const status=$("collectorStatusV504")?.value||"all",year=Number($("collectorYearV504")?.value||0),sub=$("collectorSubthemeV505")?.value||"",setq=nV3($("collectorSetSearchV505")?.value||"");
+ rows=rows.filter(([n,r])=>{
+   const t=collectorThemePathV504(all,r),hay=nV3([n,r[0],r[1],t.path].join(" "));
+   return (status==="all"||collectorStatusForV504(n)===status)&&(!year||Number(r[1])===year)&&(!sub||t.path===sub)&&(!setq||hay.includes(setq));
+ });
  rows.sort((a,b)=>Number(b[1][1]||0)-Number(a[1][1]||0)||String(a[0]).localeCompare(String(b[0]),undefined,{numeric:true}));
  const fullRows=collectorRowsV504(all,collectorCurrentV504),p=collectorProgressV504(fullRows);
  if($("collectorThemeTitleV504"))$("collectorThemeTitleV504").textContent=collectorCurrentV504.label;
@@ -1965,11 +1974,13 @@ window.addCollectorWishV504=async n=>{
  persist();refresh();renderCollectorSetViewV504();
 };
 function bindCollectorV504(){
- const search=$("collectorSearchV504"),status=$("collectorStatusV504"),year=$("collectorYearV504"),back=$("collectorBackV504");
+ const search=$("collectorSearchV504"),status=$("collectorStatusV504"),year=$("collectorYearV504"),sub=$("collectorSubthemeV505"),setSearch=$("collectorSetSearchV505"),back=$("collectorBackV504");
  if(search)search.oninput=()=>{if(collectorCurrentV504){collectorCurrentV504=null;$("collectorThemeViewV504")?.classList.add("hidden");$("collectorFeaturedV504")?.classList.remove("hidden")}renderCollectorThemesV504()};
  if(status)status.onchange=()=>collectorCurrentV504?renderCollectorSetViewV504():renderCollectorThemesV504();
  if(year)year.onchange=()=>collectorCurrentV504&&renderCollectorSetViewV504();
- if(back)back.onclick=()=>{collectorCurrentV504=null;$("collectorThemeViewV504")?.classList.add("hidden");$("collectorFeaturedV504")?.classList.remove("hidden");if(year)year.value="";renderCollectorThemesV504()};
+ if(sub)sub.onchange=()=>collectorCurrentV504&&renderCollectorSetViewV504();
+ if(setSearch)setSearch.oninput=()=>collectorCurrentV504&&renderCollectorSetViewV504();
+ if(back)back.onclick=()=>{collectorCurrentV504=null;$("collectorThemeViewV504")?.classList.add("hidden");$("collectorFeaturedV504")?.classList.remove("hidden");if(year)year.value="";if(sub)sub.value="";if(setSearch)setSearch.value="";renderCollectorThemesV504()};
 }
 const switchTabBaseV504=switchTab;
 switchTab=function(id){switchTabBaseV504(id);if(id==="collector"){renderCollectorThemesV504();if(collectorCurrentV504)renderCollectorSetViewV504()}};
