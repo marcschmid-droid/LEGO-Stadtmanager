@@ -715,3 +715,143 @@ cloudSessionV3=async function(session){const r=await cloudSessionBaseV36(session
 const refreshBaseV36=refresh;
 refresh=function(){refreshBaseV36();renderStatsV36();updateAdminVisibilityV36()};
 bindAdminV36();renderStatsV36();
+
+
+/* v37 targeted lookups, charts, history/trash and exemplar editor */
+let exemplarEditV37={setNumber:"",index:-1};
+function ensureV37State(){
+ state.trash=state.trash||[];
+ state.activityLog=state.activityLog||[];
+ state.collectionValueHistory=state.collectionValueHistory||[];
+ const cutoff=Date.now()-30*24*60*60*1000;
+ state.trash=state.trash.filter(x=>!x.deletedAt||new Date(x.deletedAt).getTime()>=cutoff);
+}
+function logV37(type,text,setNumber=""){
+ ensureV37State();
+ state.activityLog.unshift({at:new Date().toISOString(),type,text,setNumber:String(setNumber||"")});
+ if(state.activityLog.length>150)state.activityLog.length=150;
+}
+function renderHistoryV37(){
+ const trash=$("trashV37"),hist=$("historyV37");if(!(trash&&hist))return;ensureV37State();
+ trash.innerHTML=state.trash.length?state.trash.map((r,i)=>'<div class="historyRowV37"><div><b>'+esc(r.item?.setNumber||"")+' · '+esc(r.item?.name||"")+'</b><small>gelöscht '+new Date(r.deletedAt).toLocaleString("de-DE")+'</small></div><button class="btn secondary" onclick="restoreTrashV37('+i+')">Wiederherstellen</button></div>').join(""):'<p class="hint">Papierkorb leer.</p>';
+ hist.innerHTML=state.activityLog.length?state.activityLog.slice(0,40).map(r=>'<div class="historyRowV37"><div><b>'+esc(r.text)+'</b><small>'+new Date(r.at).toLocaleString("de-DE")+'</small></div></div>').join(""):'<p class="hint">Noch keine Änderungen protokolliert.</p>';
+}
+window.restoreTrashV37=i=>{
+ ensureV37State();const r=state.trash[i];if(!r)return;
+ if(state.collection.some(x=>String(x.setNumber)===String(r.item.setNumber)))return alert("Dieses Set ist bereits wieder im Bestand.");
+ state.collection.push(r.item);state.trash.splice(i,1);logV37("restore","Set "+r.item.setNumber+" wiederhergestellt",r.item.setNumber);persist();refresh();renderHistoryV37();
+};
+window.softDeleteSetV37=n=>{
+ const x=state.collection.find(y=>String(y.setNumber)===String(n));if(!x)return;
+ if(!confirm("Set "+x.setNumber+" wirklich in den Papierkorb verschieben?"))return;
+ ensureV37State();state.trash.unshift({deletedAt:new Date().toISOString(),item:structuredClone(x)});
+ state.collection=state.collection.filter(y=>y!==x);
+ for(const m in state.modules||{})state.modules[m]=(state.modules[m]||[]).filter(s=>String(s)!==String(n));
+ logV37("delete","Set "+x.setNumber+" in den Papierkorb verschoben",x.setNumber);persist();refresh();$("detailModal")?.classList.remove("show");renderHistoryV37();
+};
+window.delSet=window.softDeleteSetV37;
+
+function bindHistoryV37(){
+ if($("purgeTrashV37"))$("purgeTrashV37").onclick=()=>{if(!state.trash?.length)return;if(confirm("Papierkorb endgültig leeren?")){state.trash=[];logV37("purge","Papierkorb geleert");persist();renderHistoryV37()}};
+ renderHistoryV37();
+}
+
+const saveSetCoreV37=saveSet;
+function saveSetLoggedV37(){
+ const setNo=$("fSet")?.value.trim(),wasEditing=!!editing,before=wasEditing?structuredClone(state.collection.find(x=>String(x.setNumber)===String(editing))||null):null;
+ const r=saveSetCoreV37();
+ const after=state.collection.find(x=>String(x.setNumber)===String(setNo||before?.setNumber));
+ if(after){logV37(wasEditing?"edit":"add",(wasEditing?"Set geändert: ":"Set hinzugefügt: ")+after.setNumber,after.setNumber);persist();renderHistoryV37()}
+ return r;
+}
+if($("saveSet"))$("saveSet").onclick=saveSetLoggedV37;
+
+const savePurchaseCoreV37=savePurchaseV3;
+function savePurchaseLoggedV37(){
+ const n=$("pSet")?.value.trim(),q=Math.max(1,pV3($("pQty")?.value)||1);
+ const r=savePurchaseCoreV37();
+ const x=state.collection.find(y=>String(y.setNumber)===String(n));
+ if(x&&$("pStorage")){const newest=(x.exemplars||[]).slice(-q);newest.forEach(e=>e.storage=$("pStorage").value.trim())}
+ if(x){logV37("purchase","Kauf erfasst: "+q+" × "+n,n);persist();refresh();renderHistoryV37()}
+ return r;
+}
+if($("savePurchase"))$("savePurchase").onclick=savePurchaseLoggedV37;
+const openPurchaseCoreV37=openPurchaseV3;
+openPurchaseV3=function(w=null,x=null){const r=openPurchaseCoreV37(w,x);if($("pStorage"))$("pStorage").value=x?.storage||"";return r};
+
+window.editExemplarV28=(setNumber,index)=>{
+ const x=state.collection.find(y=>String(y.setNumber)===String(setNumber)),e=x?.exemplars?.[index];if(!e)return;
+ exemplarEditV37={setNumber:String(setNumber),index};
+ $("exDateV37").value=e.date||"";$("exPriceV37").value=e.price??"";$("exSellerV37").value=e.seller||"";$("exStorageV37").value=e.storage||x.storage||"";
+ $("exConditionV37").value=e.condition||"Unbekannt";$("exBoxV37").value=e.box||"";$("exCompleteV37").value=e.complete||"";$("exNoteV37").value=e.note||"";
+ $("exemplarModalV37").classList.add("show");
+};
+function closeExemplarV37(){$("exemplarModalV37")?.classList.remove("show");exemplarEditV37={setNumber:"",index:-1}}
+function bindExemplarV37(){
+ if($("closeExemplarV37"))$("closeExemplarV37").onclick=closeExemplarV37;if($("cancelExemplarV37"))$("cancelExemplarV37").onclick=closeExemplarV37;
+ if($("saveExemplarV37"))$("saveExemplarV37").onclick=()=>{
+   const x=state.collection.find(y=>String(y.setNumber)===exemplarEditV37.setNumber),e=x?.exemplars?.[exemplarEditV37.index];if(!e)return;
+   Object.assign(e,{date:$("exDateV37").value,price:pV3($("exPriceV37").value),seller:$("exSellerV37").value.trim(),storage:$("exStorageV37").value.trim(),condition:$("exConditionV37").value,box:$("exBoxV37").value,complete:$("exCompleteV37").value,note:$("exNoteV37").value.trim(),legacy:false});
+   const priced=x.exemplars.map(v=>pV3(v.price)).filter(v=>v>0);if(priced.length)x.purchasePrice=priced.reduce((a,b)=>a+b,0)/priced.length;
+   logV37("exemplar","Exemplar #"+(exemplarEditV37.index+1)+" von "+x.setNumber+" geändert",x.setNumber);persist();refresh();closeExemplarV37();showDetailV3(x.setNumber);
+ };
+}
+const deleteExemplarCoreV37=window.deleteExemplarV28;
+window.deleteExemplarV28=(setNumber,index)=>{
+ const x=state.collection.find(y=>String(y.setNumber)===String(setNumber));if(!x)return;
+ if(!confirm("Dieses einzelne Exemplar wirklich löschen?"))return;
+ const removed=x.exemplars?.[index]?structuredClone(x.exemplars[index]):null;
+ x.exemplars.splice(index,1);x.quantity=Math.max(0,pV3(x.quantity)-1);
+ logV37("exemplar-delete","Exemplar #"+(index+1)+" von "+setNumber+" gelöscht",setNumber);
+ if(x.quantity===0){state.trash.unshift({deletedAt:new Date().toISOString(),item:structuredClone(x)});state.collection=state.collection.filter(y=>y!==x);$("detailModal")?.classList.remove("show")}else showDetailV3(setNumber);
+ persist();refresh();renderHistoryV37();
+};
+
+function svgLineV37(points,width=620,height=180){
+ if(!points?.length)return '<p class="hint">Noch nicht genug historische Messpunkte.</p>';
+ const vals=points.map(p=>p.value).filter(Number.isFinite);if(!vals.length)return '<p class="hint">Keine Werte vorhanden.</p>';
+ const min=Math.min(...vals),max=Math.max(...vals),span=Math.max(1,max-min),pad=18;
+ const coords=points.map((p,i)=>{const x=pad+(points.length===1?0:i/(points.length-1)*(width-pad*2));const y=height-pad-((p.value-min)/span)*(height-pad*2);return{x,y,p}});
+ const line=coords.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
+ return '<svg class="priceChartV37" viewBox="0 0 '+width+' '+height+'" role="img"><path d="'+line+'" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>'+coords.map(p=>'<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="4" fill="currentColor"><title>'+esc(p.p.date)+' · '+euro(p.p.value)+'</title></circle>').join('')+'</svg><div class="chartLegendV37"><span>'+esc(points[0].date)+' · '+euro(points[0].value)+'</span><span>'+esc(points[points.length-1].date)+' · '+euro(points[points.length-1].value)+'</span></div>';
+}
+function recordCollectionValueV37(){
+ ensureV37State();const day=todayV28(),value=state.collection.reduce((s,x)=>s+pV3(x.quantity)*pV3(x.currentValue),0),a=state.collectionValueHistory;
+ const last=a[a.length-1];if(!last||last.date!==day){a.push({date:day,value});if(a.length>365)a.splice(0,a.length-365)}else last.value=value;
+}
+function renderCollectionChartV37(){
+ const box=$("collectionChartV37");if(!box)return;ensureV37State();box.innerHTML=svgLineV37(state.collectionValueHistory.slice(-90));
+}
+const detailChartCoreV37=showDetailV3;
+showDetailV3=function(n){
+ detailChartCoreV37(n);const x=state.collection.find(y=>String(y.setNumber)===String(n));if(!x)return;
+ const d=$("detailContent");if(!d)return;
+ const hist=(state.priceHistory?.[String(n)]||[]).map(r=>({date:r.date,value:pV3(r.currentEUR)||pV3(r.newEUR)||pV3(r.usedEUR)})).filter(r=>r.value);
+ const card=document.createElement("div");card.className="card wide";card.innerHTML='<div class="sectionHead"><h3>Preisverlauf</h3><button class="btn danger" onclick="softDeleteSetV37(\''+esc(n)+'\')">Set löschen</button></div>'+svgLineV37(hist.slice(-90));d.appendChild(card);
+};
+
+const applyEnrichmentCoreV37=applyEnrichmentV3;
+applyEnrichmentV3=function(){const r=applyEnrichmentCoreV37();recordCollectionValueV37();persist();renderCollectionChartV37();return r};
+const renderAnalysisCoreV37=renderAnalysisV3;
+renderAnalysisV3=function(){renderAnalysisCoreV37();renderCollectionChartV37()};
+
+async function enqueueCatalogRequestV37(n,statusId){
+ n=String(n||"").trim().replace(/-1$/,"");if(!n||!cloudV3||!cloudUserV3)return false;
+ const status=$(statusId||"catalogRequestStatusV37");
+ try{
+   const {error}=await cloudV3.from("catalog_requests").insert({set_number:n,requested_by:cloudUserV3.id,status:"pending"});
+   if(error&&error.code!=="23505"){if(status)status.textContent="Server-Nachschlagefunktion noch nicht eingerichtet.";return false}
+   if(status)status.textContent="Set "+n+" wurde zur serverseitigen Nachpflege vorgemerkt.";
+   return true;
+ }catch{if(status)status.textContent="Server-Nachschlagefunktion noch nicht eingerichtet.";return false}
+}
+const lookupCatalogCoreV37=lookupCatalogV35;
+lookupCatalogV35=async function(n,statusId){
+ const e=await lookupCatalogCoreV37(n,statusId);
+ if(!e){await enqueueCatalogRequestV37(n,statusId);const s=$(statusId);if(s)s.textContent="Noch keine Daten vorhanden – serverseitige Nachpflege wurde vorgemerkt."}
+ return e;
+};
+
+const refreshCoreV37=refresh;
+refresh=function(){ensureV37State();const r=refreshCoreV37();recordCollectionValueV37();renderHistoryV37();renderCollectionChartV37();return r};
+ensureV37State();recordCollectionValueV37();bindHistoryV37();bindExemplarV37();renderHistoryV37();renderCollectionChartV37();
