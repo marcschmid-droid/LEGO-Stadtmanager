@@ -1,78 +1,68 @@
-
-/* v20 Supabase authentication + private cloud state */
+/* v21 Supabase account + private per-user cloud state */
 let cloudV3=null,cloudUserV3=null,cloudSaveTimerV3=null,cloudApplyingV3=false;
+const CLOUD_CACHE_PREFIX_V3="lego-stadtmanager-cloud-cache-v21-";
+function blankStateV3(){return {collection:[],wishlist:[],trackShopping:JSON.parse(JSON.stringify(DEFAULT_TRACKS||[])),classifiedOffers:[],meta:{}}}
 function cloudStatusV3(t){if($("cloudStatus"))$("cloudStatus").textContent=t||""}
+function cloudCacheKeyV3(id){return CLOUD_CACHE_PREFIX_V3+id}
+function updateAccountBadgeV3(){
+ if(!$("userTop"))return;
+ const e=cloudUserV3?.email||"";
+ $("userTop").textContent=e?e.charAt(0).toUpperCase():"👤";
+ $("userTop").title=e?"Konto: "+e:"Anmelden";
+}
 async function initCloudV3(){
  const cfg=window.LEGO_SUPABASE;if(!cfg||!window.supabase)return;
  cloudV3=window.supabase.createClient(cfg.url,cfg.publishableKey);
+ if($("userTop"))$("userTop").onclick=()=>switchTab("users");
+ if($("cloudLogin"))$("cloudLogin").onclick=async()=>{const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;const {error}=await cloudV3.auth.signInWithPassword({email,password});if(error)alert(error.message)};
+ if($("cloudRegister"))$("cloudRegister").onclick=async()=>{const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;if(!email||password.length<6)return alert("Bitte E-Mail und mindestens 6 Zeichen Passwort eingeben.");const {data,error}=await cloudV3.auth.signUp({email,password,options:{emailRedirectTo:"https://marcschmid-droid.github.io/LEGO-Stadtmanager/"}});if(error)return alert(error.message);alert(data.session?"Konto erstellt und angemeldet.":"Konto erstellt. Bitte bestätige die E-Mail und melde dich danach an.")};
+ if($("cloudLogout"))$("cloudLogout").onclick=async()=>{await cloudV3.auth.signOut()};
+ if($("cloudSync"))$("cloudSync").onclick=()=>cloudSaveV3(true);
  const {data}=await cloudV3.auth.getSession();await cloudSessionV3(data.session);
  cloudV3.auth.onAuthStateChange((_e,s)=>setTimeout(()=>cloudSessionV3(s),0));
- if($("cloudLogin"))$("cloudLogin").onclick=async()=>{const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;const {error}=await cloudV3.auth.signInWithPassword({email,password});if(error)alert(error.message)};
- if($("cloudRegister"))$("cloudRegister").onclick=async()=>{const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;if(!email||password.length<6)return alert("Bitte E-Mail und mindestens 6 Zeichen Passwort eingeben.");const {data,error}=await cloudV3.auth.signUp({email,password});if(error)return alert(error.message);alert(data.session?"Konto erstellt und angemeldet.":"Konto erstellt. Bitte bestätige gegebenenfalls die E-Mail und melde dich danach an.")};
- if($("cloudLogout"))$("cloudLogout").onclick=()=>cloudV3.auth.signOut();
- if($("cloudSync"))$("cloudSync").onclick=()=>cloudSaveV3(true);
 }
 async function cloudSessionV3(session){
- cloudUserV3=session?.user||null;$("cloudSignedOut")?.classList.toggle("hidden",!!cloudUserV3);$("cloudSignedIn")?.classList.toggle("hidden",!cloudUserV3);
+ cloudUserV3=session?.user||null;
+ $("cloudSignedOut")?.classList.toggle("hidden",!!cloudUserV3);
+ $("cloudSignedIn")?.classList.toggle("hidden",!cloudUserV3);
  if($("cloudUserEmail"))$("cloudUserEmail").textContent=cloudUserV3?.email||"";
- if(!cloudUserV3){cloudStatusV3("");return}
+ updateAccountBadgeV3();
+ if(!cloudUserV3){
+   cloudApplyingV3=true;
+   state=blankStateV3();migrate();migrateV3();refresh();
+   cloudApplyingV3=false;
+   cloudStatusV3("");
+   switchTab("users");
+   return;
+ }
  cloudStatusV3("Cloud-Daten werden geladen…");
+ const cacheKey=cloudCacheKeyV3(cloudUserV3.id);
  const {data,error}=await cloudV3.from("user_state").select("state").eq("user_id",cloudUserV3.id).maybeSingle();
- if(error){cloudStatusV3("Datenbank noch nicht eingerichtet: "+error.message);return}
- if(data?.state){cloudApplyingV3=true;state=data.state;migrate();migrateV3();cloudApplyingV3=false;persistBaseV3();persistUserV3();refresh();cloudStatusV3("Cloud-Daten geladen.");}
- else {await cloudSaveV3(true);cloudStatusV3("Deine bestehende Sammlung wurde diesem Konto zugeordnet.");}
+ if(error){
+   const cached=localStorage.getItem(cacheKey);
+   if(cached){try{cloudApplyingV3=true;state=JSON.parse(cached);migrate();migrateV3();refresh();cloudApplyingV3=false;cloudStatusV3("Offline-Kopie geladen. Cloud aktuell nicht erreichbar.");return}catch{}}
+   cloudStatusV3("Cloud-Daten konnten nicht geladen werden: "+error.message);return;
+ }
+ if(data?.state){
+   cloudApplyingV3=true;state=data.state;migrate();migrateV3();refresh();cloudApplyingV3=false;
+   localStorage.setItem(cacheKey,JSON.stringify(state));persistBaseV3();cloudStatusV3("Cloud-Daten geladen.");
+ }else{
+   // First login: import the existing pre-v21 local collection once.
+   const legacy=localStorage.getItem(STORE);
+   if(legacy){try{const old=JSON.parse(legacy);if((old.collection||[]).length){cloudApplyingV3=true;state=old;migrate();migrateV3();cloudApplyingV3=false;}}catch{}}
+   await cloudSaveV3(true);cloudStatusV3("Deine bestehende Sammlung wurde diesem Konto zugeordnet.");
+ }
+ refresh();
 }
 async function cloudSaveV3(show=false){
  if(!cloudV3||!cloudUserV3||cloudApplyingV3)return;
+ localStorage.setItem(cloudCacheKeyV3(cloudUserV3.id),JSON.stringify(state));
  const {error}=await cloudV3.from("user_state").upsert({user_id:cloudUserV3.id,state,updated_at:new Date().toISOString()},{onConflict:"user_id"});
  if(show)cloudStatusV3(error?"Synchronisierung fehlgeschlagen: "+error.message:"Synchronisiert: "+new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}));
 }
 function queueCloudSaveV3(){if(!cloudUserV3||cloudApplyingV3)return;clearTimeout(cloudSaveTimerV3);cloudSaveTimerV3=setTimeout(()=>cloudSaveV3(false),700)}
-
-/* v19 local multi-user profiles */
-const USERS_KEY_V3="lego-stadtmanager-users-v19",ACTIVE_USER_KEY_V3="lego-stadtmanager-active-user-v19";
-function usersV3(){try{return JSON.parse(localStorage.getItem(USERS_KEY_V3))||[]}catch{return[]}}
-function saveUsersV3(a){localStorage.setItem(USERS_KEY_V3,JSON.stringify(a))}
-function userStoreV3(id){return STORE+"-user-"+id}
-function initUsersV3(){
- let a=usersV3(),active=localStorage.getItem(ACTIVE_USER_KEY_V3);
- if(!a.length){
-   const id="owner"; a=[{id,name:"Hauptbenutzer",created:new Date().toISOString()}];saveUsersV3(a);
-   // Preserve the complete existing collection as the first user's data.
-   const existing=localStorage.getItem(STORE);
-   if(existing&&!localStorage.getItem(userStoreV3(id)))localStorage.setItem(userStoreV3(id),existing);
-   active=id;localStorage.setItem(ACTIVE_USER_KEY_V3,id);
- }
- if(!a.some(x=>x.id===active)){active=a[0].id;localStorage.setItem(ACTIVE_USER_KEY_V3,active)}
- const saved=localStorage.getItem(userStoreV3(active));
- if(saved){try{state=JSON.parse(saved);migrate();migrateV3()}catch{}}
- renderUsersV3();
-}
-function activeUserV3(){const id=localStorage.getItem(ACTIVE_USER_KEY_V3);return usersV3().find(x=>x.id===id)||usersV3()[0]}
-function persistUserV3(){const u=activeUserV3();if(u)localStorage.setItem(userStoreV3(u.id),JSON.stringify(state))}
-function switchUserV3(id){
- if(id===localStorage.getItem(ACTIVE_USER_KEY_V3))return;
- persistUserV3();localStorage.setItem(ACTIVE_USER_KEY_V3,id);
- const raw=localStorage.getItem(userStoreV3(id));
- if(raw){try{state=JSON.parse(raw)}catch{}}
- else state={collection:[],wishlist:[],trackShopping:JSON.parse(JSON.stringify(DEFAULT_TRACKS)),classifiedOffers:[],meta:{}};
- migrate();migrateV3();persistUserV3();refresh();renderUsersV3();switchTab("home");
-}
-function renderUsersV3(){
- const box=$("userCards");if(!box)return;const active=localStorage.getItem(ACTIVE_USER_KEY_V3),a=usersV3(),u=activeUserV3();
- if($("userTop"))$("userTop").textContent=u?String(u.name).trim().charAt(0).toUpperCase()||"👤":"👤";
- box.innerHTML=a.map(x=>{let q=0,n=0;try{const s=JSON.parse(localStorage.getItem(userStoreV3(x.id))||"{}");n=(s.collection||[]).length;q=(s.collection||[]).reduce((z,v)=>z+Number(v.quantity||0),0)}catch{}return '<div class="usercard '+(x.id===active?'active':'')+'"><div><b>'+esc(x.name)+'</b><small>'+n+' Sets · '+q+' Exemplare</small></div><button class="btn '+(x.id===active?'secondary':'')+'" data-user="'+esc(x.id)+'">'+(x.id===active?'Aktiv':'Wechseln')+'</button></div>'}).join("");
- box.querySelectorAll("[data-user]").forEach(b=>b.onclick=()=>switchUserV3(b.dataset.user));
-}
-function bindUsersV3(){
- if($("userTop"))$("userTop").onclick=()=>switchTab("users");
- if($("addUser"))$("addUser").onclick=()=>{$("userName").value="";$("userModal").classList.add("show");setTimeout(()=>$("userName").focus(),50)};
- const close=()=> $("userModal").classList.remove("show");
- if($("closeUser"))$("closeUser").onclick=close;if($("cancelUser"))$("cancelUser").onclick=close;
- if($("saveUser"))$("saveUser").onclick=()=>{const name=$("userName").value.trim();if(!name)return alert("Bitte einen Namen eingeben.");const a=usersV3(),id="u"+Date.now().toString(36);a.push({id,name,created:new Date().toISOString()});saveUsersV3(a);localStorage.setItem(userStoreV3(id),JSON.stringify({collection:[],wishlist:[],trackShopping:JSON.parse(JSON.stringify(DEFAULT_TRACKS)),classifiedOffers:[],meta:{}}));close();switchUserV3(id)};
-}
 const persistBaseV3=persist;
-persist=function(){persistBaseV3();persistUserV3();queueCloudSaveV3()};
+persist=function(){persistBaseV3();queueCloudSaveV3()};
 
 // LEGO Stadtmanager v3 enhancement layer
 let collectionModeV3="list",purchaseFromWishV3=null,scanStreamV3=null;
@@ -217,7 +207,7 @@ async function handleBarcodeV3(c){
 }
 function bindV3(){fillAreaFilterV3();$("toggleView").onclick=()=>{collectionModeV3=collectionModeV3==="list"?"grid":"list";renderCollection()};$("areaFilter").onchange=renderCollection;$("quickBuy").onclick=()=>openPurchaseV3();$("quickExport").onclick=()=>$("exportJson").click();$("purchaseGeneral").onclick=()=>openPurchaseV3();$("savePurchase").onclick=savePurchaseV3;$("cancelPurchase").onclick=$("closePurchaseX").onclick=()=>{$("purchaseModal").classList.remove("show");purchaseFromWishV3=null};$("closeDetail").onclick=()=>$("detailModal").classList.remove("show");document.querySelectorAll(".hotspot").forEach(b=>b.onclick=()=>renderCityV3(b.dataset.area));$("clearCityFilter").onclick=()=>renderCityV3();$("resetModules").onclick=()=>{state.modules=structuredClone(DEFAULT_MODULES_V3);state.collection.forEach(x=>x.module=moduleForV3(x.setNumber)||x.module||"");persist();refresh()};$("scanTop").onclick=$("scanSettings").onclick=scanV3;$("closeScanner").onclick=stopScanV3;$("barcodePhoto").onchange=e=>{const f=e.target.files?.[0];if(f)decodePhotoV3(f);e.target.value=""};$("manualBarcode").onclick=()=>{const c=prompt("Barcode / EAN eingeben:");if(c){stopScanV3();handleBarcodeV3(c)}};if($("reloadEnrichment"))$("reloadEnrichment").onclick=()=>loadEnrichmentV3(true);const oldSwitch=switchTab;switchTab=function(id){oldSwitch(id);if(id==="analysis")renderAnalysisV3()};$("saveWish").onclick=()=>{const n=$("wSet").value.trim(),name=$("wName").value.trim();if(!n||!name)return alert("Setnummer und Name fehlen.");const o={priority:$("wPrio").value,setNumber:n,name,area:$("wArea").value.trim(),rrp:pV3($("wRrp").value),price:pV3($("wPrice").value),limit:pV3($("wLimit").value),offer:pV3($("wOffer").value),imageUrl:$("wImage").value.trim(),reason:$("wReason").value.trim()},ex=state.wishlist.find(x=>x.setNumber===n);if(ex)Object.assign(ex,o);else state.wishlist.push(o);persist();refresh();$("wishModal").classList.remove("show")};$("saveOffer").onclick=()=>{const title=$("oTitle").value.trim();if(!title)return alert("Titel fehlt.");const sw=String($("oSwitches").value||"").split("/").map(x=>pV3(x.trim()));state.classifiedOffers.push({title,location:$("oLocation").value.trim(),price:pV3($("oPrice").value),status:$("oStatus").value,details:$("oDetails").value.trim(),note:$("oNote").value.trim(),trackQty:{straight:pV3($("oStraight").value),curve:pV3($("oCurve").value),flex:pV3($("oFlex").value),switchL:sw[0]||0,switchR:sw[1]||0}});persist();refresh();$("offerModal").classList.remove("show")}}
 migrateV3();bindV3();refresh();loadEnrichmentV3();
-initUsersV3();bindUsersV3();refresh();
+refresh();
 
 let enrichmentV3={meta:{},sets:{}};
 function chooseMarketV3(x,e){
