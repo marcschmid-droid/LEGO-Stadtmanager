@@ -1846,14 +1846,16 @@ function collectorStatusForV504(setNumber){
 }
 function collectorFeaturedDefsV504(){
  return [
-  {key:"harry-potter",label:"Harry Potter",icon:"⚡",roots:["Harry Potter"]},
   {key:"christmas",label:"Weihnachten / Winter Village",icon:"❄",setNumbers:["10199","10216","10222","10229","10235","10245","10249","10254","10259","10263","10267","10275","10293","10308","10325","10339"]},
-  {key:"creator-icons",label:"Creator Expert / Icons",icon:"◆",roots:["Creator Expert","Icons"]},
   {key:"modular-buildings",label:"Modular Buildings",icon:"▦",pathSegments:["Modular Buildings"]},
+  {key:"botanical",label:"Botanical Collection",icon:"✿",pathSegments:["Botanical Collection"]},
+  {key:"harry-potter",label:"Harry Potter",icon:"⚡",roots:["Harry Potter"]},
   {key:"disney",label:"Disney",icon:"★",roots:["Disney"]},
   {key:"star-wars",label:"Star Wars",icon:"✦",roots:["Star Wars"]},
   {key:"technic",label:"Technic",icon:"⚙",roots:["Technic"]},
-  {key:"architecture",label:"Architecture",icon:"▥",roots:["Architecture"]}
+  {key:"architecture",label:"Architecture",icon:"▥",roots:["Architecture"]},
+  {key:"speed-champions",label:"Speed Champions",icon:"🏁",roots:["Speed Champions"]},
+  {key:"creator-icons",label:"Creator Expert / Icons",icon:"◆",roots:["Creator Expert","Icons"]}
  ];
 }
 function collectorThemePathV504(all,row){
@@ -1892,7 +1894,23 @@ function collectorMatchesDefV504(all,row,def,setNumber=""){
  return (def.keywords||[]).some(k=>hay.includes(String(k).toLowerCase()));
 }
 function collectorRowsV504(all,def){
- return Object.entries(all?.sets||{}).filter(([n,row])=>collectorMatchesDefV504(all,row,def,n));
+ const entries=Object.entries(all?.sets||{});
+ const featured=collectorFeaturedDefsV504();
+ const idx=featured.findIndex(d=>d.key===def.key);
+ if(idx>=0){
+   return entries.filter(([n,row])=>{
+     if(!collectorMatchesDefV504(all,row,def,n))return false;
+     for(let i=0;i<idx;i++){
+       if(collectorMatchesDefV504(all,row,featured[i],n))return false;
+     }
+     return true;
+   });
+ }
+ // "Weitere Themen" also excludes every set already assigned to one of the Top-10 rubrics.
+ return entries.filter(([n,row])=>{
+   if(!collectorMatchesDefV504(all,row,def,n))return false;
+   return !featured.some(d=>collectorMatchesDefV504(all,row,d,n));
+ });
 }
 function collectorThemeDefsV504(all){
  const roots=new Map();
@@ -1930,10 +1948,10 @@ async function renderCollectorThemesV504(){
  if($("collectorSetCountV504"))$("collectorSetCountV504").textContent=all.meta?.uniqueSetNumbers||Object.keys(all.sets||{}).length||"–";
  const q=nV3($("collectorSearchV504")?.value);
  const defs=collectorThemeDefsV504(all);
- const featured=defs.slice(0,8).filter(d=>!q||nV3(d.label).includes(q));
- const rest=defs.slice(8).filter(d=>!q||nV3(d.label).includes(q)).slice(0,q?100:36);
+ const featured=defs.slice(0,10).filter(d=>!q||nV3(d.label).includes(q));
+ const rest=defs.slice(10).filter(d=>!q||nV3(d.label).includes(q)).slice(0,q?100:36);
  let html="";
- if(featured.length)html+='<div class="collectorSectionTitleV504"><span>Beliebte Sammlerwelten</span><small>Direkter Vergleich mit deiner Sammlung</small></div><div class="collectorThemeGridV504">'+featured.map(d=>collectorCardHtmlV504(all,d)).join("")+'</div>';
+ if(featured.length)html+='<div class="collectorSectionTitleV504"><span>Top 10 Sammlerwelten</span><small>Jedes Set wird hier nur einer Rubrik zugeordnet</small></div><div class="collectorThemeGridV504">'+featured.map(d=>collectorCardHtmlV504(all,d)).join("")+'</div>';
  if(rest.length)html+='<div class="collectorSectionTitleV504"><span>'+(q?'Gefundene Themen':'Weitere Themen')+'</span><small>'+rest.length+' angezeigt</small></div><div class="collectorThemeGridV504 compact">'+rest.map(d=>collectorCardHtmlV504(all,d)).join("")+'</div>';
  if(!html)html='<div class="card"><p>Kein passendes Thema gefunden.</p></div>';
  box.innerHTML=html;
