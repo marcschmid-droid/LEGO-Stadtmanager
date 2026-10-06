@@ -425,3 +425,62 @@ const refreshBaseV28=refresh;
 refresh=function(){refreshBaseV28();setupPlannerV28();renderPlannerV28();renderWishAlertsV28();accountEnhanceV28()};
 
 ensureV28State();bindRecoveryV28();setTimeout(()=>{setupPlannerV28();renderWishAlertsV28();accountEnhanceV28();refresh()},300);
+
+
+/* v31 wishlist catalog autofill + price comparison */
+async function ensureCatalogV31(){
+ if(enrichmentV3?.sets&&Object.keys(enrichmentV3.sets).length)return true;
+ try{
+  const r=await fetch('./data/set-enrichment.json?t='+Date.now(),{cache:'no-store'});
+  if(!r.ok)return false;
+  enrichmentV3=await r.json();return true;
+ }catch{return false}
+}
+async function fillWishFromCatalogV31(){
+ const n=$("wSet")?.value.trim();if(!n)return;
+ await ensureCatalogV31();
+ const e=enrichmentV3.sets?.[n]||enrichmentV3.sets?.[n.replace(/-1$/,"")];
+ if(!e){return}
+ if($("wName")&&!$("wName").value.trim())$("wName").value=e.brickeconomyName||e.rebrickableName||"";
+ if($("wRrp")&&!pV3($("wRrp").value)&&pV3(e.rrpEUR))$("wRrp").value=pV3(e.rrpEUR).toFixed(2);
+ const market=pV3(e.marketNewEUR)||pV3(e.marketUsedEUR);
+ if($("wPrice")&&!pV3($("wPrice").value)&&market)$("wPrice").value=market.toFixed(2);
+ if($("wImage")&&!$("wImage").value.trim()&&e.imageUrl)$("wImage").value=e.imageUrl;
+}
+function bindWishAutofillV31(){
+ const el=$("wSet");if(!el||el.dataset.autofillV31)return;el.dataset.autofillV31="1";
+ el.addEventListener("change",fillWishFromCatalogV31);
+ el.addEventListener("blur",fillWishFromCatalogV31);
+ el.addEventListener("input",()=>{clearTimeout(window._wishFillTimerV31);window._wishFillTimerV31=setTimeout(()=>{if(el.value.trim().length>=4)fillWishFromCatalogV31()},450)});
+ if($("wishAdd")){const old=$("wishAdd").onclick;$("wishAdd").onclick=()=>{if(old)old();setTimeout(()=>{$("wSet")?.focus()},50)}}
+}
+function priceRowsV31(){
+ const rows=[];
+ for(const x of state.collection||[]){
+  const e=enrichmentV3.sets?.[String(x.setNumber)]||x.market||{};
+  rows.push({kind:"collection",setNumber:x.setNumber,name:x.name,own:pV3(x.currentValue),newv:pV3(e.marketNewEUR),used:pV3(e.marketUsedEUR),limit:0});
+ }
+ for(const w of state.wishlist||[]){
+  const e=enrichmentV3.sets?.[String(w.setNumber)]||w.market||{};
+  rows.push({kind:"wishlist",setNumber:w.setNumber,name:w.name,own:pV3(w.offer)||pV3(w.price),newv:pV3(e.marketNewEUR),used:pV3(e.marketUsedEUR),limit:pV3(w.limit)});
+ }
+ return rows;
+}
+function renderPricesV31(){
+ const body=$("priceTableV30");if(!body)return;
+ const q=nV3($("priceSearchV30")?.value),mode=$("priceModeV30")?.value||"all";
+ const rows=priceRowsV31().filter(r=>(mode==="all"||r.kind===mode)&&(!q||nV3(r.setNumber+" "+r.name).includes(q)));
+ const withMarket=rows.filter(r=>r.newv||r.used).length,alerts=rows.filter(r=>r.kind==="wishlist"&&r.limit&&(r.newv||r.used)&&Math.min(...[r.newv,r.used].filter(Boolean))<=r.limit).length;
+ if($("priceSummaryV30"))$("priceSummaryV30").innerHTML='<div class="miniStat"><span>Einträge</span><b>'+rows.length+'</b></div><div class="miniStat"><span>mit Marktwert</span><b>'+withMarket+'</b></div><div class="miniStat"><span>unter Kaufgrenze</span><b>'+alerts+'</b></div>';
+ body.innerHTML=rows.length?rows.map(r=>{
+  const m=r.newv||r.used,status=!m?'Keine Marktdaten':r.kind==="wishlist"&&r.limit?(m<=r.limit?'🟢 unter Kaufgrenze':'🔴 über Kaufgrenze'):(r.own&&m?(r.own<m?'Markt höher':'Markt niedriger'):'–');
+  return '<tr><td><b>'+esc(r.setNumber)+'</b><br><small>'+(r.kind==="collection"?'Bestand':'Wunsch')+'</small></td><td>'+esc(r.name)+'</td><td>'+euro(r.own)+'</td><td>'+euro(r.newv)+'</td><td>'+euro(r.used)+'</td><td>'+(r.limit?euro(r.limit):'–')+'</td><td>'+esc(status)+'</td></tr>'
+ }).join(""):'<tr><td colspan="7">Keine Einträge gefunden.</td></tr>';
+}
+function bindPricesV31(){
+ if($("priceSearchV30"))$("priceSearchV30").oninput=renderPricesV31;
+ if($("priceModeV30"))$("priceModeV30").onchange=renderPricesV31;
+ if($("refreshPricesV30"))$("refreshPricesV30").onclick=async()=>{await loadEnrichmentV3(true);renderPricesV31()};
+ const oldSwitchV31=switchTab;switchTab=function(id){oldSwitchV31(id);if(id==="prices")renderPricesV31()};
+}
+bindWishAutofillV31();bindPricesV31();renderPricesV31();
