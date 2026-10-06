@@ -379,7 +379,10 @@ function fitWarningV28(x){
  return "⚠️ Größer als ein Standardmodul ("+mw+" × "+md+" cm).";
 }
 function setupPlannerV28(){
- const panel=$("city");if(!panel||$("plannerV28"))return;
+ const panel=$("city");
+ // v50.15: the modern City Planner Pro replaces the old second planner card.
+ if(panel?.querySelector(".cityPlannerCardV49")){$("plannerV28")?.remove();return}
+ if(!panel||$("plannerV28"))return;
  const card=document.createElement("div");card.className="card wide";card.id="plannerV28";
  card.innerHTML='<div class="sectionHead"><div><h2>Drag-&-Drop Stadtplan</h2><p class="hint">Am Computer ein Set auf ein Modul ziehen. Auf dem iPhone: Set auswählen, Modul antippen und „Zuordnen“ drücken.</p></div></div><div class="plannerControls"><label>Modulbreite (cm)<input id="moduleWV28" type="number" step="0.1"></label><label>Modultiefe (cm)<input id="moduleDV28" type="number" step="0.1"></label><label>Set<select id="plannerSetV28"></select></label><button class="btn" id="assignModuleV28">Ausgewähltem Modul zuordnen</button></div><p id="fitV28" class="hint"></p><div id="dragSetsV28" class="dragSets"></div>';
  panel.appendChild(card);
@@ -2033,3 +2036,19 @@ const switchTabBaseV504=switchTab;
 switchTab=function(id){switchTabBaseV504(id);if(id==="collector"){renderCollectorThemesV504();if(collectorCurrentV504)renderCollectorSetViewV504()}};
 bindCollectorV504();
 renderCollectorThemesV504();
+
+
+/* v50.15 UI cleanup: remove legacy duplicate surfaces without touching data */
+function cleanupDuplicateUiV515(){
+ const oldPlanner=$("plannerV28");
+ if(oldPlanner&&document.querySelector(".cityPlannerCardV49"))oldPlanner.remove();
+ const legacyWish=document.querySelector(".legacyWishTableV515");
+ if(legacyWish){legacyWish.hidden=true;legacyWish.setAttribute("aria-hidden","true")}
+}
+const refreshBaseV515=refresh;
+refresh=function(){
+ const r=refreshBaseV515();
+ cleanupDuplicateUiV515();
+ return r;
+};
+setTimeout(cleanupDuplicateUiV515,100);
