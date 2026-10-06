@@ -627,3 +627,21 @@ tbody tr:hover{background:#fafbfc}
  .collectorToolbarV504{grid-template-columns:1fr 1fr}
  .collectorToolbarV504 #collectorSearchV504,.collectorToolbarV504 #collectorSetSearchV505{grid-column:1/-1}
 }
+
+
+/* v50.6 collector set-type filter */
+.collectorToolbarV504{grid-template-columns:minmax(250px,1.4fr) 160px 120px 175px 190px minmax(210px,1fr)}
+.collectorMetaRowV506{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.collectorMetaRowV506>span{font-size:10px;color:var(--muted)}
+.collectorTypeBadgeV506{font-size:9px;font-weight:950;padding:5px 7px;border-radius:999px;white-space:nowrap}
+.collectorTypeBadgeV506.main{background:#eef1f4;color:#222}
+.collectorTypeBadgeV506.polybag{background:#eaf3ff;color:#145c9e}
+.collectorTypeBadgeV506.gwp{background:#fff1d4;color:#7a5200}
+@media(max-width:1100px){
+ .collectorToolbarV504{grid-template-columns:1fr 1fr 1fr}
+ .collectorToolbarV504 #collectorSearchV504,.collectorToolbarV504 #collectorSetSearchV505{grid-column:span 2}
+}
+@media(max-width:720px){
+ .collectorToolbarV504{grid-template-columns:1fr 1fr}
+ .collectorToolbarV504 #collectorSearchV504,.collectorToolbarV504 #collectorSetSearchV505{grid-column:1/-1}
+}
