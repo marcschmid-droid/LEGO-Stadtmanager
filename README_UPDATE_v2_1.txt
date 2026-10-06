@@ -1,0 +1,1 @@
+LEGO Stadtmanager v2.1\n\nNeu: eigene Züge-Seite, Schienen-Einkaufsliste, Kleinanzeigen-Favoriten, Wunschliste -> Bestand, optionale Set-Bild-URLs, Brickr-Referenzwert und verbindliche Ursprungs-Stadt-Zonierung. Bestehende lokale App-Daten bleiben erhalten.\n
