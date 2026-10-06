@@ -5,7 +5,7 @@
     "errors": [
       "Rebrickable 40766: RATE_LIMIT"
     ],
-    "lastUpdated": "2026-10-06T13:21:43.811Z",
+    "lastUpdated": "2026-10-06T18:07:36.874Z",
     "rebrickableEnabled": true,
     "setCount": 181,
     "version": 1
@@ -2107,6 +2107,21 @@
       "rebrickableUpdated": "2026-10-06T06:22:08Z",
       "rebrickableUrl": "https://rebrickable.com/sets/40519-1/new-york-postcard/",
       "year": 2022
+    },
+    "40529": {
+      "brickeconomyName": "Children's Amusement Park",
+      "rebrickableName": "Children's Amusement Park",
+      "theme": "Promotional",
+      "subtheme": "Gift With Purchase",
+      "year": 2022,
+      "pieces": 170,
+      "minifigs": 2,
+      "ean": "5702017166421",
+      "upc": "673419358798",
+      "rrpEUR": 14.99,
+      "retired": true,
+      "brickeconomyUrl": "https://www.brickeconomy.com/set/40529-1/lego-childrens-amusement-park",
+      "manualUpdated": "2026-10-06T18:07:36.868Z"
     },
     "40569": {
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40569-1/106740.jpg",
