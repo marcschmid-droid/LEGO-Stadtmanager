@@ -27,3 +27,26 @@ $$;
 
 revoke all on function public.delete_own_account() from public;
 grant execute on function public.delete_own_account() to authenticated;
+
+
+-- v36: operator-only aggregate admin metrics. No access to users' collection contents.
+create or replace function public.admin_metrics()
+returns table(user_count bigint, last_state_update timestamptz)
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if lower(coalesce(auth.jwt() ->> 'email','')) <> 'marcschmid@t-online.de' then
+    raise exception 'not authorized';
+  end if;
+
+  return query
+  select
+    (select count(*) from auth.users),
+    (select max(updated_at) from public.user_state);
+end;
+$$;
+
+revoke all on function public.admin_metrics() from public;
+grant execute on function public.admin_metrics() to authenticated;
