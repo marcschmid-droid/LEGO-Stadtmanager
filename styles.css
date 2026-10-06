@@ -71,3 +71,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid #c91a0940;border-color
 /* v36 statistics and admin */
 .rankRowV36,.coverageRowV36{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.rankRowV36:last-child,.coverageRowV36:last-child{border-bottom:0}.coverageRowV36{grid-template-columns:120px minmax(120px,1fr) auto}.adminErrorsV36{display:grid;gap:6px}.adminErrorsV36>div{padding:9px 10px;border-radius:9px;background:#fff4f2;border:1px solid #f0c8c2;font-size:12px;word-break:break-word}
 @media(max-width:720px){.coverageRowV36{grid-template-columns:1fr}.rankRowV36{align-items:flex-start}.rankRowV36 b:last-child{text-align:right}}
+
+/* v37 history, charts, exemplar editor */
+.historyRowV37{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.historyRowV37:last-child{border-bottom:0}.historyRowV37 small{display:block;color:var(--muted);margin-top:3px}.priceChartV37{width:100%;height:auto;max-height:220px;color:var(--red);background:#fafafa;border:1px solid var(--line);border-radius:12px;padding:8px}.chartLegendV37{display:flex;justify-content:space-between;gap:12px;margin-top:6px;color:var(--muted);font-size:12px}.fieldStatus{min-height:16px}
+@media(max-width:720px){.historyRowV37{align-items:flex-start;flex-direction:column}.historyRowV37 .btn{width:100%}.chartLegendV37{flex-direction:column}}
