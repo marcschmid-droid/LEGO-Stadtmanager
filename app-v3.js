@@ -1655,6 +1655,7 @@ function bindV50(){
  if($("v50PlanNext"))$("v50PlanNext").onclick=()=>{switchTab("city");setTimeout(()=>{if(!citySuggestionV50)pickSuggestionV50();$("citySuggestionTitleV50")?.scrollIntoView({behavior:"smooth",block:"center"})},100)};
  if($("v50Scan"))$("v50Scan").onclick=()=>scanV3();
  if($("v50Showcase"))$("v50Showcase").onclick=enterShowcaseV50;
+ if($("v50OpenCity"))$("v50OpenCity").onclick=()=>switchTab("city");
  if($("citySuggestionRefreshV50"))$("citySuggestionRefreshV50").onclick=()=>pickSuggestionV50(true);
  if($("citySuggestionApplyV50"))$("citySuggestionApplyV50").onclick=()=>{
    if(!citySuggestionV50)return pickSuggestionV50();
