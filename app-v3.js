@@ -855,3 +855,121 @@ lookupCatalogV35=async function(n,statusId){
 const refreshCoreV37=refresh;
 refresh=function(){ensureV37State();const r=refreshCoreV37();recordCollectionValueV37();renderHistoryV37();renderCollectionChartV37();return r};
 ensureV37State();recordCollectionValueV37();bindHistoryV37();bindExemplarV37();renderHistoryV37();renderCollectionChartV37();
+
+
+/* v38 detail tabs, quality score, onboarding, complete export and alert inbox */
+function qualityScoreV38(x){
+ const checks=[
+   !!x.imageUrl,
+   !!pV3(x.currentValue),
+   !!(pV3(x.width)&&pV3(x.depth)&&pV3(x.height)),
+   !!x.barcode,
+   !!pV3(x.purchasePrice),
+   !!(x.condition&&x.condition!=="Unbekannt"),
+   !!x.cityArea,
+   !!x.category
+ ];
+ return Math.round(checks.filter(Boolean).length/checks.length*100);
+}
+const renderQualityCoreV38=renderQualityAssistantV35;
+renderQualityAssistantV35=function(){
+ const box=$("qualityAssistantV35");if(!box)return;
+ const filter=$("qualityFilterV35")?.value||"all";
+ const rows=state.collection.map(x=>({x,issues:qualityIssuesV35(x),score:qualityScoreV38(x)})).filter(r=>r.issues.length&&(filter==="all"||r.issues.includes(filter))).sort((a,b)=>a.score-b.score);
+ box.innerHTML=rows.length?rows.slice(0,100).map(({x,issues,score})=>'<div class="qualityRowV35"><div><b>'+esc(x.setNumber)+' · '+esc(x.name)+'</b><div><span class="qualityScoreV38">'+score+' % vollständig</span></div><div class="chips">'+issues.map(k=>'<span class="chip warn">'+esc(qualityLabelsV35[k])+'</span>').join("")+'</div></div><div class="actions"><button class="btn secondary" onclick="autoEnrichOneV35(\''+esc(x.setNumber)+'\')">Auto ergänzen</button><button class="btn" onclick="editSet(\''+esc(x.setNumber)+'\')">Bearbeiten</button></div></div>').join(""):'<p class="hint">Für diesen Filter sind keine fehlenden Angaben vorhanden.</p>';
+};
+
+function detailTabsV38(n){
+ const d=$("detailContent"),x=state.collection.find(y=>String(y.setNumber)===String(n));if(!d||!x||d.querySelector(".detailTabsV38"))return;
+ const hero=d.querySelector(".detailHero"),ex=d.querySelector(".exemplars"),market=d.querySelector(".marketCard"),chart=[...d.children].find(el=>el.querySelector?.(".priceChartV37"));
+ const other=[...d.children].filter(el=>el!==hero&&el!==ex&&el!==market&&el!==chart);
+ const bar=document.createElement("div");bar.className="detailTabsV38";
+ const views={};
+ [["stock","Bestand"],["ex","Exemplare"],["price","Preisverlauf"],["city","Stadtplanung"],["online","Online-Daten"]].forEach(([id,label])=>{
+   const b=document.createElement("button");b.className="detailTabBtnV38"+(id==="stock"?" active":"");b.textContent=label;b.dataset.view=id;bar.appendChild(b);
+   const v=document.createElement("div");v.className="detailViewV38"+(id==="stock"?" active":"");v.dataset.view=id;views[id]=v;
+ });
+ if(hero)views.stock.appendChild(hero);other.forEach(el=>views.stock.appendChild(el));
+ if(ex)views.ex.appendChild(ex); else views.ex.innerHTML='<p class="hint">Keine Exemplare separat erfasst.</p>';
+ if(chart)views.price.appendChild(chart); else views.price.innerHTML='<p class="hint">Noch keine Preisverlauf-Daten.</p>';
+ views.city.innerHTML='<div class="detailFacts"><div class="fact"><small>Stadtbereich</small><b>'+esc(x.cityArea||"–")+'</b></div><div class="fact"><small>Modul</small><b>'+esc(x.module||"–")+'</b></div><div class="fact"><small>Maße</small><b>'+(x.width??"–")+' × '+(x.depth??"–")+' × '+(x.height??"–")+' cm</b></div><div class="fact"><small>Passform</small><b>'+esc(fitWarningV28(x))+'</b></div><div class="fact"><small>Datenqualität</small><b>'+qualityScoreV38(x)+' %</b></div></div>';
+ if(market)views.online.appendChild(market); else views.online.innerHTML='<p class="hint">Für dieses Set liegen noch keine Online-Daten vor.</p>';
+ d.prepend(bar);
+ Object.values(views).forEach(v=>d.appendChild(v));
+ bar.querySelectorAll("button").forEach(b=>b.onclick=()=>{bar.querySelectorAll("button").forEach(z=>z.classList.toggle("active",z===b));Object.values(views).forEach(v=>v.classList.toggle("active",v.dataset.view===b.dataset.view))});
+}
+const detailCoreV38=showDetailV3;
+showDetailV3=function(n){detailCoreV38(n);detailTabsV38(n)};
+
+function csvFullExportV38(){
+ ensureV37State();ensureV28State();
+ const H=["Datentyp","Setnummer","Name","Anzahl","Exemplar","Kaufpreis","Aktueller Wert","Markt neu","Markt gebraucht","Breite","Tiefe","Höhe","Kategorie","Stadtbereich","Modul","Zustand","Bauzustand","Lagerort","Barcode","Kaufdatum","Verkäufer","OVP","Vollständig","Priorität","UVP","Kaufgrenze","Angebot","Bild URL","Notiz","Zusatzdaten"];
+ const rows=[H];
+ for(const x of state.collection||[]){
+   const e=enrichmentV3.sets?.[String(x.setNumber)]||x.market||{};
+   rows.push(["Set",x.setNumber,x.name,x.quantity,"",x.purchasePrice,x.currentValue,e.marketNewEUR,e.marketUsedEUR,x.width,x.depth,x.height,x.category,x.cityArea,x.module,x.condition,x.buildStatus,x.storage,x.barcode,x.purchaseDate,x.seller,"","","","","",x.imageUrl,x.note,JSON.stringify({valueSource:x.valueSource||"",quality:qualityScoreV38(x)})]);
+   (x.exemplars||[]).forEach((z,i)=>rows.push(["Exemplar",x.setNumber,x.name,1,i+1,z.price,"","","","","","","",x.cityArea,x.module,z.condition||x.condition,"",z.storage||x.storage,"",z.date,z.seller,z.box,z.complete,"","","","",z.note,JSON.stringify({shipping:z.shipping||0,legacy:!!z.legacy,addedAfterBaseline:!!z.addedAfterBaseline})]));
+ }
+ for(const w of state.wishlist||[])rows.push(["Wunsch",w.setNumber,w.name,"","","",w.price,w.market?.marketNewEUR,w.market?.marketUsedEUR,"","","","",w.area||w.cityArea,"","","","","","","","","",w.priority,w.rrp,w.limit,w.offer,w.imageUrl,w.reason,""]);
+ for(const [m,sets] of Object.entries(state.modules||{}))rows.push(["Modul",sets.join(","),"","","","","","","","","","","","",m,"","","","","","","","","","","","","","",""]);
+ for(const t of state.trackShopping||[])rows.push(["Schiene","","",t.target,"","","","","","","","","","","","","","","","","","","","","","","","","",JSON.stringify(t)]);
+ for(const o of state.classifiedOffers||[])rows.push(["Angebot","",o.title,"","","",o.price,"","","","","","","","","","","","","","","","","","","","","",o.note,JSON.stringify(o)]);
+ const txt="\ufeff"+rows.map(r=>r.map(csvEsc).join(";")).join("\n");
+ dl(new Blob([txt],{type:"text/csv;charset=utf-8"}),"Brick_City_Manager_Vollstaendig_"+todayV28()+".csv");
+}
+if($("exportCsv"))$("exportCsv").onclick=csvFullExportV38;
+
+function maybeShowOnboardingV38(){
+ if(!cloudUserV3||state.meta?.onboardingDone||sessionStorage.getItem("skipOnboardingV38"))return;
+ const m=$("onboardingV38");if(!m)return;
+ $("onboardNameV38").value=state.meta?.profileName||"";
+ m.classList.add("show");
+}
+function bindOnboardingV38(){
+ if($("onboardLaterV38"))$("onboardLaterV38").onclick=()=>{sessionStorage.setItem("skipOnboardingV38","1");$("onboardingV38").classList.remove("show")};
+ if($("onboardDoneV38"))$("onboardDoneV38").onclick=()=>{state.meta=state.meta||{};state.meta.profileName=$("onboardNameV38").value.trim();state.meta.onboardingDone=true;persist();updateAccountBadgeV3();$("onboardingV38").classList.remove("show");switchTab("home")};
+}
+const cloudSessionCoreV38=cloudSessionV3;
+cloudSessionV3=async function(session){const r=await cloudSessionCoreV38(session);setTimeout(maybeShowOnboardingV38,80);setTimeout(loadServerAlertsV38,120);return r};
+
+let lastSyncEventV38=0;
+async function logSyncEventV38(){
+ if(!cloudV3||!cloudUserV3)return;
+ const now=Date.now();if(now-lastSyncEventV38<15*60*1000)return;lastSyncEventV38=now;
+ try{await cloudV3.from("sync_events").insert({user_id:cloudUserV3.id,event_type:"sync"})}catch{}
+}
+const cloudSaveCoreV38=cloudSaveV3;
+cloudSaveV3=async function(show=false){const r=await cloudSaveCoreV38(show);logSyncEventV38();return r};
+
+async function loadServerAlertsV38(){
+ if(!cloudV3||!cloudUserV3)return;
+ try{
+   const {data,error}=await cloudV3.from("price_alert_events").select("id,set_number,set_name,market_price,limit_price,created_at,read_at").eq("user_id",cloudUserV3.id).order("created_at",{ascending:false}).limit(20);
+   if(error||!data)return;
+   state.meta=state.meta||{};state.meta.serverPriceAlerts=data;renderWishAlertsV28();
+ }catch{}
+}
+const renderWishAlertsCoreV38=renderWishAlertsV28;
+renderWishAlertsV28=function(){
+ renderWishAlertsCoreV38();
+ const box=$("wishAlertsV28");if(!box)return;const alerts=state.meta?.serverPriceAlerts||[];
+ if(alerts.length){const div=document.createElement("div");div.className="serverAlertsV38";div.innerHTML='<h3>Server-Preisalarme</h3>'+alerts.slice(0,8).map(a=>'<div class="alertRow"><b>'+esc(a.set_number)+' · '+esc(a.set_name||"")+'</b><span>'+euro(a.market_price)+' ≤ '+euro(a.limit_price)+'</span></div>').join("");box.appendChild(div)}
+};
+
+async function renderAdminV38(){
+ if(!isAdminV36()||!cloudV3)return;
+ let data=null,err="";
+ try{const r=await cloudV3.rpc("admin_metrics_v38");if(r.error)err=r.error.message;else data=Array.isArray(r.data)?r.data[0]:r.data}catch(e){err=String(e?.message||e)}
+ let box=$("adminExtraV38");if(!box){box=document.createElement("div");box.id="adminExtraV38";$("adminSummaryV36")?.after(box)}
+ if(!box)return;
+ box.innerHTML=data?'<div class="miniStats"><div class="miniStat"><span>Aktiv 7 Tage</span><b>'+pV3(data.active_7d)+'</b></div><div class="miniStat"><span>Aktiv 30 Tage</span><b>'+pV3(data.active_30d)+'</b></div><div class="miniStat"><span>Syncs 24h</span><b>'+pV3(data.syncs_24h)+'</b></div><div class="miniStat"><span>Datenbankgröße</span><b>'+((pV3(data.db_bytes)/1024/1024).toFixed(2).replace(".",","))+' MB</b></div><div class="miniStat"><span>Offene Kataloganfragen</span><b>'+pV3(data.pending_catalog_requests)+'</b></div></div>':'<p class="hint">Erweiterte Admin-Metriken noch nicht freigeschaltet'+(err?": "+esc(err):".")+'</p>';
+ const m=enrichmentV3?.meta||{},api=[];
+ if(m.rebrickableRequestsThisRun!=null)api.push("Rebrickable-Aufrufe letzter Lauf: "+m.rebrickableRequestsThisRun);
+ if(m.brickeconomyRequestsThisRun!=null)api.push("BrickEconomy-Aufrufe letzter Lauf: "+m.brickeconomyRequestsThisRun);
+ if(m.rateLimited)api.push("⚠ API-Limit beim letzten Lauf erreicht");
+ if(api.length)box.innerHTML+='<p class="hint">'+api.map(esc).join(" · ")+'</p>';
+}
+const adminCoreV38=renderAdminV36;
+renderAdminV36=async function(){const r=await adminCoreV38();await renderAdminV38();return r};
+
+bindOnboardingV38();setTimeout(()=>{if(cloudUserV3){maybeShowOnboardingV38();loadServerAlertsV38()}},500);
