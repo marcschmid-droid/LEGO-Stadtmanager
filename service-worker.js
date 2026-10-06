@@ -1,5 +1,5 @@
-const CACHE="lego-stadtmanager-v20";
-const ASSETS=["./styles.css?v=16","./app.js?v=16","./app-v3.js?v=16","./seed-data.js","./manifest.webmanifest","./icon.svg","./ursprungsstadt.jpg","./data/set-enrichment.json"];
+const CACHE="lego-stadtmanager-v21";
+const ASSETS=["./styles.css?v=21","./app.js?v=21","./app-v3.js?v=21","./supabase-config.js?v=21","./seed-data.js","./manifest.webmanifest","./icon.svg?v=21","./ursprungsstadt.jpg","./data/set-enrichment.json"];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))).then(()=>self.skipWaiting()));
 self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener("fetch",e=>{
