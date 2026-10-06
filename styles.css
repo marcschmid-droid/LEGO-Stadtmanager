@@ -231,3 +231,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid #c91a0940;border-color
  .themeV39 .heroV39 p{font-size:13px}
  .themeV39 .setgrid{grid-template-columns:1fr}
 }
+
+/* v43 shared barcode learning */
+.adminBarcodeV43{margin-top:18px;padding-top:8px;border-top:1px solid var(--line)}.barcodeReviewV43{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.barcodeReviewV43:last-child{border-bottom:0}.barcodeReviewV43 span,.barcodeReviewV43 small{display:block;color:var(--muted);margin-top:3px}.barcodeReviewV43 small{font-size:11px}
+@media(max-width:720px){.barcodeReviewV43{align-items:flex-start;flex-direction:column}.barcodeReviewV43 .actions{width:100%}.barcodeReviewV43 .actions .btn{flex:1}}
