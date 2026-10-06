@@ -4,11 +4,11 @@
     "brickeconomyEnabled": false,
     "brickeconomyRequestsThisRun": 0,
     "errors": [],
-    "lastUpdated": "2026-10-06T18:37:18Z",
+    "lastUpdated": "2026-10-06T19:32:26Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
-    "rebrickableRequestsThisRun": 1,
-    "setCount": 1,
+    "rebrickableRequestsThisRun": 2,
+    "setCount": 3,
     "version": 1
   },
   "sets": {
@@ -2285,6 +2285,22 @@
       "year": 2025
     },
     "40766": {},
+    "6769": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/6769-1/9073.jpg",
+      "pieces": 688,
+      "rebrickableName": "Fort Legoredo",
+      "rebrickableUpdated": "2026-10-06T19:32:25Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/6769-1/fort-legoredo/",
+      "year": 1996
+    },
+    "71043": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/71043-1/15516.jpg",
+      "pieces": 6020,
+      "rebrickableName": "Hogwarts Castle",
+      "rebrickableUpdated": "2026-10-06T19:32:25Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/71043-1/hogwarts-castle/",
+      "year": 2018
+    },
     "76386": {
       "brickeconomyName": "Hogwarts: Polyjuice Potion Mistake",
       "depth": 6,
