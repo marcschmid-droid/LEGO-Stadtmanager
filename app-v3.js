@@ -1550,3 +1550,127 @@ const refreshBaseV49=refresh;
 refresh=function(){const r=refreshBaseV49();renderCityPlannerV49();return r};
 bindCityPlannerV49();
 renderCityPlannerV49();
+
+
+/* v50 milestone: City Command Center + Planner Pro */
+let citySuggestionV50=null;
+function assignedCountV50(){
+ const s=new Set();
+ for(const a of Object.values(state.modules||{}))for(const n of (a||[]))s.add(String(n));
+ return s.size;
+}
+function dataQualityV50(){
+ const rows=state.collection||[];if(!rows.length)return 0;
+ let got=0,total=rows.length*6;
+ for(const x of rows){
+  if(x.imageUrl)got++;
+  if(pV3(x.currentValue)>0)got++;
+  if(pV3(x.width)>0&&pV3(x.depth)>0)got++;
+  if(x.cityArea)got++;
+  if(x.condition&&x.condition!=="Unbekannt")got++;
+  if(x.barcode)got++;
+ }
+ return Math.round(got/total*100);
+}
+function inferZoneV50(x){
+ const t=nV3([x.cityArea,x.category,x.name].join(" "));
+ if(/weihnacht|winter|christmas/.test(t))return "winter";
+ if(/bahnhof|zug|eisenbahn|train|station/.test(t))return "station";
+ if(/hogwarts|harry potter|winkelgasse/.test(t))return "hogwarts";
+ if(/hafen|pirat|küste|leuchtturm|fischer|harbor/.test(t))return "harbor";
+ if(/disney|springfield|simpson/.test(t))return "disney";
+ if(/botanik|weltpark|architecture|park|garten/.test(t))return "world";
+ if(/innenstadt|altstadt|modular|city|stadtgebäude/.test(t))return "city";
+ return "city";
+}
+function moduleZonesV50(){
+ const out={};let n=0;
+ for(const z of ZONES_V3){
+  if(z==="open")continue;
+  n++;out["M"+String(n).padStart(2,"0")]=z;
+ }
+ return out;
+}
+function pickSuggestionV50(force=false){
+ const unplanned=typeof cityUnplannedSetsV49==="function"?cityUnplannedSetsV49():(state.collection||[]).filter(x=>!x.module);
+ if(!unplanned.length){citySuggestionV50=null;renderSuggestionV50();return null}
+ const zones=moduleZonesV50();
+ const candidates=[...unplanned].sort((a,b)=>{
+  const am=(pV3(a.width)&&pV3(a.depth)?0:1),bm=(pV3(b.width)&&pV3(b.depth)?0:1);
+  return am-bm||String(a.setNumber).localeCompare(String(b.setNumber),undefined,{numeric:true});
+ });
+ let chosen=candidates[0];
+ if(force&&candidates.length>1){
+  const old=citySuggestionV50?.setNumber;
+  chosen=candidates.find(x=>String(x.setNumber)!==String(old))||candidates[0];
+ }
+ const zone=inferZoneV50(chosen);
+ const mods=Object.keys(state.modules||{}).filter(m=>zones[m]===zone);
+ const ordered=(mods.length?mods:Object.keys(state.modules||{})).sort((a,b)=>(state.modules[a]?.length||0)-(state.modules[b]?.length||0)||a.localeCompare(b));
+ const module=ordered[0]||"";
+ citySuggestionV50={setNumber:String(chosen.setNumber),module,zone,fit:typeof moduleFitsV35==="function"?moduleFitsV35(chosen):null};
+ renderSuggestionV50();
+ return citySuggestionV50;
+}
+function renderSuggestionV50(){
+ const title=$("citySuggestionTitleV50"),txt=$("citySuggestionTextV50"),apply=$("citySuggestionApplyV50");
+ if(!(title&&txt&&apply))return;
+ if(!citySuggestionV50){title.textContent="Stadt vollständig geplant";txt.textContent="Aktuell haben alle Sets einen festen Platz.";apply.disabled=true;return}
+ const x=state.collection.find(y=>String(y.setNumber)===citySuggestionV50.setNumber);
+ if(!x){citySuggestionV50=null;return}
+ title.textContent=x.setNumber+" · "+x.name+" → "+citySuggestionV50.module;
+ const fit=citySuggestionV50.fit===false?" Das Set ist größer als ein Standardmodul – bitte Platzbedarf prüfen.":citySuggestionV50.fit===null?" Maße fehlen; die Passform kann noch nicht geprüft werden.":" Größe passt in ein Standardmodul.";
+ txt.textContent="Vorgeschlagener Bereich: "+(ZONELABEL_V3[citySuggestionV50.zone]||citySuggestionV50.zone)+"."+fit;
+ apply.disabled=false;
+}
+function renderCommandCenterV50(){
+ const total=(state.collection||[]).length,assigned=assignedCountV50(),pct=total?Math.round(assigned/total*100):0,unplanned=Math.max(0,total-assigned),q=dataQualityV50();
+ if($("v50CityPct"))$("v50CityPct").textContent=pct+" %";
+ if($("v50CityBar"))$("v50CityBar").style.width=pct+"%";
+ if($("v50CityText"))$("v50CityText").textContent=assigned+" von "+total+" Sets haben einen festen Stadtplatz.";
+ if($("v50Unplanned"))$("v50Unplanned").textContent=unplanned;
+ if($("v50Quality"))$("v50Quality").textContent=q+" %";
+ if($("v50QualityText"))$("v50QualityText").textContent=q>=90?"Sehr gut gepflegt":q>=70?"Guter Stand – einzelne Daten fehlen":"Datenqualität kann verbessert werden";
+ let label="Sammlung ansehen",tab="collection";
+ const wishHit=(state.wishlist||[]).find(w=>pV3(w.offer)>0&&pV3(w.limit)>0&&pV3(w.offer)<=pV3(w.limit));
+ if(unplanned>0){label=unplanned+" Set"+(unplanned===1?"":"s")+" einplanen";tab="city"}
+ else if(wishHit){label="Kaufchance: "+wishHit.setNumber;tab="wishlist"}
+ else if(q<85){label="Fehlende Setdaten ergänzen";tab="analysis"}
+ else {label="Stadt & Sammlung sind gut gepflegt";tab="home"}
+ if($("v50NextAction"))$("v50NextAction").textContent=label;
+ const b=$("v50NextActionBtn");if(b)b.onclick=()=>switchTab(tab);
+}
+function enterShowcaseV50(){
+ document.body.classList.add("showcaseV50");switchTab("home");
+ let x=$("showcaseExitV50");
+ if(!x){x=document.createElement("button");x.id="showcaseExitV50";x.className="showcaseExitV50";x.textContent="Showcase beenden";x.onclick=()=>{document.body.classList.remove("showcaseV50");x.remove()};document.body.appendChild(x)}
+}
+function showWhatsNewV50(){
+ if(localStorage.getItem("brick-city-manager-v50-welcome"))return;
+ const m=document.createElement("div");m.className="v50WelcomeOverlay";m.innerHTML='<div class="v50Welcome"><span class="eyebrowV50">MEILENSTEIN · VERSION 50</span><div class="v50Big50">50</div><h2>Willkommen im City Command Center</h2><p>Version 50 bringt eine neue Startzentrale, automatische Planungsvorschläge, Stadtfortschritt und einen Showcase-Modus.</p><div class="v50WelcomeFeatures"><span>✓ Command Center</span><span>✓ Planner Pro</span><span>✓ Planungsvorschläge</span><span>✓ Showcase</span></div><button class="btn" id="closeV50Welcome">Version 50 starten</button></div>';
+ document.body.appendChild(m);
+ $("closeV50Welcome").onclick=()=>{localStorage.setItem("brick-city-manager-v50-welcome","1");m.remove()};
+}
+function bindV50(){
+ if($("v50PlanNext"))$("v50PlanNext").onclick=()=>{switchTab("city");setTimeout(()=>{if(!citySuggestionV50)pickSuggestionV50();$("citySuggestionTitleV50")?.scrollIntoView({behavior:"smooth",block:"center"})},100)};
+ if($("v50Scan"))$("v50Scan").onclick=()=>scanV3();
+ if($("v50Showcase"))$("v50Showcase").onclick=enterShowcaseV50;
+ if($("citySuggestionRefreshV50"))$("citySuggestionRefreshV50").onclick=()=>pickSuggestionV50(true);
+ if($("citySuggestionApplyV50"))$("citySuggestionApplyV50").onclick=()=>{
+   if(!citySuggestionV50)return pickSuggestionV50();
+   const s=citySuggestionV50;
+   citySelectedModuleV49=s.module;
+   assignModuleV28(s.setNumber,s.module);
+   citySuggestionV50=null;pickSuggestionV50();
+ };
+}
+function renderV50(){
+ renderCommandCenterV50();
+ if(!citySuggestionV50||!state.collection.some(x=>String(x.setNumber)===String(citySuggestionV50.setNumber)&&!x.module))pickSuggestionV50();
+ else renderSuggestionV50();
+}
+const refreshBaseV50=refresh;
+refresh=function(){const r=refreshBaseV50();renderV50();return r};
+bindV50();
+renderV50();
+setTimeout(showWhatsNewV50,450);
