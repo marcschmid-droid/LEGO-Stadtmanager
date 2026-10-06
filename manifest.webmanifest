@@ -4,12 +4,12 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f4f6f8",
-  "theme_color": "#1f4e78",
+  "background_color": "#ffffff",
+  "theme_color": "#c91a09",
   "description": "LEGO-Sammlung, Einkaufsliste, Stadt- und Zugplanung.",
   "icons": [
     {
-      "src": "./icon.svg",
+      "src": "./icon.svg?v=21",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
