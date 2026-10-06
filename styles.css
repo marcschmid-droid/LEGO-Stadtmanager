@@ -535,3 +535,10 @@ tbody tr:hover{background:#fafbfc}
  .cityPlannerCardV50{overflow-x:auto}
  .cityPlannerCardV50>.sectionHead,.cityPlannerCardV50>.cityPlannerStatsV49,.cityPlannerCardV50>.autoCapacityV502,.cityPlannerCardV50>.citySuggestionV50,.cityPlannerCardV50>.cityPlannerControlsV49,.cityPlannerCardV50>.moduleDetail,.cityPlannerCardV50>.cityUnplannedHeadV49,.cityPlannerCardV50>.cityUnplannedV49{min-width:0}
 }
+
+
+/* v50.3 redistribution control */
+.autoCapacityV502 #rebalanceCityV503{margin-left:auto;min-height:36px;padding:0 11px;font-size:11px}
+@media(max-width:720px){
+ .autoCapacityV502 #rebalanceCityV503{width:100%;margin-left:0;margin-top:4px}
+}
