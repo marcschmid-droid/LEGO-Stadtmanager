@@ -645,3 +645,11 @@ tbody tr:hover{background:#fafbfc}
  .collectorToolbarV504{grid-template-columns:1fr 1fr}
  .collectorToolbarV504 #collectorSearchV504,.collectorToolbarV504 #collectorSetSearchV505{grid-column:1/-1}
 }
+
+
+/* v50.8 always-visible home version */
+.homeVersionBadgeV508{display:inline-flex;align-items:center;gap:6px;margin:0 0 10px;padding:7px 10px;border-radius:999px;background:#111;color:#fff;font-size:11px;font-weight:800;letter-spacing:.2px;box-shadow:0 6px 16px #00000014}
+.homeVersionBadgeV508 b{color:#ffd500;font-size:12px}
+@media(max-width:720px){
+ .homeVersionBadgeV508{display:flex;width:max-content;margin:2px 0 10px;font-size:11px;position:relative;z-index:3}
+}
