@@ -1102,3 +1102,45 @@ const refreshBaseV37=refresh;
 refresh=function(){ensureV37();recordPortfolioV37();refreshBaseV37();renderTrashV37();if(document.querySelector("#analysis.active"))renderAnalysisV3()};
 
 ensureV37();bindExemplarV37();renderTrashV37();recordPortfolioV37();
+
+
+/* v40 robust account navigation and login */
+async function ensureCloudReadyV40(){
+ if(cloudV3)return true;
+ const cfg=window.LEGO_SUPABASE;
+ if(!cfg||!window.supabase){
+   cloudStatusV3("Anmeldung kann gerade nicht gestartet werden. Bitte App neu laden.");
+   return false;
+ }
+ try{
+   cloudV3=window.supabase.createClient(cfg.url,cfg.publishableKey);
+   return true;
+ }catch(e){
+   cloudStatusV3("Cloud-Verbindung konnte nicht gestartet werden.");
+   return false;
+ }
+}
+async function loginV40(){
+ const email=$("cloudEmail")?.value.trim()||"",password=$("cloudPassword")?.value||"";
+ if(!email||!password)return alert("Bitte E-Mail und Passwort eingeben.");
+ if(!(await ensureCloudReadyV40()))return;
+ cloudStatusV3("Anmeldung läuft…");
+ try{
+   const {data,error}=await cloudV3.auth.signInWithPassword({email,password});
+   if(error){cloudStatusV3("Anmeldung fehlgeschlagen.");return alert(error.message)}
+   if(data?.session){await cloudSessionV3(data.session);cloudStatusV3("Erfolgreich angemeldet.");switchTab("home")}
+ }catch(e){
+   cloudStatusV3("Anmeldung fehlgeschlagen.");
+   alert("Anmeldung fehlgeschlagen: "+(e?.message||e));
+ }
+}
+function bindAccountV40(){
+ document.addEventListener("click",e=>{
+   const tab=e.target.closest?.(".tab[data-tab]");
+   if(tab){e.preventDefault();switchTab(tab.dataset.tab)}
+ });
+ if($("userTop"))$("userTop").onclick=()=>switchTab("users");
+ if($("cloudLogin"))$("cloudLogin").onclick=loginV40;
+ if($("cloudPassword"))$("cloudPassword").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();loginV40()}});
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bindAccountV40);else bindAccountV40();
