@@ -615,3 +615,15 @@ tbody tr:hover{background:#fafbfc}
  .collectorSetImageV504{height:190px}
  .collectorHeroStatsV504>div{min-width:0}
 }
+
+
+/* v50.5 collector filters */
+.collectorToolbarV504{grid-template-columns:minmax(260px,1.4fr) 170px 130px 190px minmax(220px,1fr)}
+@media(max-width:980px){
+ .collectorToolbarV504{grid-template-columns:1fr 1fr 1fr}
+ .collectorToolbarV504 #collectorSearchV504,.collectorToolbarV504 #collectorSetSearchV505{grid-column:span 2}
+}
+@media(max-width:720px){
+ .collectorToolbarV504{grid-template-columns:1fr 1fr}
+ .collectorToolbarV504 #collectorSearchV504,.collectorToolbarV504 #collectorSetSearchV505{grid-column:1/-1}
+}
