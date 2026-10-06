@@ -18,3 +18,18 @@ Vor einer Markenanmeldung sollte der Name "Brick City Manager" in DPMAregister, 
 Für eine Software-/Web-App kommen typischerweise insbesondere Waren-/Dienstleistungsbereiche für herunterladbare Software und SaaS/Softwaredienste in Betracht. Die endgültige Klassenwahl sollte vor Einreichung geprüft werden.
 
 Eine formale Markenanmeldung kann nicht automatisch aus dem Repository durchgeführt werden: Sie erfordert Angaben des Anmelders, Auswahl des Schutzumfangs und eine gebührenpflichtige Einreichung beim DPMA oder EUIPO.
+
+
+## Serverseitige Katalogsuche und Preisalarme
+Für die bereits eingebauten serverseitigen Funktionen werden in GitHub Actions folgende Repository-Secrets verwendet:
+- SUPABASE_SERVICE_ROLE_KEY (für die Verarbeitung von Kataloganfragen und Preisalarmen)
+- REBRICKABLE_API_KEY
+- BRICKECONOMY_API_KEY
+
+Für E-Mail-Preisalarme zusätzlich:
+- RESEND_API_KEY
+- ALERT_FROM_EMAIL
+
+ALERT_FROM_EMAIL muss ein beim Mailanbieter verifizierter Absender sein. Für einen eigenen Marken-Absender ist eine eigene Domain sinnvoll. Ohne RESEND_API_KEY/ALERT_FROM_EMAIL werden Preisalarme weiterhin als private In-App-Ereignisse gespeichert, aber nicht per E-Mail versendet.
+
+Die App enthält keinen service_role-Key im Browser. Dieser bleibt ausschließlich als GitHub Actions Secret gespeichert.
