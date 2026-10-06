@@ -542,3 +542,76 @@ tbody tr:hover{background:#fafbfc}
 @media(max-width:720px){
  .autoCapacityV502 #rebalanceCityV503{width:100%;margin-left:0;margin-top:4px}
 }
+
+
+/* v50.4 collector catalog */
+.collectorHeroV504{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center;padding:26px;border-radius:24px;background:linear-gradient(135deg,#17181b,#282a2f 60%,#5a160f);color:#fff;margin-bottom:14px;box-shadow:0 16px 38px #17202b1c}
+.collectorHeroV504 h2{font-size:30px;letter-spacing:-.9px;margin:6px 0 8px}
+.collectorHeroV504 p{margin:0;color:#ffffffbd;max-width:720px;line-height:1.5}
+.collectorHeroStatsV504{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.collectorHeroStatsV504>div{min-width:105px;padding:14px;border:1px solid #ffffff1f;border-radius:16px;background:#ffffff0c;display:grid;gap:3px}
+.collectorHeroStatsV504 span{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:#ffffff8f;font-weight:900}
+.collectorHeroStatsV504 b{font-size:24px;color:#ffd500}
+.collectorToolbarV504{display:grid;grid-template-columns:minmax(260px,1fr) 180px 140px;gap:8px;margin-bottom:14px}
+.collectorFeaturedV504{display:grid;gap:17px}
+.collectorSectionTitleV504{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:2px 3px 8px}
+.collectorSectionTitleV504 span{font-size:15px;font-weight:900;letter-spacing:-.25px}
+.collectorSectionTitleV504 small{font-size:10px;color:var(--muted)}
+.collectorThemeGridV504{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.collectorThemeGridV504.compact{grid-template-columns:repeat(3,minmax(0,1fr))}
+.collectorThemeCardV504{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:11px;align-items:center;width:100%;padding:13px;border:1px solid var(--line);border-radius:17px;background:#fff;box-shadow:0 7px 22px #17202b07;text-align:left;cursor:pointer;transition:.16s ease}
+.collectorThemeCardV504:hover{transform:translateY(-2px);box-shadow:0 12px 28px #17202b12}
+.collectorThemeIconV504{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:#17181b;color:#ffd500;font-size:20px;font-weight:950}
+.collectorThemeCardMainV504{display:grid;gap:4px;min-width:0}
+.collectorThemeCardMainV504>b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.collectorThemeCardMainV504>small{font-size:10px;color:var(--muted)}
+.collectorThemeCardV504>strong{font-size:17px}
+.collectorMiniProgressV504{display:block;height:6px;border-radius:999px;background:#eceef1;overflow:hidden}
+.collectorMiniProgressV504 i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ffd500,#c91a09)}
+.collectorThemeViewV504{display:grid;gap:12px}
+.collectorThemeHeadV504{display:grid;grid-template-columns:auto minmax(0,1fr) 220px;gap:14px;align-items:center;padding:16px;border-radius:19px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow)}
+.collectorThemeHeadV504 h2{margin:2px 0 4px;font-size:24px;letter-spacing:-.65px}
+.collectorThemeHeadV504 p{margin:0}
+.collectorProgressWrapV504{display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:center}
+.collectorProgressWrapV504>b{font-size:22px}
+.collectorProgressV504{height:10px;border-radius:999px;background:#eceef1;overflow:hidden}
+.collectorProgressV504 i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#ffd500,#c91a09);transition:width .35s ease}
+.collectorSetGridV504{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
+.collectorSetCardV504{overflow:hidden;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 8px 24px #17202b08}
+.collectorSetCardV504.owned{border-color:#b8ddc0;background:#fbfffc}
+.collectorSetCardV504.wishlist{border-color:#eadb9a;background:#fffdf5}
+.collectorSetImageV504{height:150px;background:#f5f6f8;display:grid;place-items:center;overflow:hidden}
+.collectorSetImageV504 img{width:100%;height:100%;object-fit:contain;padding:8px}
+.collectorSetImageV504 span{text-align:center;font-weight:900;color:#9aa0a8}
+.collectorSetBodyV504{display:grid;gap:6px;padding:12px}
+.collectorSetTopV504{display:flex;justify-content:space-between;gap:8px}
+.collectorSetTopV504 span{font-size:11px;font-weight:950;color:var(--red)}
+.collectorSetTopV504 em{font-size:10px;color:var(--muted);font-style:normal;font-weight:800}
+.collectorSetBodyV504 h3{font-size:13px;line-height:1.25;margin:0;min-height:33px}
+.collectorSetBodyV504 p{font-size:10px;color:var(--muted);margin:0}
+.collectorWishBtnV504{width:100%;min-height:36px;font-size:11px}
+.collectorStatusV504{display:block;padding:9px 10px;border-radius:11px;text-align:center;font-size:11px;font-weight:900}
+.collectorStatusV504.owned{background:#e8f5eb;color:#11662a}
+.collectorStatusV504.wishlist{background:#fff3cf;color:#725600}
+.tab[data-tab="collector"]:before{content:"★"}
+@media(max-width:980px){
+ .collectorThemeGridV504.compact{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .collectorSetGridV504{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:720px){
+ .collectorHeroV504{grid-template-columns:1fr;padding:20px;border-radius:20px}
+ .collectorHeroV504 h2{font-size:25px}
+ .collectorHeroStatsV504{grid-template-columns:1fr 1fr}
+ .collectorToolbarV504{grid-template-columns:1fr 1fr}
+ .collectorToolbarV504 input{grid-column:1/-1}
+ .collectorThemeGridV504,.collectorThemeGridV504.compact{grid-template-columns:1fr}
+ .collectorThemeHeadV504{grid-template-columns:1fr}
+ .collectorThemeHeadV504>.btn{justify-self:start}
+ .collectorProgressWrapV504{grid-template-columns:auto 1fr}
+ .collectorSetGridV504{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:430px){
+ .collectorSetGridV504{grid-template-columns:1fr}
+ .collectorSetImageV504{height:190px}
+ .collectorHeroStatsV504>div{min-width:0}
+}
