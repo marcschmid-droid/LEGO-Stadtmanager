@@ -1847,7 +1847,7 @@ function collectorStatusForV504(setNumber){
 function collectorFeaturedDefsV504(){
  return [
   {key:"harry-potter",label:"Harry Potter",icon:"⚡",keywords:["Harry Potter"]},
-  {key:"christmas",label:"Weihnachten / Winter Village",icon:"❄",keywords:["Christmas","Winter Village","Advent"]},
+  {key:"christmas",label:"Weihnachten / Winter Village",icon:"❄",setNumbers:["10199","10216","10222","10229","10235","10245","10249","10254","10259","10263","10267","10275","10293","10308","10325","10339"]},
   {key:"creator-icons",label:"Creator Expert / Icons",icon:"◆",keywords:["Creator Expert","Icons"]},
   {key:"modular-buildings",label:"Modular Buildings",icon:"▦",keywords:["Modular Buildings"]},
   {key:"disney",label:"Disney",icon:"★",keywords:["Disney"]},
@@ -1870,14 +1870,15 @@ function collectorSetTypeV506(all,row){
 function collectorSetTypeLabelV506(type){
  return type==="polybag"?"Polybag":type==="gwp"?"Gratis-Beigabe / GWP":"Hauptset";
 }
-function collectorMatchesDefV504(all,row,def){
+function collectorMatchesDefV504(all,row,def,setNumber=""){
+ if(Array.isArray(def.setNumbers))return def.setNumbers.includes(String(setNumber));
  const t=collectorThemePathV504(all,row);
  if(def.root)return t.root===def.root;
  const hay=(t.path+" "+t.name+" "+t.root).toLowerCase();
  return (def.keywords||[]).some(k=>hay.includes(String(k).toLowerCase()));
 }
 function collectorRowsV504(all,def){
- return Object.entries(all?.sets||{}).filter(([,row])=>collectorMatchesDefV504(all,row,def));
+ return Object.entries(all?.sets||{}).filter(([n,row])=>collectorMatchesDefV504(all,row,def,n));
 }
 function collectorThemeDefsV504(all){
  const roots=new Map();
