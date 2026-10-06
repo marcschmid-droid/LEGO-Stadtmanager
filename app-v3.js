@@ -1675,3 +1675,90 @@ refresh=function(){const r=refreshBaseV50();renderV50();return r};
 bindV50();
 renderV50();
 setTimeout(showWhatsNewV50,450);
+
+
+/* v50.2 automatic city capacity */
+function baseModuleZoneMapV502(){
+ const out={};let n=0;
+ for(const z of ZONES_V3){
+  if(z==="open")continue;
+  n++;out["M"+String(n).padStart(2,"0")]=z;
+ }
+ return out;
+}
+function dynamicModuleCapacityV502(){
+ const uniqueSets=(state.collection||[]).filter(x=>String(x.setNumber||"").trim()).length;
+ const highestExisting=Math.max(0,...Object.keys(state.modules||{}).map(k=>Number(String(k).replace(/^M/i,""))||0));
+ const reserve=8;
+ const needed=Math.max(40,uniqueSets+reserve,highestExisting);
+ return Math.ceil(needed/8)*8;
+}
+function ensureDynamicModulesV502(){
+ state.modules=state.modules||{};
+ const capacity=dynamicModuleCapacityV502();
+ for(let i=1;i<=capacity;i++){
+  const m="M"+String(i).padStart(2,"0");
+  if(!Array.isArray(state.modules[m]))state.modules[m]=[];
+ }
+ state.meta=state.meta||{};
+ const old=Number(state.meta.moduleCapacity||0);
+ state.meta.moduleCapacity=capacity;
+ if(old!==capacity)persist();
+ return capacity;
+}
+function dynamicZoneForModuleV502(m){
+ const base=baseModuleZoneMapV502();
+ if(base[m])return base[m];
+ const cycle=["city","world","harbor","disney","winter","hogwarts","station","city"];
+ const n=Number(String(m).replace(/^M/i,""))||41;
+ return cycle[(n-41)%cycle.length];
+}
+function moduleZonesV50(){
+ const out={};
+ const capacity=ensureDynamicModulesV502();
+ for(let i=1;i<=capacity;i++){
+  const m="M"+String(i).padStart(2,"0");
+  out[m]=dynamicZoneForModuleV502(m);
+ }
+ return out;
+}
+function renderDynamicModulesV502(){
+ const g=$("moduleGrid");if(!g)return;
+ const capacity=ensureDynamicModulesV502();
+ const filter=$("moduleZoneFilterV35")?.value||"";
+ const baseMap=baseModuleZoneMapV502();
+ let h="",n=0;
+ for(let i=0;i<ZONES_V3.length;i++){
+  const z=ZONES_V3[i];
+  if(z==="open"){
+   h+='<div class="module open '+(filter?'moduleDimV35':'')+'">FREI</div>';
+   continue;
+  }
+  n++;
+  const m="M"+String(n).padStart(2,"0"),a=state.modules[m]||[],sets=a.map(s=>state.collection.find(x=>String(x.setNumber)===String(s))).filter(Boolean),first=sets[0];
+  const tooBig=sets.some(x=>typeof moduleFitsV35==="function"&&moduleFitsV35(x)===false),dim=filter&&filter!==z;
+  h+='<button class="module z-'+z+(tooBig?' moduleTooBigV35':'')+(dim?' moduleDimV35':'')+'" data-module="'+m+'" data-zone="'+z+'" onclick="moduleClickV3(\''+m+'\')">'+(first?.imageUrl?'<img class="moduleImgV35" src="'+esc(first.imageUrl)+'" alt="">':'')+'<span class="moduleCodeV35">'+m+'</span><small>'+(sets.length?sets.length+' Set'+(sets.length>1?'s':''):ZONELABEL_V3[z])+'</small>'+(tooBig?'<em>⚠ zu groß</em>':'')+'</button>';
+ }
+ for(let i=41;i<=capacity;i++){
+  const m="M"+String(i).padStart(2,"0"),z=dynamicZoneForModuleV502(m),a=state.modules[m]||[],sets=a.map(s=>state.collection.find(x=>String(x.setNumber)===String(s))).filter(Boolean),first=sets[0],dim=filter&&filter!==z,tooBig=sets.some(x=>typeof moduleFitsV35==="function"&&moduleFitsV35(x)===false);
+  h+='<button class="module z-'+z+' moduleExtendedV502'+(tooBig?' moduleTooBigV35':'')+(dim?' moduleDimV35':'')+'" data-module="'+m+'" data-zone="'+z+'" onclick="moduleClickV3(\''+m+'\')">'+(first?.imageUrl?'<img class="moduleImgV35" src="'+esc(first.imageUrl)+'" alt="">':'')+'<span class="moduleCodeV35">'+m+'</span><small>'+(sets.length?sets.length+' Set'+(sets.length>1?'s':''):'Erweiterung')+'</small>'+(tooBig?'<em>⚠ zu groß</em>':'')+'</button>';
+ }
+ g.innerHTML=h;
+ const rows=6+Math.ceil(Math.max(0,capacity-40)/8);
+ if($("cityGridSizeV502"))$("cityGridSizeV502").textContent="8 × "+rows;
+ const totalSets=(state.collection||[]).length,free=Math.max(0,capacity-totalSets);
+ if($("cityCapacityV502"))$("cityCapacityV502").textContent=capacity+" Plätze";
+ if($("cityCapacityTextV502"))$("cityCapacityTextV502").textContent=totalSets+" Sets · "+free+" Reserveplätze · wächst automatisch";
+ setTimeout(()=>{if(typeof renderPlannerV28==="function")renderPlannerV28();if(typeof renderCityPlannerV49==="function")renderCityPlannerV49()},0);
+}
+renderModulesV3=renderDynamicModulesV502;
+const refreshBaseV502=refresh;
+refresh=function(){
+ ensureDynamicModulesV502();
+ const r=refreshBaseV502();
+ renderDynamicModulesV502();
+ renderV50();
+ return r;
+};
+ensureDynamicModulesV502();
+refresh();
