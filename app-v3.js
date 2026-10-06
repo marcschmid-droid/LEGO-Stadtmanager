@@ -484,3 +484,25 @@ function bindPricesV31(){
  const oldSwitchV31=switchTab;switchTab=function(id){oldSwitchV31(id);if(id==="prices")renderPricesV31()};
 }
 bindWishAutofillV31();bindPricesV31();renderPricesV31();
+
+
+/* v32 set-form catalog autofill */
+async function fillSetFromCatalogV32(){
+ const n=$("fSet")?.value.trim();if(!n)return;
+ await ensureCatalogV31();
+ const e=enrichmentV3.sets?.[n]||enrichmentV3.sets?.[n.replace(/-1$/,"")];
+ if(!e)return;
+ if($("fName")&&!$("fName").value.trim())$("fName").value=e.brickeconomyName||e.rebrickableName||"";
+ const market=pV3(e.marketUsedEUR)||pV3(e.marketNewEUR);
+ if($("fValue")&&!pV3($("fValue").value)&&market)$("fValue").value=market.toFixed(2);
+ if($("fImage")&&!$("fImage").value.trim()&&e.imageUrl)$("fImage").value=e.imageUrl;
+ if($("fBarcode")&&!$("fBarcode").value.trim()&&(e.ean||e.upc))$("fBarcode").value=e.ean||e.upc;
+ if($("fCat")&&!$("fCat").value.trim())$("fCat").value=[e.theme,e.subtheme].filter(Boolean).join(" / ");
+}
+function bindSetAutofillV32(){
+ const el=$("fSet");if(!el||el.dataset.autofillV32)return;el.dataset.autofillV32="1";
+ el.addEventListener("change",fillSetFromCatalogV32);
+ el.addEventListener("blur",fillSetFromCatalogV32);
+ el.addEventListener("input",()=>{clearTimeout(window._setFillTimerV32);window._setFillTimerV32=setTimeout(()=>{if(el.value.trim().length>=4)fillSetFromCatalogV32()},450)});
+}
+bindSetAutofillV32();
