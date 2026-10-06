@@ -10,7 +10,7 @@ OUT.parent.mkdir(parents=True,exist_ok=True)
 
 RB_KEY=os.getenv("REBRICKABLE_API_KEY","").strip()
 BE_KEY=os.getenv("BRICKECONOMY_API_KEY","").strip()
-BE_BATCH=max(1,min(int(os.getenv("BRICKECONOMY_BATCH_SIZE","80")),90))
+BE_BATCH=max(1,min(int(os.getenv("BRICKECONOMY_BATCH_SIZE","90")),90))
 UA="LEGO-Stadtmanager/1.0 (+https://github.com/marcschmid-droid/LEGO-Stadtmanager)"
 
 def load():
@@ -21,18 +21,26 @@ def load():
 
 def nums():
     text=SEED.read_text(encoding="utf-8")
-    vals=re.findall(r'"setNumber"\s*:\s*"([^"]+)"',text)
-    out=[]
-    seen=set()
+    # Prefer the real collection before wishlist/other references so scarce API
+    # requests improve the user's owned inventory first.
+    try:
+        raw=text.split("=",1)[1].strip()
+        if raw.endswith(";"): raw=raw[:-1]
+        seed=json.loads(raw)
+        vals=[]
+        for section in ("collection","wishlist"):
+            for item in seed.get(section,[]) or []:
+                vals.append(str(item.get("setNumber","")))
+    except Exception:
+        vals=re.findall(r'"setNumber"\s*:\s*"([^"]+)"',text)
+    out=[];seen=set()
     for n in vals:
         n=n.strip()
-        # LEGO set numbers in this catalog are numeric (optionally with a variant suffix).
-        # Ignore CSV/header/sample values such as "Wert", "15", "6", "3".
         base=n.split("-",1)[0]
         if not re.fullmatch(r"\d{4,7}",base):
             continue
         if n not in seen:
-            seen.add(n); out.append(n)
+            seen.add(n);out.append(n)
     return out
 
 def api_num(n):
@@ -80,9 +88,16 @@ if RB_KEY:
 
 if BE_KEY and numbers:
     cursor=int(meta.get("brickeconomyCursor",0)) % len(numbers)
-    batch=[]
-    for k in range(min(BE_BATCH,len(numbers))):
-        batch.append(numbers[(cursor+k)%len(numbers)])
+    # Missing market data first, in collection priority order. After coverage is
+    # complete, continue round-robin refreshes for already known sets.
+    missing=[n for n in numbers if not (sets.get(n,{}).get("marketNewEUR") or sets.get(n,{}).get("marketUsedEUR"))]
+    batch=missing[:BE_BATCH]
+    if len(batch)<BE_BATCH:
+        for k in range(len(numbers)):
+            n=numbers[(cursor+k)%len(numbers)]
+            if n not in batch:
+                batch.append(n)
+            if len(batch)>=BE_BATCH: break
     done=0
     for n in batch:
         e=sets.setdefault(n,{})
