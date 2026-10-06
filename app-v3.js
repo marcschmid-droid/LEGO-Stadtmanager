@@ -511,3 +511,132 @@ function bindSetAutofillV32(){
  el.addEventListener("input",()=>{clearTimeout(window._setFillTimerV32);window._setFillTimerV32=setTimeout(()=>{if(el.value.trim().length>=4)fillSetFromCatalogV32()},450)});
 }
 bindSetAutofillV32();
+
+
+/* v35 catalog search, data quality assistant, richer prices and visual city modules */
+function catalogNameV35(e){return e?.brickeconomyName||e?.rebrickableName||""}
+function updateCatalogSuggestionsV35(){
+ const dl=$("catalogSuggestionsV35");if(!dl)return;
+ const rows=Object.entries(enrichmentV3?.sets||{}).sort((a,b)=>String(a[0]).localeCompare(String(b[0]),undefined,{numeric:true}));
+ dl.innerHTML=rows.map(([n,e])=>'<option value="'+esc(n)+'">'+esc(catalogNameV35(e))+'</option>').join("");
+}
+async function lookupCatalogV35(n,statusId){
+ n=String(n||"").trim().replace(/-1$/,"");const s=$(statusId);if(!n)return null;
+ if(s)s.textContent="Online-Katalog wird durchsucht…";
+ await ensureCatalogV31(n);
+ const e=enrichmentV3.sets?.[n]||null;
+ if(s)s.textContent=e?"✓ Online-Daten gefunden":"Noch keine Online-Daten für dieses Set vorhanden.";
+ updateCatalogSuggestionsV35();
+ return e;
+}
+async function autofillSetV35(){
+ const n=$("fSet")?.value.trim();if(!n)return;
+ const e=await lookupCatalogV35(n,"fCatalogStatusV35");if(!e)return;
+ if($("fName")&&!$("fName").value.trim())$("fName").value=catalogNameV35(e);
+ const market=pV3(e.marketUsedEUR)||pV3(e.marketNewEUR);
+ if($("fValue")&&!pV3($("fValue").value)&&market)$("fValue").value=market.toFixed(2);
+ if($("fImage")&&!$("fImage").value.trim()&&e.imageUrl)$("fImage").value=e.imageUrl;
+ if($("fBarcode")&&!$("fBarcode").value.trim()&&(e.ean||e.upc))$("fBarcode").value=e.ean||e.upc;
+ if($("fCat")&&!$("fCat").value.trim())$("fCat").value=[e.theme,e.subtheme].filter(Boolean).join(" / ");
+ if($("fWidth")&&!pV3($("fWidth").value)&&pV3(e.width))$("fWidth").value=e.width;
+ if($("fDepth")&&!pV3($("fDepth").value)&&pV3(e.depth))$("fDepth").value=e.depth;
+ if($("fHeight")&&!pV3($("fHeight").value)&&pV3(e.height))$("fHeight").value=e.height;
+}
+async function autofillWishV35(){
+ const n=$("wSet")?.value.trim();if(!n)return;
+ const e=await lookupCatalogV35(n,"wCatalogStatusV35");if(!e)return;
+ if($("wName")&&!$("wName").value.trim())$("wName").value=catalogNameV35(e);
+ if($("wRrp")&&!pV3($("wRrp").value)&&pV3(e.rrpEUR))$("wRrp").value=pV3(e.rrpEUR).toFixed(2);
+ const market=pV3(e.marketNewEUR)||pV3(e.marketUsedEUR);
+ if($("wPrice")&&!pV3($("wPrice").value)&&market)$("wPrice").value=market.toFixed(2);
+ if($("wImage")&&!$("wImage").value.trim()&&e.imageUrl)$("wImage").value=e.imageUrl;
+}
+function bindCatalogSearchV35(){
+ const bind=(id,fn,key)=>{const el=$(id);if(!el||el.dataset[key])return;el.dataset[key]="1";el.addEventListener("change",fn);el.addEventListener("blur",fn);el.addEventListener("input",()=>{clearTimeout(el._v35t);el._v35t=setTimeout(()=>{if(el.value.trim().length>=4)fn()},350)})};
+ bind("fSet",autofillSetV35,"v35set");bind("wSet",autofillWishV35,"v35wish");updateCatalogSuggestionsV35();
+}
+
+function qualityIssuesV35(x){
+ const a=[];
+ if(!pV3(x.currentValue))a.push("value");
+ if(!x.imageUrl)a.push("image");
+ if(!(pV3(x.width)&&pV3(x.depth)&&pV3(x.height)))a.push("dims");
+ if(!x.barcode)a.push("barcode");
+ if(!pV3(x.purchasePrice))a.push("price");
+ if(!x.condition||x.condition==="Unbekannt")a.push("condition");
+ return a;
+}
+const qualityLabelsV35={value:"Marktwert",image:"Bild",dims:"Maße",barcode:"Barcode",price:"Kaufpreis",condition:"Zustand"};
+async function autoEnrichOneV35(n){
+ const x=state.collection.find(y=>String(y.setNumber)===String(n));if(!x)return;
+ const e=await lookupCatalogV35(n,null);
+ if(!e)return alert("Für dieses Set sind im zentralen Katalog noch keine Daten vorhanden.");
+ let changed=false;
+ if(!x.imageUrl&&e.imageUrl){x.imageUrl=e.imageUrl;changed=true}
+ if(!x.barcode&&(e.ean||e.upc)){x.barcode=e.ean||e.upc;changed=true}
+ const mv=chooseMarketV3(x,e);if(!pV3(x.currentValue)&&mv){x.currentValue=mv;changed=true}
+ if(!pV3(x.width)&&pV3(e.width)){x.width=e.width;changed=true}
+ if(!pV3(x.depth)&&pV3(e.depth)){x.depth=e.depth;changed=true}
+ if(!pV3(x.height)&&pV3(e.height)){x.height=e.height;changed=true}
+ if(changed){persist();refresh();renderQualityAssistantV35();alert("Verfügbare Online-Daten wurden ergänzt.")}else alert("Online-Daten gefunden, aber für die noch fehlenden Felder liegen aktuell keine Werte vor.");
+}
+window.autoEnrichOneV35=autoEnrichOneV35;
+function renderQualityAssistantV35(){
+ const box=$("qualityAssistantV35");if(!box)return;
+ const filter=$("qualityFilterV35")?.value||"all";
+ const rows=state.collection.map(x=>({x,issues:qualityIssuesV35(x)})).filter(r=>r.issues.length&&(filter==="all"||r.issues.includes(filter)));
+ box.innerHTML=rows.length?rows.slice(0,80).map(({x,issues})=>'<div class="qualityRowV35"><div><b>'+esc(x.setNumber)+' · '+esc(x.name)+'</b><div class="chips">'+issues.map(k=>'<span class="chip warn">'+esc(qualityLabelsV35[k])+'</span>').join("")+'</div></div><div class="actions"><button class="btn secondary" onclick="autoEnrichOneV35(\''+esc(x.setNumber)+'\')">Auto ergänzen</button><button class="btn" onclick="editSet(\''+esc(x.setNumber)+'\')">Bearbeiten</button></div></div>').join(""):'<p class="hint">Für diesen Filter sind keine fehlenden Angaben vorhanden.</p>';
+}
+function bindQualityV35(){
+ if($("qualityFilterV35"))$("qualityFilterV35").onchange=renderQualityAssistantV35;
+ if($("qualityReloadV35"))$("qualityReloadV35").onclick=async()=>{await loadEnrichmentV3(true);renderQualityAssistantV35()};
+}
+
+priceRowsV31=function(){
+ const rows=[];
+ for(const x of state.collection||[]){
+  const e=enrichmentV3.sets?.[String(x.setNumber)]||x.market||{};
+  const market=chooseMarketV3(x,e);
+  rows.push({kind:"collection",setNumber:x.setNumber,name:x.name,purchase:pV3(x.purchasePrice),own:pV3(x.currentValue),newv:pV3(e.marketNewEUR),used:pV3(e.marketUsedEUR),market,limit:0});
+ }
+ for(const w of state.wishlist||[]){
+  const e=enrichmentV3.sets?.[String(w.setNumber)]||w.market||{};
+  const market=pV3(e.marketNewEUR)||pV3(e.marketUsedEUR);
+  rows.push({kind:"wishlist",setNumber:w.setNumber,name:w.name,purchase:0,own:pV3(w.offer)||pV3(w.price),newv:pV3(e.marketNewEUR),used:pV3(e.marketUsedEUR),market,limit:pV3(w.limit)});
+ }
+ return rows;
+};
+renderPricesV31=function(){
+ const body=$("priceTableV30");if(!body)return;
+ const q=nV3($("priceSearchV30")?.value),mode=$("priceModeV30")?.value||"all";
+ const rows=priceRowsV31().filter(r=>(mode==="all"||r.kind===mode)&&(!q||nV3(r.setNumber+" "+r.name).includes(q)));
+ const withMarket=rows.filter(r=>r.market).length,alerts=rows.filter(r=>r.kind==="wishlist"&&r.limit&&r.market&&r.market<=r.limit).length;
+ if($("priceSummaryV30"))$("priceSummaryV30").innerHTML='<div class="miniStat"><span>Einträge</span><b>'+rows.length+'</b></div><div class="miniStat"><span>mit Marktwert</span><b>'+withMarket+'</b></div><div class="miniStat"><span>unter Kaufgrenze</span><b>'+alerts+'</b></div>';
+ body.innerHTML=rows.length?rows.map(r=>{
+  const diff=r.kind==="collection"&&r.purchase&&r.market?r.market-r.purchase:0,pct=r.purchase&&diff?diff/r.purchase*100:0;
+  let status="–";if(!r.market)status="Keine Marktdaten";else if(r.kind==="wishlist"&&r.limit)status=r.market<=r.limit?"🟢 unter Kaufgrenze":"🔴 über Kaufgrenze";else if(r.kind==="collection"&&r.purchase)status=diff>=0?"🟢 über Kaufpreis":"🔴 unter Kaufpreis";
+  return '<tr><td><b>'+esc(r.setNumber)+'</b><br><small>'+(r.kind==="collection"?'Bestand':'Wunsch')+'</small></td><td>'+esc(r.name)+'</td><td>'+(r.purchase?euro(r.purchase):'–')+'</td><td>'+euro(r.own)+'</td><td>'+euro(r.newv)+'</td><td>'+euro(r.used)+'</td><td>'+(diff?euro(diff):'–')+'</td><td>'+(diff?(pct>=0?'+':'')+pct.toFixed(1).replace(".",",")+' %':'–')+'</td><td>'+(r.limit?euro(r.limit):'–')+'</td><td>'+esc(status)+'</td></tr>'
+ }).join(""):'<tr><td colspan="10">Keine Einträge gefunden.</td></tr>';
+};
+
+function moduleFitsV35(x){
+ const mw=pV3(state.meta?.moduleWidth)||25.6,md=pV3(state.meta?.moduleDepth)||25.6,w=pV3(x?.width),d=pV3(x?.depth);
+ if(!w||!d)return null;return (w<=mw&&d<=md)||(d<=mw&&w<=md);
+}
+renderModulesV3=function(){
+ const g=$("moduleGrid");if(!g)return;let n=0,h="",filter=$("moduleZoneFilterV35")?.value||"";
+ for(let i=0;i<48;i++){
+  const z=ZONES_V3[i];
+  if(z==="open"){h+='<div class="module open '+(filter?'moduleDimV35':'')+'">FREI</div>';continue}
+  n++;const m='M'+String(n).padStart(2,'0'),a=state.modules[m]||[],sets=a.map(s=>state.collection.find(x=>String(x.setNumber)===String(s))).filter(Boolean),first=sets[0];
+  const tooBig=sets.some(x=>moduleFitsV35(x)===false),dim=filter&&filter!==z;
+  h+='<button class="module z-'+z+(tooBig?' moduleTooBigV35':'')+(dim?' moduleDimV35':'')+'" data-module="'+m+'" data-zone="'+z+'" onclick="moduleClickV3(\''+m+'\')">'+(first?.imageUrl?'<img class="moduleImgV35" src="'+esc(first.imageUrl)+'" alt="">':'')+'<span class="moduleCodeV35">'+m+'</span><small>'+(sets.length?sets.length+' Set'+(sets.length>1?'s':''):ZONELABEL_V3[z])+'</small>'+(tooBig?'<em>⚠ zu groß</em>':'')+'</button>'
+ }
+ g.innerHTML=h;setTimeout(renderPlannerV28,0);
+};
+function bindModuleFilterV35(){if($("moduleZoneFilterV35"))$("moduleZoneFilterV35").onchange=renderModulesV3}
+
+const loadEnrichmentBaseV35=loadEnrichmentV3;
+loadEnrichmentV3=async function(force=false){const r=await loadEnrichmentBaseV35(force);updateCatalogSuggestionsV35();renderQualityAssistantV35();renderPricesV31();return r};
+
+bindCatalogSearchV35();bindQualityV35();bindModuleFilterV35();renderQualityAssistantV35();renderPricesV31();renderModulesV3();
