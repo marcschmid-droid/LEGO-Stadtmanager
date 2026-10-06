@@ -56,3 +56,6 @@ th,td{padding:10px;border-bottom:1px solid #edf1f4;text-align:left;font-size:13p
 .setcard .num{color:var(--red)}
 .referenceImage{background:#171717}
 input:focus,select:focus,textarea:focus{outline:2px solid #c91a0940;border-color:var(--red)}
+
+/* v19 user profiles */
+.usergrid{display:grid;gap:10px;margin-top:12px}.usercard{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}.usercard.active{border:2px solid var(--red);background:#fff8f7}.usercard small{display:block;color:var(--muted);margin-top:4px}.userbadge{font-weight:800;font-size:18px}
