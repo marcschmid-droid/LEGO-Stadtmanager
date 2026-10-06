@@ -1863,8 +1863,8 @@ function collectorThemePathV504(all,row){
 function collectorSetTypeV506(all,row){
  const t=collectorThemePathV504(all,row);
  const hay=nV3([row?.[0],t.name,t.path,t.root].join(" "));
- if(/polybag|poly bag/.test(hay))return "polybag";
- if(/gift with purchase|\bgwp\b|promotional|promo\b|free gift|gratis|beigabe/.test(hay))return "gwp";
+ if(/polybag|poly bag|foil pack|foilbag/.test(hay))return "polybag";
+ if(/gift with purchase|\bgwp\b|promotional|promotion|promo\b|free gift|gratis|beigabe|magazine gift|store gift|exclusive gift/.test(hay))return "gwp";
  return "main";
 }
 function collectorSetTypeLabelV506(type){
@@ -1951,19 +1951,16 @@ async function renderCollectorSetViewV504(){
  }
  const status=$("collectorStatusV504")?.value||"all",year=Number($("collectorYearV504")?.value||0),sub=$("collectorSubthemeV505")?.value||"",type=$("collectorTypeV506")?.value||"",setq=nV3($("collectorSetSearchV505")?.value||"");
  const scopeRows=rows.filter(([n,r])=>{
-   const t=collectorThemePathV504(all,r),kind=collectorSetTypeV506(all,r);
-   return (!year||Number(r[1])===year)&&(!sub||t.path===sub)&&(!type||kind===type);
+   const t=collectorThemePathV504(all,r),kind=collectorSetTypeV506(all,r),hay=nV3([n,r[0],r[1],t.path].join(" "));
+   return (!year||Number(r[1])===year)&&(!sub||t.path===sub)&&(!type||kind===type)&&(!setq||hay.includes(setq));
  });
- rows=scopeRows.filter(([n,r])=>{
-   const t=collectorThemePathV504(all,r),hay=nV3([n,r[0],r[1],t.path].join(" "));
-   return (status==="all"||collectorStatusForV504(n)===status)&&(!setq||hay.includes(setq));
- });
+ rows=scopeRows.filter(([n])=>status==="all"||collectorStatusForV504(n)===status);
  rows.sort((a,b)=>Number(b[1][1]||0)-Number(a[1][1]||0)||String(a[0]).localeCompare(String(b[0]),undefined,{numeric:true}));
  const p=collectorProgressV504(scopeRows);
  const scopeLabel=type?collectorSetTypeLabelV506(type)+(p.total===1?"":"s"):"Sets";
  if($("collectorThemeTitleV504"))$("collectorThemeTitleV504").textContent=collectorCurrentV504.label;
- if($("collectorThemeMetaV504"))$("collectorThemeMetaV504").textContent=p.owned+" vorhanden · "+p.wished+" auf Wunschliste · "+Math.max(0,p.total-p.owned-p.wished)+" noch offen · "+p.total+" "+scopeLabel+" berücksichtigt";
- if($("collectorProgressTextV504"))$("collectorProgressTextV504").textContent=p.pct+" %";
+ if($("collectorThemeMetaV504"))$("collectorThemeMetaV504").textContent=p.owned+" von "+p.total+" "+scopeLabel+" vorhanden = "+p.pct+" % · "+p.wished+" Wunschliste · "+Math.max(0,p.total-p.owned-p.wished)+" noch offen";
+ if($("collectorProgressTextV504"))$("collectorProgressTextV504").textContent=p.owned+" / "+p.total+" · "+p.pct+" %";
  if($("collectorProgressBarV504"))$("collectorProgressBarV504").style.width=p.pct+"%";
  const grid=$("collectorSetGridV504");if(!grid)return;
  grid.innerHTML=rows.length?rows.map(([n,r])=>{
