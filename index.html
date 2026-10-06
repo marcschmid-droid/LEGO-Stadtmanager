@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#c91a09">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="icon" href="./icon.svg?v=35">
-<link rel="apple-touch-icon" href="./icon.svg?v=35">
-<link rel="stylesheet" href="./styles.css?v=35">
+<link rel="icon" href="./icon.svg?v=36">
+<link rel="apple-touch-icon" href="./icon.svg?v=36">
+<link rel="stylesheet" href="./styles.css?v=36">
 <title>Brick City Manager</title><meta name="application-name" content="Brick City Manager"><meta name="apple-mobile-web-app-title" content="Brick City Manager">
 <script>
 (async()=>{
-  const V="35";
+  const V="36";
   if(localStorage.getItem("lego-app-shell-version")!==V){
     try{
       if("serviceWorker" in navigator){
@@ -30,7 +30,7 @@
 </script></head>
 <body>
 <header><div class="head">
-  <div><h1>Brick City Manager</h1><small>Sammlung · Einkauf · Stadt · Züge · <b id="appVersion">v35</b></small></div>
+  <div><h1>Brick City Manager</h1><small>Sammlung · Einkauf · Stadt · Züge · <b id="appVersion">v36</b></small></div>
   <div class="headActions"><button id="userTop" class="iconbtn userbadge" title="Benutzer wechseln">👤</button><button id="scanTop" class="iconbtn" title="Barcode scannen">▣</button><button id="addTop" class="btn">＋ Set</button></div>
 </div></header>
 
@@ -41,7 +41,7 @@
   <button class="tab" data-tab="wishlist">Einkauf</button>
   <button class="tab" data-tab="city">Stadt</button>
   <button class="tab" data-tab="trains">Züge</button><button class="tab" data-tab="prices">Preise</button><button class="tab" data-tab="analysis">Analyse</button>
-  <button class="tab" data-tab="users">Konto</button><button class="tab" data-tab="settings">Daten</button>
+  <button class="tab" data-tab="users">Konto</button><button class="tab hidden" id="adminTabV36" data-tab="admin">Admin</button><button class="tab" data-tab="settings">Daten</button>
 </nav>
 
 <section id="home" class="panel active">
@@ -126,9 +126,18 @@
 </section>
 <section id="analysis" class="panel"><div class="cards"><div class="card"><span>Sets mit Wert</span><b id="aValued">0</b></div><div class="card"><span>Sets mit Maßen</span><b id="aSized">0</b></div><div class="card"><span>Fläche bekannt</span><b id="aArea">0 m²</b></div><div class="card"><span>Bereiche</span><b id="aZones">0</b></div></div><div class="analysisgrid"><div class="card wide"><h2>Verteilung nach Stadtbereich</h2><div id="areaAnalysis"></div></div><div class="card wide"><h2>Wert / Investment</h2><div id="valueAnalysis"></div></div><div class="card wide"><div class="sectionHead"><div><h2>Datenqualität</h2><p class="hint">Fehlende Angaben gezielt finden und direkt ergänzen.</p></div><button class="btn secondary" id="qualityReloadV35">Online-Daten neu laden</button></div><div id="qualityAnalysis"></div><div class="toolbar"><select id="qualityFilterV35"><option value="all">Alle Probleme</option><option value="value">Ohne Marktwert</option><option value="image">Ohne Bild</option><option value="dims">Ohne Maße</option><option value="barcode">Ohne Barcode</option><option value="price">Ohne Kaufpreis</option><option value="condition">Ohne Zustand</option></select></div><div id="qualityAssistantV35"></div></div></div></section>
 
+<div class="analysisgrid" id="statsV36">
+  <div class="card wide"><h2>Top 10 wertvollste Sets</h2><div id="topValueV36"></div></div>
+  <div class="card wide"><h2>Top 10 Wertsteigerungen</h2><div id="topGainV36"></div></div>
+  <div class="card wide"><h2>Wert nach Stadtbereich</h2><div id="areaValueV36"></div></div>
+  <div class="card wide"><h2>Datenabdeckung</h2><div id="coverageV36"></div></div>
+</div>
 <section id="users" class="panel">
   <div class="card wide" id="cloudAccountCard"><h2>Online-Konto</h2><p class="hint">Mit E-Mail und Passwort anmelden. Deine Daten werden dann deinem persönlichen Cloud-Konto zugeordnet.</p><div id="cloudSignedOut"><div class="form"><label>E-Mail<input id="cloudEmail" type="email" autocomplete="email"></label><label>Passwort<input id="cloudPassword" type="password" minlength="6" autocomplete="current-password"></label></div><div class="actions"><button class="btn" id="cloudLogin">Anmelden</button><button class="btn secondary" id="cloudRegister">Registrieren</button></div></div><div id="cloudSignedIn" class="hidden"><p>Angemeldet als <b id="cloudUserEmail"></b></p><div class="actions"><button class="btn" id="cloudSync">Jetzt synchronisieren</button><button class="btn secondary" id="cloudLogout">Abmelden</button><button class="btn danger" id="cloudDeleteData">Cloud-Daten löschen</button><button class="btn danger" id="cloudDeleteAccount">Konto löschen</button></div><p id="cloudStatus" class="hint"></p></div></div>
   
+</section>
+<section id="admin" class="panel">
+  <div class="card wide"><div class="sectionHead"><div><h2>Admin & Systemstatus</h2><p class="hint">Nur für den Betreiber sichtbar. Keine Einsicht in fremde Sammlungsinhalte.</p></div><button class="btn secondary" id="adminRefreshV36">Aktualisieren</button></div><div id="adminSummaryV36" class="miniStats"></div><div id="adminCatalogV36"></div><div id="adminErrorsV36"></div><p id="adminNoteV36" class="hint"></p></div>
 </section>
 <section id="settings" class="panel">
   <div class="card wide"><h2>Daten & Sicherung</h2><div class="actions">
@@ -173,5 +182,5 @@
 <div id="detailModal" class="modal"><div class="sheet"><div class="sectionHead"><h2 id="detailTitle">Setdetails</h2><button class="closeX" id="closeDetail">×</button></div><div id="detailContent"></div></div></div>
 <div id="purchaseModal" class="modal"><div class="sheet"><div class="sectionHead"><h2>Kauf erfassen</h2><button class="closeX" id="closePurchaseX">×</button></div><div class="form"><label>Setnummer<input id="pSet"></label><label>Name<input id="pName"></label><label>Anzahl<input id="pQty" type="number" min="1" value="1"></label><label>Preis je Stück (€)<input id="pPrice" type="number" step="0.01"></label><label>Versand (€)<input id="pShipping" type="number" step="0.01"></label><label>Kaufdatum<input id="pDate" type="date"></label><label>Verkäufer / Quelle<input id="pSeller"></label><label>Zustand<select id="pCondition"><option>Unbekannt</option><option>Neu / OVP</option><option>Gebraucht vollständig</option><option>Gebraucht unvollständig</option></select></label><label>Stadtbereich<input id="pArea"></label><label>Modul<input id="pModule" placeholder="z. B. M27"></label><label>Originalkarton<select id="pBox"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Vollständig?<select id="pComplete"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Notiz<textarea id="pNote"></textarea></label></div><div class="actions right"><button class="btn secondary" id="cancelPurchase">Abbrechen</button><button class="btn" id="savePurchase">Kauf speichern</button></div></div></div>
 <div id="scannerModal" class="modal"><div class="sheet"><div class="sectionHead"><h2>Barcode scannen</h2><button class="closeX" id="closeScanner">×</button></div><video id="scannerVideo" playsinline muted></video><p id="scannerStatus" class="hint">Kamera wird vorbereitet…</p><div class="actions"><label class="btn" id="photoBarcodeLabel">📷 Barcode fotografieren<input id="barcodePhoto" type="file" accept="image/*" capture="environment" hidden></label><button class="btn secondary" id="manualBarcode">Barcode manuell eingeben</button></div></div></div>
-<script src="./vendor/supabase.js?v=35"></script><script src="./supabase-config.js?v=35"></script><script src="./vendor/zxing.js?v=35"></script><script src="./seed-data.js"></script><script src="./app.js?v=35"></script><script src="./app-v3.js?v=35"></script>
+<script src="./vendor/supabase.js?v=36"></script><script src="./supabase-config.js?v=36"></script><script src="./vendor/zxing.js?v=36"></script><script src="./seed-data.js"></script><script src="./app.js?v=36"></script><script src="./app-v3.js?v=36"></script>
 </body></html>
