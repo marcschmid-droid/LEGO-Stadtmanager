@@ -340,7 +340,7 @@ saveSet=function(){
  if(!editing&&n&&state.collection.some(x=>String(x.setNumber)===String(n))){
    if(!confirm("Dieses Set ist bereits vorhanden. Als weiteres Exemplar zum vorhandenen Set hinzufügen?"))return;
  }
- return saveSetBaseV28();
+ const r=saveSetBaseV28();ensureV28State();persist();refresh();return r;
 };
 
 window.editExemplarV28=(setNumber,index)=>{
