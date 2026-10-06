@@ -6,10 +6,10 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#c91a09",
-  "description": "Sammlung, Einkaufsliste, Stadt- und Zugplanung für Klemmbaustein-Sets.",
+  "description": "Brick City Manager v50 – City Command Center für Sammlung, Stadtplanung, Marktwerte und Züge.",
   "icons": [
     {
-      "src": "./icon.svg?v=49",
+      "src": "./icon.svg?v=50",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
