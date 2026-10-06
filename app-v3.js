@@ -952,6 +952,12 @@ async function loadServerAlertsV38(){
 const renderWishAlertsCoreV38=renderWishAlertsV28;
 renderWishAlertsV28=function(){
  renderWishAlertsCoreV38();
+ const root=$("wishAlertsV28");
+ if(root&&!$("emailAlertsToggleV38")){
+   const b=document.createElement("button");b.id="emailAlertsToggleV38";b.className="btn secondary";b.style.marginTop="10px";
+   const paint=()=>b.textContent="E-Mail-Preisalarme: "+(state.meta?.emailPriceAlerts?"AN":"AUS");
+   paint();b.onclick=()=>{state.meta=state.meta||{};state.meta.emailPriceAlerts=!state.meta.emailPriceAlerts;persist();paint();alert(state.meta.emailPriceAlerts?"E-Mail-Preisalarme aktiviert. Versand erfolgt, sobald ein Mail-Absender serverseitig eingerichtet ist.":"E-Mail-Preisalarme deaktiviert.")};root.appendChild(b);
+ }
  const box=$("wishAlertsV28");if(!box)return;const alerts=state.meta?.serverPriceAlerts||[];
  if(alerts.length){const div=document.createElement("div");div.className="serverAlertsV38";div.innerHTML='<h3>Server-Preisalarme</h3>'+alerts.slice(0,8).map(a=>'<div class="alertRow"><b>'+esc(a.set_number)+' · '+esc(a.set_name||"")+'</b><span>'+euro(a.market_price)+' ≤ '+euro(a.limit_price)+'</span></div>').join("");box.appendChild(div)}
 };
