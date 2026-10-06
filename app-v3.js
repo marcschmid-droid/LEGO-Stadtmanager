@@ -982,7 +982,6 @@ bindOnboardingV38();setTimeout(()=>{if(cloudUserV3){maybeShowOnboardingV38();loa
 
 
 /* v37 online catalog requests, charts, recycle bin and exemplar editor */
-let exemplarEditV37={setNumber:"",index:-1};
 
 function ensureV37(){
  state.trash=state.trash||[];
