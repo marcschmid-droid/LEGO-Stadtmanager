@@ -1846,14 +1846,14 @@ function collectorStatusForV504(setNumber){
 }
 function collectorFeaturedDefsV504(){
  return [
-  {key:"harry-potter",label:"Harry Potter",icon:"⚡",keywords:["Harry Potter"]},
+  {key:"harry-potter",label:"Harry Potter",icon:"⚡",roots:["Harry Potter"]},
   {key:"christmas",label:"Weihnachten / Winter Village",icon:"❄",setNumbers:["10199","10216","10222","10229","10235","10245","10249","10254","10259","10263","10267","10275","10293","10308","10325","10339"]},
-  {key:"creator-icons",label:"Creator Expert / Icons",icon:"◆",keywords:["Creator Expert","Icons"]},
-  {key:"modular-buildings",label:"Modular Buildings",icon:"▦",keywords:["Modular Buildings"]},
-  {key:"disney",label:"Disney",icon:"★",keywords:["Disney"]},
-  {key:"star-wars",label:"Star Wars",icon:"✦",keywords:["Star Wars"]},
-  {key:"technic",label:"Technic",icon:"⚙",keywords:["Technic"]},
-  {key:"architecture",label:"Architecture",icon:"▥",keywords:["Architecture"]}
+  {key:"creator-icons",label:"Creator Expert / Icons",icon:"◆",roots:["Creator Expert","Icons"]},
+  {key:"modular-buildings",label:"Modular Buildings",icon:"▦",pathSegments:["Modular Buildings"]},
+  {key:"disney",label:"Disney",icon:"★",roots:["Disney"]},
+  {key:"star-wars",label:"Star Wars",icon:"✦",roots:["Star Wars"]},
+  {key:"technic",label:"Technic",icon:"⚙",roots:["Technic"]},
+  {key:"architecture",label:"Architecture",icon:"▥",roots:["Architecture"]}
  ];
 }
 function collectorThemePathV504(all,row){
@@ -1862,9 +1862,12 @@ function collectorThemePathV504(all,row){
 }
 function collectorSetTypeV506(all,row){
  const t=collectorThemePathV504(all,row);
- const hay=nV3([row?.[0],t.name,t.path,t.root].join(" "));
- if(/polybag|poly bag|foil pack|foilbag/.test(hay))return "polybag";
- if(/gift with purchase|\bgwp\b|promotional|promotion|promo\b|free gift|gratis|beigabe|magazine gift|store gift|exclusive gift/.test(hay))return "gwp";
+ const name=nV3(row?.[0]||""),path=nV3(t.path||"");
+ // Rebrickable classifies many special releases through dedicated theme branches.
+ // Prefer those branches over name guesses so the same rule works for every theme.
+ if(/(^| › )(polybag|poly bags|foil pack|foil packs)( › |$)/.test(path)||/\bpolybag\b|\bfoil pack\b|\bfoilbag\b/.test(name))return "polybag";
+ if(/(^| › )(promotional|promotions|gift with purchase|gwp|magazine gift|store exclusive|exclusive gift)( › |$)/.test(path)||
+    /\bgift with purchase\b|\bgwp\b|\bpromotional\b|\bpromo\b|\bfree gift\b|\bmagazine gift\b/.test(name))return "gwp";
  return "main";
 }
 function collectorSetTypeLabelV506(type){
@@ -1873,7 +1876,13 @@ function collectorSetTypeLabelV506(type){
 function collectorMatchesDefV504(all,row,def,setNumber=""){
  if(Array.isArray(def.setNumbers))return def.setNumbers.includes(String(setNumber));
  const t=collectorThemePathV504(all,row);
+ if(Array.isArray(def.roots)&&def.roots.length)return def.roots.includes(t.root);
  if(def.root)return t.root===def.root;
+ if(Array.isArray(def.pathSegments)&&def.pathSegments.length){
+   const segments=String(t.path||"").split(" › ").map(x=>x.trim());
+   return def.pathSegments.some(x=>segments.includes(x));
+ }
+ // Kept only as a fallback for future custom collections.
  const hay=(t.path+" "+t.name+" "+t.root).toLowerCase();
  return (def.keywords||[]).some(k=>hay.includes(String(k).toLowerCase()));
 }
@@ -1887,7 +1896,7 @@ function collectorThemeDefsV504(all){
    if(t.root)roots.set(t.root,(roots.get(t.root)||0)+1);
  }
  const featured=collectorFeaturedDefsV504();
- const featuredRoots=new Set(featured.map(d=>d.label.toLowerCase()));
+ const featuredRoots=new Set(featured.flatMap(d=>[...(d.roots||[]),d.root||""].filter(Boolean).map(x=>x.toLowerCase())));
  const dynamic=[...roots.entries()]
    .filter(([name])=>!featuredRoots.has(name.toLowerCase()))
    .map(([root,count])=>({key:"root:"+root,label:root,root,count,icon:"◻"}))
