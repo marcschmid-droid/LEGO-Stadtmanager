@@ -1966,7 +1966,7 @@ async function renderCollectorSetViewV504(){
  }
  const status=$("collectorStatusV504")?.value||"all",year=Number($("collectorYearV504")?.value||0),sub=$("collectorSubthemeV505")?.value||"",type=$("collectorTypeV506")?.value||"",setq=nV3($("collectorSetSearchV505")?.value||"");
  const scopeRows=rows.filter(([n,r])=>{
-   const t=collectorThemePathV504(all,r),kind=collectorSetTypeV506(all,r),hay=nV3([n,r[0],r[1],t.path].join(" "));
+   const t=collectorThemePathV504(all,r),kind=collectorSetTypeV506(all,r,n),hay=nV3([n,r[0],r[1],t.path].join(" "));
    return (!year||Number(r[1])===year)&&(!sub||t.path===sub)&&(!type||kind===type)&&(!setq||hay.includes(setq));
  });
  rows=scopeRows.filter(([n])=>status==="all"||collectorStatusForV504(n)===status);
