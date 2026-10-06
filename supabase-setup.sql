@@ -52,32 +52,39 @@ revoke all on function public.admin_metrics() from public;
 grant execute on function public.admin_metrics() to authenticated;
 
 
--- v37: queue unknown set numbers for server-side catalog enrichment.
+-- v48: shared, non-personal queue of set numbers that need server-side catalog enrichment.
+-- The client only stores the set number and refresh timestamp. No user collection data is exposed.
 create table if not exists public.catalog_requests (
-  id bigint generated always as identity primary key,
-  set_number text not null,
-  requested_by uuid not null references auth.users(id) on delete cascade,
-  status text not null default 'pending',
-  created_at timestamptz not null default now(),
-  processed_at timestamptz
+  set_number text primary key,
+  requested_at timestamptz not null default now()
 );
-
-create unique index if not exists catalog_requests_pending_unique
-on public.catalog_requests (set_number, requested_by)
-where status = 'pending';
 
 alter table public.catalog_requests enable row level security;
 
 drop policy if exists "Users insert own catalog requests" on public.catalog_requests;
 drop policy if exists "Users read own catalog requests" on public.catalog_requests;
+drop policy if exists "Authenticated users request catalog sets" on public.catalog_requests;
+drop policy if exists "Catalog requests readable for enrichment" on public.catalog_requests;
+drop policy if exists "Authenticated users refresh catalog requests" on public.catalog_requests;
 
-create policy "Users insert own catalog requests"
-on public.catalog_requests for insert to authenticated
-with check ((select auth.uid()) = requested_by);
+create policy "Authenticated users request catalog sets"
+on public.catalog_requests
+for insert to authenticated
+with check (set_number ~ '^[0-9]{4,7}(-[0-9]+)?$');
 
-create policy "Users read own catalog requests"
-on public.catalog_requests for select to authenticated
-using ((select auth.uid()) = requested_by);
+create policy "Catalog requests readable for enrichment"
+on public.catalog_requests
+for select to anon, authenticated
+using (true);
+
+create policy "Authenticated users refresh catalog requests"
+on public.catalog_requests
+for update to authenticated
+using (set_number ~ '^[0-9]{4,7}(-[0-9]+)?$')
+with check (set_number ~ '^[0-9]{4,7}(-[0-9]+)?$');
+
+grant select on public.catalog_requests to anon, authenticated;
+grant insert, update on public.catalog_requests to authenticated;
 
 
 -- v38: lightweight sync telemetry for aggregate admin metrics.
@@ -150,7 +157,7 @@ begin
       pg_total_relation_size('public.sync_events'::regclass) +
       pg_total_relation_size('public.price_alert_events'::regclass)
     )::bigint,
-    (select count(*) from public.catalog_requests where status='pending');
+    (select count(*) from public.catalog_requests);
 end;
 $$;
 
@@ -158,34 +165,4 @@ revoke all on function public.admin_metrics_v38() from public;
 grant execute on function public.admin_metrics_v38() to authenticated;
 
 
--- v37: public, non-personal queue of requested catalog set numbers.
-create table if not exists public.catalog_requests (
-  set_number text primary key,
-  requested_at timestamptz not null default now()
-);
-alter table public.catalog_requests enable row level security;
 
-drop policy if exists "Authenticated users request catalog sets" on public.catalog_requests;
-drop policy if exists "Catalog requests readable for enrichment" on public.catalog_requests;
-drop policy if exists "Authenticated users refresh catalog requests" on public.catalog_requests;
-
-create policy "Authenticated users request catalog sets"
-on public.catalog_requests
-for insert to authenticated
-with check (set_number ~ '^[0-9]{4,7}(-[0-9]+)?$');
-
-create policy "Catalog requests readable for enrichment"
-on public.catalog_requests
-for select to anon, authenticated
-using (true);
-
-create policy "Authenticated users refresh catalog requests"
-on public.catalog_requests
-for update to authenticated
-using (set_number ~ '^[0-9]{4,7}(-[0-9]+)?
-)
-with check (set_number ~ '^[0-9]{4,7}(-[0-9]+)?
-);
-
-grant select on public.catalog_requests to anon, authenticated;
-grant insert, update on public.catalog_requests to authenticated;
