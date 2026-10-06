@@ -96,7 +96,10 @@ function migrateV3(){
  state.meta={version:"3.0",brickrInvestmentReference:18026.14,investmentBaseline:18026.14,investmentBaselineQty:245,...(state.meta||{})};
  const keys=["straight","curve","flex","switchL","switchR"];state.trackShopping=(state.trackShopping||[]).map((x,i)=>({...x,key:x.key||keys[i]}));
  state.classifiedOffers=(state.classifiedOffers||[]).map(o=>({...o,trackQty:o.trackQty||inferTrackV3(o.details)}));
- state.collection.forEach(x=>{x.exemplars=x.exemplars||[];x.condition=x.condition||"Unbekannt";x.buildStatus=x.buildStatus||"Unbekannt";x.storage=x.storage||"";x.barcode=x.barcode||"";x.module=x.module||moduleForV3(x.setNumber)||""});
+ state.collection.forEach(x=>{
+   if(String(x.setNumber)==="10390"&&nV3(x.name).includes("vielsaft"))x.setNumber="76386";
+   x.exemplars=x.exemplars||[];x.condition=x.condition||"Unbekannt";x.buildStatus=x.buildStatus||"Unbekannt";x.storage=x.storage||"";x.barcode=x.barcode||"";x.module=x.module||moduleForV3(x.setNumber)||""
+ });
  state.wishlist.forEach(w=>{w.rrp=pV3(w.rrp);w.limit=pV3(w.limit);w.offer=pV3(w.offer)});
  persist();
 }
