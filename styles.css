@@ -1,0 +1,22 @@
+:root{--blue:#1f4e78;--bg:#f4f6f8;--card:#fff;--text:#17212b;--muted:#65727e;--line:#dce3e9}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{position:sticky;top:0;z-index:20;background:var(--blue);color:#fff;padding:14px 16px;box-shadow:0 2px 12px #0002}
+.head{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+h1{font-size:20px;margin:0}small{opacity:.82}main{max-width:1100px;margin:auto;padding:16px 16px 100px}
+.tabs{display:flex;gap:7px;overflow:auto;margin-bottom:14px}.tab{border:0;border-radius:999px;padding:10px 13px;background:#e4eaf0;font-weight:700;white-space:nowrap}
+.tab.active{background:var(--blue);color:#fff}.panel{display:none}.panel.active{display:block}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:0 2px 8px #00000008}
+.card span{display:block;color:var(--muted);font-size:12px}.card b{font-size:25px;display:block;margin-top:6px}.wide{margin-top:12px}.wide h2{margin-top:0}
+.btn{border:0;border-radius:10px;padding:10px 13px;background:var(--blue);color:#fff;font-weight:700;cursor:pointer}.btn.secondary{background:#e5ebf0;color:#223343}
+.toolbar,.actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.toolbar input{flex:1;min-width:210px}.right{justify-content:flex-end}
+input,select,textarea{font:inherit;width:100%;padding:10px 11px;border:1px solid #cbd5de;border-radius:9px;background:#fff}textarea{min-height:75px}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:#fff}table{width:100%;border-collapse:collapse;min-width:820px}
+th,td{padding:10px;border-bottom:1px solid #edf1f4;text-align:left;font-size:13px}th{background:#eef3f7}.rowbtn{border:0;border-radius:8px;padding:7px 9px;margin-right:4px}
+.hint{font-size:13px;color:var(--muted)}.citygrid{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,120px);gap:8px}
+.zone{border-radius:15px;padding:12px;font-weight:800;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid #0001}
+.winter{grid-column:1/2;background:#e9f3fb}.station{grid-column:2/4;background:#e5e7ea}.magic{grid-column:4;background:#ddd5ef}
+.harbor{grid-row:2/4;background:#cfe8f7}.open{grid-column:2/4;grid-row:2;background:#fff;border:2px dashed #9aa7b2}.disney{grid-column:4;grid-row:2/4;background:#f3d9e7}
+.city{grid-column:2;background:#e6dccf}.world{grid-column:3;background:#d9ecd8}.modal{position:fixed;inset:0;background:#0008;display:none;align-items:flex-end;justify-content:center;z-index:50}
+.modal.show{display:flex}.sheet{width:min(720px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:20px 20px 0 0;padding:18px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form label{font-size:12px;color:var(--muted)}.form label input,.form label textarea,.form label select{margin-top:5px;color:var(--text)}
+@media(max-width:720px){.cards{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}.citygrid{grid-template-columns:1fr 1fr;grid-template-rows:auto}.zone{min-height:95px;grid-column:auto!important;grid-row:auto!important}}
