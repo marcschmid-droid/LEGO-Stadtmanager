@@ -156,3 +156,27 @@ $$;
 
 revoke all on function public.admin_metrics_v38() from public;
 grant execute on function public.admin_metrics_v38() to authenticated;
+
+
+-- v37: public, non-personal queue of requested catalog set numbers.
+create table if not exists public.catalog_requests (
+  set_number text primary key,
+  requested_at timestamptz not null default now()
+);
+alter table public.catalog_requests enable row level security;
+
+drop policy if exists "Authenticated users request catalog sets" on public.catalog_requests;
+drop policy if exists "Catalog requests readable for enrichment" on public.catalog_requests;
+
+create policy "Authenticated users request catalog sets"
+on public.catalog_requests
+for insert to authenticated
+with check (set_number ~ '^[0-9]{4,7}(-[0-9]+)?$');
+
+create policy "Catalog requests readable for enrichment"
+on public.catalog_requests
+for select to anon, authenticated
+using (true);
+
+grant select on public.catalog_requests to anon, authenticated;
+grant insert on public.catalog_requests to authenticated;
