@@ -199,38 +199,31 @@ const BARCODE_OVERRIDES_V42={
 async function handleBarcodeV3(c){
  const code=String(c||"").trim();
  let x=state.collection.find(s=>String(s.barcode||"").trim()===code);
- if(!x){
-   // Always refresh the online catalog before resolving a scanned EAN/UPC.
-   // This also fixes scans performed before the enrichment JSON finished loading.
-   try{
-     const r=await fetch('./data/set-enrichment.json?t='+Date.now(),{cache:'no-store'});
-     if(r.ok)enrichmentV3=await r.json();
-   }catch{}
-   let hit=Object.entries(enrichmentV3?.sets||{}).find(([n,e])=>[e.ean,e.upc].filter(Boolean).some(v=>String(v).trim()===code));
-   if(!hit&&BARCODE_OVERRIDES_V42[code]){
-     const o=BARCODE_OVERRIDES_V42[code],e=enrichmentV3?.sets?.[o.setNumber]||{brickeconomyName:o.name,rebrickableName:o.name,ean:code};
-     hit=[o.setNumber,e];
-   }
-   if(hit){
-     const [setNumber,e]=hit;
-     x=state.collection.find(s=>String(s.setNumber)===String(setNumber));
-     if(x){
-       if(!x.barcode)x.barcode=code;
-       if(!x.imageUrl&&e.imageUrl)x.imageUrl=e.imageUrl;
-       persist();refresh();showDetailV3(x.setNumber);return;
-     }
-     openSet();
-     $("fSet").value=setNumber;
-     $("fName").value=e.brickeconomyName||e.rebrickableName||"";
-     $("fBarcode").value=code;
-     if($("fImage")&&e.imageUrl)$("fImage").value=e.imageUrl;
-     return;
-   }
- }
  if(x){showDetailV3(x.setNumber);return}
- openSet();
- $("fBarcode").value=code;
- alert("Barcode erkannt ("+code+"), aber in den bisher geladenen Online-Daten noch keinem LEGO-Set zugeordnet.");
+
+ const central=await lookupBarcodeCentralV43(code);
+ if(central){
+   const e={set_name:central.set_name,image_url:central.image_url};
+   await useBarcodeSetV43(code,central.set_number,e);
+   return;
+ }
+
+ try{
+   const r=await fetch('./data/set-enrichment.json?t='+Date.now(),{cache:'no-store'});
+   if(r.ok)enrichmentV3=await r.json();
+ }catch{}
+ let hit=Object.entries(enrichmentV3?.sets||{}).find(([n,e])=>[e.ean,e.upc].filter(Boolean).some(v=>String(v).trim()===code));
+ if(!hit&&BARCODE_OVERRIDES_V42[code]){
+   const o=BARCODE_OVERRIDES_V42[code],e=enrichmentV3?.sets?.[o.setNumber]||{brickeconomyName:o.name,rebrickableName:o.name,ean:code};
+   hit=[o.setNumber,e];
+ }
+ if(hit){
+   const [setNumber,e]=hit;
+   await learnBarcodeV43(code,setNumber,e.brickeconomyName||e.rebrickableName||"",e.imageUrl||"");
+   await useBarcodeSetV43(code,setNumber,e);
+   return;
+ }
+ await handleUnknownBarcodeV43(code);
 }
 function bindV3(){fillAreaFilterV3();$("toggleView").onclick=()=>{collectionModeV3=collectionModeV3==="list"?"grid":"list";renderCollection()};$("areaFilter").onchange=renderCollection;$("quickBuy").onclick=()=>openPurchaseV3();$("quickExport").onclick=()=>$("exportJson").click();$("purchaseGeneral").onclick=()=>openPurchaseV3();$("savePurchase").onclick=savePurchaseV3;$("cancelPurchase").onclick=$("closePurchaseX").onclick=()=>{$("purchaseModal").classList.remove("show");purchaseFromWishV3=null};$("closeDetail").onclick=()=>$("detailModal").classList.remove("show");document.querySelectorAll(".hotspot").forEach(b=>b.onclick=()=>renderCityV3(b.dataset.area));$("clearCityFilter").onclick=()=>renderCityV3();$("resetModules").onclick=()=>{state.modules=structuredClone(DEFAULT_MODULES_V3);state.collection.forEach(x=>x.module=moduleForV3(x.setNumber)||x.module||"");persist();refresh()};$("scanTop").onclick=$("scanSettings").onclick=scanV3;$("closeScanner").onclick=stopScanV3;$("barcodePhoto").onchange=e=>{const f=e.target.files?.[0];if(f)decodePhotoV3(f);e.target.value=""};$("manualBarcode").onclick=()=>{const c=prompt("Barcode / EAN eingeben:");if(c){stopScanV3();handleBarcodeV3(c)}};if($("reloadEnrichment"))$("reloadEnrichment").onclick=()=>loadEnrichmentV3(true);const oldSwitch=switchTab;switchTab=function(id){oldSwitch(id);if(id==="analysis")renderAnalysisV3()};$("saveWish").onclick=()=>{const n=$("wSet").value.trim(),name=$("wName").value.trim();if(!n||!name)return alert("Setnummer und Name fehlen.");const o={priority:$("wPrio").value,setNumber:n,name,area:$("wArea").value.trim(),rrp:pV3($("wRrp").value),price:pV3($("wPrice").value),limit:pV3($("wLimit").value),offer:pV3($("wOffer").value),imageUrl:$("wImage").value.trim(),reason:$("wReason").value.trim()},ex=state.wishlist.find(x=>x.setNumber===n);if(ex)Object.assign(ex,o);else state.wishlist.push(o);persist();refresh();$("wishModal").classList.remove("show")};$("saveOffer").onclick=()=>{const title=$("oTitle").value.trim();if(!title)return alert("Titel fehlt.");const sw=String($("oSwitches").value||"").split("/").map(x=>pV3(x.trim()));state.classifiedOffers.push({title,location:$("oLocation").value.trim(),price:pV3($("oPrice").value),status:$("oStatus").value,details:$("oDetails").value.trim(),note:$("oNote").value.trim(),trackQty:{straight:pV3($("oStraight").value),curve:pV3($("oCurve").value),flex:pV3($("oFlex").value),switchL:sw[0]||0,switchR:sw[1]||0}});persist();refresh();$("offerModal").classList.remove("show")}}
 migrateV3();bindV3();refresh();loadEnrichmentV3();
@@ -1150,3 +1143,73 @@ function bindAccountV40(){
  if($("cloudPassword"))$("cloudPassword").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();loginV40()}});
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bindAccountV40);else bindAccountV40();
+
+
+/* v43 central barcode learning */
+async function lookupBarcodeCentralV43(code){
+ if(!cloudV3||!cloudUserV3)return null;
+ try{
+   const {data,error}=await cloudV3.from("barcode_mappings").select("barcode,set_number,set_name,image_url,status").eq("barcode",String(code)).maybeSingle();
+   if(error||!data||data.status==="rejected"||data.status==="conflict")return null;
+   return data;
+ }catch{return null}
+}
+async function learnBarcodeV43(code,setNumber,name,imageUrl=""){
+ if(!cloudV3||!cloudUserV3)return false;
+ try{
+   const {data,error}=await cloudV3.rpc("learn_barcode_mapping",{
+     p_barcode:String(code),p_set_number:String(setNumber),p_set_name:String(name||""),p_image_url:String(imageUrl||"")
+   });
+   return !error&&data!==false;
+ }catch{return false}
+}
+async function useBarcodeSetV43(code,setNumber,e={}){
+ const name=e.brickeconomyName||e.rebrickableName||e.set_name||"";
+ let x=state.collection.find(s=>String(s.setNumber)===String(setNumber));
+ if(x){
+   if(!x.barcode)x.barcode=code;
+   if(!x.imageUrl&&(e.imageUrl||e.image_url))x.imageUrl=e.imageUrl||e.image_url;
+   persist();refresh();showDetailV3(x.setNumber);return true;
+ }
+ openSet();
+ $("fSet").value=setNumber;
+ $("fName").value=name;
+ $("fBarcode").value=code;
+ if($("fImage")&&(e.imageUrl||e.image_url))$("fImage").value=e.imageUrl||e.image_url;
+ if(name||e.imageUrl||e.image_url)setTimeout(()=>fillSetFromCatalogV32?.(),50);
+ return true;
+}
+async function handleUnknownBarcodeV43(code){
+ const setNumber=(prompt("Barcode "+code+" ist noch unbekannt. Welche LEGO-Setnummer gehört dazu?")||"").trim().replace(/-1$/,"");
+ if(!setNumber){openSet();$("fBarcode").value=code;return}
+ if(!/^\d{4,7}$/.test(setNumber)){alert("Bitte eine gültige LEGO-Setnummer eingeben.");openSet();$("fBarcode").value=code;return}
+ await ensureCatalogV31(setNumber);
+ const e=enrichmentV3?.sets?.[setNumber]||{};
+ const name=e.brickeconomyName||e.rebrickableName||"";
+ await learnBarcodeV43(code,setNumber,name,e.imageUrl||"");
+ try{await requestCatalogV37(setNumber)}catch{}
+ await useBarcodeSetV43(code,setNumber,e);
+ alert("Barcode wurde gespeichert. Diese Zuordnung steht künftig auch anderen angemeldeten Benutzern zur Verfügung.");
+}
+async function loadBarcodeAdminV43(){
+ if(!isAdminV36()||!cloudV3||!$("barcodeAdminListV43"))return;
+ try{
+   const {data,error}=await cloudV3.from("barcode_mappings").select("barcode,set_number,set_name,status,report_count,updated_at").order("updated_at",{ascending:false}).limit(100);
+   if(error)throw error;
+   const rows=data||[],pending=rows.filter(r=>r.status==="pending"||r.status==="conflict");
+   $("barcodeAdminStatsV43").innerHTML='<div class="miniStat"><span>Bekannte Barcodes</span><b>'+rows.length+'</b></div><div class="miniStat"><span>Zu prüfen</span><b>'+pending.length+'</b></div><div class="miniStat"><span>Bestätigt</span><b>'+rows.filter(r=>r.status==="verified").length+'</b></div>';
+   $("barcodeAdminListV43").innerHTML=pending.length?pending.map(r=>'<div class="barcodeReviewV43"><div><b>'+esc(r.barcode)+'</b><span>'+esc(r.set_number)+' · '+esc(r.set_name||"")+'</span><small>'+esc(r.status)+' · Meldungen: '+pV3(r.report_count)+'</small></div><div class="actions"><button class="btn" onclick="approveBarcodeV43(\''+esc(r.barcode)+'\')">Bestätigen</button><button class="btn secondary" onclick="rejectBarcodeV43(\''+esc(r.barcode)+'\')">Ablehnen</button></div></div>').join(""):'<p class="hint">Keine offenen Barcode-Zuordnungen.</p>';
+ }catch(e){$("barcodeAdminListV43").innerHTML='<p class="hint">Barcode-Datenbank noch nicht eingerichtet: '+esc(e.message||e)+'</p>'}
+}
+window.approveBarcodeV43=async code=>{
+ const {error}=await cloudV3.rpc("admin_set_barcode_status",{p_barcode:code,p_status:"verified"});
+ if(error)return alert(error.message);loadBarcodeAdminV43();
+};
+window.rejectBarcodeV43=async code=>{
+ const {error}=await cloudV3.rpc("admin_set_barcode_status",{p_barcode:code,p_status:"rejected"});
+ if(error)return alert(error.message);loadBarcodeAdminV43();
+};
+
+if($("barcodeAdminRefreshV43"))$("barcodeAdminRefreshV43").onclick=loadBarcodeAdminV43;
+const renderAdminCoreV43=renderAdminV36;
+renderAdminV36=async function(){const r=await renderAdminCoreV43();await loadBarcodeAdminV43();return r};
