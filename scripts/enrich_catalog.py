@@ -58,6 +58,9 @@ meta=data.setdefault("meta",{})
 numbers=nums()
 changed=False
 errors=[]
+rb_requests=0
+be_requests=0
+rate_limited=False
 
 if RB_KEY:
     for i,n in enumerate(numbers):
@@ -65,6 +68,7 @@ if RB_KEY:
         if e.get("imageUrl") and e.get("rebrickableUpdated"):
             continue
         try:
+            rb_requests+=1
             j=get_json(
                 f"https://rebrickable.com/api/v3/lego/sets/{api_num(n)}/",
                 {"Authorization":f"key {RB_KEY}","User-Agent":UA}
@@ -81,6 +85,7 @@ if RB_KEY:
         except Exception as ex:
             errors.append(f"Rebrickable {n}: {ex}")
             if "RATE_LIMIT" in str(ex):
+                rate_limited=True
                 # Keep already fetched entries and resume with missing sets next scheduled run.
                 break
         # Be deliberately gentle with the public API; missing entries are retried next run.
@@ -102,6 +107,7 @@ if BE_KEY and numbers:
     for n in batch:
         e=sets.setdefault(n,{})
         try:
+            be_requests+=1
             j=get_json(
                 f"https://www.brickeconomy.com/api/v1/set/{api_num(n)}?currency=EUR",
                 {"x-apikey":BE_KEY,"Accept":"application/json","User-Agent":UA}
@@ -129,7 +135,9 @@ if BE_KEY and numbers:
             changed=True; done+=1
         except Exception as ex:
             errors.append(f"BrickEconomy {n}: {ex}")
-            if "RATE_LIMIT" in str(ex): break
+            if "RATE_LIMIT" in str(ex):
+                rate_limited=True
+                break
         time.sleep(0.12)
     meta["brickeconomyCursor"]=(cursor+done)%len(numbers)
 
@@ -140,7 +148,10 @@ if changed:
         "setCount":len(numbers),
         "rebrickableEnabled":bool(RB_KEY),
         "brickeconomyEnabled":bool(BE_KEY),
-        "errors":errors[-20:]
+        "errors":errors[-20:],
+        "rebrickableRequestsThisRun":rb_requests,
+        "brickeconomyRequestsThisRun":be_requests,
+        "rateLimited":rate_limited
     })
     OUT.write_text(json.dumps(data,ensure_ascii=False,indent=2,sort_keys=True)+"\n",encoding="utf-8")
 else:
