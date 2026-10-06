@@ -2,6 +2,9 @@ name: Alle LEGO Setnummern aktualisieren
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - "scripts/build_all_sets.py"
   schedule:
     - cron: "42 4 * * 1"
 
