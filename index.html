@@ -139,11 +139,11 @@
   </div><p class="hint">Die App speichert lokal auf deinem Gerät. Regelmäßig ein JSON-Backup exportieren.</p></div>
   <div class="card wide"><div class="sectionHead"><div><h2>Online-Katalog & Marktwerte</h2><p class="hint">Setbilder über Rebrickable, Marktwerte über BrickEconomy. Die Aktualisierung läuft automatisch über GitHub Actions.</p></div><button class="btn secondary" id="reloadEnrichment">Neu laden</button></div><div id="catalogSyncStatus" class="miniStats"></div><div id="catalogSyncNote" class="hint"></div></div><div class="card wide"><h2>Barcode-Scanner</h2><p class="hint">Kamera-Scan auf unterstützten Geräten; unbekannte Barcodes können einem neuen Set zugeordnet werden.</p><button class="btn" id="scanSettings">Barcode scannen</button></div><div class="card wide"><h2>Auf dem iPhone/iPad installieren</h2><p>In Safari öffnen → Teilen → <b>Zum Home-Bildschirm</b>.</p></div>
 </section>
-<div class="legal-note">LEGO® ist eine Marke der LEGO Group. Diese App ist ein unabhängiges Privatprojekt und wird weder von der LEGO Group gesponsert, autorisiert noch unterstützt.<br><a href="./impressum.html">Impressum</a> · <a href="./datenschutz.html">Datenschutz</a></div></main>
+<div class="legal-note">LEGO® ist eine Marke der LEGO Group. Diese App ist ein unabhängiges Privatprojekt und wird weder von der LEGO Group gesponsert, autorisiert noch unterstützt.<br><a href="./impressum.html">Impressum</a> · <a href="./datenschutz.html">Datenschutz</a></div><datalist id="catalogSuggestionsV35"></datalist></main>
 
 <div id="setModal" class="modal"><div class="sheet">
 <h2 id="setTitle">Set hinzufügen</h2><div class="form">
-<label>Setnummer<input id="fSet"></label><label>Name<input id="fName"></label>
+<label>Setnummer<input id="fSet" list="catalogSuggestionsV35"><small id="fCatalogStatusV35" class="fieldStatus"></small></label><label>Name<input id="fName"></label>
 <label>Anzahl<input id="fQty" type="number" min="1" value="1"></label><label>Kaufpreis je Stück (€)<input id="fPrice" type="number" step="0.01"></label>
 <label>Aktueller Wert je Stück (€)<input id="fValue" type="number" step="0.01"></label><label>Stadtbereich<input id="fArea"></label>
 <label>Kategorie<input id="fCat"></label><label>Breite (cm)<input id="fWidth" type="number" step="0.1"></label>
@@ -154,7 +154,7 @@
 
 <div id="wishModal" class="modal"><div class="sheet">
 <h2>Wunsch hinzufügen</h2><div class="form">
-<label>Priorität<select id="wPrio"><option>A</option><option>B</option><option>C</option></select></label><label>Setnummer<input id="wSet"></label>
+<label>Priorität<select id="wPrio"><option>A</option><option>B</option><option>C</option></select></label><label>Setnummer<input id="wSet" list="catalogSuggestionsV35"><small id="wCatalogStatusV35" class="fieldStatus"></small></label>
 <label>Name<input id="wName"></label><label>Stadtbereich<input id="wArea"></label>
 <label>UVP (€)<input id="wRrp" type="number" step="0.01"></label><label>Richtpreis (€)<input id="wPrice" type="number" step="0.01"></label><label>Kaufgrenze (€)<input id="wLimit" type="number" step="0.01"></label><label>Aktuelles Angebot (€)<input id="wOffer" type="number" step="0.01"></label><label>Bild-URL (optional)<input id="wImage" type="url" placeholder="https://…"></label>
 <label>Grund<textarea id="wReason"></textarea></label>
