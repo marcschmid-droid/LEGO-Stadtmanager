@@ -7,11 +7,11 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg">
 <link rel="apple-touch-icon" href="./icon.svg">
-<link rel="stylesheet" href="./styles.css?v=18">
+<link rel="stylesheet" href="./styles.css?v=19">
 <title>LEGO Stadtmanager</title>
 <script>
 (async()=>{
-  const V="18";
+  const V="19";
   if(localStorage.getItem("lego-app-shell-version")!==V){
     try{
       if("serviceWorker" in navigator){
@@ -30,8 +30,8 @@
 </script></head>
 <body>
 <header><div class="head">
-  <div><h1>LEGO Stadtmanager</h1><small>Sammlung · Einkauf · Stadt · Züge · <b id="appVersion">v18</b></small></div>
-  <div class="headActions"><button id="scanTop" class="iconbtn" title="Barcode scannen">▣</button><button id="addTop" class="btn">＋ Set</button></div>
+  <div><h1>LEGO Stadtmanager</h1><small>Sammlung · Einkauf · Stadt · Züge · <b id="appVersion">v19</b></small></div>
+  <div class="headActions"><button id="userTop" class="iconbtn userbadge" title="Benutzer wechseln">👤</button><button id="scanTop" class="iconbtn" title="Barcode scannen">▣</button><button id="addTop" class="btn">＋ Set</button></div>
 </div></header>
 
 <main>
@@ -41,7 +41,7 @@
   <button class="tab" data-tab="wishlist">Einkauf</button>
   <button class="tab" data-tab="city">Stadt</button>
   <button class="tab" data-tab="trains">Züge</button><button class="tab" data-tab="analysis">Analyse</button>
-  <button class="tab" data-tab="settings">Daten</button>
+  <button class="tab" data-tab="users">Benutzer</button><button class="tab" data-tab="settings">Daten</button>
 </nav>
 
 <section id="home" class="panel active">
@@ -118,6 +118,9 @@
 
 <section id="analysis" class="panel"><div class="cards"><div class="card"><span>Sets mit Wert</span><b id="aValued">0</b></div><div class="card"><span>Sets mit Maßen</span><b id="aSized">0</b></div><div class="card"><span>Fläche bekannt</span><b id="aArea">0 m²</b></div><div class="card"><span>Bereiche</span><b id="aZones">0</b></div></div><div class="analysisgrid"><div class="card wide"><h2>Verteilung nach Stadtbereich</h2><div id="areaAnalysis"></div></div><div class="card wide"><h2>Wert / Investment</h2><div id="valueAnalysis"></div></div><div class="card wide"><h2>Datenqualität</h2><div id="qualityAnalysis"></div></div></div></section>
 
+<section id="users" class="panel">
+  <div class="card wide"><div class="sectionHead"><div><h2>Benutzer</h2><p class="hint">Jeder Benutzer verwaltet auf diesem Gerät seine eigene Sammlung, Wunschliste und Stadtplanung.</p></div><button class="btn" id="addUser">＋ Benutzer</button></div><div id="userCards" class="usergrid"></div></div>
+</section>
 <section id="settings" class="panel">
   <div class="card wide"><h2>Daten & Sicherung</h2><div class="actions">
     <label class="btn secondary">CSV importieren<input id="csvFile" type="file" accept=".csv,text/csv" hidden></label>
@@ -129,6 +132,7 @@
 </section>
 </main>
 
+<div id="userModal" class="modal"><div class="sheet"><div class="sectionHead"><h2>Benutzer hinzufügen</h2><button class="closeX" id="closeUser">×</button></div><div class="form"><label>Name<input id="userName" maxlength="40" placeholder="z. B. Marc"></label></div><p class="hint">Der neue Benutzer startet mit einer eigenen, leeren Sammlung.</p><div class="actions right"><button class="btn secondary" id="cancelUser">Abbrechen</button><button class="btn" id="saveUser">Benutzer anlegen</button></div></div></div>
 <div id="setModal" class="modal"><div class="sheet">
 <h2 id="setTitle">Set hinzufügen</h2><div class="form">
 <label>Setnummer<input id="fSet"></label><label>Name<input id="fName"></label>
@@ -161,5 +165,5 @@
 <div id="detailModal" class="modal"><div class="sheet"><div class="sectionHead"><h2 id="detailTitle">Setdetails</h2><button class="closeX" id="closeDetail">×</button></div><div id="detailContent"></div></div></div>
 <div id="purchaseModal" class="modal"><div class="sheet"><div class="sectionHead"><h2>Kauf erfassen</h2><button class="closeX" id="closePurchaseX">×</button></div><div class="form"><label>Setnummer<input id="pSet"></label><label>Name<input id="pName"></label><label>Anzahl<input id="pQty" type="number" min="1" value="1"></label><label>Preis je Stück (€)<input id="pPrice" type="number" step="0.01"></label><label>Versand (€)<input id="pShipping" type="number" step="0.01"></label><label>Kaufdatum<input id="pDate" type="date"></label><label>Verkäufer / Quelle<input id="pSeller"></label><label>Zustand<select id="pCondition"><option>Unbekannt</option><option>Neu / OVP</option><option>Gebraucht vollständig</option><option>Gebraucht unvollständig</option></select></label><label>Stadtbereich<input id="pArea"></label><label>Modul<input id="pModule" placeholder="z. B. M27"></label><label>Originalkarton<select id="pBox"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Vollständig?<select id="pComplete"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Notiz<textarea id="pNote"></textarea></label></div><div class="actions right"><button class="btn secondary" id="cancelPurchase">Abbrechen</button><button class="btn" id="savePurchase">Kauf speichern</button></div></div></div>
 <div id="scannerModal" class="modal"><div class="sheet"><div class="sectionHead"><h2>Barcode scannen</h2><button class="closeX" id="closeScanner">×</button></div><video id="scannerVideo" playsinline muted></video><p id="scannerStatus" class="hint">Kamera wird vorbereitet…</p><div class="actions"><label class="btn" id="photoBarcodeLabel">📷 Barcode fotografieren<input id="barcodePhoto" type="file" accept="image/*" capture="environment" hidden></label><button class="btn secondary" id="manualBarcode">Barcode manuell eingeben</button></div></div></div>
-<script src="https://unpkg.com/@zxing/library@0.23.0/umd/index.min.js"></script><script src="./seed-data.js"></script><script src="./app.js?v=18"></script><script src="./app-v3.js?v=18"></script>
+<script src="https://unpkg.com/@zxing/library@0.23.0/umd/index.min.js"></script><script src="./seed-data.js"></script><script src="./app.js?v=19"></script><script src="./app-v3.js?v=19"></script>
 </body></html>
