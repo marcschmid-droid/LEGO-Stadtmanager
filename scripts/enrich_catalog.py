@@ -6,11 +6,13 @@ import requests
 ROOT=Path(__file__).resolve().parents[1]
 SEED=ROOT/"seed-data.js"
 OUT=ROOT/"data"/"set-enrichment.json"
+CONFIG=ROOT/"supabase-config.js"
 OUT.parent.mkdir(parents=True,exist_ok=True)
 
 RB_KEY=os.getenv("REBRICKABLE_API_KEY","").strip()
 BE_KEY=os.getenv("BRICKECONOMY_API_KEY","").strip()
 BE_BATCH=max(1,min(int(os.getenv("BRICKECONOMY_BATCH_SIZE","90")),90))
+REQUESTS_ONLY=os.getenv("REQUESTS_ONLY","").strip()=="1"
 UA="LEGO-Stadtmanager/1.0 (+https://github.com/marcschmid-droid/LEGO-Stadtmanager)"
 
 def load():
@@ -43,6 +45,28 @@ def nums():
             seen.add(n);out.append(n)
     return out
 
+def requested_nums():
+    if not CONFIG.exists(): return []
+    try:
+        text=CONFIG.read_text(encoding="utf-8")
+        url=re.search(r'url:"([^"]+)"',text)
+        key=re.search(r'publishableKey:"([^"]+)"',text)
+        if not url or not key: return []
+        r=requests.get(
+            url.group(1)+"/rest/v1/catalog_requests?select=set_number&order=requested_at.asc&limit=500",
+            headers={"apikey":key.group(1),"Authorization":"Bearer "+key.group(1),"Accept":"application/json"},
+            timeout=20
+        )
+        if not r.ok: return []
+        out=[];seen=set()
+        for row in r.json():
+            n=str(row.get("set_number","")).strip()
+            if re.fullmatch(r"\d{4,7}(?:-\d+)?",n) and n not in seen:
+                seen.add(n);out.append(n)
+        return out
+    except Exception:
+        return []
+
 def api_num(n):
     return n if "-" in n else n+"-1"
 
@@ -55,7 +79,13 @@ def get_json(url,headers=None,timeout=25):
 data=load()
 sets=data.setdefault("sets",{})
 meta=data.setdefault("meta",{})
-numbers=nums()
+seed_numbers=nums()
+requests_numbers=requested_nums()
+numbers=[]
+for n in requests_numbers+seed_numbers:
+    if n not in numbers: numbers.append(n)
+if REQUESTS_ONLY:
+    numbers=requests_numbers
 changed=False
 errors=[]
 rb_requests=0
@@ -91,7 +121,7 @@ if RB_KEY:
         # Be deliberately gentle with the public API; missing entries are retried next run.
         time.sleep(0.25)
 
-if BE_KEY and numbers:
+if BE_KEY and numbers and not REQUESTS_ONLY:
     cursor=int(meta.get("brickeconomyCursor",0)) % len(numbers)
     # Missing market data first, in collection priority order. After coverage is
     # complete, continue round-robin refreshes for already known sets.
