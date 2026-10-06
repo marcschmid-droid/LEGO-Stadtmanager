@@ -38,3 +38,5 @@ th,td{padding:10px;border-bottom:1px solid #edf1f4;text-align:left;font-size:13p
 #collection .toolbar select{width:auto;min-width:160px}
 @media(max-width:900px){.cards{grid-template-columns:repeat(3,1fr)}.homegrid,.analysisgrid{grid-template-columns:1fr}}
 @media(max-width:720px){.detailHero{grid-template-columns:1fr}.detailPic{height:210px}.modulegrid{gap:3px}.module{font-size:9px;border-radius:5px}.hotspot{font-size:9px;padding:5px 7px}#collection .toolbar select{width:100%}}
+
+#wishlist .tablewrap{display:none}
