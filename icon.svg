@@ -1,7 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<rect width="512" height="512" rx="96" fill="#1f4e78"/>
-<rect x="90" y="175" width="332" height="245" rx="34" fill="#f2c94c"/>
-<circle cx="170" cy="157" r="55" fill="#e05245"/><circle cx="342" cy="157" r="55" fill="#e05245"/>
-<rect x="142" y="240" width="228" height="40" rx="12" fill="#1f4e78"/>
-<rect x="142" y="315" width="165" height="40" rx="12" fill="#1f4e78"/>
+<defs><linearGradient id="r" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ef2b1d"/><stop offset="1" stop-color="#a90f08"/></linearGradient></defs>
+<rect width="512" height="512" rx="108" fill="url(#r)"/>
+<circle cx="292" cy="214" r="142" fill="#fff" opacity=".96"/>
+<path d="M74 292h364v112H74z" fill="#8d0c07" opacity=".28"/>
+<path d="M80 306h352M80 362h352M126 282v130M202 282v130M278 282v130M354 282v130" stroke="#fff" stroke-width="12" opacity=".32"/>
+<path d="M286 104h46v188h-46zM298 80h22v28h-22zM326 148h48v144h-48zM220 166h50v126h-50zM154 204h48v88h-48zM390 214h38v78h-38z" fill="#c9160d"/>
+<path d="M92 282h150c35 0 54 18 78 42 22 22 45 34 100 34" fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round"/>
+<g transform="translate(92 250)">
+<rect x="0" y="48" width="176" height="122" rx="20" fill="#ed2518"/>
+<ellipse cx="42" cy="48" rx="27" ry="13" fill="#ff6257"/>
+<ellipse cx="126" cy="48" rx="27" ry="13" fill="#ff6257"/>
+<ellipse cx="42" cy="48" rx="20" ry="9" fill="#d5160d"/>
+<ellipse cx="126" cy="48" rx="20" ry="9" fill="#d5160d"/>
+</g>
 </svg>
