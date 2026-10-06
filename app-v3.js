@@ -1860,6 +1860,16 @@ function collectorThemePathV504(all,row){
  const t=all?.themes?.[String(row?.[5]||"")];
  return {name:t?.[0]||"",path:t?.[2]||"",root:t?.[3]||t?.[0]||""};
 }
+function collectorSetTypeV506(all,row){
+ const t=collectorThemePathV504(all,row);
+ const hay=nV3([row?.[0],t.name,t.path,t.root].join(" "));
+ if(/polybag|poly bag/.test(hay))return "polybag";
+ if(/gift with purchase|\bgwp\b|promotional|promo\b|free gift|gratis|beigabe/.test(hay))return "gwp";
+ return "main";
+}
+function collectorSetTypeLabelV506(type){
+ return type==="polybag"?"Polybag":type==="gwp"?"Gratis-Beigabe / GWP":"Hauptset";
+}
 function collectorMatchesDefV504(all,row,def){
  const t=collectorThemePathV504(all,row);
  if(def.root)return t.root===def.root;
@@ -1939,10 +1949,10 @@ async function renderCollectorSetViewV504(){
    subEl.innerHTML='<option value="">Alle Unterthemen</option>'+subs.map(s=>'<option value="'+esc(s)+'">'+esc(s.split(" › ").slice(-1)[0])+'</option>').join("");
    if(subs.includes(oldSub))subEl.value=oldSub;
  }
- const status=$("collectorStatusV504")?.value||"all",year=Number($("collectorYearV504")?.value||0),sub=$("collectorSubthemeV505")?.value||"",setq=nV3($("collectorSetSearchV505")?.value||"");
+ const status=$("collectorStatusV504")?.value||"all",year=Number($("collectorYearV504")?.value||0),sub=$("collectorSubthemeV505")?.value||"",type=$("collectorTypeV506")?.value||"",setq=nV3($("collectorSetSearchV505")?.value||"");
  rows=rows.filter(([n,r])=>{
-   const t=collectorThemePathV504(all,r),hay=nV3([n,r[0],r[1],t.path].join(" "));
-   return (status==="all"||collectorStatusForV504(n)===status)&&(!year||Number(r[1])===year)&&(!sub||t.path===sub)&&(!setq||hay.includes(setq));
+   const t=collectorThemePathV504(all,r),hay=nV3([n,r[0],r[1],t.path].join(" ")),kind=collectorSetTypeV506(all,r);
+   return (status==="all"||collectorStatusForV504(n)===status)&&(!year||Number(r[1])===year)&&(!sub||t.path===sub)&&(!type||kind===type)&&(!setq||hay.includes(setq));
  });
  rows.sort((a,b)=>Number(b[1][1]||0)-Number(a[1][1]||0)||String(a[0]).localeCompare(String(b[0]),undefined,{numeric:true}));
  const fullRows=collectorRowsV504(all,collectorCurrentV504),p=collectorProgressV504(fullRows);
@@ -1955,9 +1965,10 @@ async function renderCollectorSetViewV504(){
    const st=collectorStatusForV504(n),label=st==="owned"?"✓ Vorhanden":st==="wishlist"?"♥ Wunschliste":"Fehlt";
    const action=st==="missing"?'<button class="btn collectorWishBtnV504" onclick="event.stopPropagation();addCollectorWishV504(\''+esc(n)+'\')">Auf Wunschliste</button>':
      st==="owned"?'<span class="collectorStatusV504 owned">✓ Vorhanden</span>':'<span class="collectorStatusV504 wishlist">♥ Wunschliste</span>';
+   const kind=collectorSetTypeV506(all,r);
    return '<article class="collectorSetCardV504 '+st+'">'+
      '<div class="collectorSetImageV504">'+(r[3]?'<img src="'+esc(r[3])+'" loading="lazy" alt="">':'<span>LEGO<br>'+esc(n)+'</span>')+'</div>'+
-     '<div class="collectorSetBodyV504"><div class="collectorSetTopV504"><span>'+esc(n)+'</span><em>'+esc(String(r[1]||"–"))+'</em></div><h3>'+esc(r[0]||("Set "+n))+'</h3><p>'+pV3(r[2])+' Teile</p>'+action+'</div>'+
+     '<div class="collectorSetBodyV504"><div class="collectorSetTopV504"><span>'+esc(n)+'</span><em>'+esc(String(r[1]||"–"))+'</em></div><h3>'+esc(r[0]||("Set "+n))+'</h3><div class="collectorMetaRowV506"><span>'+pV3(r[2])+' Teile</span><b class="collectorTypeBadgeV506 '+kind+'">'+esc(collectorSetTypeLabelV506(kind))+'</b></div>'+action+'</div>'+
    '</article>';
  }).join(""):'<div class="card"><p>Für diesen Filter wurden keine Sets gefunden.</p></div>';
 }
@@ -1974,13 +1985,14 @@ window.addCollectorWishV504=async n=>{
  persist();refresh();renderCollectorSetViewV504();
 };
 function bindCollectorV504(){
- const search=$("collectorSearchV504"),status=$("collectorStatusV504"),year=$("collectorYearV504"),sub=$("collectorSubthemeV505"),setSearch=$("collectorSetSearchV505"),back=$("collectorBackV504");
+ const search=$("collectorSearchV504"),status=$("collectorStatusV504"),year=$("collectorYearV504"),sub=$("collectorSubthemeV505"),type=$("collectorTypeV506"),setSearch=$("collectorSetSearchV505"),back=$("collectorBackV504");
  if(search)search.oninput=()=>{if(collectorCurrentV504){collectorCurrentV504=null;$("collectorThemeViewV504")?.classList.add("hidden");$("collectorFeaturedV504")?.classList.remove("hidden")}renderCollectorThemesV504()};
  if(status)status.onchange=()=>collectorCurrentV504?renderCollectorSetViewV504():renderCollectorThemesV504();
  if(year)year.onchange=()=>collectorCurrentV504&&renderCollectorSetViewV504();
  if(sub)sub.onchange=()=>collectorCurrentV504&&renderCollectorSetViewV504();
+ if(type)type.onchange=()=>collectorCurrentV504&&renderCollectorSetViewV504();
  if(setSearch)setSearch.oninput=()=>collectorCurrentV504&&renderCollectorSetViewV504();
- if(back)back.onclick=()=>{collectorCurrentV504=null;$("collectorThemeViewV504")?.classList.add("hidden");$("collectorFeaturedV504")?.classList.remove("hidden");if(year)year.value="";if(sub)sub.value="";if(setSearch)setSearch.value="";renderCollectorThemesV504()};
+ if(back)back.onclick=()=>{collectorCurrentV504=null;$("collectorThemeViewV504")?.classList.add("hidden");$("collectorFeaturedV504")?.classList.remove("hidden");if(year)year.value="";if(sub)sub.value="";if(type)type.value="";if(setSearch)setSearch.value="";renderCollectorThemesV504()};
 }
 const switchTabBaseV504=switchTab;
 switchTab=function(id){switchTabBaseV504(id);if(id==="collector"){renderCollectorThemesV504();if(collectorCurrentV504)renderCollectorSetViewV504()}};
