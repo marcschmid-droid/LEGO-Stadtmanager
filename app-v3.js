@@ -279,3 +279,149 @@ async function loadEnrichmentV3(force=false){
 }
 
 initCloudV3();
+
+
+/* v28 feature bundle: recovery/profile, sync status, exemplar tools, planner, price history */
+let plannerSelectedSetV28="";
+function todayV28(){return new Date().toISOString().slice(0,10)}
+function ensureV28State(){
+ state.meta=state.meta||{};
+ state.meta.profileName=state.meta.profileName||"";
+ state.meta.moduleWidth=Number(state.meta.moduleWidth||25.6);
+ state.meta.moduleDepth=Number(state.meta.moduleDepth||25.6);
+ state.priceHistory=state.priceHistory||{};
+ state.collection=(state.collection||[]).map(x=>{
+   x.exemplars=x.exemplars||[];
+   const q=Math.max(1,pV3(x.quantity)||1);
+   while(x.exemplars.length<q)x.exemplars.push({legacy:true,date:x.purchaseDate||"",seller:x.seller||"",condition:x.condition||"Unbekannt",price:pV3(x.purchasePrice),shipping:0,box:"",complete:"",note:"Historischer Bestand"});
+   return x;
+ });
+}
+const migrateBaseV28=migrateV3;
+migrateV3=function(){migrateBaseV28();ensureV28State()};
+
+function accountEnhanceV28(){
+ const card=$("cloudAccountCard"); if(!card||$("profileNameV28"))return;
+ const status=document.createElement("div"); status.className="syncbox"; status.innerHTML='<b id="syncStateV28">Synchronisation</b><span id="syncTextV28">wird geprüft…</span>'; card.appendChild(status);
+ const signedOut=$("cloudSignedOut");
+ if(signedOut){
+   const b=document.createElement("button");b.className="btn secondary";b.id="cloudForgotV28";b.textContent="Passwort vergessen";signedOut.querySelector(".actions")?.appendChild(b);
+   b.onclick=async()=>{const email=$("cloudEmail")?.value.trim()||prompt("E-Mail-Adresse:")||"";if(!email)return;const {error}=await cloudV3.auth.resetPasswordForEmail(email,{redirectTo:"https://marcschmid-droid.github.io/LEGO-Stadtmanager/"});alert(error?error.message:"E-Mail zum Zurücksetzen wurde versendet.")};
+ }
+ const signedIn=$("cloudSignedIn");
+ if(signedIn){
+   const box=document.createElement("div");box.className="profilebox";box.innerHTML='<label>Profilname<input id="profileNameV28" maxlength="40" placeholder="z. B. Marc"></label><button class="btn secondary" id="saveProfileV28">Profil speichern</button>';signedIn.insertBefore(box,signedIn.querySelector(".actions"));
+   $("profileNameV28").value=state.meta?.profileName||"";
+   $("saveProfileV28").onclick=()=>{state.meta.profileName=$("profileNameV28").value.trim();persist();updateAccountBadgeV3();alert("Profil gespeichert.")};
+ }
+ updateSyncV28();
+}
+function updateSyncV28(msg){
+ const a=$("syncStateV28"),b=$("syncTextV28");if(!a||!b)return;
+ if(!navigator.onLine){a.textContent="Offline";b.textContent="Änderungen werden lokal gespeichert.";return}
+ a.textContent=cloudUserV3?"Cloud verbunden":"Nicht angemeldet";
+ b.textContent=msg||(cloudUserV3?"Daten werden automatisch synchronisiert.":"Bitte anmelden, um geräteübergreifend zu synchronisieren.");
+}
+window.addEventListener("online",()=>updateSyncV28("Verbindung wiederhergestellt."));
+window.addEventListener("offline",()=>updateSyncV28());
+
+const cloudSaveBaseV28=cloudSaveV3;
+cloudSaveV3=async function(show=false){updateSyncV28("Synchronisiere…");const r=await cloudSaveBaseV28(show);updateSyncV28("Cloud aktuell · "+new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}));return r};
+const badgeBaseV28=updateAccountBadgeV3;
+updateAccountBadgeV3=function(){badgeBaseV28();if($("userTop")&&cloudUserV3&&state.meta?.profileName){$("userTop").textContent=state.meta.profileName.charAt(0).toUpperCase();$("userTop").title=state.meta.profileName+" · "+cloudUserV3.email}if($("profileNameV28"))$("profileNameV28").value=state.meta?.profileName||""};
+
+function bindRecoveryV28(){
+ const wait=()=>{if(!cloudV3){setTimeout(wait,250);return}cloudV3.auth.onAuthStateChange(async(e)=>{if(e==="PASSWORD_RECOVERY"){const p=prompt("Neues Passwort (mindestens 6 Zeichen):");if(!p)return;if(p.length<6)return alert("Passwort ist zu kurz.");const {error}=await cloudV3.auth.updateUser({password:p});alert(error?error.message:"Passwort wurde geändert.")}setTimeout(accountEnhanceV28,50)});accountEnhanceV28()};wait();
+}
+
+const saveSetBaseV28=saveSet;
+saveSet=function(){
+ const n=$("fSet")?.value.trim();
+ if(!editing&&n&&state.collection.some(x=>String(x.setNumber)===String(n))){
+   if(!confirm("Dieses Set ist bereits vorhanden. Als weiteres Exemplar zum vorhandenen Set hinzufügen?"))return;
+ }
+ return saveSetBaseV28();
+};
+
+window.editExemplarV28=(setNumber,index)=>{
+ const x=state.collection.find(y=>String(y.setNumber)===String(setNumber)),e=x?.exemplars?.[index];if(!e)return;
+ const price=prompt("Kaufpreis (€):",String(e.price??""));if(price===null)return;
+ const date=prompt("Kaufdatum (JJJJ-MM-TT):",e.date||"")??e.date;
+ const seller=prompt("Verkäufer / Quelle:",e.seller||"")??e.seller;
+ const condition=prompt("Zustand:",e.condition||"Unbekannt")??e.condition;
+ const note=prompt("Notiz:",e.note||"")??e.note;
+ Object.assign(e,{price:pV3(String(price).replace(",",".")),date,seller,condition,note,legacy:false});
+ const vals=x.exemplars.map(v=>pV3(v.price)).filter(v=>v>0);if(vals.length)x.purchasePrice=vals.reduce((a,b)=>a+b,0)/vals.length;
+ persist();refresh();showDetailV3(setNumber);
+};
+window.deleteExemplarV28=(setNumber,index)=>{
+ const x=state.collection.find(y=>String(y.setNumber)===String(setNumber));if(!x||!confirm("Dieses einzelne Exemplar wirklich löschen?"))return;
+ x.exemplars.splice(index,1);x.quantity=Math.max(0,pV3(x.quantity)-1);
+ if(x.quantity===0){state.collection=state.collection.filter(y=>y!==x);$("detailModal")?.classList.remove("show")}else showDetailV3(setNumber);
+ persist();refresh();
+};
+const detailBaseV28=showDetailV3;
+showDetailV3=function(n){
+ detailBaseV28(n);const x=state.collection.find(y=>String(y.setNumber)===String(n));if(!x)return;
+ const ex=$("detailContent")?.querySelector(".exemplars");if(!ex)return;
+ ex.innerHTML='<h3>Einzel-Exemplare / Käufe</h3>'+x.exemplars.map((e,i)=>'<div class="exemplar"><div><b>#'+(i+1)+'</b> · '+esc(e.date||"ohne Datum")+' · '+esc(e.condition||"Unbekannt")+' · '+esc(e.seller||"Quelle unbekannt")+' · '+euro(e.price)+(e.legacy?' <span class="chip">Bestandsimport</span>':'')+'</div><div class="actions"><button class="rowbtn" onclick="editExemplarV28(\''+esc(x.setNumber)+'\','+i+')">✏️ Bearbeiten</button><button class="rowbtn" onclick="deleteExemplarV28(\''+esc(x.setNumber)+'\','+i+')">🗑 Löschen</button></div></div>').join("");
+};
+
+function fitWarningV28(x){
+ const mw=pV3(state.meta.moduleWidth)||25.6,md=pV3(state.meta.moduleDepth)||25.6,w=pV3(x.width),d=pV3(x.depth);
+ if(!w||!d)return "Maße fehlen – Passform kann nicht geprüft werden.";
+ if((w<=mw&&d<=md)||(d<=mw&&w<=md))return "Passt in ein Standardmodul ("+mw+" × "+md+" cm).";
+ return "⚠️ Größer als ein Standardmodul ("+mw+" × "+md+" cm).";
+}
+function setupPlannerV28(){
+ const panel=$("city");if(!panel||$("plannerV28"))return;
+ const card=document.createElement("div");card.className="card wide";card.id="plannerV28";
+ card.innerHTML='<div class="sectionHead"><div><h2>Drag-&-Drop Stadtplan</h2><p class="hint">Am Computer ein Set auf ein Modul ziehen. Auf dem iPhone: Set auswählen, Modul antippen und „Zuordnen“ drücken.</p></div></div><div class="plannerControls"><label>Modulbreite (cm)<input id="moduleWV28" type="number" step="0.1"></label><label>Modultiefe (cm)<input id="moduleDV28" type="number" step="0.1"></label><label>Set<select id="plannerSetV28"></select></label><button class="btn" id="assignModuleV28">Ausgewähltem Modul zuordnen</button></div><p id="fitV28" class="hint"></p><div id="dragSetsV28" class="dragSets"></div>';
+ panel.appendChild(card);
+ $("moduleWV28").value=state.meta.moduleWidth;$("moduleDV28").value=state.meta.moduleDepth;
+ const saveDims=()=>{state.meta.moduleWidth=pV3($("moduleWV28").value)||25.6;state.meta.moduleDepth=pV3($("moduleDV28").value)||25.6;persist();renderPlannerV28()};$("moduleWV28").onchange=saveDims;$("moduleDV28").onchange=saveDims;
+ $("plannerSetV28").onchange=e=>{plannerSelectedSetV28=e.target.value;renderPlannerV28()};
+ $("assignModuleV28").onclick=()=>{const m=document.querySelector(".module.active")?.dataset.module;if(!plannerSelectedSetV28)return alert("Bitte zuerst ein Set auswählen.");if(!m)return alert("Bitte zuerst ein Modul antippen.");assignModuleV28(plannerSelectedSetV28,m)};
+ renderPlannerV28();
+}
+function renderPlannerV28(){
+ if(!$("plannerSetV28"))return;
+ const sets=state.collection.filter(x=>String(x.setNumber));
+ $("plannerSetV28").innerHTML='<option value="">Set auswählen…</option>'+sets.map(x=>'<option value="'+esc(x.setNumber)+'" '+(String(x.setNumber)===String(plannerSelectedSetV28)?'selected':'')+'>'+esc(x.setNumber)+' · '+esc(x.name)+'</option>').join("");
+ const x=sets.find(y=>String(y.setNumber)===String(plannerSelectedSetV28));$("fitV28").textContent=x?fitWarningV28(x):"";
+ $("dragSetsV28").innerHTML=sets.slice(0,80).map(x=>'<div class="dragSet" draggable="true" data-set="'+esc(x.setNumber)+'"><b>'+esc(x.setNumber)+'</b><span>'+esc(x.name)+'</span></div>').join("");
+ document.querySelectorAll(".dragSet").forEach(el=>el.ondragstart=e=>e.dataTransfer.setData("text/plain",el.dataset.set));
+ document.querySelectorAll(".module[data-module]").forEach(el=>{el.ondragover=e=>e.preventDefault();el.ondrop=e=>{e.preventDefault();assignModuleV28(e.dataTransfer.getData("text/plain"),el.dataset.module)}});
+}
+function assignModuleV28(setNumber,module){
+ const x=state.collection.find(y=>String(y.setNumber)===String(setNumber));if(!x)return;
+ x.module=module;syncModuleV3(x);persist();refresh();renderPlannerV28();$("fitV28").textContent=fitWarningV28(x)+" Zugeordnet zu "+module+".";
+}
+const renderModulesBaseV28=renderModulesV3;
+renderModulesV3=function(){renderModulesBaseV28();setTimeout(renderPlannerV28,0)};
+
+function recordPriceV28(setNumber,e,current){
+ state.priceHistory=state.priceHistory||{};const a=state.priceHistory[setNumber]=state.priceHistory[setNumber]||[],day=todayV28();
+ const row={date:day,newEUR:pV3(e.marketNewEUR),usedEUR:pV3(e.marketUsedEUR),currentEUR:pV3(current)};
+ const last=a[a.length-1];if(!last||last.date!==day||last.newEUR!==row.newEUR||last.usedEUR!==row.usedEUR||last.currentEUR!==row.currentEUR){a.push(row);if(a.length>180)a.splice(0,a.length-180)}
+}
+function checkWishAlertsV28(){
+ const hits=[];
+ for(const w of state.wishlist||[]){const e=enrichmentV3.sets?.[String(w.setNumber)];if(!e||!pV3(w.limit))continue;const market=pV3(e.marketNewEUR)||pV3(e.marketUsedEUR);if(market&&market<=pV3(w.limit))hits.push({w,market})}
+ state.meta.wishAlerts=hits.map(h=>({setNumber:h.w.setNumber,name:h.w.name,market:h.market,limit:pV3(h.w.limit),date:todayV28()}));
+ renderWishAlertsV28();
+}
+function renderWishAlertsV28(){
+ let box=$("wishAlertsV28");if(!box){const home=$("home");if(!home)return;box=document.createElement("div");box.id="wishAlertsV28";box.className="card wide";home.appendChild(box)}
+ const h=state.meta?.wishAlerts||[];box.innerHTML='<div class="sectionHead"><div><h2>Preisalarme</h2><p class="hint">Vergleich der aktuellen Online-Marktwerte mit deiner Kaufgrenze.</p></div><button class="btn secondary" id="notifyV28">Benachrichtigungen aktivieren</button></div>'+(h.length?h.map(x=>'<div class="alertRow"><b>'+esc(x.setNumber)+' · '+esc(x.name)+'</b><span>'+euro(x.market)+' ≤ '+euro(x.limit)+'</span></div>').join(""):'<p class="hint">Aktuell kein Set unter deiner Kaufgrenze.</p>');
+ if($("notifyV28"))$("notifyV28").onclick=async()=>{if(!("Notification" in window))return alert("Benachrichtigungen werden von diesem Gerät nicht unterstützt.");const p=await Notification.requestPermission();alert(p==="granted"?"Benachrichtigungen aktiviert.":"Benachrichtigungen wurden nicht freigegeben.")};
+ if(h.length&&Notification?.permission==="granted"&&!sessionStorage.getItem("priceNoticeV28")){new Notification("Brick City Manager",{body:h.length+" Wunschlisten-Set"+(h.length>1?"s":"")+" unter deiner Kaufgrenze."});sessionStorage.setItem("priceNoticeV28","1")}
+}
+const applyEnrichmentBaseV28=applyEnrichmentV3;
+applyEnrichmentV3=function(){applyEnrichmentBaseV28();for(const x of state.collection){const e=enrichmentV3.sets?.[String(x.setNumber)];if(e)recordPriceV28(String(x.setNumber),e,x.currentValue)}checkWishAlertsV28();persist()};
+const analysisBaseV28=renderAnalysisV3;
+renderAnalysisV3=function(){analysisBaseV28();let box=$("priceHistoryV28");if(!box){box=document.createElement("div");box.id="priceHistoryV28";box.className="card wide";$("analysis")?.appendChild(box)}const entries=Object.entries(state.priceHistory||{}).filter(([,a])=>a.length);box.innerHTML='<h2>Wertverlauf</h2><p class="hint">Historie wird ab v28 bei jedem neuen Online-Marktstand gespeichert.</p>'+entries.slice(0,20).map(([n,a])=>{const first=a[0],last=a[a.length-1];return '<div class="alertRow"><b>'+esc(n)+'</b><span>'+euro(first.currentEUR||first.newEUR)+' → '+euro(last.currentEUR||last.newEUR)+' · '+a.length+' Messpunkt'+(a.length===1?'':'e')+'</span></div>'}).join("")};
+const refreshBaseV28=refresh;
+refresh=function(){refreshBaseV28();setupPlannerV28();renderPlannerV28();renderWishAlertsV28();accountEnhanceV28()};
+
+ensureV28State();bindRecoveryV28();setTimeout(()=>{setupPlannerV28();renderWishAlertsV28();accountEnhanceV28();refresh()},300);
