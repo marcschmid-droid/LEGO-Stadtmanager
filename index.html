@@ -13,7 +13,7 @@
 <body>
 <header><div class="head">
   <div><h1>LEGO Stadtmanager</h1><small>Sammlung · Einkauf · Stadt · Züge</small></div>
-  <button id="addTop" class="btn">＋ Set</button>
+  <div class="headActions"><button id="scanTop" class="iconbtn" title="Barcode scannen">▣</button><button id="addTop" class="btn">＋ Set</button></div>
 </div></header>
 
 <main>
@@ -22,7 +22,7 @@
   <button class="tab" data-tab="collection">Sammlung</button>
   <button class="tab" data-tab="wishlist">Einkauf</button>
   <button class="tab" data-tab="city">Stadt</button>
-  <button class="tab" data-tab="trains">Züge</button>
+  <button class="tab" data-tab="trains">Züge</button><button class="tab" data-tab="analysis">Analyse</button>
   <button class="tab" data-tab="settings">Daten</button>
 </nav>
 
@@ -31,25 +31,25 @@
     <div class="card"><span>Eindeutige Sets</span><b id="kUnique">0</b></div>
     <div class="card"><span>Exemplare</span><b id="kQty">0</b></div>
     <div class="card"><span>Investment (Master)</span><b id="kInvest">0 €</b><small id="investRef" class="subnote"></small></div>
-    <div class="card"><span>Wunschliste</span><b id="kWish">0</b></div>
+    <div class="card"><span>Wunschliste</span><b id="kWish">0</b></div><div class="card"><span>Erfasster Wert</span><b id="kValue">0 €</b><small>nur gepflegte Werte</small></div><div class="card"><span>Gewinn / Verlust</span><b id="kGain">0 €</b><small id="kGainPct">0 %</small></div>
   </div>
   <div class="card wide">
     <h2>Schnellstart</h2>
     <p>Deine bestätigte Sammlung ist als Startbestand enthalten. Neue Käufe kannst du direkt eintragen oder aus der Einkaufsliste übernehmen.</p>
-    <div class="actions"><button class="btn" id="quickAdd">Neues Set</button><button class="btn secondary" id="quickExport">CSV exportieren</button></div>
+    <div class="actions"><button class="btn" id="quickAdd">Neues Set</button><button class="btn secondary" id="quickBuy">Kauf erfassen</button><button class="btn secondary" id="quickExport">Backup</button></div>
   </div>
-</section>
+<div class="homegrid"><div class="card wide"><h2>Stadtstatus</h2><div id="homeCityStats" class="miniStats"></div></div><div class="card wide"><h2>Zugstatus</h2><div id="homeTrackStats" class="miniStats"></div></div></div></section>
 
 <section id="collection" class="panel">
-  <div class="toolbar"><input id="search" placeholder="Setnummer, Name, Kategorie oder Stadtbereich…"><button class="btn" id="addBtn">＋ Set</button></div>
+  <div class="toolbar"><input id="search" placeholder="Setnummer, Name, Kategorie, Bereich, Lagerort…"><select id="areaFilter"><option value="">Alle Bereiche</option></select><button class="btn secondary" id="toggleView">▦ Raster</button><button class="btn" id="addBtn">＋ Set</button></div>
   <div class="tablewrap"><table>
     <thead><tr><th>Set</th><th>Name</th><th>Anzahl</th><th>Kaufpreis</th><th>Wert</th><th>Bereich</th><th></th></tr></thead>
     <tbody id="collectionBody"></tbody>
-  </table></div>
+  </table></div><div id="collectionGrid" class="setgrid hidden"></div>
 </section>
 
 <section id="wishlist" class="panel">
-  <div class="toolbar"><button class="btn" id="wishAdd">＋ Wunsch</button></div>
+  <div class="toolbar"><button class="btn" id="wishAdd">＋ Wunsch</button><button class="btn secondary" id="purchaseGeneral">＋ Kauf erfassen</button></div><div id="wishCards" class="wishgrid"></div>
   <div class="tablewrap"><table>
     <thead><tr><th>Prio</th><th>Set</th><th>Name</th><th>Bereich</th><th>Preis</th><th></th></tr></thead>
     <tbody id="wishBody"></tbody>
@@ -58,7 +58,7 @@
 
 <section id="city" class="panel">
   <div class="card wide">
-    <h2>Verbindliche Ursprungs-Stadt</h2><img src="./ursprungsstadt.jpg?v=8" alt="Ursprungs-Stadt" class="referenceImage">
+    <div class="sectionHead"><div><h2>Verbindliche Ursprungs-Stadt</h2><p class="hint">Tippe auf einen Bereich, um passende Sets zu filtern.</p></div><button class="btn secondary" id="clearCityFilter">Filter löschen</button></div><div class="cityImageWrap"><img src="./ursprungsstadt.jpg?v=8" alt="Ursprungs-Stadt" class="referenceImage"><button class="hotspot hs-winter" data-area="Weihnachtsdorf">Weihnachtsdorf</button><button class="hotspot hs-station" data-area="Hauptbahnhof">Hauptbahnhof</button><button class="hotspot hs-hogwarts" data-area="Hogwarts">Hogwarts</button><button class="hotspot hs-harbor" data-area="Hafen">Hafen</button><button class="hotspot hs-disney" data-area="Disney">Disney / Springfield</button><button class="hotspot hs-city" data-area="Innenstadt">Innenstadt</button><button class="hotspot hs-world" data-area="Weltpark">Weltpark / Botanik</button></div><div id="citySetResults" class="cityResults"></div>
     <p class="hint">Diese Zonierung ist die feste Referenz für weitere Planung. Die große zentrale Freifläche bleibt offen.</p>
   </div>
   <div class="citygrid">
@@ -70,7 +70,7 @@
     <div class="zone disney">Disney / Springfield<br><small>rechts</small></div>
     <div class="zone city">Innenstadt<br><small>unten Mitte</small></div>
     <div class="zone world">Weltpark / Botanik<br><small>unten rechts</small></div>
-  </div>
+  </div><div class="card wide"><div class="sectionHead"><div><h2>Modulplanung 8 × 6</h2><p class="hint">40 Tischmodule; zentrale 4 × 2 Fläche bleibt frei. Tippe ein Modul an.</p></div><button class="btn secondary" id="resetModules">Referenzbelegung</button></div><div id="moduleGrid" class="modulegrid"></div><div id="moduleDetail" class="moduleDetail hint">Modul antippen.</div></div>
 </section>
 
 <section id="trains" class="panel">
@@ -87,7 +87,7 @@
   </div>
 
   <div class="card wide">
-    <h2>Schienen-Einkaufsliste</h2>
+    <h2>Schienenbestand</h2><div id="trackSummary" class="miniStats"></div>
     <div id="trackTable" class="tablewrap"></div>
   </div>
 
@@ -98,6 +98,8 @@
   </div>
 </section>
 
+<section id="analysis" class="panel"><div class="cards"><div class="card"><span>Sets mit Wert</span><b id="aValued">0</b></div><div class="card"><span>Sets mit Maßen</span><b id="aSized">0</b></div><div class="card"><span>Fläche bekannt</span><b id="aArea">0 m²</b></div><div class="card"><span>Bereiche</span><b id="aZones">0</b></div></div><div class="analysisgrid"><div class="card wide"><h2>Verteilung nach Stadtbereich</h2><div id="areaAnalysis"></div></div><div class="card wide"><h2>Wert / Investment</h2><div id="valueAnalysis"></div></div><div class="card wide"><h2>Datenqualität</h2><div id="qualityAnalysis"></div></div></div></section>
+
 <section id="settings" class="panel">
   <div class="card wide"><h2>Daten & Sicherung</h2><div class="actions">
     <label class="btn secondary">CSV importieren<input id="csvFile" type="file" accept=".csv,text/csv" hidden></label>
@@ -105,7 +107,7 @@
     <button class="btn secondary" id="exportJson">Backup JSON</button>
     <label class="btn secondary">Backup laden<input id="jsonFile" type="file" accept=".json" hidden></label>
   </div><p class="hint">Die App speichert lokal auf deinem Gerät. Regelmäßig ein JSON-Backup exportieren.</p></div>
-  <div class="card wide"><h2>Auf dem iPhone/iPad installieren</h2><p>In Safari öffnen → Teilen → <b>Zum Home-Bildschirm</b>.</p></div>
+  <div class="card wide"><h2>Barcode-Scanner</h2><p class="hint">Kamera-Scan auf unterstützten Geräten; unbekannte Barcodes können einem neuen Set zugeordnet werden.</p><button class="btn" id="scanSettings">Barcode scannen</button></div><div class="card wide"><h2>Auf dem iPhone/iPad installieren</h2><p>In Safari öffnen → Teilen → <b>Zum Home-Bildschirm</b>.</p></div>
 </section>
 </main>
 
@@ -116,7 +118,7 @@
 <label>Aktueller Wert je Stück (€)<input id="fValue" type="number" step="0.01"></label><label>Stadtbereich<input id="fArea"></label>
 <label>Kategorie<input id="fCat"></label><label>Breite (cm)<input id="fWidth" type="number" step="0.1"></label>
 <label>Tiefe (cm)<input id="fDepth" type="number" step="0.1"></label><label>Höhe (cm)<input id="fHeight" type="number" step="0.1"></label>
-<label>Bild-URL (optional)<input id="fImage" type="url" placeholder="https://…"></label><label>Notiz<textarea id="fNote"></textarea></label>
+<label>Bild-URL (optional)<input id="fImage" type="url" placeholder="https://…"></label><label>Modul<input id="fModule" placeholder="z. B. M27"></label><label>Zustand<select id="fCondition"><option>Unbekannt</option><option>Neu / OVP</option><option>Gebraucht vollständig</option><option>Gebraucht unvollständig</option></select></label><label>Bauzustand<select id="fBuild"><option>Unbekannt</option><option>Aufgebaut</option><option>Zerlegt</option><option>OVP</option><option>Teilaufgebaut</option></select></label><label>Lagerort<input id="fStorage"></label><label>Barcode / EAN<input id="fBarcode"></label><label>Kaufdatum<input id="fPurchaseDate" type="date"></label><label>Verkäufer / Quelle<input id="fSeller"></label><label>Notiz<textarea id="fNote"></textarea></label>
 </div><div class="actions right"><button class="btn secondary" id="cancelSet">Abbrechen</button><button class="btn" id="saveSet">Speichern</button></div>
 </div></div>
 
@@ -124,7 +126,7 @@
 <h2>Wunsch hinzufügen</h2><div class="form">
 <label>Priorität<select id="wPrio"><option>A</option><option>B</option><option>C</option></select></label><label>Setnummer<input id="wSet"></label>
 <label>Name<input id="wName"></label><label>Stadtbereich<input id="wArea"></label>
-<label>Richtpreis (€)<input id="wPrice" type="number" step="0.01"></label><label>Bild-URL (optional)<input id="wImage" type="url" placeholder="https://…"></label>
+<label>UVP (€)<input id="wRrp" type="number" step="0.01"></label><label>Richtpreis (€)<input id="wPrice" type="number" step="0.01"></label><label>Kaufgrenze (€)<input id="wLimit" type="number" step="0.01"></label><label>Aktuelles Angebot (€)<input id="wOffer" type="number" step="0.01"></label><label>Bild-URL (optional)<input id="wImage" type="url" placeholder="https://…"></label>
 <label>Grund<textarea id="wReason"></textarea></label>
 </div><div class="actions right"><button class="btn secondary" id="cancelWish">Abbrechen</button><button class="btn" id="saveWish">Speichern</button></div>
 </div></div>
@@ -133,9 +135,13 @@
 <h2>Kleinanzeigen-Angebot</h2><div class="form">
 <label>Titel<input id="oTitle"></label><label>Ort<input id="oLocation"></label>
 <label>Preis (€)<input id="oPrice" type="number" step="0.01"></label><label>Status<select id="oStatus"><option>Beobachten</option><option>Angefragt</option><option>Reserviert</option><option>Gekauft</option><option>Verworfen</option></select></label>
-<label>Details<textarea id="oDetails"></textarea></label><label>Notiz<textarea id="oNote"></textarea></label>
+<label>Gerade<input id="oStraight" type="number" min="0"></label><label>Kurven<input id="oCurve" type="number" min="0"></label><label>Flex<input id="oFlex" type="number" min="0"></label><label>Weichen L / R<input id="oSwitches" placeholder="z. B. 2 / 2"></label><label>Details<textarea id="oDetails"></textarea></label><label>Notiz<textarea id="oNote"></textarea></label>
 </div><div class="actions right"><button class="btn secondary" id="cancelOffer">Abbrechen</button><button class="btn" id="saveOffer">Speichern</button></div>
 </div></div>
 
-<script src="./seed-data.js"></script><script src="./app.js"></script>
+
+<div id="detailModal" class="modal"><div class="sheet"><div class="sectionHead"><h2 id="detailTitle">Setdetails</h2><button class="closeX" id="closeDetail">×</button></div><div id="detailContent"></div></div></div>
+<div id="purchaseModal" class="modal"><div class="sheet"><div class="sectionHead"><h2>Kauf erfassen</h2><button class="closeX" id="closePurchaseX">×</button></div><div class="form"><label>Setnummer<input id="pSet"></label><label>Name<input id="pName"></label><label>Anzahl<input id="pQty" type="number" min="1" value="1"></label><label>Preis je Stück (€)<input id="pPrice" type="number" step="0.01"></label><label>Versand (€)<input id="pShipping" type="number" step="0.01"></label><label>Kaufdatum<input id="pDate" type="date"></label><label>Verkäufer / Quelle<input id="pSeller"></label><label>Zustand<select id="pCondition"><option>Unbekannt</option><option>Neu / OVP</option><option>Gebraucht vollständig</option><option>Gebraucht unvollständig</option></select></label><label>Stadtbereich<input id="pArea"></label><label>Modul<input id="pModule" placeholder="z. B. M27"></label><label>Originalkarton<select id="pBox"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Vollständig?<select id="pComplete"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Notiz<textarea id="pNote"></textarea></label></div><div class="actions right"><button class="btn secondary" id="cancelPurchase">Abbrechen</button><button class="btn" id="savePurchase">Kauf speichern</button></div></div></div>
+<div id="scannerModal" class="modal"><div class="sheet"><div class="sectionHead"><h2>Barcode scannen</h2><button class="closeX" id="closeScanner">×</button></div><video id="scannerVideo" playsinline muted></video><p id="scannerStatus" class="hint">Kamera wird vorbereitet…</p><div class="actions"><button class="btn secondary" id="manualBarcode">Barcode manuell eingeben</button></div></div></div>
+<script src="./seed-data.js"></script><script src="./app.js"></script><script src="./app-v3.js"></script>
 </body></html>
