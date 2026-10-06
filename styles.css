@@ -355,3 +355,140 @@ input:focus,select:focus,textarea:focus{outline:2px solid #c91a0940;border-color
  .v50Big50{font-size:76px}
  .v50WelcomeFeatures{grid-template-columns:1fr}
 }
+
+
+/* v50 design review — full app polish */
+:root{
+ --bg:#f3f4f6;
+ --card:#ffffff;
+ --text:#17191d;
+ --muted:#69707d;
+ --line:#e2e5e9;
+ --red:#c91a09;
+ --red-dark:#9f1508;
+ --yellow:#ffd500;
+ --surface:#f8f9fb;
+ --shadow:0 12px 34px rgba(22,27,36,.08);
+ --radius:20px;
+}
+html{background:var(--bg);scroll-behavior:smooth}
+body.themeV39{background:
+ radial-gradient(circle at 10% -10%,rgba(255,213,0,.12),transparent 28%),
+ radial-gradient(circle at 100% 8%,rgba(201,26,9,.08),transparent 24%),
+ var(--bg);min-height:100vh}
+header{background:rgba(24,25,28,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.08);box-shadow:none;padding:11px 16px}
+.head{max-width:1220px}
+.brandV39{gap:10px}
+.brandIconV39{width:42px;height:42px;border-radius:13px;background:#fff;padding:5px;box-shadow:0 4px 16px #0004}
+.brandV39 h1{font-size:17px;letter-spacing:-.3px;margin:0}
+.brandV39 small{font-size:10px;color:#ffffff9a}
+.headActions{gap:7px}
+.iconbtn{width:40px;height:40px;border-radius:12px;border:1px solid #ffffff1f;background:#ffffff0d;color:#fff}
+header .btn{min-height:40px;border-radius:12px;padding:0 14px}
+main{max-width:1220px;padding:14px 16px 44px}
+nav.tabs{position:sticky;top:65px;z-index:18;display:flex;gap:5px;padding:7px;margin:0 0 16px;background:rgba(255,255,255,.9);border:1px solid rgba(220,223,228,.88);border-radius:17px;box-shadow:0 9px 28px #17202b0c;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;border:0;border-radius:11px;background:transparent;color:#626976;font-size:12px;font-weight:800;padding:9px 12px;transition:.18s ease}
+.tab:hover{background:#f0f1f3;color:#1b1d21}
+.tab.active{background:#191a1d;color:#fff;box-shadow:0 5px 14px #1112}
+.panel{animation:panelInV50 .22s ease}
+@keyframes panelInV50{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{border:1px solid var(--line);border-radius:var(--radius);background:rgba(255,255,255,.94);box-shadow:var(--shadow);padding:18px}
+.card h2{font-size:18px;letter-spacing:-.35px;margin-top:0}
+.card h3{letter-spacing:-.2px}
+.cards{gap:10px}
+.cards>.card{min-height:122px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 8px 24px #17202b08}
+.cards>.card>span{font-size:10px;letter-spacing:.65px;text-transform:uppercase;font-weight:900;color:var(--muted)}
+.cards>.card>b{font-size:25px;letter-spacing:-.8px;margin-top:5px}
+.cards>.card>small{font-size:10px;color:var(--muted);margin-top:3px}
+.btn{min-height:42px;border-radius:13px;padding:0 15px;font-weight:850;letter-spacing:-.1px;box-shadow:none;transition:transform .15s ease,box-shadow .15s ease,background .15s ease}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px #17202b18}
+.btn:active{transform:none}
+.btn.secondary{background:#fff;border:1px solid #d8dce1;color:#222}
+input,select,textarea{min-height:43px;border:1px solid #d8dce1;border-radius:12px;background:#fff;color:var(--text);padding:10px 12px;font:inherit;outline:none;transition:border .15s ease,box-shadow .15s ease}
+input:focus,select:focus,textarea:focus{border-color:#8f96a1;box-shadow:0 0 0 3px rgba(58,64,74,.08)}
+.toolbar{display:flex;gap:8px;align-items:center;margin:0 0 12px;padding:10px;border:1px solid var(--line);border-radius:17px;background:rgba(255,255,255,.86);box-shadow:0 8px 24px #17202b08;backdrop-filter:blur(10px)}
+.toolbar input{flex:1;min-width:180px}
+.tablewrap{border:1px solid var(--line);border-radius:18px;background:#fff;overflow:auto;box-shadow:0 10px 28px #17202b08}
+table{border-collapse:collapse;width:100%}
+thead th{position:sticky;top:0;z-index:2;background:#f7f8fa;color:#747b87;font-size:10px;letter-spacing:.55px;text-transform:uppercase;font-weight:900;padding:12px;border-bottom:1px solid var(--line)}
+tbody td{padding:12px;border-bottom:1px solid #eceef1;font-size:13px}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#fafbfc}
+.sectionHead{gap:12px}
+.sectionHead h2{margin-bottom:4px}
+.hint{color:var(--muted);line-height:1.45}
+.chip{border:1px solid #e1e4e8;background:#f7f8fa;color:#555d68;border-radius:999px;padding:5px 9px;font-size:10px;font-weight:850}
+.miniStats{gap:9px}
+.miniStat{border:1px solid #e4e7eb;background:#fafbfc;border-radius:14px;padding:12px}
+.miniStat span{font-size:10px;color:var(--muted);font-weight:800}
+.miniStat b{font-size:18px;letter-spacing:-.4px}
+.setgrid,.wishgrid{gap:12px}
+.setcard,.wishcard,.offer,.exemplar{border:1px solid var(--line)!important;border-radius:17px!important;box-shadow:0 8px 24px #17202b08;background:#fff}
+.setcard:hover,.wishcard:hover{transform:translateY(-2px);box-shadow:0 12px 30px #17202b12}
+.modal{backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+.modalbox,.modal .box{border:1px solid #ffffff55;border-radius:24px!important;box-shadow:0 30px 90px #0005!important}
+.cityImageWrap{border-radius:18px;overflow:hidden;box-shadow:inset 0 0 0 1px #0001}
+.referenceImage{border-radius:18px}
+.citygrid{gap:9px}
+.zone{border-radius:15px!important;box-shadow:0 6px 18px #17202b0b}
+.modulegrid{gap:7px}
+#moduleGrid .module{border-radius:12px;box-shadow:0 4px 12px #17202b0d;transition:transform .15s ease,box-shadow .15s ease,opacity .15s ease}
+#moduleGrid .module:hover{transform:translateY(-2px);box-shadow:0 8px 18px #17202b15}
+.moduleDetail{border-radius:14px;background:#fafbfc;border:1px solid var(--line);padding:12px;margin-top:10px}
+.railplan{border-radius:18px;overflow:hidden}
+.homegrid{gap:12px}
+.heroV50{margin-top:2px}
+.commandCardV50{box-shadow:0 10px 28px #17202b08}
+#settings .card,#analysis .card,#prices .card,#trains .card,#users .card,#admin .card{margin-bottom:12px}
+.rowbtn{border-radius:10px!important}
+.goodTxt{color:#137333!important}
+.badTxt{color:#b3261e!important}
+
+/* Phone: thumb-friendly bottom navigation and cleaner density */
+@media(max-width:720px){
+ body{padding-bottom:78px}
+ header{padding:9px 10px}
+ .brandIconV39{width:38px;height:38px}
+ .brandV39 h1{font-size:15px}
+ .brandV39 small{display:block;max-width:175px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .headActions #addTop{display:none}
+ main{padding:10px 10px 28px}
+ nav.tabs{position:fixed;left:8px;right:8px;bottom:8px;top:auto;z-index:80;margin:0;padding:6px;justify-content:space-between;border-radius:20px;background:rgba(24,25,28,.95);border-color:#ffffff16;box-shadow:0 12px 40px #0005;overflow-x:auto}
+ .tab{min-width:58px;padding:7px 7px;color:#ffffff9c;font-size:9px;display:grid;gap:2px;place-items:center}
+ .tab:before{font-size:16px;line-height:1}
+ .tab[data-tab="home"]:before{content:"⌂"}
+ .tab[data-tab="collection"]:before{content:"▦"}
+ .tab[data-tab="wishlist"]:before{content:"♡"}
+ .tab[data-tab="city"]:before{content:"▤"}
+ .tab[data-tab="trains"]:before{content:"⇄"}
+ .tab[data-tab="prices"]:before{content:"€"}
+ .tab[data-tab="analysis"]:before{content:"↗"}
+ .tab[data-tab="users"]:before{content:"●"}
+ .tab[data-tab="settings"]:before{content:"⚙"}
+ .tab.active{background:#fff;color:#151618}
+ .toolbar{position:relative;display:grid;grid-template-columns:1fr 1fr;padding:8px;border-radius:15px}
+ .toolbar input{grid-column:1/-1;width:100%;min-width:0}
+ .toolbar select{width:100%}
+ .toolbar .btn{width:100%}
+ .cards{grid-template-columns:1fr 1fr!important}
+ .cards>.card{min-height:105px;padding:14px}
+ .cards>.card>b{font-size:21px}
+ .card{padding:15px;border-radius:17px}
+ .tablewrap{border-radius:15px}
+ thead th{font-size:9px;padding:10px}
+ tbody td{font-size:12px;padding:10px}
+ .sectionHead{align-items:flex-start}
+ .sectionHead>.actions{width:100%;display:flex;flex-wrap:wrap}
+ .sectionHead>.actions>*{flex:1;min-width:120px}
+ .modalbox,.modal .box{border-radius:20px 20px 0 0!important;max-height:91vh!important;margin-top:auto!important}
+}
+@media(max-width:430px){
+ .headActions{gap:5px}
+ .iconbtn{width:37px;height:37px}
+ .cards>.card{min-height:98px}
+ .commandGridV50{margin-bottom:10px}
+ .heroV50{border-radius:20px}
+ .citygrid{grid-template-columns:1fr 1fr}
+ .modulegrid{gap:5px}
+}
