@@ -1233,3 +1233,159 @@ window.rejectBarcodeV43=async code=>{
 if($("barcodeAdminRefreshV43"))$("barcodeAdminRefreshV43").onclick=loadBarcodeAdminV43;
 const renderAdminCoreV43=renderAdminV36;
 renderAdminV36=async function(){const r=await renderAdminCoreV43();await loadBarcodeAdminV43();return r};
+
+
+/* v45 fast Supabase set catalog by set number */
+function catalogRowToLegacyV45(r={}){
+ return {
+  brickeconomyName:r.name||"",
+  rebrickableName:r.name||"",
+  imageUrl:r.image_url||"",
+  theme:r.theme||"",
+  subtheme:r.subtheme||"",
+  year:r.year,
+  pieces:r.pieces,
+  minifigs:r.minifigs,
+  ean:r.ean||"",
+  upc:r.upc||"",
+  rrpEUR:pV3(r.rrp_eur),
+  marketNewEUR:pV3(r.market_new_eur),
+  marketUsedEUR:pV3(r.market_used_eur),
+  marketUsedLowEUR:pV3(r.market_used_low_eur),
+  marketUsedHighEUR:pV3(r.market_used_high_eur),
+  growth12mPct:r.growth_12m_pct,
+  width:r.width,
+  depth:r.depth,
+  height:r.height,
+  retired:r.retired,
+  onlineDb:true
+ };
+}
+async function lookupSetOnlineV45(n){
+ n=String(n||"").trim().replace(/-1$/,"");
+ if(!/^\d{4,7}$/.test(n))return null;
+ await ensureCloudReadyV40();
+ if(cloudV3){
+   try{
+     const {data,error}=await cloudV3.from("catalog_sets").select("*").eq("set_number",n).maybeSingle();
+     if(!error&&data)return catalogRowToLegacyV45(data);
+   }catch{}
+ }
+ const local=enrichmentV3?.sets?.[n];
+ if(local)return local;
+ try{
+   const r=await fetch('./data/set-enrichment.json?t='+Date.now(),{cache:'no-store'});
+   if(r.ok){
+     enrichmentV3=await r.json();
+     if(enrichmentV3?.sets?.[n])return enrichmentV3.sets[n];
+   }
+ }catch{}
+ if(cloudUserV3){try{await requestCatalogV37(n)}catch{}}
+ return null;
+}
+function fillSetFieldsV45(e){
+ if(!e)return;
+ if($("fName")&&!$("fName").value.trim())$("fName").value=e.brickeconomyName||e.rebrickableName||"";
+ const market=pV3(e.marketUsedEUR)||pV3(e.marketNewEUR);
+ if($("fValue")&&!pV3($("fValue").value)&&market)$("fValue").value=market.toFixed(2);
+ if($("fImage")&&!$("fImage").value.trim()&&e.imageUrl)$("fImage").value=e.imageUrl;
+ if($("fBarcode")&&!$("fBarcode").value.trim()&&(e.ean||e.upc))$("fBarcode").value=e.ean||e.upc;
+ if($("fCat")&&!$("fCat").value.trim())$("fCat").value=[e.theme,e.subtheme].filter(Boolean).join(" / ");
+ if($("fWidth")&&!pV3($("fWidth").value)&&pV3(e.width))$("fWidth").value=e.width;
+ if($("fDepth")&&!pV3($("fDepth").value)&&pV3(e.depth))$("fDepth").value=e.depth;
+ if($("fHeight")&&!pV3($("fHeight").value)&&pV3(e.height))$("fHeight").value=e.height;
+}
+fillSetFromCatalogV32=async function(){
+ const n=$("fSet")?.value.trim();if(!n)return;
+ const s=$("fCatalogStatusV35");if(s)s.textContent="Setdaten werden online geladen…";
+ const e=await lookupSetOnlineV45(n);
+ if(e){fillSetFieldsV45(e);if(s)s.textContent=e.onlineDb?"✓ Sofort aus Online-Datenbank geladen":"✓ Daten gefunden";}
+ else if(s)s.textContent="Noch nicht gefunden · automatische Nachladung wurde angefordert.";
+};
+fillWishFromCatalogV31=async function(){
+ const n=$("wSet")?.value.trim();if(!n)return;
+ const s=$("wCatalogStatusV35");if(s)s.textContent="Setdaten werden online geladen…";
+ const e=await lookupSetOnlineV45(n);
+ if(!e){if(s)s.textContent="Noch nicht gefunden · automatische Nachladung wurde angefordert.";return}
+ if($("wName")&&!$("wName").value.trim())$("wName").value=e.brickeconomyName||e.rebrickableName||"";
+ if($("wRrp")&&!pV3($("wRrp").value)&&pV3(e.rrpEUR))$("wRrp").value=pV3(e.rrpEUR).toFixed(2);
+ const market=pV3(e.marketNewEUR)||pV3(e.marketUsedEUR);
+ if($("wPrice")&&!pV3($("wPrice").value)&&market)$("wPrice").value=market.toFixed(2);
+ if($("wImage")&&!$("wImage").value.trim()&&e.imageUrl)$("wImage").value=e.imageUrl;
+ if(s)s.textContent=e.onlineDb?"✓ Sofort aus Online-Datenbank geladen":"✓ Daten gefunden";
+};
+lookupCatalogV35=async function(n,statusId){
+ const e=await lookupSetOnlineV45(n);
+ const s=$(statusId);
+ if(s)s.textContent=e?(e.onlineDb?"✓ Sofort aus Online-Datenbank geladen":"✓ Daten gefunden"):"Noch nicht gefunden · automatische Nachladung wurde angefordert.";
+ return e;
+};
+
+function catalogRowsForSyncV45(){
+ return Object.entries(enrichmentV3?.sets||{}).map(([n,e])=>({
+  set_number:String(n),
+  name:e.brickeconomyName||e.rebrickableName||"",
+  image_url:e.imageUrl||"",
+  theme:e.theme||"",
+  subtheme:e.subtheme||"",
+  year:e.year??null,
+  pieces:e.pieces??null,
+  minifigs:e.minifigs??null,
+  ean:e.ean||"",
+  upc:e.upc||"",
+  rrp_eur:e.rrpEUR||null,
+  market_new_eur:e.marketNewEUR||null,
+  market_used_eur:e.marketUsedEUR||null,
+  market_used_low_eur:e.marketUsedLowEUR||null,
+  market_used_high_eur:e.marketUsedHighEUR||null,
+  growth_12m_pct:e.growth12mPct??null,
+  width:e.width??null,
+  depth:e.depth??null,
+  height:e.height??null,
+  retired:e.retired??null,
+  source_updated_at:e.brickeconomyUpdated||e.rebrickableUpdated||e.manualUpdated||enrichmentV3?.meta?.lastUpdated||new Date().toISOString()
+ }));
+}
+async function syncFastCatalogV45(force=false){
+ const note=$("fastCatalogNoteV45");
+ if(!cloudV3||!cloudUserV3){if(note)note.textContent="Zum Synchronisieren bitte anmelden.";return false}
+ if(!isAdminV36()){if(note)note.textContent="Die zentrale Datenbank wird vom Betreiber synchronisiert.";return false}
+ if(!Object.keys(enrichmentV3?.sets||{}).length)await loadEnrichmentV3(true);
+ const stamp=enrichmentV3?.meta?.lastUpdated||"";
+ if(!force&&stamp&&localStorage.getItem("fastCatalogSyncV45")===stamp)return true;
+ const rows=catalogRowsForSyncV45();
+ if(note)note.textContent="Online-Datenbank wird synchronisiert…";
+ try{
+   const {data,error}=await cloudV3.rpc("admin_upsert_catalog_batch",{p_rows:rows});
+   if(error)throw error;
+   if(stamp)localStorage.setItem("fastCatalogSyncV45",stamp);
+   if(note)note.textContent="Synchronisiert: "+data+" Sets.";
+   await renderFastCatalogStatusV45();
+   return true;
+ }catch(e){
+   if(note)note.textContent="Online-Datenbank noch nicht eingerichtet: "+(e?.message||e);
+   return false;
+ }
+}
+async function renderFastCatalogStatusV45(){
+ const box=$("fastCatalogStatusV45");if(!box)return;
+ await ensureCloudReadyV40();
+ let count="–",withPrice="–",withBarcode="–";
+ try{
+  if(cloudV3){
+   const [a,b,d]=await Promise.all([
+    cloudV3.from("catalog_sets").select("set_number",{count:"exact",head:true}),
+    cloudV3.from("catalog_sets").select("set_number",{count:"exact",head:true}).or("market_new_eur.not.is.null,market_used_eur.not.is.null"),
+    cloudV3.from("catalog_sets").select("set_number",{count:"exact",head:true}).or("ean.not.is.null,upc.not.is.null")
+   ]);
+   if(!a.error)count=a.count??0;if(!b.error)withPrice=b.count??0;if(!d.error)withBarcode=d.count??0;
+  }
+ }catch{}
+ box.innerHTML='<div class="miniStat"><span>Online-Sets</span><b>'+count+'</b></div><div class="miniStat"><span>mit Marktwert</span><b>'+withPrice+'</b></div><div class="miniStat"><span>mit Barcode</span><b>'+withBarcode+'</b></div>';
+}
+function bindFastCatalogV45(){
+ if($("syncFastCatalogV45"))$("syncFastCatalogV45").onclick=()=>syncFastCatalogV45(true);
+ renderFastCatalogStatusV45();
+ setTimeout(()=>{if(isAdminV36())syncFastCatalogV45(false)},800);
+}
+bindFastCatalogV45();
