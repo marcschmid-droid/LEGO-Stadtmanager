@@ -26,7 +26,12 @@ def nums():
     seen=set()
     for n in vals:
         n=n.strip()
-        if n and n not in seen:
+        # LEGO set numbers in this catalog are numeric (optionally with a variant suffix).
+        # Ignore CSV/header/sample values such as "Wert", "15", "6", "3".
+        base=n.split("-",1)[0]
+        if not re.fullmatch(r"\\d{4,7}",base):
+            continue
+        if n not in seen:
             seen.add(n); out.append(n)
     return out
 
@@ -67,8 +72,11 @@ if RB_KEY:
             changed=True
         except Exception as ex:
             errors.append(f"Rebrickable {n}: {ex}")
-            if "RATE_LIMIT" in str(ex): break
-        time.sleep(0.08)
+            if "RATE_LIMIT" in str(ex):
+                # Keep already fetched entries and resume with missing sets next scheduled run.
+                break
+        # Be deliberately gentle with the public API; missing entries are retried next run.
+        time.sleep(0.25)
 
 if BE_KEY and numbers:
     cursor=int(meta.get("brickeconomyCursor",0)) % len(numbers)
