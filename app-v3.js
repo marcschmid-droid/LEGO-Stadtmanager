@@ -1389,3 +1389,21 @@ function bindFastCatalogV45(){
  setTimeout(()=>{if(isAdminV36())syncFastCatalogV45(false)},800);
 }
 bindFastCatalogV45();
+
+
+function bindFastSetInputsV45(){
+ const set=$("fSet"),wish=$("wSet");
+ if(set&&!set.dataset.fastV45){
+   set.dataset.fastV45="1";
+   const run=()=>fillSetFromCatalogV32();
+   set.addEventListener("change",run);set.addEventListener("blur",run);
+   set.addEventListener("input",()=>{clearTimeout(set._fastV45);set._fastV45=setTimeout(()=>{if(set.value.trim().length>=4)run()},250)});
+ }
+ if(wish&&!wish.dataset.fastV45){
+   wish.dataset.fastV45="1";
+   const run=()=>fillWishFromCatalogV31();
+   wish.addEventListener("change",run);wish.addEventListener("blur",run);
+   wish.addEventListener("input",()=>{clearTimeout(wish._fastV45);wish._fastV45=setTimeout(()=>{if(wish.value.trim().length>=4)run()},250)});
+ }
+}
+bindFastSetInputsV45();
