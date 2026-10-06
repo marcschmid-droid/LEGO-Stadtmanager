@@ -193,6 +193,9 @@ async function decodePhotoV3(file){
    $("scannerStatus").textContent="Auf dem Foto wurde kein lesbarer Barcode erkannt. Bitte näher herangehen, scharf fotografieren oder manuell eingeben.";
  }
 }
+const BARCODE_OVERRIDES_V42={
+ "5702017166421":{setNumber:"40529",name:"Children's Amusement Park"}
+};
 async function handleBarcodeV3(c){
  const code=String(c||"").trim();
  let x=state.collection.find(s=>String(s.barcode||"").trim()===code);
@@ -203,7 +206,11 @@ async function handleBarcodeV3(c){
      const r=await fetch('./data/set-enrichment.json?t='+Date.now(),{cache:'no-store'});
      if(r.ok)enrichmentV3=await r.json();
    }catch{}
-   const hit=Object.entries(enrichmentV3?.sets||{}).find(([n,e])=>[e.ean,e.upc].filter(Boolean).some(v=>String(v).trim()===code));
+   let hit=Object.entries(enrichmentV3?.sets||{}).find(([n,e])=>[e.ean,e.upc].filter(Boolean).some(v=>String(v).trim()===code));
+   if(!hit&&BARCODE_OVERRIDES_V42[code]){
+     const o=BARCODE_OVERRIDES_V42[code],e=enrichmentV3?.sets?.[o.setNumber]||{brickeconomyName:o.name,rebrickableName:o.name,ean:code};
+     hit=[o.setNumber,e];
+   }
    if(hit){
      const [setNumber,e]=hit;
      x=state.collection.find(s=>String(s.setNumber)===String(setNumber));
