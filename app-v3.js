@@ -1860,14 +1860,19 @@ function collectorThemePathV504(all,row){
  const t=all?.themes?.[String(row?.[5]||"")];
  return {name:t?.[0]||"",path:t?.[2]||"",root:t?.[3]||t?.[0]||""};
 }
-function collectorSetTypeV506(all,row){
+function collectorSetTypeV506(all,row,setNumber=""){
  const t=collectorThemePathV504(all,row);
- const name=nV3(row?.[0]||""),path=nV3(t.path||"");
- // Rebrickable classifies many special releases through dedicated theme branches.
- // Prefer those branches over name guesses so the same rule works for every theme.
+ const name=nV3(row?.[0]||""),path=nV3(t.path||""),n=String(setNumber||row?.[4]||"").replace(/-\d+$/,""),num=Number(n)||0,parts=pV3(row?.[2]);
+ // First use explicit catalog/theme information.
  if(/(^| › )(polybag|poly bags|foil pack|foil packs)( › |$)/.test(path)||/\bpolybag\b|\bfoil pack\b|\bfoilbag\b/.test(name))return "polybag";
  if(/(^| › )(promotional|promotions|gift with purchase|gwp|magazine gift|store exclusive|exclusive gift)( › |$)/.test(path)||
     /\bgift with purchase\b|\bgwp\b|\bpromotional\b|\bpromo\b|\bfree gift\b|\bmagazine gift\b/.test(name))return "gwp";
+ // LEGO's 30xxx range is commonly used for small promotional/polybag releases.
+ // Restrict this fallback to small sets so normal numbered sets are not affected.
+ if(num>=30000&&num<40000&&parts>0&&parts<=180)return "polybag";
+ // 40xxx/41xxx contains many gifts/promotional side releases. Treat small releases
+ // in this range as GWP for collector-completion purposes unless catalog says otherwise.
+ if(num>=40000&&num<42000&&parts>0&&parts<=500)return "gwp";
  return "main";
 }
 function collectorSetTypeLabelV506(type){
@@ -1977,7 +1982,7 @@ async function renderCollectorSetViewV504(){
    const st=collectorStatusForV504(n),label=st==="owned"?"✓ Vorhanden":st==="wishlist"?"♥ Wunschliste":"Fehlt";
    const action=st==="missing"?'<button class="btn collectorWishBtnV504" onclick="event.stopPropagation();addCollectorWishV504(\''+esc(n)+'\')">Auf Wunschliste</button>':
      st==="owned"?'<span class="collectorStatusV504 owned">✓ Vorhanden</span>':'<span class="collectorStatusV504 wishlist">♥ Wunschliste</span>';
-   const kind=collectorSetTypeV506(all,r);
+   const kind=collectorSetTypeV506(all,r,n);
    return '<article class="collectorSetCardV504 '+st+'">'+
      '<div class="collectorSetImageV504">'+(r[3]?'<img src="'+esc(r[3])+'" loading="lazy" alt="">':'<span>LEGO<br>'+esc(n)+'</span>')+'</div>'+
      '<div class="collectorSetBodyV504"><div class="collectorSetTopV504"><span>'+esc(n)+'</span><em>'+esc(String(r[1]||"–"))+'</em></div><h3>'+esc(r[0]||("Set "+n))+'</h3><div class="collectorMetaRowV506"><span>'+pV3(r[2])+' Teile</span><b class="collectorTypeBadgeV506 '+kind+'">'+esc(collectorSetTypeLabelV506(kind))+'</b></div>'+action+'</div>'+
