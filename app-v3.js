@@ -1762,3 +1762,74 @@ refresh=function(){
 };
 ensureDynamicModulesV502();
 refresh();
+
+
+/* v50.3 smart full-city redistribution */
+function rebalanceCityV503(showMessage=true){
+ ensureDynamicModulesV502();
+ const sets=[...(state.collection||[])].filter(x=>String(x.setNumber||"").trim());
+ const zones=moduleZonesV50();
+
+ // Capacity: one fixed city slot per unique set, plus reserve.
+ const needed=Math.max(40,sets.length+8);
+ const capacity=Math.ceil(needed/8)*8;
+ for(let i=1;i<=capacity;i++){
+   const m="M"+String(i).padStart(2,"0");
+   if(!Array.isArray(state.modules[m]))state.modules[m]=[];
+ }
+ // Clear all placements before rebuilding the city.
+ for(const m of Object.keys(state.modules))state.modules[m]=[];
+ for(const x of sets)x.module="";
+
+ const byZone={winter:[],station:[],hogwarts:[],harbor:[],disney:[],city:[],world:[]};
+ for(let i=1;i<=capacity;i++){
+   const m="M"+String(i).padStart(2,"0"),z=zones[m]||dynamicZoneForModuleV502(m);
+   if(!byZone[z])byZone[z]=[];
+   byZone[z].push(m);
+ }
+
+ // Larger sets are placed first so they get priority in their matching area.
+ const ordered=[...sets].sort((a,b)=>{
+   const aa=pV3(a.width)*pV3(a.depth),bb=pV3(b.width)*pV3(b.depth);
+   return bb-aa||String(a.setNumber).localeCompare(String(b.setNumber),undefined,{numeric:true});
+ });
+
+ const allModules=[];
+ for(let i=1;i<=capacity;i++)allModules.push("M"+String(i).padStart(2,"0"));
+ const used=new Set();
+ let placed=0;
+ for(const x of ordered){
+   const z=inferZoneV50(x);
+   let m=(byZone[z]||[]).find(k=>!used.has(k));
+   if(!m)m=allModules.find(k=>!used.has(k));
+   if(!m)continue;
+   used.add(m);
+   state.modules[m]=[String(x.setNumber)];
+   x.module=m;
+   placed++;
+ }
+
+ state.meta=state.meta||{};
+ state.meta.moduleCapacity=capacity;
+ state.meta.lastCityRebalanceV503=new Date().toISOString();
+ state.meta.cityLayoutVersion="50.3";
+ citySuggestionV50=null;
+ persist();
+ refresh();
+ if(showMessage)alert("Stadt neu verteilt: "+placed+" Sets auf "+capacity+" Modulplätze. "+Math.max(0,capacity-placed)+" Plätze bleiben als Reserve frei.");
+ return {placed,capacity,free:Math.max(0,capacity-placed)};
+}
+
+function bindRebalanceV503(){
+ const b=$("rebalanceCityV503");
+ if(b)b.onclick=()=>{if(confirm("Alle bisherigen Modul-Zuordnungen werden neu verteilt. Fortfahren?"))rebalanceCityV503(true)};
+}
+
+// Run once for existing v50 users so the enlarged city is actually populated.
+function migrateCityLayoutV503(){
+ state.meta=state.meta||{};
+ if(state.meta.cityLayoutVersion==="50.3"){bindRebalanceV503();return}
+ rebalanceCityV503(false);
+ bindRebalanceV503();
+}
+setTimeout(migrateCityLayoutV503,650);
