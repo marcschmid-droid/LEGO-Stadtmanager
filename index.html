@@ -11,12 +11,10 @@
 <title>LEGO Stadtmanager</title>
 </head>
 <body>
-<header>
-  <div class="head">
-    <div><h1>LEGO Stadtmanager</h1><small>Sammlung · Einkauf · Stadt · Züge</small></div>
-    <button id="addTop" class="btn">＋ Set</button>
-  </div>
-</header>
+<header><div class="head">
+  <div><h1>LEGO Stadtmanager</h1><small>Sammlung · Einkauf · Stadt · Züge</small></div>
+  <button id="addTop" class="btn">＋ Set</button>
+</div></header>
 
 <main>
 <nav class="tabs">
@@ -24,6 +22,7 @@
   <button class="tab" data-tab="collection">Sammlung</button>
   <button class="tab" data-tab="wishlist">Einkauf</button>
   <button class="tab" data-tab="city">Stadt</button>
+  <button class="tab" data-tab="trains">Züge</button>
   <button class="tab" data-tab="settings">Daten</button>
 </nav>
 
@@ -31,108 +30,112 @@
   <div class="cards">
     <div class="card"><span>Eindeutige Sets</span><b id="kUnique">0</b></div>
     <div class="card"><span>Exemplare</span><b id="kQty">0</b></div>
-    <div class="card"><span>Investment</span><b id="kInvest">0 €</b></div>
+    <div class="card"><span>Investment (Master)</span><b id="kInvest">0 €</b><small id="investRef" class="subnote"></small></div>
     <div class="card"><span>Wunschliste</span><b id="kWish">0</b></div>
   </div>
   <div class="card wide">
     <h2>Schnellstart</h2>
-    <p>Deine bestätigte Sammlung ist bereits als Startbestand enthalten. Neue Käufe kannst du direkt eintragen.</p>
-    <div class="actions">
-      <button class="btn" id="quickAdd">Neues Set</button>
-      <button class="btn secondary" id="quickExport">CSV exportieren</button>
-    </div>
+    <p>Deine bestätigte Sammlung ist als Startbestand enthalten. Neue Käufe kannst du direkt eintragen oder aus der Einkaufsliste übernehmen.</p>
+    <div class="actions"><button class="btn" id="quickAdd">Neues Set</button><button class="btn secondary" id="quickExport">CSV exportieren</button></div>
   </div>
 </section>
 
 <section id="collection" class="panel">
-  <div class="toolbar">
-    <input id="search" placeholder="Setnummer, Name, Kategorie oder Stadtbereich…">
-    <button class="btn" id="addBtn">＋ Set</button>
-  </div>
-  <div class="tablewrap">
-    <table>
-      <thead><tr><th>Set</th><th>Name</th><th>Anzahl</th><th>Kaufpreis</th><th>Wert</th><th>Bereich</th><th></th></tr></thead>
-      <tbody id="collectionBody"></tbody>
-    </table>
-  </div>
+  <div class="toolbar"><input id="search" placeholder="Setnummer, Name, Kategorie oder Stadtbereich…"><button class="btn" id="addBtn">＋ Set</button></div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Set</th><th>Name</th><th>Anzahl</th><th>Kaufpreis</th><th>Wert</th><th>Bereich</th><th></th></tr></thead>
+    <tbody id="collectionBody"></tbody>
+  </table></div>
 </section>
 
 <section id="wishlist" class="panel">
   <div class="toolbar"><button class="btn" id="wishAdd">＋ Wunsch</button></div>
-  <div class="tablewrap">
-    <table>
-      <thead><tr><th>Prio</th><th>Set</th><th>Name</th><th>Bereich</th><th>Preis</th><th></th></tr></thead>
-      <tbody id="wishBody"></tbody>
-    </table>
-  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Prio</th><th>Set</th><th>Name</th><th>Bereich</th><th>Preis</th><th></th></tr></thead>
+    <tbody id="wishBody"></tbody>
+  </table></div>
 </section>
 
 <section id="city" class="panel">
-  <div class="citygrid">
-    <div class="zone winter">Weihnachtsdorf</div>
-    <div class="zone station">Hauptbahnhof</div>
-    <div class="zone magic">Hogwarts</div>
-    <div class="zone harbor">Hafen & Piraten</div>
-    <div class="zone open">Zentrale freie Fläche</div>
-    <div class="zone disney">Disney / Springfield</div>
-    <div class="zone city">Innenstadt</div>
-    <div class="zone world">Weltpark / Botanik</div>
+  <div class="card wide">
+    <h2>Verbindliche Ursprungs-Stadt</h2>
+    <p class="hint">Diese Zonierung ist die feste Referenz für weitere Planung. Die große zentrale Freifläche bleibt offen.</p>
   </div>
+  <div class="citygrid">
+    <div class="zone winter">Weihnachtsdorf<br><small>oben links</small></div>
+    <div class="zone station">Hauptbahnhof<br><small>oben Mitte</small></div>
+    <div class="zone magic">Hogwarts<br><small>oben rechts</small></div>
+    <div class="zone harbor">Hafen & Piraten<br><small>unten links / Wasser</small></div>
+    <div class="zone open">Zentrale freie Fläche<br><small>Zugang & Betrieb</small></div>
+    <div class="zone disney">Disney / Springfield<br><small>rechts</small></div>
+    <div class="zone city">Innenstadt<br><small>unten Mitte</small></div>
+    <div class="zone world">Weltpark / Botanik<br><small>unten rechts</small></div>
+  </div>
+</section>
+
+<section id="trains" class="panel">
   <div class="card wide">
     <h2>Zugplan</h2>
-    <p>Hauptstrecke umlaufend um die zentrale freie Fläche, Hauptbahnhof als Knoten, Hafenabzweig für Güterverkehr sowie Winteranschluss.</p>
+    <div class="railplan">
+      <div class="rail railtop">Hauptbahnhof</div>
+      <div class="rail railleft">Winter-Anschluss</div>
+      <div class="rail railcenter">Zentrale Freifläche</div>
+      <div class="rail railright">Disney / Stadt</div>
+      <div class="rail railbottom">Hafen-Güterabzweig</div>
+    </div>
+    <p class="hint">Großer geschlossener Rundkurs um die zentrale Freifläche; Hauptbahnhof als Knoten. Die exakten Schienenmengen werden weiter verifiziert.</p>
+  </div>
+
+  <div class="card wide">
+    <h2>Schienen-Einkaufsliste</h2>
+    <div id="trackTable" class="tablewrap"></div>
+  </div>
+
+  <div class="card wide">
+    <h2>Kleinanzeigen-Favoriten</h2>
+    <div id="offerList"></div>
+    <button class="btn secondary" id="addOffer">＋ Angebot</button>
   </div>
 </section>
 
 <section id="settings" class="panel">
-  <div class="card wide">
-    <h2>Daten & Sicherung</h2>
-    <div class="actions">
-      <label class="btn secondary">CSV importieren<input id="csvFile" type="file" accept=".csv,text/csv" hidden></label>
-      <button class="btn" id="exportCsv">CSV exportieren</button>
-      <button class="btn secondary" id="exportJson">Backup JSON</button>
-      <label class="btn secondary">Backup laden<input id="jsonFile" type="file" accept=".json" hidden></label>
-    </div>
-    <p class="hint">Die App speichert lokal auf deinem Gerät. Regelmäßig ein JSON-Backup exportieren.</p>
-  </div>
-  <div class="card wide">
-    <h2>Auf dem iPhone installieren</h2>
-    <p>In Safari öffnen → Teilen → <b>Zum Home-Bildschirm</b>.</p>
-  </div>
+  <div class="card wide"><h2>Daten & Sicherung</h2><div class="actions">
+    <label class="btn secondary">CSV importieren<input id="csvFile" type="file" accept=".csv,text/csv" hidden></label>
+    <button class="btn" id="exportCsv">CSV exportieren</button>
+    <button class="btn secondary" id="exportJson">Backup JSON</button>
+    <label class="btn secondary">Backup laden<input id="jsonFile" type="file" accept=".json" hidden></label>
+  </div><p class="hint">Die App speichert lokal auf deinem Gerät. Regelmäßig ein JSON-Backup exportieren.</p></div>
+  <div class="card wide"><h2>Auf dem iPhone/iPad installieren</h2><p>In Safari öffnen → Teilen → <b>Zum Home-Bildschirm</b>.</p></div>
 </section>
 </main>
 
 <div id="setModal" class="modal"><div class="sheet">
-<h2 id="setTitle">Set hinzufügen</h2>
-<div class="form">
-<label>Setnummer<input id="fSet"></label>
-<label>Name<input id="fName"></label>
-<label>Anzahl<input id="fQty" type="number" min="1" value="1"></label>
-<label>Kaufpreis je Stück (€)<input id="fPrice" type="number" step="0.01"></label>
-<label>Aktueller Wert je Stück (€)<input id="fValue" type="number" step="0.01"></label>
-<label>Stadtbereich<input id="fArea"></label>
-<label>Kategorie<input id="fCat"></label>
-<label>Breite (cm)<input id="fWidth" type="number" step="0.1"></label>
-<label>Tiefe (cm)<input id="fDepth" type="number" step="0.1"></label>
-<label>Höhe (cm)<input id="fHeight" type="number" step="0.1"></label>
-<label>Notiz<textarea id="fNote"></textarea></label>
-</div>
-<div class="actions right"><button class="btn secondary" id="cancelSet">Abbrechen</button><button class="btn" id="saveSet">Speichern</button></div>
+<h2 id="setTitle">Set hinzufügen</h2><div class="form">
+<label>Setnummer<input id="fSet"></label><label>Name<input id="fName"></label>
+<label>Anzahl<input id="fQty" type="number" min="1" value="1"></label><label>Kaufpreis je Stück (€)<input id="fPrice" type="number" step="0.01"></label>
+<label>Aktueller Wert je Stück (€)<input id="fValue" type="number" step="0.01"></label><label>Stadtbereich<input id="fArea"></label>
+<label>Kategorie<input id="fCat"></label><label>Breite (cm)<input id="fWidth" type="number" step="0.1"></label>
+<label>Tiefe (cm)<input id="fDepth" type="number" step="0.1"></label><label>Höhe (cm)<input id="fHeight" type="number" step="0.1"></label>
+<label>Bild-URL (optional)<input id="fImage" type="url" placeholder="https://…"></label><label>Notiz<textarea id="fNote"></textarea></label>
+</div><div class="actions right"><button class="btn secondary" id="cancelSet">Abbrechen</button><button class="btn" id="saveSet">Speichern</button></div>
 </div></div>
 
 <div id="wishModal" class="modal"><div class="sheet">
-<h2>Wunsch hinzufügen</h2>
-<div class="form">
-<label>Priorität<select id="wPrio"><option>A</option><option>B</option><option>C</option></select></label>
-<label>Setnummer<input id="wSet"></label>
-<label>Name<input id="wName"></label>
-<label>Stadtbereich<input id="wArea"></label>
-<label>Richtpreis (€)<input id="wPrice" type="number" step="0.01"></label>
+<h2>Wunsch hinzufügen</h2><div class="form">
+<label>Priorität<select id="wPrio"><option>A</option><option>B</option><option>C</option></select></label><label>Setnummer<input id="wSet"></label>
+<label>Name<input id="wName"></label><label>Stadtbereich<input id="wArea"></label>
+<label>Richtpreis (€)<input id="wPrice" type="number" step="0.01"></label><label>Bild-URL (optional)<input id="wImage" type="url" placeholder="https://…"></label>
 <label>Grund<textarea id="wReason"></textarea></label>
-</div>
-<div class="actions right"><button class="btn secondary" id="cancelWish">Abbrechen</button><button class="btn" id="saveWish">Speichern</button></div>
+</div><div class="actions right"><button class="btn secondary" id="cancelWish">Abbrechen</button><button class="btn" id="saveWish">Speichern</button></div>
 </div></div>
 
-<script src="./seed-data.js"></script>
-<script src="./app.js"></script>
+<div id="offerModal" class="modal"><div class="sheet">
+<h2>Kleinanzeigen-Angebot</h2><div class="form">
+<label>Titel<input id="oTitle"></label><label>Ort<input id="oLocation"></label>
+<label>Preis (€)<input id="oPrice" type="number" step="0.01"></label><label>Status<select id="oStatus"><option>Beobachten</option><option>Angefragt</option><option>Reserviert</option><option>Gekauft</option><option>Verworfen</option></select></label>
+<label>Details<textarea id="oDetails"></textarea></label><label>Notiz<textarea id="oNote"></textarea></label>
+</div><div class="actions right"><button class="btn secondary" id="cancelOffer">Abbrechen</button><button class="btn" id="saveOffer">Speichern</button></div>
+</div></div>
+
+<script src="./seed-data.js"></script><script src="./app.js"></script>
 </body></html>
