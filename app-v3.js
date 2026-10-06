@@ -1950,14 +1950,19 @@ async function renderCollectorSetViewV504(){
    if(subs.includes(oldSub))subEl.value=oldSub;
  }
  const status=$("collectorStatusV504")?.value||"all",year=Number($("collectorYearV504")?.value||0),sub=$("collectorSubthemeV505")?.value||"",type=$("collectorTypeV506")?.value||"",setq=nV3($("collectorSetSearchV505")?.value||"");
- rows=rows.filter(([n,r])=>{
-   const t=collectorThemePathV504(all,r),hay=nV3([n,r[0],r[1],t.path].join(" ")),kind=collectorSetTypeV506(all,r);
-   return (status==="all"||collectorStatusForV504(n)===status)&&(!year||Number(r[1])===year)&&(!sub||t.path===sub)&&(!type||kind===type)&&(!setq||hay.includes(setq));
+ const scopeRows=rows.filter(([n,r])=>{
+   const t=collectorThemePathV504(all,r),kind=collectorSetTypeV506(all,r);
+   return (!year||Number(r[1])===year)&&(!sub||t.path===sub)&&(!type||kind===type);
+ });
+ rows=scopeRows.filter(([n,r])=>{
+   const t=collectorThemePathV504(all,r),hay=nV3([n,r[0],r[1],t.path].join(" "));
+   return (status==="all"||collectorStatusForV504(n)===status)&&(!setq||hay.includes(setq));
  });
  rows.sort((a,b)=>Number(b[1][1]||0)-Number(a[1][1]||0)||String(a[0]).localeCompare(String(b[0]),undefined,{numeric:true}));
- const fullRows=collectorRowsV504(all,collectorCurrentV504),p=collectorProgressV504(fullRows);
+ const p=collectorProgressV504(scopeRows);
+ const scopeLabel=type?collectorSetTypeLabelV506(type)+(p.total===1?"":"s"):"Sets";
  if($("collectorThemeTitleV504"))$("collectorThemeTitleV504").textContent=collectorCurrentV504.label;
- if($("collectorThemeMetaV504"))$("collectorThemeMetaV504").textContent=p.owned+" vorhanden · "+p.wished+" auf Wunschliste · "+Math.max(0,p.total-p.owned-p.wished)+" noch offen · "+p.total+" Sets insgesamt";
+ if($("collectorThemeMetaV504"))$("collectorThemeMetaV504").textContent=p.owned+" vorhanden · "+p.wished+" auf Wunschliste · "+Math.max(0,p.total-p.owned-p.wished)+" noch offen · "+p.total+" "+scopeLabel+" berücksichtigt";
  if($("collectorProgressTextV504"))$("collectorProgressTextV504").textContent=p.pct+" %";
  if($("collectorProgressBarV504"))$("collectorProgressBarV504").style.width=p.pct+"%";
  const grid=$("collectorSetGridV504");if(!grid)return;
