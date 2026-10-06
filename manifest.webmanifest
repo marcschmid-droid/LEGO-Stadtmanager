@@ -9,7 +9,7 @@
   "description": "Sammlung, Einkaufsliste, Stadt- und Zugplanung für Klemmbaustein-Sets.",
   "icons": [
     {
-      "src": "./icon.svg?v=48",
+      "src": "./icon.svg?v=49",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
