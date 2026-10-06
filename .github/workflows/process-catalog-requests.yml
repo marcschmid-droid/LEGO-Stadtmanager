@@ -1,0 +1,30 @@
+name: Process catalog requests
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 */6 * * *"
+permissions:
+  contents: write
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - name: Process pending set lookups
+        env:
+          SUPABASE_URL: https://eeiokqujnpaxgncmcvsi.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          REBRICKABLE_API_KEY: ${{ secrets.REBRICKABLE_API_KEY }}
+          BRICKECONOMY_API_KEY: ${{ secrets.BRICKECONOMY_API_KEY }}
+        run: python scripts/process_catalog_requests.py
+      - name: Commit catalog updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/set-enrichment.json
+          git diff --cached --quiet || git commit -m "Process targeted catalog requests"
+          git push
