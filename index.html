@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#c91a09">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="icon" href="./icon.svg?v=23">
-<link rel="apple-touch-icon" href="./icon.svg?v=23">
-<link rel="stylesheet" href="./styles.css?v=23">
+<link rel="icon" href="./icon.svg?v=24">
+<link rel="apple-touch-icon" href="./icon.svg?v=24">
+<link rel="stylesheet" href="./styles.css?v=24">
 <title>Brick City Manager</title><meta name="application-name" content="Brick City Manager"><meta name="apple-mobile-web-app-title" content="Brick City Manager">
 <script>
 (async()=>{
-  const V="23";
+  const V="24";
   if(localStorage.getItem("lego-app-shell-version")!==V){
     try{
       if("serviceWorker" in navigator){
@@ -30,7 +30,7 @@
 </script></head>
 <body>
 <header><div class="head">
-  <div><h1>Brick City Manager</h1><small>Sammlung · Einkauf · Stadt · Züge · <b id="appVersion">v23</b></small></div>
+  <div><h1>Brick City Manager</h1><small>Sammlung · Einkauf · Stadt · Züge · <b id="appVersion">v24</b></small></div>
   <div class="headActions"><button id="userTop" class="iconbtn userbadge" title="Benutzer wechseln">👤</button><button id="scanTop" class="iconbtn" title="Barcode scannen">▣</button><button id="addTop" class="btn">＋ Set</button></div>
 </div></header>
 
@@ -119,7 +119,7 @@
 <section id="analysis" class="panel"><div class="cards"><div class="card"><span>Sets mit Wert</span><b id="aValued">0</b></div><div class="card"><span>Sets mit Maßen</span><b id="aSized">0</b></div><div class="card"><span>Fläche bekannt</span><b id="aArea">0 m²</b></div><div class="card"><span>Bereiche</span><b id="aZones">0</b></div></div><div class="analysisgrid"><div class="card wide"><h2>Verteilung nach Stadtbereich</h2><div id="areaAnalysis"></div></div><div class="card wide"><h2>Wert / Investment</h2><div id="valueAnalysis"></div></div><div class="card wide"><h2>Datenqualität</h2><div id="qualityAnalysis"></div></div></div></section>
 
 <section id="users" class="panel">
-  <div class="card wide" id="cloudAccountCard"><h2>Online-Konto</h2><p class="hint">Mit E-Mail und Passwort anmelden. Deine Daten werden dann deinem persönlichen Cloud-Konto zugeordnet.</p><div id="cloudSignedOut"><div class="form"><label>E-Mail<input id="cloudEmail" type="email" autocomplete="email"></label><label>Passwort<input id="cloudPassword" type="password" minlength="6" autocomplete="current-password"></label></div><div class="actions"><button class="btn" id="cloudLogin">Anmelden</button><button class="btn secondary" id="cloudRegister">Registrieren</button></div></div><div id="cloudSignedIn" class="hidden"><p>Angemeldet als <b id="cloudUserEmail"></b></p><div class="actions"><button class="btn" id="cloudSync">Jetzt synchronisieren</button><button class="btn secondary" id="cloudLogout">Abmelden</button></div><p id="cloudStatus" class="hint"></p></div></div>
+  <div class="card wide" id="cloudAccountCard"><h2>Online-Konto</h2><p class="hint">Mit E-Mail und Passwort anmelden. Deine Daten werden dann deinem persönlichen Cloud-Konto zugeordnet.</p><div id="cloudSignedOut"><div class="form"><label>E-Mail<input id="cloudEmail" type="email" autocomplete="email"></label><label>Passwort<input id="cloudPassword" type="password" minlength="6" autocomplete="current-password"></label></div><div class="actions"><button class="btn" id="cloudLogin">Anmelden</button><button class="btn secondary" id="cloudRegister">Registrieren</button></div></div><div id="cloudSignedIn" class="hidden"><p>Angemeldet als <b id="cloudUserEmail"></b></p><div class="actions"><button class="btn" id="cloudSync">Jetzt synchronisieren</button><button class="btn secondary" id="cloudLogout">Abmelden</button><button class="btn danger" id="cloudDeleteData">Cloud-Daten löschen</button><button class="btn danger" id="cloudDeleteAccount">Konto löschen</button></div><p id="cloudStatus" class="hint"></p></div></div>
   
 </section>
 <section id="settings" class="panel">
@@ -165,5 +165,5 @@
 <div id="detailModal" class="modal"><div class="sheet"><div class="sectionHead"><h2 id="detailTitle">Setdetails</h2><button class="closeX" id="closeDetail">×</button></div><div id="detailContent"></div></div></div>
 <div id="purchaseModal" class="modal"><div class="sheet"><div class="sectionHead"><h2>Kauf erfassen</h2><button class="closeX" id="closePurchaseX">×</button></div><div class="form"><label>Setnummer<input id="pSet"></label><label>Name<input id="pName"></label><label>Anzahl<input id="pQty" type="number" min="1" value="1"></label><label>Preis je Stück (€)<input id="pPrice" type="number" step="0.01"></label><label>Versand (€)<input id="pShipping" type="number" step="0.01"></label><label>Kaufdatum<input id="pDate" type="date"></label><label>Verkäufer / Quelle<input id="pSeller"></label><label>Zustand<select id="pCondition"><option>Unbekannt</option><option>Neu / OVP</option><option>Gebraucht vollständig</option><option>Gebraucht unvollständig</option></select></label><label>Stadtbereich<input id="pArea"></label><label>Modul<input id="pModule" placeholder="z. B. M27"></label><label>Originalkarton<select id="pBox"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Vollständig?<select id="pComplete"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Notiz<textarea id="pNote"></textarea></label></div><div class="actions right"><button class="btn secondary" id="cancelPurchase">Abbrechen</button><button class="btn" id="savePurchase">Kauf speichern</button></div></div></div>
 <div id="scannerModal" class="modal"><div class="sheet"><div class="sectionHead"><h2>Barcode scannen</h2><button class="closeX" id="closeScanner">×</button></div><video id="scannerVideo" playsinline muted></video><p id="scannerStatus" class="hint">Kamera wird vorbereitet…</p><div class="actions"><label class="btn" id="photoBarcodeLabel">📷 Barcode fotografieren<input id="barcodePhoto" type="file" accept="image/*" capture="environment" hidden></label><button class="btn secondary" id="manualBarcode">Barcode manuell eingeben</button></div></div></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./supabase-config.js?v=23"></script><script src="https://unpkg.com/@zxing/library@0.23.0/umd/index.min.js"></script><script src="./seed-data.js"></script><script src="./app.js?v=23"></script><script src="./app-v3.js?v=23"></script>
+<script src="./vendor/supabase.js?v=24"></script><script src="./supabase-config.js?v=24"></script><script src="./vendor/zxing.js?v=24"></script><script src="./seed-data.js"></script><script src="./app.js?v=24"></script><script src="./app-v3.js?v=24"></script>
 </body></html>
