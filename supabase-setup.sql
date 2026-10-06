@@ -167,6 +167,7 @@ alter table public.catalog_requests enable row level security;
 
 drop policy if exists "Authenticated users request catalog sets" on public.catalog_requests;
 drop policy if exists "Catalog requests readable for enrichment" on public.catalog_requests;
+drop policy if exists "Authenticated users refresh catalog requests" on public.catalog_requests;
 
 create policy "Authenticated users request catalog sets"
 on public.catalog_requests
@@ -178,5 +179,13 @@ on public.catalog_requests
 for select to anon, authenticated
 using (true);
 
+create policy "Authenticated users refresh catalog requests"
+on public.catalog_requests
+for update to authenticated
+using (set_number ~ '^[0-9]{4,7}(-[0-9]+)?
+)
+with check (set_number ~ '^[0-9]{4,7}(-[0-9]+)?
+);
+
 grant select on public.catalog_requests to anon, authenticated;
-grant insert on public.catalog_requests to authenticated;
+grant insert, update on public.catalog_requests to authenticated;
