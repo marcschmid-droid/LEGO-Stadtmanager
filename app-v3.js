@@ -240,6 +240,8 @@ function applyEnrichmentV3(){
  for(const x of state.collection){
    const e=enrichmentV3.sets?.[String(x.setNumber)];
    if(!e)continue;
+   const onlineName=e.brickeconomyName||e.rebrickableName||"";
+   if(onlineName&&(/^Set\s+\d+\s*·\s*Daten werden nachgeladen$/i.test(String(x.name||""))||!x.name)){x.name=onlineName;changed=true}
    if(!x.imageUrl&&e.imageUrl){x.imageUrl=e.imageUrl;changed=true}
    if(!x.barcode&&(e.ean||e.upc)){x.barcode=e.ean||e.upc;changed=true}
    const mv=chooseMarketV3(x,e);
@@ -1183,13 +1185,31 @@ async function handleUnknownBarcodeV43(code){
  const setNumber=(prompt("Barcode "+code+" ist noch unbekannt. Welche LEGO-Setnummer gehört dazu?")||"").trim().replace(/-1$/,"");
  if(!setNumber){openSet();$("fBarcode").value=code;return}
  if(!/^\d{4,7}$/.test(setNumber)){alert("Bitte eine gültige LEGO-Setnummer eingeben.");openSet();$("fBarcode").value=code;return}
+
  await ensureCatalogV31(setNumber);
  const e=enrichmentV3?.sets?.[setNumber]||{};
- const name=e.brickeconomyName||e.rebrickableName||"";
+ let name=e.brickeconomyName||e.rebrickableName||"";
+
+ if(!name){
+   const entered=(prompt("Set "+setNumber+" ist noch nicht im Online-Katalog. Optional den Namen eingeben:")||"").trim();
+   name=entered||("Set "+setNumber+" · Daten werden nachgeladen");
+ }
+
  await learnBarcodeV43(code,setNumber,name,e.imageUrl||"");
  try{await requestCatalogV37(setNumber)}catch{}
- await useBarcodeSetV43(code,setNumber,e);
- alert("Barcode wurde gespeichert. Diese Zuordnung steht künftig auch anderen angemeldeten Benutzern zur Verfügung.");
+
+ openSet();
+ $("fSet").value=setNumber;
+ $("fName").value=name;
+ $("fBarcode").value=code;
+ if($("fImage")&&e.imageUrl)$("fImage").value=e.imageUrl;
+ if($("fCatalogStatusV35"))$("fCatalogStatusV35").textContent=e.brickeconomyName||e.rebrickableName
+   ?"✓ Online-Daten gefunden"
+   :"Online-Daten wurden angefordert und werden später automatisch ergänzt.";
+
+ if(e.brickeconomyName||e.rebrickableName) setTimeout(()=>fillSetFromCatalogV32?.(),50);
+
+ alert("Barcode und Setnummer wurden gespeichert. Fehlende Online-Daten werden automatisch nachgeladen.");
 }
 async function loadBarcodeAdminV43(){
  if(!isAdminV36()||!cloudV3||!$("barcodeAdminListV43"))return;
