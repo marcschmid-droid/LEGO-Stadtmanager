@@ -2052,3 +2052,29 @@ refresh=function(){
  return r;
 };
 setTimeout(cleanupDuplicateUiV515,100);
+
+
+/* v50.16 pricing page */
+let pricingYearlyV516=false;
+function renderPricingV516(){
+ const basic=$("basicPriceV516"),basicPeriod=$("basicPeriodV516"),premium=$("premiumPriceV516"),premiumPeriod=$("premiumPeriodV516");
+ if(basic)basic.textContent=pricingYearlyV516?"39,99 €":"3,99 €";
+ if(basicPeriod)basicPeriod.textContent=pricingYearlyV516?"pro Jahr":"pro Monat";
+ if(premium)premium.textContent=pricingYearlyV516?"79,99 €":"7,99 €";
+ if(premiumPeriod)premiumPeriod.textContent=pricingYearlyV516?"pro Jahr":"pro Monat";
+ $("pricingMonthlyV516")?.classList.toggle("active",!pricingYearlyV516);
+ $("pricingYearlyV516")?.classList.toggle("active",pricingYearlyV516);
+}
+function bindPricingV516(){
+ const monthly=$("pricingMonthlyV516"),yearly=$("pricingYearlyV516"),plans=$("v50Plans");
+ if(monthly)monthly.onclick=()=>{pricingYearlyV516=false;renderPricingV516()};
+ if(yearly)yearly.onclick=()=>{pricingYearlyV516=true;renderPricingV516()};
+ if(plans)plans.onclick=()=>switchTab("plans");
+ document.querySelectorAll(".pricingCtaV516").forEach(b=>b.onclick=()=>{
+   const plan=b.dataset.plan;
+   if(plan==="free"){switchTab("collection");return}
+   alert((plan==="premium"?"Premium":"Basic")+" ist vorbereitet und wird buchbar, sobald die Zahlungsanbindung aktiviert ist.");
+ });
+ renderPricingV516();
+}
+setTimeout(bindPricingV516,80);
