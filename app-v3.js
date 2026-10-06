@@ -428,17 +428,19 @@ ensureV28State();bindRecoveryV28();setTimeout(()=>{setupPlannerV28();renderWishA
 
 
 /* v31 wishlist catalog autofill + price comparison */
-async function ensureCatalogV31(){
- if(enrichmentV3?.sets&&Object.keys(enrichmentV3.sets).length)return true;
+async function ensureCatalogV31(setNumber=""){
+ const wanted=String(setNumber||"").replace(/-1$/,"");
+ if(enrichmentV3?.sets&&(!wanted||enrichmentV3.sets[wanted]))return true;
  try{
   const r=await fetch('./data/set-enrichment.json?t='+Date.now(),{cache:'no-store'});
   if(!r.ok)return false;
-  enrichmentV3=await r.json();return true;
+  enrichmentV3=await r.json();
+  return !wanted||!!enrichmentV3.sets?.[wanted];
  }catch{return false}
 }
 async function fillWishFromCatalogV31(){
  const n=$("wSet")?.value.trim();if(!n)return;
- await ensureCatalogV31();
+ await ensureCatalogV31(n);
  const e=enrichmentV3.sets?.[n]||enrichmentV3.sets?.[n.replace(/-1$/,"")];
  if(!e){return}
  if($("wName")&&!$("wName").value.trim())$("wName").value=e.brickeconomyName||e.rebrickableName||"";
@@ -489,7 +491,7 @@ bindWishAutofillV31();bindPricesV31();renderPricesV31();
 /* v32 set-form catalog autofill */
 async function fillSetFromCatalogV32(){
  const n=$("fSet")?.value.trim();if(!n)return;
- await ensureCatalogV31();
+ await ensureCatalogV31(n);
  const e=enrichmentV3.sets?.[n]||enrichmentV3.sets?.[n.replace(/-1$/,"")];
  if(!e)return;
  if($("fName")&&!$("fName").value.trim())$("fName").value=e.brickeconomyName||e.rebrickableName||"";
