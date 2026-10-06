@@ -29,7 +29,7 @@ def nums():
         # LEGO set numbers in this catalog are numeric (optionally with a variant suffix).
         # Ignore CSV/header/sample values such as "Wert", "15", "6", "3".
         base=n.split("-",1)[0]
-        if not re.fullmatch(r"\\d{4,7}",base):
+        if not re.fullmatch(r"\d{4,7}",base):
             continue
         if n not in seen:
             seen.add(n); out.append(n)
