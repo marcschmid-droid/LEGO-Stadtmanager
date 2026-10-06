@@ -1461,3 +1461,92 @@ renderFastCatalogStatusV45=async function(){
  }
 };
 loadAllSetsV46(false);
+
+
+/* v49 iPhone-first city planner */
+let citySelectedModuleV49="";
+function cityAssignedSetNumbersV49(){
+ const out=new Set();
+ for(const a of Object.values(state.modules||{}))for(const n of (a||[]))out.add(String(n));
+ return out;
+}
+function cityUnplannedSetsV49(){
+ const assigned=cityAssignedSetNumbersV49();
+ return (state.collection||[]).filter(x=>!assigned.has(String(x.setNumber)));
+}
+function renderCityPlannerV49(){
+ const stats=$("cityPlannerStatsV49"),select=$("citySetSelectV49"),list=$("cityUnplannedV49");
+ if(!(stats&&select&&list))return;
+ const modules=Object.keys(state.modules||{}),occupied=modules.filter(m=>(state.modules[m]||[]).length).length;
+ const unplanned=cityUnplannedSetsV49();
+ const oversized=(state.collection||[]).filter(x=>cityAssignedSetNumbersV49().has(String(x.setNumber))&&typeof moduleFitsV35==="function"&&moduleFitsV35(x)===false).length;
+ const area=(state.collection||[]).reduce((s,x)=>s+pV3(x.width)*pV3(x.depth)*pV3(x.quantity),0)/10000;
+ stats.innerHTML=
+   '<div class="miniStat"><span>Belegte Module</span><b>'+occupied+' / '+modules.length+'</b></div>'+
+   '<div class="miniStat"><span>Noch ohne Platz</span><b>'+unplanned.length+'</b></div>'+
+   '<div class="miniStat"><span>Zu groß für 1 Modul</span><b>'+oversized+'</b></div>'+
+   '<div class="miniStat"><span>Bekannte Setfläche</span><b>'+area.toFixed(2).replace(".",",")+' m²</b></div>';
+
+ const previous=select.value;
+ const sorted=[...(state.collection||[])].sort((a,b)=>{
+   const au=unplanned.includes(a)?0:1,bu=unplanned.includes(b)?0:1;
+   return au-bu||String(a.setNumber).localeCompare(String(b.setNumber),undefined,{numeric:true});
+ });
+ select.innerHTML='<option value="">Set auswählen…</option>'+sorted.map(x=>'<option value="'+esc(x.setNumber)+'">'+(unplanned.includes(x)?'● ':'')+esc(x.setNumber)+' · '+esc(x.name)+'</option>').join("");
+ if(sorted.some(x=>String(x.setNumber)===String(previous)))select.value=previous;
+
+ if($("citySelectedModuleV49"))$("citySelectedModuleV49").textContent=citySelectedModuleV49||"Noch keines";
+ if($("cityUnplannedCountV49"))$("cityUnplannedCountV49").textContent=String(unplanned.length);
+ list.innerHTML=unplanned.length?unplanned.slice(0,100).map(x=>
+   '<button class="cityUnplannedItemV49" onclick="selectCitySetV49(\''+esc(x.setNumber)+'\')">'+
+   '<span class="cityUnplannedPicV49">'+(x.imageUrl?'<img src="'+esc(x.imageUrl)+'" alt="">':'◻')+'</span>'+
+   '<span class="cityUnplannedTextV49"><b>'+esc(x.setNumber)+'</b><span>'+esc(x.name)+'</span><small>'+esc(shortAreaV3(x.cityArea||"Ohne Bereich"))+'</small></span>'+
+   '<span class="cityUnplannedActionV49">Planen ›</span></button>'
+ ).join(""):'<div class="cityAllPlannedV49">✓ Alle Sets haben einen festen Platz in der Stadt.</div>';
+
+ document.querySelectorAll("#moduleGrid .module[data-module]").forEach(el=>{
+   const m=el.dataset.module,sets=(state.modules?.[m]||[]).map(n=>state.collection.find(x=>String(x.setNumber)===String(n))).filter(Boolean);
+   if(sets.length){
+     const first=sets[0];
+     el.insertAdjacentHTML("beforeend",'<span class="moduleSetNameV49">'+esc(first.setNumber)+' · '+esc(first.name)+(sets.length>1?' <b>+'+(sets.length-1)+'</b>':'')+'</span>');
+   }
+ });
+}
+window.selectCitySetV49=n=>{
+ const select=$("citySetSelectV49");if(select)select.value=String(n);
+ const x=state.collection.find(y=>String(y.setNumber)===String(n));
+ if(x&&$("fitV28"))$("fitV28").textContent=typeof fitWarningV28==="function"?fitWarningV28(x):"";
+ $("citySetSelectV49")?.scrollIntoView({behavior:"smooth",block:"center"});
+};
+window.removeCitySetV49=n=>{
+ const x=state.collection.find(y=>String(y.setNumber)===String(n));if(!x)return;
+ x.module="";syncModuleV3(x);persist();refresh();renderCityPlannerV49();
+};
+const moduleClickBaseV49=window.moduleClickV3;
+window.moduleClickV3=m=>{
+ citySelectedModuleV49=m;
+ moduleClickBaseV49(m);
+ if($("citySelectedModuleV49"))$("citySelectedModuleV49").textContent=m;
+ const d=(state.modules?.[m]||[]).map(n=>state.collection.find(x=>String(x.setNumber)===String(n))).filter(Boolean);
+ const detail=$("moduleDetail");
+ if(detail&&d.length){
+   detail.insertAdjacentHTML("beforeend",'<div class="cityModuleManageV49">'+d.map(x=>'<div><span>'+esc(x.setNumber)+' · '+esc(x.name)+'</span><button class="rowbtn" onclick="removeCitySetV49(\''+esc(x.setNumber)+'\')">Vom Modul lösen</button></div>').join("")+'</div>');
+ }
+};
+function bindCityPlannerV49(){
+ const assign=$("cityAssignV49"),select=$("citySetSelectV49");
+ if(select)select.onchange=()=>{const x=state.collection.find(y=>String(y.setNumber)===String(select.value));if(x&&$("fitV28"))$("fitV28").textContent=fitWarningV28(x)};
+ if(assign)assign.onclick=()=>{
+   const setNumber=select?.value||"";
+   if(!citySelectedModuleV49)return alert("Bitte zuerst auf dem Stadtplan ein Modul antippen.");
+   if(!setNumber)return alert("Bitte ein Set auswählen.");
+   assignModuleV28(setNumber,citySelectedModuleV49);
+   renderCityPlannerV49();
+ };
+}
+const renderModulesBaseV49=renderModulesV3;
+renderModulesV3=function(){renderModulesBaseV49();setTimeout(renderCityPlannerV49,0)};
+const refreshBaseV49=refresh;
+refresh=function(){const r=refreshBaseV49();renderCityPlannerV49();return r};
+bindCityPlannerV49();
+renderCityPlannerV49();
