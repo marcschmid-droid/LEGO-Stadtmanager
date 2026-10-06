@@ -1,0 +1,23 @@
+name: Check wishlist price alerts
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 6 * * *"
+permissions:
+  contents: read
+jobs:
+  alerts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - name: Check wishlists against current market data
+        env:
+          SUPABASE_URL: https://eeiokqujnpaxgncmcvsi.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_FROM_EMAIL: ${{ secrets.ALERT_FROM_EMAIL }}
+        run: python scripts/check_price_alerts.py
