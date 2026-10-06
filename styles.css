@@ -286,3 +286,72 @@ input:focus,select:focus,textarea:focus{outline:2px solid #c91a0940;border-color
  .cityUnplannedPicV49{width:48px;height:42px}
  .cityUnplannedActionV49{grid-column:2}
 }
+
+
+/* v50 milestone visual system */
+.heroV50{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:22px;align-items:center;padding:28px;border-radius:26px;background:linear-gradient(135deg,#151515 0%,#252525 55%,#c91a09 145%);color:#fff;box-shadow:0 18px 45px #1113;overflow:hidden;margin-bottom:16px}
+.heroV50:before{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-90px;top:-120px;background:#ffd50022;border:28px solid #ffffff08}
+.heroV50 h2{font-size:clamp(28px,5vw,46px);line-height:1.02;margin:7px 0 10px;letter-spacing:-1.4px;max-width:700px}
+.heroV50 p{margin:0;max-width:660px;color:#ffffffc7;font-size:15px}
+.eyebrowV50{display:inline-block;font-size:10px;font-weight:950;letter-spacing:1.6px;text-transform:uppercase;color:#ffd500}
+.heroActionsV50{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.v50Primary{background:#ffd500!important;color:#161616!important;border-color:#ffd500!important}
+.v50Ghost{background:#ffffff10!important;color:#fff!important;border-color:#ffffff30!important}
+.hero50Mark{position:relative;z-index:1;display:grid;place-items:center;width:128px;height:128px;border:1px solid #ffffff28;border-radius:32px;background:#ffffff0d;backdrop-filter:blur(8px);transform:rotate(3deg)}
+.hero50Mark span{font-size:62px;line-height:.9;font-weight:1000;letter-spacing:-5px;color:#ffd500}
+.hero50Mark small{font-size:9px;font-weight:900;letter-spacing:1.2px;color:#fff}
+.commandGridV50{display:grid;grid-template-columns:2fr 1.35fr 1fr 1fr;gap:12px;margin:0 0 18px}
+.commandCardV50{min-height:126px;border:1px solid #e7e7e7;border-radius:20px;background:#fff;padding:16px;box-shadow:0 8px 24px #17202b08;display:flex;flex-direction:column;justify-content:space-between}
+.commandCardV50>span,.commandHeadV50 span{font-size:11px;text-transform:uppercase;letter-spacing:.8px;font-weight:900;color:var(--muted)}
+.commandCardV50>b{font-size:24px;line-height:1.12}
+.commandCardV50 small,.commandCardV50 p{font-size:11px;color:var(--muted);margin:5px 0 0}
+.commandHeadV50{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.commandHeadV50 b{font-size:24px}
+.commandBarV50{height:12px;border-radius:999px;background:#eceff1;overflow:hidden;margin:14px 0 4px}
+.commandBarV50 i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#ffd500,#f0a900,#c91a09);transition:width .5s ease}
+.linkbtnV50{border:0;background:none;padding:5px 0 0;text-align:left;font-weight:900;color:var(--red);cursor:pointer}
+.cityPlannerCardV50{border:1px solid #dadada;box-shadow:0 12px 36px #17202b0d}
+.cityPlannerCardV50>.sectionHead{padding-bottom:6px;border-bottom:1px solid var(--line)}
+.citySuggestionV50{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 16px;margin:14px 0;border-radius:17px;background:linear-gradient(135deg,#fff8d8,#fff);border:1px solid #ecd878}
+.citySuggestionV50>div:first-child{display:grid;gap:3px;min-width:0}
+.citySuggestionV50 span{font-size:10px;letter-spacing:.7px;text-transform:uppercase;font-weight:950;color:#806900}
+.citySuggestionV50 b{font-size:15px;overflow:hidden;text-overflow:ellipsis}
+.citySuggestionV50 small{font-size:11px;color:var(--muted);line-height:1.35}
+.v50WelcomeOverlay{position:fixed;inset:0;z-index:1000;background:#111b;backdrop-filter:blur(8px);display:grid;place-items:center;padding:18px}
+.v50Welcome{width:min(520px,100%);border-radius:28px;background:#fff;padding:28px;text-align:center;box-shadow:0 30px 80px #0007}
+.v50Big50{font-size:96px;line-height:.95;font-weight:1000;letter-spacing:-8px;color:var(--red);margin:8px 0}
+.v50Welcome h2{font-size:28px;margin:0 0 8px}
+.v50Welcome p{color:var(--muted);line-height:1.5}
+.v50WelcomeFeatures{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0}
+.v50WelcomeFeatures span{padding:9px;border-radius:12px;background:#f5f5f3;font-weight:800;font-size:12px}
+.showcaseExitV50{position:fixed;right:16px;bottom:16px;z-index:999;border:0;border-radius:999px;background:#111;color:#fff;padding:12px 17px;font-weight:900;box-shadow:0 8px 28px #0004}
+.showcaseV50 header .headActions,.showcaseV50 nav.tabs,.showcaseV50 #home .actions,.showcaseV50 #home .linkbtnV50,.showcaseV50 #wishAlertsV28 button{display:none!important}
+.showcaseV50 header{position:relative}
+.showcaseV50 main{padding-top:18px}
+.showcaseV50 .heroV50{min-height:250px}
+@media(max-width:900px){.commandGridV50{grid-template-columns:1fr 1fr}.commandProgressV50{grid-column:1/-1}}
+@media(max-width:720px){
+ .heroV50{grid-template-columns:1fr 92px;padding:20px;border-radius:22px}
+ .hero50Mark{width:84px;height:84px;border-radius:22px}
+ .hero50Mark span{font-size:45px;letter-spacing:-4px}
+ .hero50Mark small{font-size:7px}
+ .heroV50 h2{font-size:30px}
+ .citySuggestionV50{align-items:flex-start;flex-direction:column}
+ .citySuggestionV50 .actions{width:100%}
+ .citySuggestionV50 .actions .btn{flex:1}
+}
+@media(max-width:480px){
+ .heroV50{grid-template-columns:1fr}
+ .hero50Mark{position:absolute;right:12px;top:12px;width:60px;height:60px;border-radius:17px;opacity:.92}
+ .hero50Mark span{font-size:33px;letter-spacing:-3px}
+ .hero50Mark small{display:none}
+ .heroV50 h2{padding-right:58px}
+ .heroActionsV50 .btn{flex:1 1 44%}
+ .commandGridV50{grid-template-columns:1fr 1fr;gap:8px}
+ .commandCardV50{min-height:112px;padding:13px;border-radius:16px}
+ .commandCardV50>b,.commandHeadV50 b{font-size:20px}
+ .commandProgressV50{grid-column:1/-1}
+ .v50Welcome{padding:22px 18px}
+ .v50Big50{font-size:76px}
+ .v50WelcomeFeatures{grid-template-columns:1fr}
+}
