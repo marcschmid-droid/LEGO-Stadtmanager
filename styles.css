@@ -519,3 +519,19 @@ tbody tr:hover{background:#fafbfc}
  .homeCityPreviewContentV50{min-height:225px;max-width:86%;padding:17px}
  .homeCityPreviewContentV50 h2{font-size:23px}
 }
+
+
+/* v50.2 automatic module expansion */
+.autoCapacityV502{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin:12px 0;padding:11px 13px;border-radius:14px;background:#f7f8fa;border:1px solid var(--line)}
+.autoCapacityV502 span{font-size:10px;font-weight:950;letter-spacing:.7px;text-transform:uppercase;color:var(--muted)}
+.autoCapacityV502 b{font-size:15px}
+.autoCapacityV502 small{margin-left:auto;color:var(--muted);font-size:10px}
+.moduleExtendedV502{position:relative}
+.moduleExtendedV502:after{content:"+";position:absolute;right:5px;top:4px;width:16px;height:16px;border-radius:50%;display:grid;place-items:center;background:#111;color:#fff;font-size:10px;font-weight:900;opacity:.72}
+@media(max-width:720px){
+ .autoCapacityV502{align-items:flex-start}
+ .autoCapacityV502 small{width:100%;margin-left:0}
+ #moduleGrid.modulegrid{min-width:680px}
+ .cityPlannerCardV50{overflow-x:auto}
+ .cityPlannerCardV50>.sectionHead,.cityPlannerCardV50>.cityPlannerStatsV49,.cityPlannerCardV50>.autoCapacityV502,.cityPlannerCardV50>.citySuggestionV50,.cityPlannerCardV50>.cityPlannerControlsV49,.cityPlannerCardV50>.moduleDetail,.cityPlannerCardV50>.cityUnplannedHeadV49,.cityPlannerCardV50>.cityUnplannedV49{min-width:0}
+}
