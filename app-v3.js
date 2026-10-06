@@ -17,6 +17,23 @@ async function initCloudV3(){
  if($("cloudLogin"))$("cloudLogin").onclick=async()=>{const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;const {error}=await cloudV3.auth.signInWithPassword({email,password});if(error)alert(error.message)};
  if($("cloudRegister"))$("cloudRegister").onclick=async()=>{const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;if(!email||password.length<6)return alert("Bitte E-Mail und mindestens 6 Zeichen Passwort eingeben.");const {data,error}=await cloudV3.auth.signUp({email,password,options:{emailRedirectTo:"https://marcschmid-droid.github.io/LEGO-Stadtmanager/"}});if(error)return alert(error.message);alert(data.session?"Konto erstellt und angemeldet.":"Konto erstellt. Bitte bestätige die E-Mail und melde dich danach an.")};
  if($("cloudLogout"))$("cloudLogout").onclick=async()=>{await cloudV3.auth.signOut()};
+ if($("cloudDeleteData"))$("cloudDeleteData").onclick=async()=>{
+   if(!cloudUserV3)return;
+   if(!confirm("Wirklich alle Cloud-Daten dieses Kontos löschen? Diese Aktion kann nicht rückgängig gemacht werden."))return;
+   const {error}=await cloudV3.from("user_state").delete().eq("user_id",cloudUserV3.id);
+   if(error)return alert("Löschen fehlgeschlagen: "+error.message);
+   localStorage.removeItem(cloudCacheKeyV3(cloudUserV3.id));
+   cloudApplyingV3=true;state=blankStateV3();migrate();migrateV3();refresh();cloudApplyingV3=false;
+   cloudStatusV3("Cloud-Daten gelöscht.");
+ };
+ if($("cloudDeleteAccount"))$("cloudDeleteAccount").onclick=async()=>{
+   if(!cloudUserV3)return;
+   if(!confirm("Konto wirklich vollständig löschen? Dabei werden Konto und Cloud-Daten endgültig gelöscht."))return;
+   const {error}=await cloudV3.rpc("delete_own_account");
+   if(error)return alert("Kontolöschung ist noch nicht freigeschaltet: "+error.message);
+   localStorage.removeItem(cloudCacheKeyV3(cloudUserV3.id));
+   await cloudV3.auth.signOut();alert("Konto wurde gelöscht.");
+ };
  if($("cloudSync"))$("cloudSync").onclick=()=>cloudSaveV3(true);
  const {data}=await cloudV3.auth.getSession();await cloudSessionV3(data.session);
  cloudV3.auth.onAuthStateChange((_e,s)=>setTimeout(()=>cloudSessionV3(s),0));
