@@ -1951,8 +1951,12 @@ async function renderCollectorThemesV504(){
  if($("collectorSetCountV504"))$("collectorSetCountV504").textContent=all.meta?.uniqueSetNumbers||Object.keys(all.sets||{}).length||"–";
  const q=nV3($("collectorSearchV504")?.value);
  const defs=collectorThemeDefsV504(all);
- const featured=defs.slice(0,10).filter(d=>!q||nV3(d.label).includes(q));
- const rest=defs.slice(10).filter(d=>!q||nV3(d.label).includes(q)).slice(0,q?100:36);
+ const byProgress=(a,b)=>{
+   const pa=collectorProgressV504(collectorRowsV504(all,a)),pb=collectorProgressV504(collectorRowsV504(all,b));
+   return pb.pct-pa.pct||pb.owned-pa.owned||a.label.localeCompare(b.label,"de");
+ };
+ const featured=defs.slice(0,10).filter(d=>!q||nV3(d.label).includes(q)).sort(byProgress);
+ const rest=defs.slice(10).filter(d=>!q||nV3(d.label).includes(q)).sort(byProgress).slice(0,q?100:36);
  let html="";
  if(featured.length)html+='<div class="collectorSectionTitleV504"><span>Top 10 Sammlerwelten</span><small>Jedes Set wird hier nur einer Rubrik zugeordnet</small></div><div class="collectorThemeGridV504">'+featured.map(d=>collectorCardHtmlV504(all,d)).join("")+'</div>';
  if(rest.length)html+='<div class="collectorSectionTitleV504"><span>'+(q?'Gefundene Themen':'Weitere Themen')+'</span><small>'+rest.length+' angezeigt</small></div><div class="collectorThemeGridV504 compact">'+rest.map(d=>collectorCardHtmlV504(all,d)).join("")+'</div>';
