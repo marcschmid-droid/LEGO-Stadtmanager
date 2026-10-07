@@ -4335,3 +4335,16 @@ switchTab=function(id){
 };
 
 setTimeout(()=>{enforceCollectorDefaultV543();bindCollectorDetailFastV543()},350);
+
+
+/* v50.43b: Sammler-Tab exakt einmal rendern */
+switchTab=function(id){
+ const wasCollector=$("collector")?.classList.contains("active");
+ const r=switchTabBaseV504(id);
+ if(id==="collector"&&!wasCollector){
+   bindCollectorFastV542();
+   bindCollectorDetailFastV543();
+   requestAnimationFrame(()=>collectorCurrentV504?renderCollectorSetViewV504():renderCollectorThemesV504());
+ }
+ return r;
+};
