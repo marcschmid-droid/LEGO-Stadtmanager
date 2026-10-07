@@ -3708,3 +3708,202 @@ renderHomeExecutiveV536=function(){
  };
 };
 setTimeout(renderHomeExecutiveV536,250);
+
+
+/* v50.38 UX Upgrade: Sammlung, Details, Prüfung, Top-10, Einkauf, Suche, Mobile */
+function priceSignalV538(x){
+ const e=enrichmentForV536(x),c=confidenceV536(x),choice=marketChoiceV532(x,e),v=pV3(choice.value),lo=pV3(e.marketUsedLowEUR),hi=pV3(e.marketUsedHighEUR),nu=pV3(e.marketNewEUR);
+ if(!v)return {label:"Keine Daten",cls:"unknown",note:"Marktwert fehlt"};
+ if(c.score<55)return {label:"Unsicher",cls:"warn",note:"Datenlage prüfen"};
+ if(lo&&v<=lo*1.04)return {label:"Günstig",cls:"good",note:"am unteren Marktbereich"};
+ if(hi&&v>=hi*.94)return {label:"Hoch",cls:"high",note:"nahe oberer Marktspanne"};
+ if(nu&&v>nu*.95)return {label:"Hoch",cls:"high",note:"nahe Neu-Markt"};
+ return {label:"Fair",cls:"fair",note:"im realistischen Marktbereich"};
+}
+function miniTrendV538(x){
+ const h=state.priceHistory?.[setKeyV536(x.setNumber)]||[];
+ const vals=h.map(r=>pV3(r.currentEUR)||pV3(r.value)||pV3(r.usedEUR)||pV3(r.newEUR)).filter(Boolean).slice(-12);
+ if(vals.length<2)return "";
+ const min=Math.min(...vals),max=Math.max(...vals),span=max-min||1;
+ const pts=vals.map((v,i)=>((i/(vals.length-1))*100).toFixed(1)+","+((28-(v-min)/span*24)).toFixed(1)).join(" ");
+ return '<svg class="miniTrendV538" viewBox="0 0 100 32" preserveAspectRatio="none"><polyline points="'+pts+'" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>';
+}
+function conditionShortV538(x){
+ const s=String(x.condition||"Gebraucht");
+ if(/neu|ovp/i.test(s))return "Neu / OVP";
+ if(/unvoll/i.test(s))return "Unvollständig";
+ if(/voll/i.test(s))return "Gebraucht komplett";
+ return "Gebraucht";
+}
+renderCollection=function(){
+ const data=filteredV3(),list=document.querySelector("#collection .tablewrap"),grid=$("collectionGrid");if(!grid)return;
+ list?.classList.add("collectionTableLegacyV538");
+ grid.classList.remove("hidden");
+ if($("toggleView"))$("toggleView").textContent="☷ Kompakt";
+ const total=data.reduce((s,x)=>s+pV3(x.quantity),0),value=data.reduce((s,x)=>s+pV3(x.quantity)*pV3(x.currentValue),0);
+ let head=$("collectionSummaryV538");
+ if(!head){head=document.createElement("div");head.id="collectionSummaryV538";head.className="collectionSummaryV538";document.querySelector("#collection .toolbar")?.insertAdjacentElement("afterend",head)}
+ head.innerHTML='<div><span>Gefunden</span><b>'+data.length+'</b><small>'+total+' Exemplare</small></div><div><span>Wert</span><b>'+euro(value)+'</b><small>aktuelle Auswahl</small></div><div><span>Ansicht</span><b>Sammlerkarten</b><small>Zustand · Lagerort · Markt</small></div>';
+ grid.innerHTML=data.length?data.map(x=>{
+   const sig=priceSignalV538(x),conf=confidenceV536(x),q=pV3(x.quantity);
+   return '<article class="setcard setcardV538" onclick="showDetailV3(\''+esc(x.setNumber)+'\')">'+
+    '<div class="setVisualV538">'+(x.imageUrl?'<img src="'+esc(x.imageUrl)+'" alt="">':'<div class="setFallbackV538">LEGO<br>'+esc(x.setNumber)+'</div>')+
+    '<span class="marketPillV538 '+sig.cls+'">'+esc(sig.label)+'</span>'+(q>1?'<b class="qtyBadgeV538">×'+q+'</b>':'')+'</div>'+
+    '<div class="setBodyV538"><div class="setNoV538">'+esc(x.setNumber)+'</div><h3>'+esc(x.name)+'</h3>'+
+    '<div class="setMetaV538"><span>'+esc(conditionShortV538(x))+'</span><span>'+esc(x.storage||"Lagerort offen")+'</span></div>'+
+    miniTrendV538(x)+
+    '<div class="setValueRowV538"><div><small>Kauf</small><b>'+euro(x.purchasePrice)+'</b></div><div><small>Wert</small><b>'+euro(x.currentValue)+'</b></div><div><small>Vertrauen</small><b>'+conf.score+'%</b></div></div>'+
+    '<div class="setFootV538"><span>'+esc(shortAreaV3(x.cityArea||"Ohne Bereich"))+'</span><span>'+(x.module?esc(x.module):"noch nicht geplant")+'</span></div></div></article>';
+ }).join(""):'<div class="emptyV538">Keine Sets gefunden.</div>';
+ if($("collectionBody"))$("collectionBody").innerHTML=data.map(x=>'<tr><td><b>'+esc(x.setNumber)+'</b></td><td>'+esc(x.name)+'</td><td>'+pV3(x.quantity)+'</td><td>'+euro(x.purchasePrice)+'</td><td>'+euro(x.currentValue)+'</td><td>'+esc(x.cityArea||"")+'</td><td><button class="rowbtn" onclick="showDetailV3(\''+esc(x.setNumber)+'\')">Öffnen</button></td></tr>').join("");
+};
+function setupCollectionViewV538(){
+ collectionModeV3="grid";
+ const list=document.querySelector("#collection .tablewrap"),grid=$("collectionGrid");
+ if(list)list.classList.add("collectionTableLegacyV538");
+ if(grid)grid.classList.remove("hidden");
+ if($("toggleView"))$("toggleView").onclick=()=>document.querySelector("#collection .tablewrap")?.classList.toggle("showCompactV538");
+}
+
+function addDetailNavV538(x){
+ const root=$("detailContent");if(!root||!x)return;
+ root.querySelector(".detailNavV538")?.remove();
+ const nav=document.createElement("div");nav.className="detailNavV538";
+ nav.innerHTML='<button data-go="overview">Übersicht</button><button data-go="market">Wert & Markt</button><button data-go="copies">Exemplare</button><button data-go="city">Stadt</button><button data-go="history">Historie</button>';
+ root.prepend(nav);
+ const blocks=[...root.children].filter(e=>e!==nav);
+ blocks.forEach((el,i)=>{if(!el.id)el.dataset.detailSectionV538=i===0?"overview":""});
+ const market=root.querySelector(".valuationDetailV532,.intelDetailV536");if(market)market.dataset.detailSectionV538="market";
+ const copies=root.querySelector(".exemplars")?.closest(".card")||root.querySelector(".exemplars");if(copies)copies.dataset.detailSectionV538="copies";
+ const history=[...root.querySelectorAll(".card")].find(el=>/Preisverlauf/i.test(el.textContent||""));if(history)history.dataset.detailSectionV538="history";
+ nav.querySelectorAll("button").forEach(b=>b.onclick=()=>{
+   const key=b.dataset.go;
+   if(key==="city"){closeModal?.("detailModal");switchTab("city");return}
+   const target=root.querySelector('[data-detail-section-v538="'+key+'"]')||root.querySelector(key==="market"?".valuationDetailV532,.intelDetailV536":key==="copies"?".exemplars":key==="history"?".priceChartV37":"");
+   target?.scrollIntoView({behavior:"smooth",block:"start"});
+ });
+ const sig=priceSignalV538(x),conf=confidenceV536(x);
+ const intro=document.createElement("div");intro.className="detailSummaryV538";intro.dataset.detailSectionV538="overview";
+ intro.innerHTML='<div><span>'+esc(x.setNumber)+'</span><h3>'+esc(x.name)+'</h3><small>'+esc(conditionShortV538(x))+' · '+pV3(x.quantity)+' Exemplar'+(pV3(x.quantity)===1?"":"e")+'</small></div>'+
+ '<div class="detailSummaryMetricsV538"><div><small>Sammlerwert</small><b>'+euro(x.currentValue)+'</b></div><div><small>Markt</small><b class="signal '+sig.cls+'">'+esc(sig.label)+'</b></div><div><small>Vertrauen</small><b>'+conf.score+'%</b></div><div><small>Lagerort</small><b>'+esc(x.storage||"offen")+'</b></div></div>';
+ nav.insertAdjacentElement("afterend",intro);
+}
+const showDetailBaseV538=showDetailV3;
+showDetailV3=function(n){showDetailBaseV538(n);const x=(state.collection||[]).find(y=>setKeyV536(y.setNumber)===setKeyV536(n));setTimeout(()=>addDetailNavV538(x),0)};
+
+function collectionAuditV538(){
+ const rows=state.collection||[],issues=[];
+ const dup=new Map();
+ rows.forEach(x=>dup.set(setKeyV536(x.setNumber),(dup.get(setKeyV536(x.setNumber))||0)+1));
+ for(const x of rows){
+   const a=[];
+   if(!pV3(x.purchasePrice))a.push("Kaufpreis");
+   if(!x.condition||x.condition==="Unbekannt")a.push("Zustand");
+   if(!x.imageUrl)a.push("Bild");
+   if(!pV3(x.currentValue))a.push("Marktwert");
+   if(!x.storage)a.push("Lagerort");
+   if(!x.module)a.push("Stadtplatz");
+   if(confidenceV536(x).score<55)a.push("Preisvertrauen");
+   if(a.length)issues.push({x,a});
+ }
+ return {sets:rows.length,qty:qtyTotalV536(),issues,duplicateRows:[...dup].filter(([,n])=>n>1)};
+}
+function renderAuditV538(){
+ const a=collectionAuditV538(),html='<div class="auditHeroV538"><div><span>Sammlung geprüft</span><b>'+a.sets+' Sets · '+a.qty+' Exemplare</b></div><strong class="'+(a.issues.length?"warn":"good")+'">'+(a.issues.length?a.issues.length+" Sets prüfen":"Alles sauber")+'</strong></div>'+
+ '<div class="auditGridV538">'+[
+  ["Ohne Kaufpreis",a.issues.filter(r=>r.a.includes("Kaufpreis")).length],
+  ["Ohne Lagerort",a.issues.filter(r=>r.a.includes("Lagerort")).length],
+  ["Ohne Stadtplatz",a.issues.filter(r=>r.a.includes("Stadtplatz")).length],
+  ["Preis unsicher",a.issues.filter(r=>r.a.includes("Preisvertrauen")).length]
+ ].map(([k,v])=>'<div><span>'+k+'</span><b>'+v+'</b></div>').join("")+'</div>'+
+ (a.issues.length?'<div class="auditListV538">'+a.issues.slice(0,25).map(r=>'<button onclick="showDetailV3(\''+esc(r.x.setNumber)+'\')"><b>'+esc(r.x.setNumber)+' · '+esc(r.x.name)+'</b><small>'+r.a.map(esc).join(" · ")+'</small></button>').join("")+'</div>':'<p class="hint">Keine offenen Prüfungen.</p>');
+ ensurePanelCardV536("analysis","collectionAuditV538","Sammlung prüfen",html);
+}
+window.runCollectionAuditV538=()=>{renderAuditV538();switchTab("analysis");document.getElementById("collectionAuditV538")?.scrollIntoView({behavior:"smooth"})};
+
+function smartWishLimitV538(w){
+ const e=enrichmentV3?.sets?.[setKeyV536(w.setNumber)]||w.market||{},used=pV3(e.marketUsedEUR),low=pV3(e.marketUsedLowEUR),nu=pV3(e.marketNewEUR);
+ const base=low||used||nu;
+ return base?Math.round(base*.9*100)/100:0;
+}
+function applyWishlistLimitsV538(){
+ let changed=0;
+ for(const w of state.wishlist||[]){if(!pV3(w.limit)){const v=smartWishLimitV538(w);if(v){w.limit=v;changed++}}}
+ if(changed){journalAddV536("Einkauf","Kaufgrenzen automatisch ergänzt",changed+" Wunschlisten-Sets");persist();refresh()}
+ alert(changed?changed+" Kaufgrenzen wurden ergänzt.":"Für die offenen Wünsche konnten keine neuen sicheren Kaufgrenzen berechnet werden.");
+}
+window.applyWishlistLimitsV538=applyWishlistLimitsV538;
+const renderWishlistBaseV538=renderWishlist;
+renderWishlist=function(){
+ renderWishlistBaseV538();
+ const panel=$("wishlist");if(!panel)return;
+ let bar=$("wishlistSmartV538");
+ if(!bar){bar=document.createElement("div");bar.id="wishlistSmartV538";bar.className="wishlistSmartV538";panel.querySelector(".toolbar")?.insertAdjacentElement("afterend",bar)}
+ const alerts=(state.wishlist||[]).filter(w=>pV3(w.offer)&&pV3(w.limit)&&pV3(w.offer)<=pV3(w.limit)).length;
+ bar.innerHTML='<div><span>SMART BUY</span><b>'+alerts+' aktuelle Kaufchance'+(alerts===1?"":"n")+'</b><small>Kaufgrenzen orientieren sich am unteren Marktbereich mit Sicherheitsabschlag.</small></div><button class="btn secondary" onclick="applyWishlistLimitsV538()">Fehlende Kaufgrenzen berechnen</button>';
+};
+
+async function renderCollectorPriorityV538(){
+ const panel=$("collector");if(!panel)return;
+ let box=$("collectorPriorityV538");if(!box){box=document.createElement("div");box.id="collectorPriorityV538";box.className="collectorPriorityV538";panel.querySelector(".collectorFastCompleteV528")?.insertAdjacentElement("beforebegin",box)}
+ try{
+   const all=await loadAllSetsV46(false);if(!all?.sets)return;
+   const defs=collectorThemeDefsV504(all),goals=defs.map(def=>{const rows=collectorRowsV504(all,def),p=collectorProgressV504(rows),missing=rows.filter(([n])=>collectorStatusForV504(n)==="missing");return {def,p,missing}}).filter(g=>g.p.total&&g.p.missing>0).sort((a,b)=>a.p.missing-b.p.missing||b.p.pct-a.p.pct).slice(0,6);
+   box.innerHTML='<div class="sectionHead"><div><span class="eyebrowV50">NÄCHSTE ABSCHLÜSSE</span><h2>Diese Serien erreichst du am schnellsten</h2></div></div><div class="collectorPriorityGridV538">'+goals.map(g=>'<button onclick="openCollectorThemeV504(\''+esc(g.def.key)+'\')"><div><span>'+esc(g.def.label)+'</span><b>'+g.p.pct+'%</b></div><small>'+g.p.missing+' fehlen · '+g.p.owned+' vorhanden</small><i><em style="width:'+g.p.pct+'%"></em></i></button>').join("")+'</div>';
+ }catch{}
+}
+
+function renderGlobalSearchV521(){
+ const box=$("globalSearchResultsV521"),input=$("globalSearchInputV521");if(!box||!input)return;
+ const q=nV3(input.value||"");
+ if(!q){box.innerHTML='<p class="hint">Durchsuche Sets, Setnummern, Lagerorte, Themen, Wunschliste und Stadtmodule.</p>';return}
+ const own=(state.collection||[]).filter(x=>nV3([x.setNumber,x.name,x.category,x.cityArea,x.storage,x.module,...(x.exemplars||[]).flatMap(e=>[e.storage,e.seller,e.note])].join(" ")).includes(q)).slice(0,15);
+ const wish=(state.wishlist||[]).filter(x=>nV3([x.setNumber,x.name,x.area,x.reason,x.priority].join(" ")).includes(q)).slice(0,8);
+ const modules=Object.entries(state.modules||{}).filter(([m,sets])=>nV3([m,...sets].join(" ")).includes(q)).slice(0,8);
+ let html="";
+ if(own.length)html+='<h3>Sammlung</h3>'+own.map(x=>'<div class="globalResultV521"><button class="favBtnV521 '+(isFavoriteV521(x.setNumber)?"active":"")+'" onclick="toggleFavoriteV521(\''+esc(x.setNumber)+'\')">★</button><button class="globalResultMainV521" onclick="closeUtilityV521(\'globalSearchV521\');showDetailV3(\''+esc(x.setNumber)+'\')"><b>'+esc(x.setNumber)+' · '+esc(x.name)+'</b><small>'+esc([x.cityArea,x.storage,x.module].filter(Boolean).join(" · ")||"Sammlung")+'</small></button></div>').join("");
+ if(wish.length)html+='<h3>Wunschliste</h3>'+wish.map(x=>'<div class="globalResultV521"><span class="favPlaceholderV521">♡</span><button class="globalResultMainV521" onclick="closeUtilityV521(\'globalSearchV521\');switchTab(\'wishlist\')"><b>'+esc(x.setNumber)+' · '+esc(x.name)+'</b><small>'+esc(x.area||x.reason||"Wunschliste")+'</small></button></div>').join("");
+ if(modules.length)html+='<h3>Stadtmodule</h3>'+modules.map(([m,sets])=>'<div class="globalResultV521"><span class="favPlaceholderV521">▦</span><button class="globalResultMainV521" onclick="closeUtilityV521(\'globalSearchV521\');switchTab(\'city\');setTimeout(()=>moduleClickV3(\''+esc(m)+'\'),150)"><b>'+esc(m)+'</b><small>'+sets.length+' Set'+(sets.length===1?"":"s")+'</small></button></div>').join("");
+ if(!html)html='<p class="hint">Keine passenden Einträge gefunden.</p>';
+ box.innerHTML=html;
+}
+
+function topCardV538(x,i,kind,max){
+ const val=kind==="value"?x.value:x.gain,pct=max?Math.max(3,Math.max(0,val)/max*100):3;
+ return '<button class="rankCardV538" onclick="showDetailV3(\''+esc(x.setNumber)+'\')"><div class="rankNoV538">'+(i+1)+'</div><div class="rankPicV538">'+(x.imageUrl?'<img src="'+esc(x.imageUrl)+'" alt="">':'<span>LEGO</span>')+'</div><div class="rankMainV538"><div><b>'+esc(x.setNumber)+'</b><span>'+esc(x.name)+'</span></div><small>'+(kind==="value"?x.qty+'× · '+euro(x.market)+' je Set':"Kauf "+euro(x.purchase)+" → "+euro(x.market))+'</small><i><em style="width:'+pct+'%"></em></i></div><div class="rankValueV538"><b>'+(kind==="gain"&&val>=0?"+":"")+euro(val)+'</b>'+(kind==="gain"?'<small>'+(x.pct>=0?"+":"")+x.pct.toFixed(1).replace(".",",")+'%</small>':'')+'</div></button>';
+}
+const renderStatsBaseV538=renderStatsV36;
+renderStatsV36=function(){
+ renderStatsBaseV538();
+ const rows=(state.collection||[]).map(x=>{const qty=pV3(x.quantity),market=pV3(x.currentValue),purchase=pV3(x.purchasePrice),value=qty*market,gain=qty*(market-purchase);return {...x,qty,market,purchase,value,gain,pct:purchase?((market-purchase)/purchase*100):0}});
+ const bestV=[...rows].sort((a,b)=>b.value-a.value).slice(0,10),bestG=[...rows].filter(x=>x.market&&x.purchase).sort((a,b)=>b.gain-a.gain).slice(0,10);
+ const mv=Math.max(...bestV.map(x=>x.value),1),mg=Math.max(...bestG.map(x=>Math.max(0,x.gain)),1);
+ if($("topValueV36"))$("topValueV36").innerHTML='<div class="rankListV538">'+bestV.map((x,i)=>topCardV538(x,i,"value",mv)).join("")+'</div>';
+ if($("topGainV36"))$("topGainV36").innerHTML='<div class="rankListV538">'+bestG.map((x,i)=>topCardV538(x,i,"gain",mg)).join("")+'</div>';
+ renderAuditV538();
+};
+
+function simplifyHomeV538(){
+ const home=$("home");if(!home)return;
+ const selectors=[".homeSectionTitleV50",".cards",".homegridV515",".homeSmartGridV521"];
+ selectors.forEach(sel=>home.querySelectorAll(sel).forEach(el=>el.classList.add("homeSecondaryV538")));
+ let focus=$("todayFocusV538");
+ if(!focus){focus=document.createElement("div");focus.id="todayFocusV538";focus.className="todayFocusV538";$("executiveV536")?.insertAdjacentElement("afterend",focus)}
+ const a=collectionAuditV538(),unplanned=(state.collection||[]).filter(x=>!x.module).length,wish=(state.wishlist||[]).filter(w=>pV3(w.offer)&&pV3(w.limit)&&pV3(w.offer)<=pV3(w.limit)).length;
+ const tasks=[
+   a.issues.length?{n:a.issues.length,t:"Sammlung prüfen",s:"Sets mit offenen Angaben",go:"runCollectionAuditV538()"}:null,
+   unplanned?{n:unplanned,t:"Stadt weiterplanen",s:"Sets ohne Modulplatz",go:"switchTab('city')"}:null,
+   wish?{n:wish,t:"Kaufchancen ansehen",s:"Angebote unter Kaufgrenze",go:"switchTab('wishlist')"}:null
+ ].filter(Boolean).slice(0,3);
+ focus.innerHTML='<div class="sectionHead"><div><span class="eyebrowV50">HEUTE WICHTIG</span><h2>Deine nächsten Schritte</h2></div><button class="execTechBtnV537" id="homeMoreV538">Mehr anzeigen</button></div><div class="todayGridV538">'+(tasks.length?tasks.map(t=>'<button onclick="'+t.go+'"><b>'+t.n+'</b><span>'+esc(t.t)+'</span><small>'+esc(t.s)+'</small></button>').join(""):'<div class="allGoodV538"><b>✓</b><span>Alles im grünen Bereich</span></div>')+'</div>';
+ const btn=$("homeMoreV538");if(btn)btn.onclick=()=>home.querySelectorAll(".homeSecondaryV538").forEach(e=>e.classList.toggle("showV538"));
+}
+
+function backgroundQualityV538(){
+ const q=$("qualityAnalysis")?.closest(".card");
+ if(q){q.classList.add("qualityBackgroundV538");const h=q.querySelector(".sectionHead h2");if(h)h.textContent="Datenprüfung (nur bei Bedarf)"}
+}
+function renderUxV538(){setupCollectionViewV538();renderCollection();renderWishlist();renderStatsV36();renderCollectorPriorityV538();simplifyHomeV538();backgroundQualityV538()}
+const refreshBaseV538=refresh;
+refresh=function(){const r=refreshBaseV538();setTimeout(renderUxV538,0);return r};
+setTimeout(renderUxV538,700);
