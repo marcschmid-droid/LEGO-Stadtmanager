@@ -1017,3 +1017,61 @@ tbody tr:hover{background:#fafbfc}
 [data-theme="dark"] .execHeroCardV537,[data-theme="dark"] .execMetricV537{background:linear-gradient(145deg,rgba(35,35,38,.96),rgba(24,24,27,.94));box-shadow:0 8px 26px rgba(0,0,0,.22)}
 @media(max-width:1050px){.execRailV537{grid-template-columns:repeat(2,minmax(0,1fr))}.execHeroCardV537{grid-column:span 2}}
 @media(max-width:620px){.execRailV537{grid-template-columns:1fr}.execHeroCardV537{grid-column:auto}.execHeroCardV537,.execMetricV537{min-height:96px}.execCopyV537>b,.execHeroCardV537 .execCopyV537>b{font-size:1.55rem}.execHeadV537{align-items:flex-start}}
+
+
+/* v50.38 UX Upgrade */
+.collectionTableLegacyV538{display:none!important}
+.collectionTableLegacyV538.showCompactV538{display:block!important}
+.collectionSummaryV538{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0 16px}
+.collectionSummaryV538>div{padding:13px 15px;border-radius:16px;background:rgba(0,0,0,.035)}
+.collectionSummaryV538 span,.collectionSummaryV538 small{display:block;opacity:.65;font-size:.78rem}
+.collectionSummaryV538 b{display:block;font-size:1.2rem;margin:3px 0}
+.setgrid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.setcardV538{border-radius:20px;overflow:hidden;padding:0;background:var(--card,#fff);box-shadow:0 8px 24px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.06)}
+.setVisualV538{position:relative;aspect-ratio:16/10;background:rgba(0,0,0,.035);display:grid;place-items:center;overflow:hidden}
+.setVisualV538 img{width:100%;height:100%;object-fit:contain;padding:10px}
+.setFallbackV538{text-align:center;font-weight:900;opacity:.35}
+.marketPillV538{position:absolute;left:10px;top:10px;padding:6px 9px;border-radius:999px;font-size:.72rem;font-weight:800;background:rgba(0,0,0,.75);color:#fff}
+.marketPillV538.good{background:#207a49}.marketPillV538.fair{background:#446275}.marketPillV538.warn{background:#a16a00}.marketPillV538.high{background:#8a3d32}
+.qtyBadgeV538{position:absolute;right:10px;top:10px;background:#fff;border-radius:999px;padding:6px 9px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.setBodyV538{padding:15px}
+.setNoV538{font-size:.74rem;font-weight:900;letter-spacing:.08em;opacity:.55}
+.setBodyV538 h3{font-size:1rem;margin:4px 0 10px;min-height:2.4em}
+.setMetaV538,.setFootV538{display:flex;gap:7px;flex-wrap:wrap}
+.setMetaV538 span,.setFootV538 span{padding:5px 8px;border-radius:999px;background:rgba(0,0,0,.045);font-size:.72rem}
+.miniTrendV538{width:100%;height:30px;margin:8px 0;opacity:.75}
+.setValueRowV538{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:9px 0}
+.setValueRowV538>div{background:rgba(0,0,0,.035);border-radius:12px;padding:8px}
+.setValueRowV538 small,.setValueRowV538 b{display:block}.setValueRowV538 small{font-size:.68rem;opacity:.6}.setValueRowV538 b{font-size:.9rem;margin-top:2px}
+.detailNavV538{position:sticky;top:0;z-index:4;display:flex;gap:6px;overflow:auto;padding:8px 0 12px;background:inherit}
+.detailNavV538 button{border:0;border-radius:999px;padding:8px 11px;white-space:nowrap;font-weight:700;background:rgba(0,0,0,.055)}
+.detailSummaryV538{display:grid;grid-template-columns:1.2fr 2fr;gap:15px;padding:16px;border-radius:18px;background:linear-gradient(145deg,rgba(0,0,0,.035),rgba(0,0,0,.015));margin-bottom:12px}
+.detailSummaryV538 h3{margin:3px 0}.detailSummaryV538>div>span{font-weight:900;opacity:.6}
+.detailSummaryMetricsV538{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.detailSummaryMetricsV538>div{padding:9px;border-radius:12px;background:rgba(255,255,255,.62)}
+.detailSummaryMetricsV538 small,.detailSummaryMetricsV538 b{display:block}.detailSummaryMetricsV538 small{font-size:.68rem;opacity:.6}.signal.good{color:#207a49}.signal.warn{color:#a16a00}.signal.high{color:#8a3d32}
+.auditHeroV538{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.auditHeroV538 span,.auditHeroV538 b{display:block}.auditHeroV538 strong{padding:8px 11px;border-radius:999px}.auditHeroV538 strong.good{background:rgba(39,174,96,.14)}.auditHeroV538 strong.warn{background:rgba(243,156,18,.16)}
+.auditGridV538{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.auditGridV538>div{padding:10px;border-radius:12px;background:rgba(0,0,0,.04)}.auditGridV538 span,.auditGridV538 b{display:block}
+.auditListV538{display:grid;gap:6px;margin-top:12px;max-height:320px;overflow:auto}.auditListV538 button{border:0;border-radius:12px;padding:10px 12px;text-align:left;background:rgba(0,0,0,.035)}.auditListV538 b,.auditListV538 small{display:block}.auditListV538 small{opacity:.65;margin-top:3px}
+.wishlistSmartV538{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;border-radius:18px;background:rgba(0,0,0,.035);margin-bottom:14px}.wishlistSmartV538 span,.wishlistSmartV538 b,.wishlistSmartV538 small{display:block}.wishlistSmartV538 span{font-size:.7rem;font-weight:900;letter-spacing:.08em;opacity:.55}.wishlistSmartV538 b{margin:3px 0}
+.collectorPriorityV538{margin:16px 0}.collectorPriorityGridV538{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:9px}.collectorPriorityGridV538 button{border:0;border-radius:16px;padding:12px;text-align:left;background:rgba(0,0,0,.035)}.collectorPriorityGridV538 button>div{display:flex;justify-content:space-between;gap:10px}.collectorPriorityGridV538 span,.collectorPriorityGridV538 small{display:block}.collectorPriorityGridV538 i{display:block;height:4px;margin-top:8px;border-radius:999px;background:rgba(0,0,0,.08);overflow:hidden}.collectorPriorityGridV538 em{display:block;height:100%;background:currentColor}
+.rankListV538{display:grid;gap:8px}.rankCardV538{border:0;border-radius:16px;padding:10px;display:grid;grid-template-columns:34px 54px 1fr auto;gap:10px;align-items:center;text-align:left;background:rgba(0,0,0,.035)}.rankNoV538{font-size:1.1rem;font-weight:900;opacity:.4;text-align:center}.rankPicV538{width:54px;height:54px;border-radius:10px;background:#fff;display:grid;place-items:center;overflow:hidden}.rankPicV538 img{width:100%;height:100%;object-fit:contain}.rankPicV538 span{font-size:.7rem;font-weight:900;opacity:.35}.rankMainV538>div{display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}.rankMainV538 span{opacity:.7}.rankMainV538 small{display:block;opacity:.6;margin:3px 0 5px}.rankMainV538 i{display:block;height:4px;background:rgba(0,0,0,.07);border-radius:999px;overflow:hidden}.rankMainV538 em{display:block;height:100%;background:currentColor}.rankValueV538{text-align:right}.rankValueV538 b,.rankValueV538 small{display:block}.rankValueV538 small{opacity:.62}
+.homeSecondaryV538{display:none!important}.homeSecondaryV538.showV538{display:grid!important}
+.todayFocusV538{margin:18px 0}.todayGridV538{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.todayGridV538 button,.allGoodV538{border:0;border-radius:18px;padding:14px;text-align:left;background:rgba(0,0,0,.035)}.todayGridV538 button b,.todayGridV538 button span,.todayGridV538 button small{display:block}.todayGridV538 button b{font-size:1.5rem}.todayGridV538 button span{font-weight:800;margin:3px 0}.todayGridV538 button small{opacity:.62}
+.qualityBackgroundV538{opacity:.94}
+.emptyV538{padding:30px;text-align:center;opacity:.6}
+@media(max-width:760px){
+ .collectionSummaryV538{grid-template-columns:1fr 1fr}.collectionSummaryV538>div:last-child{grid-column:1/-1}
+ .setgrid{grid-template-columns:1fr 1fr;gap:9px}.setBodyV538{padding:11px}.setBodyV538 h3{font-size:.9rem}
+ .setValueRowV538{grid-template-columns:1fr 1fr}.setValueRowV538>div:last-child{grid-column:1/-1}
+ .detailSummaryV538{grid-template-columns:1fr}.detailSummaryMetricsV538{grid-template-columns:1fr 1fr}
+ .auditGridV538{grid-template-columns:1fr 1fr}.wishlistSmartV538{align-items:flex-start;flex-direction:column}
+ .todayGridV538{grid-template-columns:1fr}
+ .rankCardV538{grid-template-columns:28px 48px 1fr}.rankValueV538{grid-column:3;text-align:left}
+}
+@media(max-width:460px){
+ .setgrid{grid-template-columns:1fr}
+ .collectionSummaryV538{grid-template-columns:1fr}.collectionSummaryV538>div:last-child{grid-column:auto}
+ .detailSummaryMetricsV538{grid-template-columns:1fr 1fr}.auditGridV538{grid-template-columns:1fr 1fr}
+}
