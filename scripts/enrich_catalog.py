@@ -2,6 +2,10 @@
 import json, os, re, time
 from pathlib import Path
 import requests
+try:
+    from requests_oauthlib import OAuth1
+except Exception:
+    OAuth1=None
 
 ROOT=Path(__file__).resolve().parents[1]
 SEED=ROOT/"seed-data.js"
@@ -11,6 +15,11 @@ OUT.parent.mkdir(parents=True,exist_ok=True)
 
 RB_KEY=os.getenv("REBRICKABLE_API_KEY","").strip()
 BE_KEY=os.getenv("BRICKECONOMY_API_KEY","").strip()
+BS_KEY=os.getenv("BRICKSET_API_KEY","").strip()
+BL_CONSUMER_KEY=os.getenv("BRICKLINK_CONSUMER_KEY","").strip()
+BL_CONSUMER_SECRET=os.getenv("BRICKLINK_CONSUMER_SECRET","").strip()
+BL_TOKEN_VALUE=os.getenv("BRICKLINK_TOKEN_VALUE","").strip()
+BL_TOKEN_SECRET=os.getenv("BRICKLINK_TOKEN_SECRET","").strip()
 BE_BATCH=max(1,min(int(os.getenv("BRICKECONOMY_BATCH_SIZE","90")),90))
 REQUESTS_ONLY=os.getenv("REQUESTS_ONLY","").strip()=="1"
 UA="LEGO-Stadtmanager/1.0 (+https://github.com/marcschmid-droid/LEGO-Stadtmanager)"
@@ -90,6 +99,8 @@ changed=False
 errors=[]
 rb_requests=0
 be_requests=0
+bs_requests=0
+bl_requests=0
 rate_limited=False
 
 if RB_KEY:
@@ -120,6 +131,46 @@ if RB_KEY:
                 break
         # Be deliberately gentle with the public API; missing entries are retried next run.
         time.sleep(0.25)
+
+# Brickset fallback for model dimensions. Brickset exposes three model
+# dimensions but does not guarantee which physical axis each value represents,
+# so keep them as generic modelDimension1/2/3 instead of pretending they are
+# width/depth/height.
+if BS_KEY:
+    missing_dims=[n for n in numbers if not all([
+        sets.get(n,{}).get("modelDimension1"),
+        sets.get(n,{}).get("modelDimension2"),
+        sets.get(n,{}).get("modelDimension3")
+    ])]
+    for n in missing_dims[:95]:
+        e=sets.setdefault(n,{})
+        try:
+            bs_requests+=1
+            r=requests.get(
+                "https://brickset.com/api/v3.asmx/getSets",
+                params={"apiKey":BS_KEY,"userHash":"","params":json.dumps({"setNumber":api_num(n),"pageSize":1})},
+                headers={"Accept":"application/json","User-Agent":UA},
+                timeout=25
+            )
+            r.raise_for_status()
+            j=r.json()
+            rows=j.get("sets") or []
+            if rows:
+                row=rows[0]
+                md=row.get("modelDimensions") or {}
+                d1=md.get("dimension1"); d2=md.get("dimension2"); d3=md.get("dimension3")
+                if d1 and d2 and d3:
+                    e.update({
+                        "modelDimension1":d1,
+                        "modelDimension2":d2,
+                        "modelDimension3":d3,
+                        "modelDimensionsSource":"Brickset",
+                        "bricksetUpdated":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())
+                    })
+                    changed=True
+        except Exception as ex:
+            errors.append(f"Brickset {n}: {ex}")
+        time.sleep(0.18)
 
 if BE_KEY and numbers and not REQUESTS_ONLY:
     cursor=int(meta.get("brickeconomyCursor",0)) % len(numbers)
@@ -171,6 +222,49 @@ if BE_KEY and numbers and not REQUESTS_ONLY:
         time.sleep(0.12)
     meta["brickeconomyCursor"]=(cursor+done)%len(numbers)
 
+# BrickLink fallback for market values. Use sold-price averages in EUR.
+# BrickLink requires OAuth 1.0 credentials. Some accounts also require requests
+# to originate from registered IP addresses; failures are recorded but never
+# overwrite existing BrickEconomy values.
+bl_ready=all([BL_CONSUMER_KEY,BL_CONSUMER_SECRET,BL_TOKEN_VALUE,BL_TOKEN_SECRET,OAuth1])
+if bl_ready and numbers and not REQUESTS_ONLY:
+    auth=OAuth1(BL_CONSUMER_KEY,BL_CONSUMER_SECRET,BL_TOKEN_VALUE,BL_TOKEN_SECRET)
+    missing_prices=[n for n in numbers if not (sets.get(n,{}).get("marketNewEUR") or sets.get(n,{}).get("marketUsedEUR"))]
+    for n in missing_prices[:40]:
+        e=sets.setdefault(n,{})
+        base=api_num(n)
+        got=False
+        try:
+            vals={}
+            for condition,key in (("N","marketNewEUR"),("U","marketUsedEUR")):
+                bl_requests+=1
+                r=requests.get(
+                    f"https://api.bricklink.com/api/store/v1/items/SET/{base}/price",
+                    params={"guide_type":"sold","new_or_used":condition,"currency_code":"EUR"},
+                    auth=auth,
+                    headers={"Accept":"application/json","User-Agent":UA},
+                    timeout=25
+                )
+                if r.status_code==429: raise RuntimeError("RATE_LIMIT")
+                r.raise_for_status()
+                j=(r.json() or {}).get("data") or {}
+                v=j.get("qty_avg_price") or j.get("avg_price")
+                if v is not None:
+                    try: vals[key]=float(v)
+                    except Exception: pass
+                time.sleep(0.12)
+            if vals:
+                for key,val in vals.items():
+                    if not e.get(key): e[key]=val
+                e["marketSourceFallback"]="BrickLink sold 6m"
+                e["bricklinkUpdated"]=time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())
+                changed=True;got=True
+        except Exception as ex:
+            errors.append(f"BrickLink {n}: {ex}")
+            if "RATE_LIMIT" in str(ex):
+                rate_limited=True
+                break
+
 if changed:
     meta.update({
         "version":1,
@@ -178,9 +272,13 @@ if changed:
         "setCount":len(numbers),
         "rebrickableEnabled":bool(RB_KEY),
         "brickeconomyEnabled":bool(BE_KEY),
+        "bricksetEnabled":bool(BS_KEY),
+        "bricklinkEnabled":bool(bl_ready),
         "errors":errors[-20:],
         "rebrickableRequestsThisRun":rb_requests,
         "brickeconomyRequestsThisRun":be_requests,
+        "bricksetRequestsThisRun":bs_requests,
+        "bricklinkRequestsThisRun":bl_requests,
         "rateLimited":rate_limited
     })
     OUT.write_text(json.dumps(data,ensure_ascii=False,indent=2,sort_keys=True)+"\n",encoding="utf-8")
