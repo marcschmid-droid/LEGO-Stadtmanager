@@ -2228,7 +2228,7 @@ cloudSaveV3=async function(show=false){
  if(cloudUserV3){
    state.meta=state.meta||{};
    state.meta.lastCloudBackupAt=new Date().toISOString();
-   persistBaseV3?.();
+   if(typeof persistBaseV3==="function")persistBaseV3();
    renderCommercialV520();
  }
  return r;
