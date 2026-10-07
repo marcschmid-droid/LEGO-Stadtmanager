@@ -1472,7 +1472,7 @@ renderFastCatalogStatusV45=async function(){
    const d=document.createElement("div");d.className="miniStat";d.id="allSetsCountV46";d.innerHTML='<span>Alle Setnummern</span><b>'+all.meta.uniqueSetNumbers+'</b>';box.appendChild(d);
  }
 };
-loadAllSetsV46(false);
+/* v50.42 performance: Gesamtkatalog erst beim Sammler/Lookup laden */
 
 
 /* v49 iPhone-first city planner */
@@ -2048,7 +2048,7 @@ function bindCollectorV504(){
 const switchTabBaseV504=switchTab;
 switchTab=function(id){switchTabBaseV504(id);if(id==="collector"){renderCollectorThemesV504();if(collectorCurrentV504)renderCollectorSetViewV504()}};
 bindCollectorV504();
-renderCollectorThemesV504();
+/* v50.42: Sammler-Katalog wird bewusst erst beim Öffnen geladen. */
 
 
 /* v50.15 UI cleanup: remove legacy duplicate surfaces without touching data */
@@ -4122,3 +4122,93 @@ window.openCollectorThemeV504=async key=>{
  $("collectorThemeViewV504")?.classList.remove("hidden");
  renderCollectorSetViewV504();
 };
+
+
+/* v50.42 Performance + Sammler UX */
+let collectorLoadedOnceV542=false,collectorSearchTimerV542=null;
+function collectorSortModeV542(){
+ return state.meta?.collectorSortV542||"owned";
+}
+function ensureCollectorSortV542(){
+ const bar=$("collectorSearchV504")?.closest(".collectorToolbarV504");if(!bar||$("collectorSortV542"))return;
+ const sel=document.createElement("select");sel.id="collectorSortV542";
+ sel.innerHTML='<option value="owned">Meist gesammelt zuerst</option><option value="progress">Höchster Fortschritt</option><option value="missing">Wenigste fehlende zuerst</option><option value="size">Größte Themen zuerst</option><option value="az">A–Z</option>';
+ sel.value=collectorSortModeV542();
+ sel.onchange=()=>{state.meta=state.meta||{};state.meta.collectorSortV542=sel.value;persist();renderCollectorThemesV504()};
+ bar.appendChild(sel);
+}
+function sortCollectorBucketsV542(rows){
+ const mode=collectorSortModeV542();
+ return rows.sort((a,b)=>{
+   if(mode==="progress")return b.p.pct-a.p.pct||b.p.owned-a.p.owned||a.def.label.localeCompare(b.def.label,"de");
+   if(mode==="missing")return a.p.missing-b.p.missing||b.p.owned-a.p.owned||a.def.label.localeCompare(b.def.label,"de");
+   if(mode==="size")return b.p.total-a.p.total||b.p.owned-a.p.owned||a.def.label.localeCompare(b.def.label,"de");
+   if(mode==="az")return a.def.label.localeCompare(b.def.label,"de");
+   return b.p.owned-a.p.owned||b.p.pct-a.p.pct||b.p.total-a.p.total||a.def.label.localeCompare(b.def.label,"de");
+ });
+}
+const renderCollectorThemesBaseV542=renderCollectorThemesV504;
+renderCollectorThemesV504=async function(){
+ const box=$("collectorFeaturedV504");if(!box)return;
+ const seq=++collectorRenderSeqV541;
+ ensureCollectorSortV542();
+ if(!allSetsV46)box.innerHTML='<div class="collectorLoadingV541"><b>Sammler-Katalog wird geladen…</b><small>Einmalig beim ersten Öffnen – danach bleibt er im Speicher.</small></div>';
+ const all=await loadAllSetsV46(false);
+ if(seq!==collectorRenderSeqV541)return;
+ if(!all?.sets){box.innerHTML='<div class="card"><p>Sammler-Katalog konnte gerade nicht geladen werden.</p></div>';return}
+ collectorLoadedOnceV542=true;
+ const cache=buildCollectorTurboV541(all);
+ if($("collectorThemeCountV504"))$("collectorThemeCountV504").textContent=all.meta?.themeCount||Object.keys(all.themes||{}).length||"–";
+ if($("collectorSetCountV504"))$("collectorSetCountV504").textContent=all.meta?.uniqueSetNumbers||Object.keys(all.sets||{}).length||"–";
+ const q=nV3($("collectorSearchV504")?.value);
+ const rows=sortCollectorBucketsV542(cache.buckets.filter(b=>!q||nV3(b.def.label).includes(q)));
+ const top=rows.slice(0,10),rest=rows.slice(10,q?110:46);
+ const mode=collectorSortModeV542(),caption=mode==="owned"?"Sortiert nach Anzahl deiner vorhandenen Sets":mode==="progress"?"Sortiert nach Sammlungsfortschritt":mode==="missing"?"Sortiert nach geringster Restmenge":mode==="size"?"Sortiert nach Themenumfang":"Alphabetisch sortiert";
+ let html="";
+ if(top.length)html+='<div class="collectorSectionTitleV504"><span>'+(mode==="owned"?"Deine meistgesammelten Themen":"Top-Themen")+'</span><small>'+caption+'</small></div><div class="collectorThemeGridV504">'+top.map(collectorCardTurboV541).join("")+'</div>';
+ if(rest.length)html+='<div class="collectorSectionTitleV504"><span>'+(q?"Weitere Treffer":"Weitere Themen")+'</span><small>'+caption+'</small></div><div class="collectorThemeGridV504 compact">'+rest.map(collectorCardTurboV541).join("")+'</div>';
+ if(!html)html='<div class="card"><p>Kein passendes Thema gefunden.</p></div>';
+ box.innerHTML=html;
+ renderCollectorFastCompleteV528();
+};
+function bindCollectorFastV542(){
+ ensureCollectorSortV542();
+ const search=$("collectorSearchV504");
+ if(search&&!search.dataset.fastV542){
+   search.dataset.fastV542="1";
+   search.oninput=()=>{
+     clearTimeout(collectorSearchTimerV542);
+     collectorSearchTimerV542=setTimeout(()=>{
+       if(collectorCurrentV504){collectorCurrentV504=null;$("collectorThemeViewV504")?.classList.add("hidden");$("collectorFeaturedV504")?.classList.remove("hidden")}
+       renderCollectorThemesV504();
+     },180);
+   };
+ }
+}
+const switchTabBaseV542=switchTab;
+switchTab=function(id){
+ const r=switchTabBaseV542(id);
+ if(id==="collector"){
+   bindCollectorFastV542();
+   requestAnimationFrame(()=>{if(collectorCurrentV504)renderCollectorSetViewV504();else renderCollectorThemesV504()});
+ }
+ return r;
+};
+// Keep collector cache invalidation cheap and explicit after state-changing refreshes.
+const persistBaseV542=persist;
+persist=function(){
+ collectorTurboCacheV541=null;
+ return persistBaseV542();
+};
+// Browser scheduling: costly secondary panels get a chance after first paint.
+function idleV542(fn,timeout=1000){
+ if("requestIdleCallback" in window)return requestIdleCallback(fn,{timeout});
+ return setTimeout(fn,80);
+}
+const renderUxBaseV542=renderUxV538;
+renderUxV538=function(){
+ setupCollectionViewV538();renderCollection();renderWishlist();simplifyHomeV538();backgroundQualityV538();
+ idleV542(()=>renderStatsV36(),700);
+ // Sammler intentionally omitted here: it loads only on demand.
+};
+setTimeout(()=>bindCollectorFastV542(),400);
