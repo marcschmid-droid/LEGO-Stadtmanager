@@ -3379,3 +3379,47 @@ function reconcileBrickrQuantitiesV534(){
 }
 reconcileBrickrQuantitiesV534();
 setTimeout(()=>{try{renderAll?.();}catch(e){}},250);
+
+
+/* v50.35 Sammlerwert = Durchschnitt aus Markt-Mittelwert und oberer Spanne */
+collectorValueV533=function(x,e={}){
+ const nu=pV3(e.marketNewEUR),us=pV3(e.marketUsedEUR),lo=pV3(e.marketUsedLowEUR),hi=pV3(e.marketUsedHighEUR);
+ const cond=nV3(x?.condition||x?.buildStatus||"");
+ if(cond.includes("neu")||cond.includes("ovp")){
+   if(nu)return {value:nu,kind:"new",reason:"Sammlerwert · Neu / OVP = Neu-Marktwert"};
+   if(hi||us)return {value:hi||us,kind:"used",reason:"Sammlerwert · Neu-Wert fehlt, obere Gebrauchtbewertung verwendet"};
+ }
+ if(cond.includes("unvollständig")){
+   if(lo&&us)return {value:(lo+us)/2,kind:"used",reason:"Sammlerwert · unvollständig = Durchschnitt aus Untergrenze und Markt-Mittelwert"};
+   if(lo||us)return {value:lo||us,kind:"used",reason:"Sammlerwert · unvollständig"};
+ }
+ if(us&&hi){
+   let v=(us+hi)/2;
+   if(nu)v=Math.min(v,nu*0.98);
+   return {value:v,kind:"used",reason:"Sammlerwert · Durchschnitt aus Gebraucht-Mittelwert und oberer Marktspanne"};
+ }
+ if(us){
+   let v=us;
+   if(nu)v=Math.min(v,nu*0.98);
+   return {value:v,kind:"used",reason:"Sammlerwert · Gebraucht-Mittelwert, da keine obere Spanne verfügbar"};
+ }
+ if(hi)return {value:nu?Math.min(hi,nu*0.98):hi,kind:"used",reason:"Sammlerwert · obere Gebrauchtspanne"};
+ if(nu)return {value:nu*0.92,kind:"new",reason:"Sammlerwert · nur Neu-Marktwert verfügbar, moderater Abschlag"};
+ return {value:0,kind:"none",reason:"Keine Marktdaten"};
+};
+
+function migrateValuationV535(){
+ state.meta=state.meta||{};
+ if(state.meta.valuationMigrationV535)return;
+ state.meta.valuationModeV532="collector";
+ state.meta.valuationMigrationV535=new Date().toISOString();
+ persist();
+}
+migrateValuationV535();
+setTimeout(async()=>{
+ try{
+   await auditAllPricesV532(false,false);
+   renderPricesV31();
+   refresh();
+ }catch(e){}
+},1100);
