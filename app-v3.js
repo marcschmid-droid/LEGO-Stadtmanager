@@ -4009,3 +4009,116 @@ bindPricingV516=function(){bindPricingBaseV540();bindCommercialCheckoutV540();re
 const refreshBaseV540=refresh;
 refresh=function(){const r=refreshBaseV540();setTimeout(()=>{bindCommercialCheckoutV540();renderCommercialLaunchV540()},0);return r};
 setTimeout(()=>{bindCommercialCheckoutV540();renderCommercialLaunchV540()},300);
+
+
+/* v50.41 Collector Turbo: one-pass index + meistgesammelte Themen zuerst */
+let collectorTurboCacheV541=null,collectorRenderSeqV541=0;
+function collectorStateSigV541(){
+ const own=(state.collection||[]).map(x=>String(x.setNumber)).sort().join(",");
+ const wish=(state.wishlist||[]).map(x=>String(x.setNumber)).sort().join(",");
+ return own+"|"+wish;
+}
+function buildCollectorTurboV541(all){
+ const sig=collectorStateSigV541();
+ if(collectorTurboCacheV541?.all===all&&collectorTurboCacheV541.sig===sig)return collectorTurboCacheV541;
+ const ownedSet=new Set((state.collection||[]).map(x=>String(x.setNumber)));
+ const wishSet=new Set((state.wishlist||[]).map(x=>String(x.setNumber)));
+ const featured=collectorFeaturedDefsV504();
+ const buckets=new Map(featured.map(d=>[d.key,{def:d,rows:[]}]));
+ const dyn=new Map();
+ for(const [n,row] of Object.entries(all?.sets||{})){
+   let assigned=false;
+   for(const d of featured){
+     if(collectorMatchesDefV504(all,row,d,n)){
+       buckets.get(d.key).rows.push([n,row]);assigned=true;break;
+     }
+   }
+   if(assigned)continue;
+   const t=collectorThemePathV504(all,row),root=t.root;
+   if(!root)continue;
+   const key="root:"+root;
+   if(!dyn.has(key))dyn.set(key,{def:{key,label:root,root,count:0,icon:"◻"},rows:[]});
+   const b=dyn.get(key);b.rows.push([n,row]);b.def.count++;
+ }
+ const allBuckets=[...buckets.values(),...dyn.values()].filter(b=>b.rows.length);
+ for(const b of allBuckets){
+   let owned=0,wished=0;
+   for(const [n] of b.rows){if(ownedSet.has(String(n)))owned++;else if(wishSet.has(String(n)))wished++}
+   const total=b.rows.length,missing=Math.max(0,total-owned),pct=total?Math.round(owned/total*100):0;
+   b.p={total,owned,wished,missing,pct};
+ }
+ const byKey=new Map(allBuckets.map(b=>[b.def.key,b]));
+ collectorTurboCacheV541={all,sig,buckets:allBuckets,byKey,ownedSet,wishSet};
+ return collectorTurboCacheV541;
+}
+collectorRowsV504=function(all,def){
+ const c=buildCollectorTurboV541(all),b=c.byKey.get(def?.key);
+ return b?b.rows:[];
+};
+collectorThemeDefsV504=function(all){return buildCollectorTurboV541(all).buckets.map(b=>b.def)};
+collectorProgressV504=function(rows){
+ let owned=0,wished=0;
+ const own=collectorTurboCacheV541?.ownedSet||new Set((state.collection||[]).map(x=>String(x.setNumber)));
+ const wish=collectorTurboCacheV541?.wishSet||new Set((state.wishlist||[]).map(x=>String(x.setNumber)));
+ for(const [n] of rows){if(own.has(String(n)))owned++;else if(wish.has(String(n)))wished++}
+ const total=rows.length,missing=Math.max(0,total-owned);
+ return {total,owned,wished,missing,pct:total?Math.round(owned/total*100):0};
+};
+function collectorCardTurboV541(b){
+ const d=b.def,p=b.p;
+ return '<button class="collectorThemeCardV504 collectorThemeTurboV541" onclick="openCollectorThemeV504(\''+esc(d.key)+'\')">'+
+   '<span class="collectorThemeIconV504">'+esc(d.icon||"◻")+'</span>'+
+   '<span class="collectorThemeCardMainV504"><b>'+esc(d.label)+'</b><small><strong class="ownedCountV541">'+p.owned+' gesammelt</strong> · '+p.total+' gesamt · '+p.missing+' fehlen</small><span class="collectorMiniProgressV504"><i style="width:'+p.pct+'%"></i></span></span>'+
+   '<strong>'+p.pct+'%</strong></button>';
+}
+renderCollectorThemesV504=async function(){
+ const box=$("collectorFeaturedV504");if(!box)return;
+ const seq=++collectorRenderSeqV541;
+ if(!allSetsV46)box.innerHTML='<div class="collectorLoadingV541"><b>Sammler-Katalog wird geladen…</b><small>Die Themenübersicht wird vorbereitet.</small></div>';
+ const all=await loadAllSetsV46(false);
+ if(seq!==collectorRenderSeqV541)return;
+ if(!all?.sets){box.innerHTML='<div class="card"><p>Sammler-Katalog konnte gerade nicht geladen werden.</p></div>';return}
+ const c=buildCollectorTurboV541(all);
+ if($("collectorThemeCountV504"))$("collectorThemeCountV504").textContent=all.meta?.themeCount||Object.keys(all.themes||{}).length||"–";
+ if($("collectorSetCountV504"))$("collectorSetCountV504").textContent=all.meta?.uniqueSetNumbers||Object.keys(all.sets||{}).length||"–";
+ const q=nV3($("collectorSearchV504")?.value);
+ const rows=c.buckets
+   .filter(b=>!q||nV3(b.def.label).includes(q))
+   .sort((a,b)=>b.p.owned-a.p.owned||b.p.pct-a.p.pct||b.p.total-a.p.total||a.def.label.localeCompare(b.def.label,"de"));
+ const top=rows.slice(0,10),rest=rows.slice(10,q?110:46);
+ let html="";
+ if(top.length)html+='<div class="collectorSectionTitleV504"><span>Deine meistgesammelten Themen</span><small>Sortiert nach Anzahl deiner vorhandenen Sets</small></div><div class="collectorThemeGridV504">'+top.map(collectorCardTurboV541).join("")+'</div>';
+ if(rest.length)html+='<div class="collectorSectionTitleV504"><span>'+(q?'Weitere Treffer':'Weitere Themen')+'</span><small>Danach ebenfalls nach deinem Bestand sortiert</small></div><div class="collectorThemeGridV504 compact">'+rest.map(collectorCardTurboV541).join("")+'</div>';
+ if(!html)html='<div class="card"><p>Kein passendes Thema gefunden.</p></div>';
+ box.innerHTML=html;
+ renderCollectorFastCompleteV528();
+};
+renderCollectorFastCompleteV528=async function(){
+ const box=$("collectorFastCompleteGridV528");if(!box)return;
+ const all=allSetsV46||await loadAllSetsV46(false);if(!all?.sets)return;
+ const c=buildCollectorTurboV541(all);
+ const rows=c.buckets.filter(b=>b.p.missing>=1&&b.p.missing<=5)
+   .sort((a,b)=>a.p.missing-b.p.missing||b.p.owned-a.p.owned||b.p.pct-a.p.pct)
+   .slice(0,8);
+ box.innerHTML=rows.length?rows.map(b=>
+   '<button class="collectorThemeCardV504 fastCompleteCardV528" onclick="openCollectorThemeV504(\''+esc(b.def.key)+'\')">'+
+   '<span class="collectorThemeIconV504">'+esc(b.def.icon||"✓")+'</span>'+
+   '<span class="collectorThemeCardMainV504"><b>'+esc(b.def.label)+'</b><small>'+b.p.owned+' gesammelt · nur noch '+b.p.missing+' fehlen</small><span class="collectorMiniProgressV504"><i style="width:'+b.p.pct+'%"></i></span></span>'+
+   '<strong>'+b.p.pct+'%</strong></button>'
+ ).join(""):'<div class="card"><p class="hint">Aktuell gibt es keine Themenwelt mit nur noch 1–5 fehlenden Sets.</p></div>';
+};
+/* Die zusätzliche Prioritätsanalyse nutzte bisher erneut den gesamten Katalog.
+   Ab v50.41 übernimmt die sortierte Hauptliste diese Aufgabe ohne zweiten Vollscan. */
+renderCollectorPriorityV538=async function(){
+ const old=$("collectorPriorityV538");if(old)old.remove();
+};
+const openCollectorThemeBaseV541=window.openCollectorThemeV504;
+window.openCollectorThemeV504=async key=>{
+ const all=allSetsV46||await loadAllSetsV46(false);
+ const b=all?buildCollectorTurboV541(all).byKey.get(key):null;
+ if(!b)return openCollectorThemeBaseV541(key);
+ collectorCurrentV504=b.def;
+ $("collectorFeaturedV504")?.classList.add("hidden");
+ $("collectorThemeViewV504")?.classList.remove("hidden");
+ renderCollectorSetViewV504();
+};
