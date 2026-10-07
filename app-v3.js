@@ -3684,3 +3684,27 @@ function migrateV536(){
 }
 migrateV536();
 setTimeout(renderIntelligenceV536,700);
+
+
+/* v50.37 Startseite: neue Premium-KPI-Darstellung */
+renderHomeExecutiveV536=function(){
+ const home=$("home");if(!home)return;
+ let box=$("executiveV536");
+ if(!box){box=document.createElement("div");box.id="executiveV536";box.className="executiveV536";const hero=home.querySelector(".heroV50");hero?.insertAdjacentElement("afterend",box)}
+ const b=portfolioBandV536(),d=inventoryDiffV536(),h=portfolioHighlightsV536(),confRows=(state.collection||[]).map(confidenceV536),avg=confRows.length?Math.round(confRows.reduce((s,c)=>s+c.score,0)/confRows.length):0;
+ const lowTrust=(state.collection||[]).filter(x=>confidenceV536(x).score<60).length;
+ const topLabel=h.value?esc(h.value.x.setNumber+" · "+h.value.x.name):"–";
+ box.innerHTML=
+ '<div class="execHeadV537"><div><span class="eyebrowV50">PORTFOLIO AUF EINEN BLICK</span><h2>Deine wichtigsten Zahlen</h2></div><button class="execTechBtnV537" id="toggleTechV536">Details</button></div>'+
+ '<div class="execRailV537">'+
+   '<article class="execHeroCardV537"><div class="execIconV537">€</div><div class="execCopyV537"><span>Sammlerwert</span><b>'+euro(b.mid)+'</b><small>Marktspanne '+euro(b.low)+' – '+euro(b.high)+'</small></div><div class="execAccentV537"></div></article>'+
+   '<article class="execMetricV537"><div class="execIconV537">▦</div><div class="execCopyV537"><span>Bestand</span><b>'+qtyTotalV536()+'</b><small>'+(d.length?d.length+" Abweichungen zur Referenz":"Referenzbestand vollständig")+'</small></div></article>'+
+   '<article class="execMetricV537"><div class="execIconV537">✓</div><div class="execCopyV537"><span>Preisvertrauen</span><b>'+avg+'%</b><small>'+lowTrust+' Sets mit Prüfbedarf</small></div><div class="execTrustBarV537"><i style="width:'+avg+'%"></i></div></article>'+
+   '<article class="execMetricV537"><div class="execIconV537">★</div><div class="execCopyV537"><span>Top-Wert</span><b>'+(h.value?euro(h.value.value):"–")+'</b><small>'+topLabel+'</small></div></article>'+
+ '</div>';
+ const btn=$("toggleTechV536");if(btn)btn.onclick=()=>{
+   const tech=[home.querySelector(".commandGridV50"),home.querySelector(".megaAutopilotV530")].filter(Boolean);
+   const hidden=tech.every(e=>e.classList.contains("intelHiddenV536"));tech.forEach(e=>e.classList.toggle("intelHiddenV536",!hidden));btn.textContent=hidden?"Details ausblenden":"Details";
+ };
+};
+setTimeout(renderHomeExecutiveV536,250);
