@@ -2516,3 +2516,123 @@ function footprintAreaCm2V526(x){
 function footprintTextV526(x){
  const f=footprintV526(x);return f?(f.w+" × "+f.d+" cm · "+f.source):"keine verlässliche Stellfläche";
 }
+
+
+/* v50.27 data-quality consistency + clickable quality summary */
+function hasFullDimsV527(x){
+ return !!(pV3(x?.width)&&pV3(x?.depth)&&pV3(x?.height));
+}
+function hasModelDimsV527(x){
+ return Array.isArray(x?.modelDimensions)&&x.modelDimensions.filter(v=>pV3(v)>0).length===3;
+}
+function hasReliableFootprintV527(x){
+ return !!footprintV526(x);
+}
+function dimensionStatusV527(x){
+ if(hasFullDimsV527(x))return "full";
+ if(hasReliableFootprintV527(x))return "footprint";
+ if(hasModelDimsV527(x))return "modelonly";
+ return "none";
+}
+function qualityChecksV527(x){
+ return [
+   !!x?.imageUrl,
+   pV3(x?.currentValue)>0,
+   hasFullDimsV527(x)||hasModelDimsV527(x)||hasReliableFootprintV527(x),
+   !!x?.barcode,
+   pV3(x?.purchasePrice)>0,
+   !!(x?.condition&&x.condition!=="Unbekannt"),
+   !!x?.cityArea,
+   !!x?.category
+ ];
+}
+qualityScoreV38=function(x){
+ const checks=qualityChecksV527(x);
+ return Math.round(checks.filter(Boolean).length/checks.length*100);
+};
+dataQualityV50=function(){
+ const rows=state.collection||[];if(!rows.length)return 0;
+ let got=0,total=rows.length*qualityChecksV527({}).length;
+ for(const x of rows)got+=qualityChecksV527(x).filter(Boolean).length;
+ return Math.round(got/total*100);
+};
+qualityIssuesV35=function(x){
+ const a=[];
+ if(!pV3(x.currentValue))a.push("value");
+ if(!x.imageUrl)a.push("image");
+ if(!(hasFullDimsV527(x)||hasModelDimsV527(x)||hasReliableFootprintV527(x)))a.push("dims");
+ if(!x.barcode)a.push("barcode");
+ if(!pV3(x.purchasePrice))a.push("price");
+ if(!x.condition||x.condition==="Unbekannt")a.push("condition");
+ return a;
+};
+function setQualityFilterV527(filter){
+ const el=$("qualityFilterV35");if(el)el.value=filter;
+ renderQualityAssistantV35();
+ document.getElementById("qualityAssistantV35")?.scrollIntoView({behavior:"smooth",block:"start"});
+}
+window.setQualityFilterV527=setQualityFilterV527;
+function renderQualitySummaryV527(){
+ const box=$("qualityAnalysis");if(!box)return;
+ const rows=state.collection||[];
+ const stats=[
+   ["image","Ohne Bild",rows.filter(x=>!x.imageUrl).length],
+   ["value","Ohne aktuellen Wert",rows.filter(x=>!pV3(x.currentValue)).length],
+   ["dims","Ohne nutzbare Maße",rows.filter(x=>!(hasFullDimsV527(x)||hasModelDimsV527(x)||hasReliableFootprintV527(x))).length],
+   ["footprint","Ohne verlässliche Stellfläche",rows.filter(x=>!hasReliableFootprintV527(x)).length],
+   ["barcode","Ohne Barcode",rows.filter(x=>!x.barcode).length],
+   ["price","Ohne Kaufpreis",rows.filter(x=>!pV3(x.purchasePrice)).length],
+   ["condition","Ohne Zustand",rows.filter(x=>!x.condition||x.condition==="Unbekannt").length]
+ ];
+ box.innerHTML='<div class="qualitylist qualityClickableV527">'+stats.map(([f,k,v])=>'<button type="button" class="qualityitem qualityBtnV527" onclick="setQualityFilterV527(\''+f+'\')"><span>'+esc(k)+'</span><b>'+v+'</b><small>anzeigen →</small></button>').join("")+'</div>'+
+ '<div class="measureStatusV527">'+[
+   ["Vollständige Maße",rows.filter(x=>dimensionStatusV527(x)==="full").length],
+   ["Sichere Stellfläche",rows.filter(x=>hasReliableFootprintV527(x)).length],
+   ["Nur Brickset-Modellmaße",rows.filter(x=>dimensionStatusV527(x)==="modelonly").length],
+   ["Keine Maße",rows.filter(x=>dimensionStatusV527(x)==="none").length]
+ ].map(([k,v])=>'<div><span>'+k+'</span><b>'+v+'</b></div>').join("")+'</div>';
+}
+const renderQualityAssistantCoreV527=renderQualityAssistantV35;
+renderQualityAssistantV35=function(){
+ const box=$("qualityAssistantV35");if(!box)return;
+ const filter=$("qualityFilterV35")?.value||"all";
+ const rows=(state.collection||[]).map(x=>({x,issues:qualityIssuesV35(x),score:qualityScoreV38(x),dim:dimensionStatusV527(x)})).filter(r=>{
+   if(filter==="all")return r.issues.length;
+   if(filter==="modelonly")return r.dim==="modelonly";
+   if(filter==="nodims")return r.dim==="none";
+   if(filter==="footprint")return !hasReliableFootprintV527(r.x);
+   return r.issues.includes(filter);
+ });
+ box.innerHTML=rows.length?rows.slice(0,100).map(({x,issues,score,dim})=>{
+   const chips=issues.map(k=>'<span class="chip warn">'+esc(qualityLabelsV35[k])+'</span>');
+   if(dim==="modelonly")chips.push('<span class="chip">nur Modellmaße</span>');
+   if(!hasReliableFootprintV527(x))chips.push('<span class="chip warn">keine sichere Stellfläche</span>');
+   return '<div class="qualityRowV35"><div><b>'+esc(x.setNumber)+' · '+esc(x.name)+'</b><small>'+score+' % vollständig</small><div class="chips">'+chips.join("")+'</div></div><div class="actions"><button class="btn secondary" onclick="autoEnrichOneV35(\''+esc(x.setNumber)+'\')">Auto ergänzen</button><button class="btn" onclick="editSet(\''+esc(x.setNumber)+'\')">Bearbeiten</button></div></div>';
+ }).join(""):'<p class="hint">Für diesen Filter sind keine Einträge vorhanden.</p>';
+};
+const renderAnalysisBaseV527=renderAnalysisV3;
+renderAnalysisV3=function(){
+ const r=renderAnalysisBaseV527();
+ renderQualitySummaryV527();
+ if($("aSized"))$("aSized").textContent=(state.collection||[]).filter(x=>hasFullDimsV527(x)||hasModelDimsV527(x)||hasReliableFootprintV527(x)).length;
+ return r;
+};
+const renderStatsBaseV527=renderStatsV36;
+renderStatsV36=function(){
+ const r=renderStatsBaseV527();
+ const cov=$("coverageV36");if(cov){
+   const total=state.collection.length||1;
+   const rows=[
+     ["Marktwert",state.collection.filter(x=>pV3(x.currentValue)).length],
+     ["Bild",state.collection.filter(x=>x.imageUrl).length],
+     ["Maße",state.collection.filter(x=>hasFullDimsV527(x)||hasModelDimsV527(x)||hasReliableFootprintV527(x)).length],
+     ["Stellfläche",state.collection.filter(x=>hasReliableFootprintV527(x)).length],
+     ["Barcode",state.collection.filter(x=>x.barcode).length],
+     ["Kaufpreis",state.collection.filter(x=>pV3(x.purchasePrice)).length],
+     ["Zustand",state.collection.filter(x=>x.condition&&x.condition!=="Unbekannt").length]
+   ];
+   cov.innerHTML=rows.map(([k,v])=>'<div class="coverageRowV36"><span>'+k+'</span><div class="bar"><i style="width:'+(v/total*100)+'%"></i></div><b>'+v+'/'+total+'</b></div>').join("");
+ }
+ return r;
+};
+setTimeout(()=>{renderQualitySummaryV527();renderQualityAssistantV35()},240);
