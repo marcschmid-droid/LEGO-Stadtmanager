@@ -2085,8 +2085,15 @@ function planKeyV519(){
  const p=String(state?.meta?.subscriptionPlan||"free").toLowerCase();
  return ["free","basic","premium"].includes(p)?p:"free";
 }
+function trialInfoV520(){
+ const started=state?.meta?.premiumTrialStartedAt?new Date(state.meta.premiumTrialStartedAt).getTime():0;
+ const ends=started+7*24*60*60*1000;
+ const active=!!started&&Date.now()<ends&&!state?.meta?.premiumTrialUsed;
+ return {started,ends,active,daysLeft:active?Math.max(1,Math.ceil((ends-Date.now())/86400000)):0};
+}
 function planInfoV519(){
- const key=planKeyV519();
+ const key=planKeyV519(),trial=trialInfoV520();
+ if(trial.active)return {key:"premium",baseKey:key,label:"Premium Test",limit:Infinity,desc:"7 Tage Premium-Testphase aktiv.",trial:true};
  return key==="premium"
    ?{key,label:"Premium",limit:Infinity,desc:"Unbegrenzt viele Sets verwalten."}
    :key==="basic"
@@ -2101,9 +2108,12 @@ function canAddNewSetV519(setNumber=""){
  return !Number.isFinite(info.limit)||collectionCountV519()<info.limit;
 }
 function renderPlanStatusV519(){
- const info=planInfoV519(),used=collectionCountV519(),limit=info.limit;
+ const info=planInfoV519(),used=collectionCountV519(),limit=info.limit,trial=trialInfoV520();
  if($("planNameV519"))$("planNameV519").textContent=info.label;
- if($("planDescriptionV519"))$("planDescriptionV519").textContent=info.desc;
+ if($("planDescriptionV519"))$("planDescriptionV519").textContent=info.trial?info.desc+" Noch "+trial.daysLeft+" Tag"+(trial.daysLeft===1?"":"e")+".":info.desc;
+ if($("planBillingStatusV520"))$("planBillingStatusV520").textContent=info.label;
+ if($("planBillingPeriodV520"))$("planBillingPeriodV520").textContent=info.trial?new Date(trial.ends).toLocaleDateString("de-DE"):(info.key==="free"?"Keine Laufzeit":"Aktiver Tarif");
+ if($("planBillingActionV520"))$("planBillingActionV520").textContent=info.trial?"Test endet automatisch":(info.key==="free"?"Bei Bedarf upgraden":"Abo verwalten");
  const usage=$("planUsageTextV519"),bar=$("planUsageBarV519"),hint=$("planUsageHintV519");
  if(Number.isFinite(limit)){
    if(usage)usage.textContent=used+" / "+limit+" Sets";
@@ -2173,3 +2183,61 @@ refresh=function(){
  return r;
 };
 setTimeout(bindPlanLimitsV519,120);
+
+
+/* v50.20 commercial readiness */
+function startPremiumTrialV520(){
+ state.meta=state.meta||{};
+ if(state.meta.premiumTrialUsed)return alert("Die kostenlose Premium-Testphase wurde bereits genutzt.");
+ if(state.meta.premiumTrialStartedAt)return alert("Deine Premium-Testphase läuft bereits.");
+ state.meta.premiumTrialStartedAt=new Date().toISOString();
+ persist();refresh();
+ alert("Premium ist jetzt 7 Tage kostenlos freigeschaltet. Die Testphase endet automatisch und es wird nichts berechnet.");
+}
+function finishExpiredTrialV520(){
+ const t=state?.meta?.premiumTrialStartedAt?new Date(state.meta.premiumTrialStartedAt).getTime():0;
+ if(t&&Date.now()>=t+7*86400000&&!state.meta.premiumTrialUsed){
+   state.meta.premiumTrialUsed=true;persist();
+ }
+}
+function renderCommercialV520(){
+ finishExpiredTrialV520();
+ const trial=trialInfoV520(),info=planInfoV519();
+ const trialButtons=[$("startTrialV520"),$("startTrialAccountV520")].filter(Boolean);
+ trialButtons.forEach(b=>{
+   b.disabled=!!state?.meta?.premiumTrialUsed||trial.active;
+   b.textContent=trial.active?"Premium-Test läuft ("+trial.daysLeft+" Tage)":state?.meta?.premiumTrialUsed?"Testphase bereits genutzt":"7 Tage Premium kostenlos testen";
+ });
+ document.querySelectorAll(".premiumTabV520").forEach(el=>el.classList.toggle("premiumActiveV520",info.key==="premium"));
+ if($("cloudBackupTimeV520")){
+   const ts=state?.meta?.lastCloudBackupAt;
+   $("cloudBackupTimeV520").textContent=ts?new Date(ts).toLocaleString("de-DE",{dateStyle:"short",timeStyle:"short"}):"Noch keine";
+ }
+}
+function bindCommercialV520(){
+ if($("startTrialV520"))$("startTrialV520").onclick=startPremiumTrialV520;
+ if($("startTrialAccountV520"))$("startTrialAccountV520").onclick=startPremiumTrialV520;
+ if($("manageSubscriptionV520"))$("manageSubscriptionV520").onclick=()=>alert("Die Abo-Verwaltung ist vorbereitet. Sie wird mit der Zahlungsanbindung freigeschaltet.");
+ if($("showInvoicesV520"))$("showInvoicesV520").onclick=()=>alert("Rechnungen werden verfügbar, sobald die Zahlungsanbindung aktiviert ist.");
+ if($("supportContactV520"))$("supportContactV520").onclick=()=>alert("Support-Kontakt ist vorbereitet. Vor dem öffentlichen Start bitte noch eine Support-E-Mail hinterlegen.");
+ renderCommercialV520();
+}
+const cloudSaveBaseV520=cloudSaveV3;
+cloudSaveV3=async function(show=false){
+ const r=await cloudSaveBaseV520(show);
+ if(cloudUserV3){
+   state.meta=state.meta||{};
+   state.meta.lastCloudBackupAt=new Date().toISOString();
+   persistBaseV3?.();
+   renderCommercialV520();
+ }
+ return r;
+};
+const refreshBaseV520=refresh;
+refresh=function(){
+ const r=refreshBaseV520();
+ renderCommercialV520();
+ setTimeout(bindCommercialV520,0);
+ return r;
+};
+setTimeout(bindCommercialV520,160);
