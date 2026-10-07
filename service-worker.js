@@ -1,5 +1,5 @@
-const CACHE="brick-city-manager-v50-r25";
-const ASSETS=["./styles.css?v=50.24","./app.js?v=50.24","./app-v3.js?v=50.24","./supabase-config.js?v=50.24","./seed-data.js","./manifest.webmanifest","./icon.svg?v=50.24","./ursprungsstadt.jpg","./data/set-enrichment.json","./data/all-sets.json","./impressum.html","./datenschutz.html","./vendor/supabase.js?v=50.24","./vendor/zxing.js?v=50.24"];
+const CACHE="brick-city-manager-v50-r26";
+const ASSETS=["./styles.css?v=50.25","./app.js?v=50.25","./app-v3.js?v=50.25","./supabase-config.js?v=50.25","./seed-data.js","./manifest.webmanifest","./icon.svg?v=50.25","./ursprungsstadt.jpg","./data/set-enrichment.json","./data/all-sets.json","./impressum.html","./datenschutz.html","./vendor/supabase.js?v=50.25","./vendor/zxing.js?v=50.25"];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))).then(()=>self.skipWaiting()));
 self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener("fetch",e=>{
