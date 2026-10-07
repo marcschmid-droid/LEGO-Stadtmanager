@@ -4212,3 +4212,126 @@ renderUxV538=function(){
  // Sammler intentionally omitted here: it loads only on demand.
 };
 setTimeout(()=>bindCollectorFastV542(),400);
+
+
+/* v50.43 Speed Pack: kein Katalog-Load beim Start, sichtbare Bereiche zuerst */
+let homeGoalsLoadedV543=false;
+
+renderHomeUxV521=function(){
+ ensureUxStateV521();
+ renderAchievementsV521();
+ renderRecommendationsV521();
+ renderNotificationsV521();
+ renderPremiumPreviewV521();
+ // Wichtig: Der 2,3-MB-Gesamtkatalog wird auf der Startseite NICHT mehr automatisch geladen.
+ // Serien-Ziele werden erst geladen, wenn der Nutzer sie wirklich aufklappt oder Sammler öffnet.
+};
+
+const simplifyHomeBaseV543=simplifyHomeV538;
+simplifyHomeV538=function(){
+ simplifyHomeBaseV543();
+ const home=$("home"),btn=$("homeMoreV538");
+ if(!home||!btn)return;
+ btn.onclick=()=>{
+   const blocks=[...home.querySelectorAll(".homeSecondaryV538")];
+   const opening=blocks.some(e=>!e.classList.contains("showV538"));
+   blocks.forEach(e=>e.classList.toggle("showV538",opening));
+   btn.textContent=opening?"Weniger anzeigen":"Mehr anzeigen";
+   if(opening&&!homeGoalsLoadedV543){
+     homeGoalsLoadedV543=true;
+     const box=$("homeSeriesGoalsV521");
+     if(box)box.innerHTML='<p class="hint">Serien-Ziele werden geladen…</p>';
+     idleV542(()=>renderHomeSeriesGoalsV521(),1200);
+   }
+ };
+};
+
+// Der Katalog-Status darf den Vollkatalog nicht mehr im Hintergrund laden.
+const renderFastCatalogStatusBaseV543=renderFastCatalogStatusBaseV46;
+renderFastCatalogStatusV45=async function(){
+ await renderFastCatalogStatusBaseV543();
+ const box=$("fastCatalogStatusV45");
+ if(!box)return;
+ let d=$("allSetsCountV46");
+ if(allSetsV46?.meta?.uniqueSetNumbers){
+   if(!d){d=document.createElement("div");d.className="miniStat";d.id="allSetsCountV46";box.appendChild(d)}
+   d.innerHTML='<span>Alle Setnummern</span><b>'+allSetsV46.meta.uniqueSetNumbers+'</b>';
+ }else if(d){
+   d.remove();
+ }
+};
+
+// Nur sichtbare Analyse rendern. Das spart mehrere DOM-Listen beim Start.
+renderUxV538=function(){
+ setupCollectionViewV538();
+ renderCollection();
+ renderWishlist();
+ simplifyHomeV538();
+ backgroundQualityV538();
+ if($("analysis")?.classList.contains("active"))idleV542(()=>renderStatsV36(),500);
+};
+
+// Collector-Themen: Default bleibt "meist gesammelt zuerst".
+// Zusätzlich wird die Auswahl beim ersten Start automatisch auf diesen Modus gesetzt.
+function enforceCollectorDefaultV543(){
+ state.meta=state.meta||{};
+ if(!state.meta.collectorSortV542){
+   state.meta.collectorSortV542="owned";
+   persistBaseV542();
+ }
+ const sel=$("collectorSortV542");
+ if(sel&&sel.value!==collectorSortModeV542())sel.value=collectorSortModeV542();
+}
+
+// Set-Suche im Sammler ebenfalls entprellen, damit große Themen nicht bei jedem Tastendruck neu gebaut werden.
+let collectorSetSearchTimerV543=null;
+function bindCollectorDetailFastV543(){
+ const el=$("collectorSetSearchV505");
+ if(el&&!el.dataset.fastV543){
+   el.dataset.fastV543="1";
+   el.oninput=()=>{
+     clearTimeout(collectorSetSearchTimerV543);
+     collectorSetSearchTimerV543=setTimeout(()=>collectorCurrentV504&&renderCollectorSetViewV504(),160);
+   };
+ }
+}
+
+// Bei Bildern unterhalb des sichtbaren Bereichs Browser-Decoding entkoppeln.
+function optimizeCollectorImagesV543(){
+ document.querySelectorAll("#collector img").forEach(img=>{
+   img.loading="lazy";
+   img.decoding="async";
+   if(!img.hasAttribute("fetchpriority"))img.setAttribute("fetchpriority","low");
+ });
+}
+
+const renderCollectorSetViewBaseV543=renderCollectorSetViewV504;
+renderCollectorSetViewV504=async function(){
+ await renderCollectorSetViewBaseV543();
+ optimizeCollectorImagesV543();
+};
+
+const renderCollectorThemesBaseV543=renderCollectorThemesV504;
+renderCollectorThemesV504=async function(){
+ enforceCollectorDefaultV543();
+ await renderCollectorThemesBaseV543();
+ bindCollectorDetailFastV543();
+ optimizeCollectorImagesV543();
+};
+
+// Beim Öffnen des Sammlers wird nur ein Renderlauf ausgelöst.
+const switchTabBaseV543=switchTab;
+switchTab=function(id){
+ const wasCollector=$("collector")?.classList.contains("active");
+ const r=switchTabBaseV543(id);
+ if(id==="collector"){
+   bindCollectorFastV542();
+   bindCollectorDetailFastV543();
+   if(!wasCollector){
+     requestAnimationFrame(()=>collectorCurrentV504?renderCollectorSetViewV504():renderCollectorThemesV504());
+   }
+ }
+ return r;
+};
+
+setTimeout(()=>{enforceCollectorDefaultV543();bindCollectorDetailFastV543()},350);
