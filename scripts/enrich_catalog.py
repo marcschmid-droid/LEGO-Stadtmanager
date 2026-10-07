@@ -136,19 +136,60 @@ if RB_KEY:
 # dimensions but does not guarantee which physical axis each value represents,
 # so keep them as generic modelDimension1/2/3 instead of pretending they are
 # width/depth/height.
+
+def parse_brickset_footprint(description):
+    """Return labelled horizontal dimensions from Brickset/LEGO description.
+
+    Brickset's modelDimension1/2/3 preserve text order and do not identify axes,
+    so they must never be treated as width/depth for city footprint. This parser
+    only returns a footprint when the source text explicitly labels two
+    horizontal dimensions such as wide/deep/long.
+    """
+    text=re.sub(r"<[^>]+>"," ",str(description or ""))
+    text=re.sub(r"\s+"," ",text)
+    vals={}
+    labels={
+        "height":r"(?:high|tall|height)",
+        "width":r"(?:wide|width)",
+        "depth":r"(?:deep|depth)",
+        "length":r"(?:long|length)"
+    }
+    num=r"(\d+(?:[\.,]\d+)?)\s*cm"
+    for key,word in labels.items():
+        patterns=[
+            rf"{num}\s*(?:\([^)]*\)\s*)?(?:{word})\b",
+            rf"\b(?:{word})\b[^.;,:]{{0,28}}?{num}"
+        ]
+        for pat in patterns:
+            m=re.search(pat,text,re.I)
+            if m:
+                raw=m.group(1 if pat.startswith("(") else 1)
+                try: vals[key]=float(raw.replace(",","."))
+                except Exception: pass
+                break
+    # Prefer explicit width + depth. LEGO descriptions also commonly use
+    # width + length for the two horizontal axes.
+    if vals.get("width") and vals.get("depth"):
+        return vals["width"],vals["depth"],vals.get("height")
+    if vals.get("width") and vals.get("length"):
+        return vals["width"],vals["length"],vals.get("height")
+    if vals.get("depth") and vals.get("length"):
+        return vals["depth"],vals["length"],vals.get("height")
+    return None
+
 if BS_KEY:
-    missing_dims=[n for n in numbers if not all([
-        sets.get(n,{}).get("modelDimension1"),
-        sets.get(n,{}).get("modelDimension2"),
-        sets.get(n,{}).get("modelDimension3")
-    ])]
+    # Retry sets that still lack a trustworthy footprint first, even when
+    # generic Brickset model dimensions are already stored.
+    missing_dims=[n for n in numbers if not (
+        sets.get(n,{}).get("footprintWidth") and sets.get(n,{}).get("footprintDepth")
+    )]
     for n in missing_dims[:95]:
         e=sets.setdefault(n,{})
         try:
             bs_requests+=1
             r=requests.get(
                 "https://brickset.com/api/v3.asmx/getSets",
-                params={"apiKey":BS_KEY,"userHash":"","params":json.dumps({"setNumber":api_num(n),"pageSize":1})},
+                params={"apiKey":BS_KEY,"userHash":"","params":json.dumps({"setNumber":api_num(n),"pageSize":1,"extendedData":1})},
                 headers={"Accept":"application/json","User-Agent":UA},
                 timeout=25
             )
@@ -159,14 +200,26 @@ if BS_KEY:
                 row=rows[0]
                 md=row.get("modelDimensions") or {}
                 d1=md.get("dimension1"); d2=md.get("dimension2"); d3=md.get("dimension3")
+                update={}
                 if d1 and d2 and d3:
-                    e.update({
+                    update.update({
                         "modelDimension1":d1,
                         "modelDimension2":d2,
                         "modelDimension3":d3,
-                        "modelDimensionsSource":"Brickset",
-                        "bricksetUpdated":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())
+                        "modelDimensionsSource":"Brickset"
                     })
+                fp=parse_brickset_footprint(row.get("extendedData",{}).get("description") if isinstance(row.get("extendedData"),dict) else row.get("description"))
+                if fp:
+                    fw,fd,fh=fp
+                    update.update({
+                        "footprintWidth":fw,
+                        "footprintDepth":fd,
+                        "footprintSource":"Brickset/LEGO description"
+                    })
+                    if fh: update["modelHeight"]=fh
+                if update:
+                    update["bricksetUpdated"]=time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())
+                    e.update(update)
                     changed=True
         except Exception as ex:
             errors.append(f"Brickset {n}: {ex}")
