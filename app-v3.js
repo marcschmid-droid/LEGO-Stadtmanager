@@ -2399,3 +2399,87 @@ refresh=function(){
  return r;
 };
 setTimeout(bindUxV521,220);
+
+
+/* v50.23 data quality bulk repair */
+async function bulkEnrichCollectionV523(){
+ const btn=$("qualityBulkFillV523");
+ if(btn){btn.disabled=true;btn.textContent="Daten werden ergänzt…"}
+ let changed=0,img=0,value=0,dims=0,barcode=0;
+ try{
+   await loadEnrichmentV3(true);
+   const all=await loadAllSetsV46(false);
+   for(const x of (state.collection||[])){
+     const n=String(x.setNumber||"").replace(/-1$/,"");
+     let e=enrichmentV3?.sets?.[n]||null;
+     if(!e){
+       try{e=await lookupSetOnlineV45(n)}catch{}
+     }
+     const bulk=all?.sets?.[n]||null;
+     let touched=false;
+     if(!x.imageUrl){
+       const u=e?.imageUrl||bulk?.[3]||"";
+       if(u){x.imageUrl=u;touched=true;img++}
+     }
+     if(!x.name||/^Set\s+\d+/i.test(String(x.name))){
+       const name=e?.brickeconomyName||e?.rebrickableName||bulk?.[0]||"";
+       if(name){x.name=name;touched=true}
+     }
+     if(!x.barcode&&(e?.ean||e?.upc)){x.barcode=e.ean||e.upc;touched=true;barcode++}
+     const mv=e?chooseMarketV3(x,e):0;
+     if(!pV3(x.currentValue)&&mv){x.currentValue=mv;x.valueSource="Online-Katalog";touched=true;value++}
+     if(e){
+       let gotDims=false;
+       if(!pV3(x.width)&&pV3(e.width)){x.width=e.width;touched=true;gotDims=true}
+       if(!pV3(x.depth)&&pV3(e.depth)){x.depth=e.depth;touched=true;gotDims=true}
+       if(!pV3(x.height)&&pV3(e.height)){x.height=e.height;touched=true;gotDims=true}
+       if(gotDims)dims++;
+       x.market={...(x.market||{}),...e};
+     }
+     if(touched)changed++;
+   }
+   if(changed){persist();refresh()}
+   renderQualityAssistantV35();
+   const remaining={
+     image:(state.collection||[]).filter(x=>!x.imageUrl).length,
+     value:(state.collection||[]).filter(x=>!pV3(x.currentValue)).length,
+     dims:(state.collection||[]).filter(x=>!(pV3(x.width)&&pV3(x.depth)&&pV3(x.height))).length
+   };
+   alert(
+     "Automatische Ergänzung abgeschlossen.\n\n"+
+     "Sets aktualisiert: "+changed+
+     "\nBilder ergänzt: "+img+
+     "\nMarktwerte ergänzt: "+value+
+     "\nMaße ergänzt: "+dims+
+     "\nBarcodes ergänzt: "+barcode+
+     "\n\nNoch offen: "+remaining.image+" Bilder, "+remaining.value+" Marktwerte, "+remaining.dims+" Maße."+
+     "\nFür verbleibende Werte liegen im aktuellen Online-Katalog keine verlässlichen Daten vor."
+   );
+ }finally{
+   if(btn){btn.disabled=false;btn.textContent="Alle automatisch ergänzen"}
+ }
+}
+function applyAllSetImageFallbackV523(){
+ if(!allSetsV46?.sets)return false;
+ let changed=false;
+ for(const x of (state.collection||[])){
+   const n=String(x.setNumber||"").replace(/-1$/,""),r=allSetsV46.sets[n];
+   if(!r)continue;
+   if(!x.imageUrl&&r[3]){x.imageUrl=r[3];changed=true}
+   if((!x.name||/^Set\s+\d+/i.test(String(x.name)))&&r[0]){x.name=r[0];changed=true}
+ }
+ if(changed)persist();
+ return changed;
+}
+const loadAllSetsBaseV523=loadAllSetsV46;
+loadAllSetsV46=async function(force=false){
+ const out=await loadAllSetsBaseV523(force);
+ if(out&&applyAllSetImageFallbackV523())setTimeout(refresh,0);
+ return out;
+};
+function bindQualityBulkV523(){
+ if($("qualityBulkFillV523"))$("qualityBulkFillV523").onclick=bulkEnrichCollectionV523;
+}
+const refreshBaseV523=refresh;
+refresh=function(){const r=refreshBaseV523();setTimeout(bindQualityBulkV523,0);return r};
+setTimeout(bindQualityBulkV523,200);
