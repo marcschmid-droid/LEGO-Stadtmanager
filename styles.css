@@ -1092,3 +1092,10 @@ tbody tr:hover{background:#fafbfc}
 .launchScoreV540{font-size:1.5rem}
 .launchBlockerV540,.launchReadyV540{margin-top:12px;padding:12px 14px;border-radius:14px}.launchBlockerV540{background:rgba(243,156,18,.12)}.launchReadyV540{background:rgba(39,174,96,.1)}
 @media(max-width:720px){.checkoutSummaryV540,.launchGridV540{grid-template-columns:1fr}}
+
+
+/* v50.41 Collector Turbo */
+.collectorLoadingV541{padding:24px;border-radius:18px;background:rgba(0,0,0,.035);display:flex;flex-direction:column;gap:5px}
+.collectorLoadingV541 small{opacity:.65}
+.ownedCountV541{font-weight:900}
+.collectorThemeTurboV541{content-visibility:auto;contain-intrinsic-size:96px}
