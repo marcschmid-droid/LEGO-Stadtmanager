@@ -2782,3 +2782,28 @@ renderCityPlannerV49=function(){
  renderCityCoverageV528();
  return r;
 };
+
+
+/* v50.29 default missing condition to used */
+function fillMissingConditionV529(){
+ const rows=state.collection||[];
+ let changed=0;
+ for(const x of rows){
+   if(!x.condition||x.condition==="Unbekannt"){
+     x.condition="Gebraucht";
+     changed++;
+   }
+ }
+ if(changed){
+   state.meta=state.meta||{};
+   state.meta.conditionDefaultMigrationV529=new Date().toISOString();
+   persist();
+ }
+ return changed;
+}
+const refreshBaseV529=refresh;
+refresh=function(){
+ fillMissingConditionV529();
+ return refreshBaseV529();
+};
+setTimeout(()=>{fillMissingConditionV529();refresh()},120);
