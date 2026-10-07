@@ -918,3 +918,26 @@ tbody tr:hover{background:#fafbfc}
  .megaAutoMetricsV530{grid-template-columns:repeat(2,1fr)}
  .megaAutoActionsV530{grid-template-columns:1fr}
 }
+
+
+/* v50.31 data light + storage + block planner */
+.dataLightV531{margin:0 0 14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:#fafbfc}
+.dataLightHeadV531{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px}
+.dataLightHeadV531 h3{margin:2px 0 0;font-size:16px}
+.dataLightHeadV531>b{font-size:22px}
+.dataLightGridV531{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.dataLightGridV531>div{display:grid;grid-template-columns:auto 1fr auto;gap:7px;align-items:center;padding:8px 9px;border-radius:11px;background:#fff;border:1px solid var(--line)}
+.dataLightGridV531 i{width:9px;height:9px;border-radius:50%}
+.dataLightGridV531 .ok i{background:#3a9c55}
+.dataLightGridV531 .warn i{background:#d89b22}
+.dataLightGridV531 span{font-size:9px;color:var(--muted)}
+.dataLightGridV531 b{font-size:9px;text-align:right}
+.cityBlockSuggestionV531{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 14px;padding:12px 14px;border:1px solid #e8d98b;border-radius:14px;background:#fffdf1}
+.cityBlockSuggestionV531>div{display:grid;gap:2px}
+.cityBlockSuggestionV531>div>b{font-size:12px}
+.cityBlockSuggestionV531 small,.cityBlockSuggestionV531>span{font-size:9px;color:var(--muted)}
+@media(max-width:700px){
+ .dataLightGridV531{grid-template-columns:1fr}
+ .cityBlockSuggestionV531{align-items:flex-start;flex-direction:column}
+ .cityBlockSuggestionV531 .btn{width:100%}
+}
