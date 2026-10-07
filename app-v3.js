@@ -265,9 +265,9 @@ function renderEnrichmentStatusV3(){
    '<div class="miniStat"><span>Bilder</span><b>'+img+'</b></div>'+
    '<div class="miniStat"><span>Marktwerte</span><b>'+prices+'</b></div>'+
    '<div class="miniStat"><span>Letzte Aktualisierung</span><b class="syncDate">'+(m.lastUpdated?new Date(m.lastUpdated).toLocaleDateString("de-DE"):"–")+'</b></div>';
- const ready=m.rebrickableEnabled||m.brickeconomyEnabled;
+ const ready=m.rebrickableEnabled||m.brickeconomyEnabled||m.bricksetEnabled||m.bricklinkEnabled;
  $("catalogSyncNote").textContent=ready
-   ? 'Automatik aktiv. Marktwerte werden je nach Zustand als Neu- oder Gebrauchtwert übernommen.'
+   ? 'Automatik aktiv. Quellen: Rebrickable/Bilder, BrickEconomy/Marktwerte, Brickset/Maße und BrickLink als Preis-Fallback – jeweils soweit Zugangsdaten vorhanden.'
    : 'Automatik ist vorbereitet. Für den ersten Lauf müssen einmalig die GitHub-Secrets REBRICKABLE_API_KEY und BRICKECONOMY_API_KEY hinterlegt werden.';
 }
 async function loadEnrichmentV3(force=false){
@@ -568,7 +568,7 @@ function qualityIssuesV35(x){
  const a=[];
  if(!pV3(x.currentValue))a.push("value");
  if(!x.imageUrl)a.push("image");
- if(!(pV3(x.width)&&pV3(x.depth)&&pV3(x.height)))a.push("dims");
+ if(!(pV3(x.width)&&pV3(x.depth)&&pV3(x.height))&&!(Array.isArray(x.modelDimensions)&&x.modelDimensions.filter(v=>pV3(v)>0).length===3))a.push("dims");
  if(!x.barcode)a.push("barcode");
  if(!pV3(x.purchasePrice))a.push("price");
  if(!x.condition||x.condition==="Unbekannt")a.push("condition");
@@ -586,6 +586,10 @@ async function autoEnrichOneV35(n){
  if(!pV3(x.width)&&pV3(e.width)){x.width=e.width;changed=true}
  if(!pV3(x.depth)&&pV3(e.depth)){x.depth=e.depth;changed=true}
  if(!pV3(x.height)&&pV3(e.height)){x.height=e.height;changed=true}
+ if(!(Array.isArray(x.modelDimensions)&&x.modelDimensions.length===3)&&pV3(e.modelDimension1)&&pV3(e.modelDimension2)&&pV3(e.modelDimension3)){
+   x.modelDimensions=[pV3(e.modelDimension1),pV3(e.modelDimension2),pV3(e.modelDimension3)];
+   x.modelDimensionsSource=e.modelDimensionsSource||"Brickset";changed=true
+ }
  if(changed){persist();refresh();renderQualityAssistantV35();alert("Verfügbare Online-Daten wurden ergänzt.")}else alert("Online-Daten gefunden, aber für die noch fehlenden Felder liegen aktuell keine Werte vor.");
 }
 window.autoEnrichOneV35=autoEnrichOneV35;
@@ -2430,6 +2434,10 @@ async function bulkEnrichCollectionV523(){
      if(!pV3(x.currentValue)&&mv){x.currentValue=mv;x.valueSource="Online-Katalog";touched=true;value++}
      if(e){
        let gotDims=false;
+       if(!(Array.isArray(x.modelDimensions)&&x.modelDimensions.length===3)&&pV3(e.modelDimension1)&&pV3(e.modelDimension2)&&pV3(e.modelDimension3)){
+         x.modelDimensions=[pV3(e.modelDimension1),pV3(e.modelDimension2),pV3(e.modelDimension3)];
+         x.modelDimensionsSource=e.modelDimensionsSource||"Brickset";touched=true;gotDims=true
+       }
        if(!pV3(x.width)&&pV3(e.width)){x.width=e.width;touched=true;gotDims=true}
        if(!pV3(x.depth)&&pV3(e.depth)){x.depth=e.depth;touched=true;gotDims=true}
        if(!pV3(x.height)&&pV3(e.height)){x.height=e.height;touched=true;gotDims=true}
@@ -2443,7 +2451,7 @@ async function bulkEnrichCollectionV523(){
    const remaining={
      image:(state.collection||[]).filter(x=>!x.imageUrl).length,
      value:(state.collection||[]).filter(x=>!pV3(x.currentValue)).length,
-     dims:(state.collection||[]).filter(x=>!(pV3(x.width)&&pV3(x.depth)&&pV3(x.height))).length
+     dims:(state.collection||[]).filter(x=>!(pV3(x.width)&&pV3(x.depth)&&pV3(x.height))&&!(Array.isArray(x.modelDimensions)&&x.modelDimensions.filter(v=>pV3(v)>0).length===3)).length
    };
    alert(
      "Automatische Ergänzung abgeschlossen.\n\n"+
