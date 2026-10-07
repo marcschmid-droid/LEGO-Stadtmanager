@@ -2078,3 +2078,98 @@ function bindPricingV516(){
  renderPricingV516();
 }
 setTimeout(bindPricingV516,80);
+
+
+/* v50.19 subscription limits */
+function planKeyV519(){
+ const p=String(state?.meta?.subscriptionPlan||"free").toLowerCase();
+ return ["free","basic","premium"].includes(p)?p:"free";
+}
+function planInfoV519(){
+ const key=planKeyV519();
+ return key==="premium"
+   ?{key,label:"Premium",limit:Infinity,desc:"Unbegrenzt viele Sets verwalten."}
+   :key==="basic"
+     ?{key,label:"Basic",limit:50,desc:"Bis zu 50 Sets verwalten."}
+     :{key:"free",label:"Free",limit:20,desc:"Bis zu 20 Sets verwalten."};
+}
+function collectionCountV519(){return (state.collection||[]).length}
+function canAddNewSetV519(setNumber=""){
+ const n=String(setNumber||"").trim();
+ if(n&&(state.collection||[]).some(x=>String(x.setNumber)===n))return true;
+ const info=planInfoV519();
+ return !Number.isFinite(info.limit)||collectionCountV519()<info.limit;
+}
+function renderPlanStatusV519(){
+ const info=planInfoV519(),used=collectionCountV519(),limit=info.limit;
+ if($("planNameV519"))$("planNameV519").textContent=info.label;
+ if($("planDescriptionV519"))$("planDescriptionV519").textContent=info.desc;
+ const usage=$("planUsageTextV519"),bar=$("planUsageBarV519"),hint=$("planUsageHintV519");
+ if(Number.isFinite(limit)){
+   if(usage)usage.textContent=used+" / "+limit+" Sets";
+   if(bar)bar.style.width=Math.min(100,Math.round(used/limit*100))+"%";
+   const left=Math.max(0,limit-used);
+   if(hint)hint.textContent=used>limit
+     ?"Dein bestehender Bestand bleibt erhalten. Neue Sets sind bis zum Upgrade gesperrt."
+     :left===0
+       ?"Limit erreicht. Für weitere Sets bitte Tarif upgraden."
+       :"Noch "+left+" Set"+(left===1?"":"s")+" verfügbar.";
+ }else{
+   if(usage)usage.textContent=used+" Sets · unbegrenzt";
+   if(bar)bar.style.width="100%";
+   if(hint)hint.textContent="Premium hat kein Set-Limit.";
+ }
+}
+function openPlanLimitV519(){
+ const info=planInfoV519(),m=$("planLimitModalV519");
+ const next=info.key==="free"?"Basic":"Premium";
+ const nextText=info.key==="free"
+   ?"Mit Basic kannst du bis zu 50 Sets verwalten."
+   :"Mit Premium kannst du unbegrenzt viele Sets verwalten.";
+ if($("planLimitTitleV519"))$("planLimitTitleV519").textContent="Dein "+info.label+"-Limit ist erreicht.";
+ if($("planLimitTextV519"))$("planLimitTextV519").textContent=nextText+" Dein bestehender Bestand wird nicht verändert.";
+ if(m){m.classList.add("show");m.setAttribute("aria-hidden","false")}
+}
+function closePlanLimitV519(){
+ const m=$("planLimitModalV519");if(m){m.classList.remove("show");m.setAttribute("aria-hidden","true")}
+}
+function goPlansV519(){closePlanLimitV519();switchTab("plans")}
+function bindPlanLimitsV519(){
+ if($("planUpgradeV519"))$("planUpgradeV519").onclick=goPlansV519;
+ if($("planLimitUpgradeV519"))$("planLimitUpgradeV519").onclick=goPlansV519;
+ if($("planLimitLaterV519"))$("planLimitLaterV519").onclick=closePlanLimitV519;
+ if($("planLimitCloseV519"))$("planLimitCloseV519").onclick=closePlanLimitV519;
+ const m=$("planLimitModalV519");if(m)m.onclick=e=>{if(e.target===m)closePlanLimitV519()};
+
+ const saveBtn=$("saveSet");
+ if(saveBtn&&!saveBtn.dataset.planGateV519){
+   saveBtn.dataset.planGateV519="1";
+   const old=saveBtn.onclick;
+   saveBtn.onclick=e=>{
+     const n=$("fSet")?.value.trim()||"";
+     const isNew=!editing&&!(state.collection||[]).some(x=>String(x.setNumber)===String(n));
+     if(isNew&&!canAddNewSetV519(n)){e?.preventDefault?.();openPlanLimitV519();return}
+     return old?.call(saveBtn,e);
+   };
+ }
+ const purchaseBtn=$("savePurchase");
+ if(purchaseBtn&&!purchaseBtn.dataset.planGateV519){
+   purchaseBtn.dataset.planGateV519="1";
+   const old=purchaseBtn.onclick;
+   purchaseBtn.onclick=e=>{
+     const n=$("pSet")?.value.trim()||"";
+     const isNew=n&&!(state.collection||[]).some(x=>String(x.setNumber)===String(n));
+     if(isNew&&!canAddNewSetV519(n)){e?.preventDefault?.();openPlanLimitV519();return}
+     return old?.call(purchaseBtn,e);
+   };
+ }
+ renderPlanStatusV519();
+}
+const refreshBaseV519=refresh;
+refresh=function(){
+ const r=refreshBaseV519();
+ renderPlanStatusV519();
+ setTimeout(bindPlanLimitsV519,0);
+ return r;
+};
+setTimeout(bindPlanLimitsV519,120);
