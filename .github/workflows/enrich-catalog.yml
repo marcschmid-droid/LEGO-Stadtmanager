@@ -1,6 +1,11 @@
 name: LEGO Katalog & Marktwerte aktualisieren
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/enrich_catalog.py"
+      - ".github/workflows/enrich-catalog.yml"
   workflow_dispatch:
   schedule:
     - cron: "17 3 * * *"
