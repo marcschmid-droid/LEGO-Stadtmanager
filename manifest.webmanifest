@@ -9,7 +9,7 @@
   "description": "Brick City Manager v50 – City Command Center für Sammlung, Stadtplanung, Marktwerte und Züge.",
   "icons": [
     {
-      "src": "./icon.svg?v=50.19",
+      "src": "./icon.svg?v=50.20",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
