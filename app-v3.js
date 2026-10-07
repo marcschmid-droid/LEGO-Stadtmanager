@@ -119,7 +119,7 @@ function reservedV3(key){return state.classifiedOffers.filter(o=>["Angefragt","R
 renderTracks=function(){let miss=0;const rows=state.trackShopping.map((x,i)=>{const r=reservedV3(x.key),m=Math.max(0,pV3(x.target)-pV3(x.confirmedOwned)-r);miss+=m;return'<tr><td><b>'+esc(x.item)+'</b><div class="trackNote">'+esc(x.note||"")+'</div></td><td><input type="number" min="0" value="'+pV3(x.target)+'" onchange="trackEdit('+i+',\'target\',this.value)"></td><td><input type="number" min="0" value="'+(x.confirmedOwned??"")+'" placeholder="?" onchange="trackEdit('+i+',\'confirmedOwned\',this.value)"></td><td>'+r+'</td><td><b class="'+(m?"badTxt":"goodTxt")+'">'+m+'</b></td></tr>'}).join("");$("trackTable").innerHTML='<table class="trackTable"><thead><tr><th>Teil</th><th>Planwert*</th><th>Bestätigt</th><th>Angefragt/reserviert</th><th>Fehlt</th></tr></thead><tbody>'+rows+'</tbody></table>';if($("trackSummary"))$("trackSummary").innerHTML='<div class="miniStat"><span>Offene Fehlmenge</span><b>'+miss+'</b></div><div class="miniStat"><span>Angebote</span><b>'+state.classifiedOffers.length+'</b></div>'}
 renderOffers=function(){$("offerList").innerHTML=state.classifiedOffers.length?state.classifiedOffers.map((o,i)=>'<div class="offer"><div class="sectionHead"><div><h3>'+esc(o.title)+'</h3><div class="offerMeta">'+esc(o.location||"")+' · '+euro(o.price)+' '+esc(o.shipping||"")+'</div></div><span class="offerStatus">'+esc(o.status||"")+'</span></div><p>'+esc(o.details||"")+'</p><div class="chips"><span class="chip">Gerade '+pV3(o.trackQty?.straight)+'</span><span class="chip">Kurven '+pV3(o.trackQty?.curve)+'</span><span class="chip">Flex '+pV3(o.trackQty?.flex)+'</span><span class="chip">Weichen '+pV3(o.trackQty?.switchL)+'/'+pV3(o.trackQty?.switchR)+'</span></div><div class="trackNote">'+esc(o.note||"")+'</div><button class="rowbtn" onclick="deleteOffer('+i+')">🗑 Entfernen</button></div>').join(""):'<p>Keine Angebote gespeichert.</p>'}
 function renderHomeV3(){const t=totalsV3();if($("kInvest"))$("kInvest").textContent=euro(t.inv);if($("investRef"))$("investRef").textContent="Bestätigte Basis: "+euro(state.meta?.investmentBaseline||18026.14);if($("kValue"))$("kValue").textContent=euro(t.val);if($("kGain"))$("kGain").textContent=euro(t.gain);if($("kGainPct"))$("kGainPct").textContent=t.pct.toFixed(1).replace(".",",")+" %";const g={};state.collection.forEach(x=>{const a=shortAreaV3(x.cityArea||"Ohne Bereich");g[a]=(g[a]||0)+pV3(x.quantity)});if($("homeCityStats"))$("homeCityStats").innerHTML=Object.entries(g).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,v])=>'<div class="miniStat"><span>'+esc(k)+'</span><b>'+v+'</b></div>').join("");const miss=state.trackShopping.reduce((s,x)=>s+Math.max(0,pV3(x.target)-pV3(x.confirmedOwned)-reservedV3(x.key)),0);if($("homeTrackStats"))$("homeTrackStats").innerHTML='<div class="miniStat"><span>Offene Teile</span><b>'+miss+'</b></div><div class="miniStat"><span>Angefragte Angebote</span><b>'+state.classifiedOffers.filter(o=>o.status==="Angefragt").length+'</b></div>'}
-function renderAnalysisV3(){const t=totalsV3(),valued=state.collection.filter(x=>pV3(x.currentValue)>0).length,sized=state.collection.filter(x=>(pV3(x.width)>0&&pV3(x.depth)>0)||(Array.isArray(x.modelDimensions)&&x.modelDimensions.filter(v=>pV3(v)>0).length===3)).length,area=state.collection.reduce((s,x)=>s+pV3(x.width)*pV3(x.depth)*pV3(x.quantity),0)/10000;if(!$("aValued"))return;$("aValued").textContent=valued;$("aSized").textContent=sized;$("aArea").textContent=area.toFixed(2).replace(".",",")+" m²";const g={};state.collection.forEach(x=>{const a=shortAreaV3(x.cityArea||"Ohne Bereich");g[a]=(g[a]||0)+pV3(x.quantity)});$("aZones").textContent=Object.keys(g).length;const mx=Math.max(...Object.values(g),1);$("areaAnalysis").innerHTML=Object.entries(g).sort((a,b)=>b[1]-a[1]).map(([k,v])=>'<div class="barrow"><span>'+esc(k)+'</span><div class="bar"><i style="width:'+(v/mx*100)+'%"></i></div><b>'+v+'</b></div>').join("");$("valueAnalysis").innerHTML='<div class="miniStats"><div class="miniStat"><span>Investment</span><b>'+euro(t.inv)+'</b></div><div class="miniStat"><span>Erfasster Wert</span><b>'+euro(t.val)+'</b></div><div class="miniStat"><span>Differenz</span><b>'+euro(t.gain)+'</b></div><div class="miniStat"><span>Rendite</span><b>'+t.pct.toFixed(1).replace(".",",")+' %</b></div></div><p class="hint">Aktuelle Werte sind nur für gepflegte Sets aussagekräftig.</p>';const q=[["Ohne Bild",state.collection.filter(x=>!x.imageUrl).length],["Ohne aktuellen Wert",state.collection.filter(x=>!pV3(x.currentValue)).length],["Ohne vollständige Maße",state.collection.filter(x=>!(pV3(x.width)&&pV3(x.depth)&&pV3(x.height))&&!(Array.isArray(x.modelDimensions)&&x.modelDimensions.filter(v=>pV3(v)>0).length===3)).length],["Ohne Modul",state.collection.filter(x=>!x.module).length],["Ohne Lagerort",state.collection.filter(x=>!x.storage).length]];$("qualityAnalysis").innerHTML='<div class="qualitylist">'+q.map(([k,v])=>'<div class="qualityitem"><span>'+k+'</span><b>'+v+'</b></div>').join("")+'</div>'}
+function renderAnalysisV3(){const t=totalsV3(),valued=state.collection.filter(x=>pV3(x.currentValue)>0).length,sized=state.collection.filter(x=>(pV3(x.width)>0&&pV3(x.depth)>0)||(Array.isArray(x.modelDimensions)&&x.modelDimensions.filter(v=>pV3(v)>0).length===3)).length,area=state.collection.reduce((s,x)=>s+footprintAreaCm2V526(x),0)/10000;if(!$("aValued"))return;$("aValued").textContent=valued;$("aSized").textContent=sized;$("aArea").textContent=area.toFixed(2).replace(".",",")+" m²";const g={};state.collection.forEach(x=>{const a=shortAreaV3(x.cityArea||"Ohne Bereich");g[a]=(g[a]||0)+pV3(x.quantity)});$("aZones").textContent=Object.keys(g).length;const mx=Math.max(...Object.values(g),1);$("areaAnalysis").innerHTML=Object.entries(g).sort((a,b)=>b[1]-a[1]).map(([k,v])=>'<div class="barrow"><span>'+esc(k)+'</span><div class="bar"><i style="width:'+(v/mx*100)+'%"></i></div><b>'+v+'</b></div>').join("");$("valueAnalysis").innerHTML='<div class="miniStats"><div class="miniStat"><span>Investment</span><b>'+euro(t.inv)+'</b></div><div class="miniStat"><span>Erfasster Wert</span><b>'+euro(t.val)+'</b></div><div class="miniStat"><span>Differenz</span><b>'+euro(t.gain)+'</b></div><div class="miniStat"><span>Rendite</span><b>'+t.pct.toFixed(1).replace(".",",")+' %</b></div></div><p class="hint">Aktuelle Werte sind nur für gepflegte Sets aussagekräftig.</p>';const q=[["Ohne Bild",state.collection.filter(x=>!x.imageUrl).length],["Ohne aktuellen Wert",state.collection.filter(x=>!pV3(x.currentValue)).length],["Ohne vollständige Maße",state.collection.filter(x=>!(pV3(x.width)&&pV3(x.depth)&&pV3(x.height))&&!(Array.isArray(x.modelDimensions)&&x.modelDimensions.filter(v=>pV3(v)>0).length===3)).length],["Ohne Modul",state.collection.filter(x=>!x.module).length],["Ohne Lagerort",state.collection.filter(x=>!x.storage).length]];$("qualityAnalysis").innerHTML='<div class="qualitylist">'+q.map(([k,v])=>'<div class="qualityitem"><span>'+k+'</span><b>'+v+'</b></div>').join("")+'</div>'}
 const oldRefreshV3=refresh;refresh=function(){oldRefreshV3();fillAreaFilterV3();renderCollection();renderWishlist();renderCityV3();renderModulesV3();renderTracks();renderOffers();renderHomeV3();if(document.querySelector("#analysis.active"))renderAnalysisV3()}
 function syncModuleV3(x){for(const m in state.modules)state.modules[m]=state.modules[m].filter(n=>n!==x.setNumber);if(x.module){state.modules[x.module]=state.modules[x.module]||[];if(!state.modules[x.module].includes(x.setNumber))state.modules[x.module].push(x.setNumber)}}
 const oldOpenSetV3=openSet;openSet=function(x=null){oldOpenSetV3(x);if($("fModule"))$("fModule").value=x?.module||"";if($("fCondition"))$("fCondition").value=x?.condition||"Unbekannt";if($("fBuild"))$("fBuild").value=x?.buildStatus||"Unbekannt";if($("fStorage"))$("fStorage").value=x?.storage||"";if($("fBarcode"))$("fBarcode").value=x?.barcode||"";if($("fPurchaseDate"))$("fPurchaseDate").value=x?.purchaseDate||"";if($("fSeller"))$("fSeller").value=x?.seller||""}
@@ -373,8 +373,9 @@ showDetailV3=function(n){
 };
 
 function fitWarningV28(x){
- const mw=pV3(state.meta.moduleWidth)||25.6,md=pV3(state.meta.moduleDepth)||25.6,w=pV3(x.width),d=pV3(x.depth);
- if(!w||!d)return "Maße fehlen – Passform kann nicht geprüft werden.";
+ const mw=pV3(state.meta.moduleWidth)||25.6,md=pV3(state.meta.moduleDepth)||25.6,f=footprintV526(x);
+ if(!f)return "Keine eindeutig zugeordnete Stellfläche – Passform kann nicht verlässlich geprüft werden.";
+ const w=f.w,d=f.d;
  if((w<=mw&&d<=md)||(d<=mw&&w<=md))return "Passt in ein Standardmodul ("+mw+" × "+md+" cm).";
  return "⚠️ Größer als ein Standardmodul ("+mw+" × "+md+" cm).";
 }
@@ -590,6 +591,10 @@ async function autoEnrichOneV35(n){
    x.modelDimensions=[pV3(e.modelDimension1),pV3(e.modelDimension2),pV3(e.modelDimension3)];
    x.modelDimensionsSource=e.modelDimensionsSource||"Brickset";changed=true
  }
+ if(!pV3(x.footprintWidth)&&pV3(e.footprintWidth)&&pV3(e.footprintDepth)){
+   x.footprintWidth=pV3(e.footprintWidth);x.footprintDepth=pV3(e.footprintDepth);
+   x.footprintSource=e.footprintSource||"Brickset/LEGO-Beschreibung";changed=true
+ }
  if(changed){persist();refresh();renderQualityAssistantV35();alert("Verfügbare Online-Daten wurden ergänzt.")}else alert("Online-Daten gefunden, aber für die noch fehlenden Felder liegen aktuell keine Werte vor.");
 }
 window.autoEnrichOneV35=autoEnrichOneV35;
@@ -632,8 +637,8 @@ renderPricesV31=function(){
 };
 
 function moduleFitsV35(x){
- const mw=pV3(state.meta?.moduleWidth)||25.6,md=pV3(state.meta?.moduleDepth)||25.6,w=pV3(x?.width),d=pV3(x?.depth);
- if(!w||!d)return null;return (w<=mw&&d<=md)||(d<=mw&&w<=md);
+ const mw=pV3(state.meta?.moduleWidth)||25.6,md=pV3(state.meta?.moduleDepth)||25.6,f=footprintV526(x);
+ if(!f)return null;const w=f.w,d=f.d;return (w<=mw&&d<=md)||(d<=mw&&w<=md);
 }
 renderModulesV3=function(){
  const g=$("moduleGrid");if(!g)return;let n=0,h="",filter=$("moduleZoneFilterV35")?.value||"";
@@ -902,7 +907,7 @@ function detailTabsV38(n){
  if(hero)views.stock.appendChild(hero);other.forEach(el=>views.stock.appendChild(el));
  if(ex)views.ex.appendChild(ex); else views.ex.innerHTML='<p class="hint">Keine Exemplare separat erfasst.</p>';
  if(chart)views.price.appendChild(chart); else views.price.innerHTML='<p class="hint">Noch keine Preisverlauf-Daten.</p>';
- views.city.innerHTML='<div class="detailFacts"><div class="fact"><small>Stadtbereich</small><b>'+esc(x.cityArea||"–")+'</b></div><div class="fact"><small>Modul</small><b>'+esc(x.module||"–")+'</b></div><div class="fact"><small>Maße</small><b>'+(x.width??"–")+' × '+(x.depth??"–")+' × '+(x.height??"–")+' cm</b></div><div class="fact"><small>Passform</small><b>'+esc(fitWarningV28(x))+'</b></div><div class="fact"><small>Datenqualität</small><b>'+qualityScoreV38(x)+' %</b></div></div>';
+ views.city.innerHTML='<div class="detailFacts"><div class="fact"><small>Stadtbereich</small><b>'+esc(x.cityArea||"–")+'</b></div><div class="fact"><small>Modul</small><b>'+esc(x.module||"–")+'</b></div><div class="fact"><small>Stellfläche</small><b>'+esc(footprintTextV526(x))+'</b></div><div class="fact"><small>Passform</small><b>'+esc(fitWarningV28(x))+'</b></div><div class="fact"><small>Datenqualität</small><b>'+qualityScoreV38(x)+' %</b></div></div>';
  if(market)views.online.appendChild(market); else views.online.innerHTML='<p class="hint">Für dieses Set liegen noch keine Online-Daten vor.</p>';
  d.prepend(bar);
  Object.values(views).forEach(v=>d.appendChild(v));
@@ -2438,6 +2443,10 @@ async function bulkEnrichCollectionV523(){
          x.modelDimensions=[pV3(e.modelDimension1),pV3(e.modelDimension2),pV3(e.modelDimension3)];
          x.modelDimensionsSource=e.modelDimensionsSource||"Brickset";touched=true;gotDims=true
        }
+       if(!pV3(x.footprintWidth)&&pV3(e.footprintWidth)&&pV3(e.footprintDepth)){
+         x.footprintWidth=pV3(e.footprintWidth);x.footprintDepth=pV3(e.footprintDepth);
+         x.footprintSource=e.footprintSource||"Brickset/LEGO-Beschreibung";touched=true;gotDims=true
+       }
        if(!pV3(x.width)&&pV3(e.width)){x.width=e.width;touched=true;gotDims=true}
        if(!pV3(x.depth)&&pV3(e.depth)){x.depth=e.depth;touched=true;gotDims=true}
        if(!pV3(x.height)&&pV3(e.height)){x.height=e.height;touched=true;gotDims=true}
@@ -2491,3 +2500,19 @@ function bindQualityBulkV523(){
 const refreshBaseV523=refresh;
 refresh=function(){const r=refreshBaseV523();setTimeout(bindQualityBulkV523,0);return r};
 setTimeout(bindQualityBulkV523,200);
+
+
+/* v50.26 trustworthy footprint handling */
+function footprintV526(x){
+ const w=pV3(x?.width),d=pV3(x?.depth);
+ if(w&&d)return {w,d,source:"Eigene/strukturierte Maße"};
+ const fw=pV3(x?.footprintWidth),fd=pV3(x?.footprintDepth);
+ if(fw&&fd)return {w:fw,d:fd,source:x?.footprintSource||"Brickset/LEGO-Beschreibung"};
+ return null;
+}
+function footprintAreaCm2V526(x){
+ const f=footprintV526(x);return f?f.w*f.d*Math.max(1,pV3(x?.quantity)||1):0;
+}
+function footprintTextV526(x){
+ const f=footprintV526(x);return f?(f.w+" × "+f.d+" cm · "+f.source):"keine verlässliche Stellfläche";
+}
