@@ -2909,3 +2909,190 @@ refresh=function(){
 };
 bindAutopilotV530();
 setTimeout(renderAutopilotV530,220);
+
+
+/* v50.31 data traffic light, structured storage, module-block planner, safety snapshots */
+function parseStorageV531(value=""){
+ const parts=String(value||"").split(" › ").map(x=>x.trim()).filter(Boolean);
+ return {room:parts[0]||"",shelf:parts[1]||"",bin:parts.slice(2).join(" › ")||""};
+}
+function composeStorageV531(room="",shelf="",bin=""){
+ return [room,shelf,bin].map(x=>String(x||"").trim()).filter(Boolean).join(" › ");
+}
+function fillStorageFieldsV531(prefix,x){
+ const storage=x?.storage||"";
+ const parsed=(x?.storageRoom||x?.storageShelf||x?.storageBin)?{
+   room:x.storageRoom||"",shelf:x.storageShelf||"",bin:x.storageBin||""
+ }:parseStorageV531(storage);
+ const total=$(prefix+"Storage"),room=$(prefix+"StorageRoom"),shelf=$(prefix+"StorageShelf"),bin=$(prefix+"StorageBin");
+ if(total)total.value=storage||composeStorageV531(parsed.room,parsed.shelf,parsed.bin);
+ if(room)room.value=parsed.room;
+ if(shelf)shelf.value=parsed.shelf;
+ if(bin)bin.value=parsed.bin;
+}
+function readStorageFieldsV531(prefix,x){
+ const total=$(prefix+"Storage"),room=$(prefix+"StorageRoom"),shelf=$(prefix+"StorageShelf"),bin=$(prefix+"StorageBin");
+ const r=room?.value.trim()||"",s=shelf?.value.trim()||"",b=bin?.value.trim()||"";
+ const composed=composeStorageV531(r,s,b);
+ x.storageRoom=r;x.storageShelf=s;x.storageBin=b;
+ x.storage=composed||(total?.value.trim()||x.storage||"");
+ if(total&&composed)total.value=composed;
+}
+const openSetBaseV531=openSet;
+openSet=function(x=null){
+ const r=openSetBaseV531(x);
+ fillStorageFieldsV531("f",x||{});
+ return r;
+};
+const saveSetBaseV531=saveSet;
+saveSet=function(){
+ const was=editing||$("fSet")?.value?.trim();
+ const r=saveSetBaseV531();
+ const x=(state.collection||[]).find(y=>String(y.setNumber)===String(was));
+ if(x){readStorageFieldsV531("f",x);persist();refresh()}
+ return r;
+};
+const openPurchaseBaseV531=openPurchaseV3;
+openPurchaseV3=function(w=null,x=null){
+ const r=openPurchaseBaseV531(w,x);
+ fillStorageFieldsV531("p",x||{storage:""});
+ return r;
+};
+const savePurchaseBaseV531=savePurchaseV3;
+savePurchaseV3=function(){
+ const n=$("pSet")?.value?.trim();
+ const r=savePurchaseBaseV531();
+ const x=(state.collection||[]).find(y=>String(y.setNumber)===String(n));
+ if(x){readStorageFieldsV531("p",x);persist();refresh()}
+ return r;
+};
+
+function dataLightRowsV531(x){
+ const e=enrichmentV3?.sets?.[String(x.setNumber)]||x.market||{};
+ const updated=e.brickeconomyUpdated||e.bricklinkUpdated||e.rebrickableUpdated||e.bricksetUpdated||"";
+ let marketFresh="unknown";
+ if(updated){
+   const age=(Date.now()-new Date(updated).getTime())/86400000;
+   marketFresh=age<=14?"fresh":age<=45?"aging":"old";
+ }
+ return [
+   ["Bild",!!x.imageUrl, x.imageUrl?"vorhanden":"fehlt"],
+   ["Marktwert",pV3(x.currentValue)>0, pV3(x.currentValue)>0?(marketFresh==="fresh"?"aktuell":marketFresh==="aging"?"älter":"vorhanden"):"fehlt"],
+   ["Maße",hasFullDimsV527(x)||hasModelDimsV527(x),hasFullDimsV527(x)?"vollständig":hasModelDimsV527(x)?"Modellmaße":"fehlen"],
+   ["Stellfläche",hasReliableFootprintV527(x),hasReliableFootprintV527(x)?"verlässlich":"unsicher"],
+   ["Barcode",!!x.barcode,x.barcode?"vorhanden":"fehlt"],
+   ["Zustand",!!(x.condition&&x.condition!=="Unbekannt"),x.condition||"fehlt"],
+   ["Lagerort",!!x.storage,x.storage||"fehlt"]
+ ];
+}
+function renderDataLightV531(x,root){
+ if(!root||!x)return;
+ let box=root.querySelector(".dataLightV531");
+ if(!box){box=document.createElement("div");box.className="dataLightV531";root.prepend(box)}
+ box.innerHTML='<div class="dataLightHeadV531"><div><span class="eyebrowV50">DATENAMPEL</span><h3>Setdaten auf einen Blick</h3></div><b>'+qualityScoreV38(x)+'%</b></div>'+
+ '<div class="dataLightGridV531">'+dataLightRowsV531(x).map(([k,ok,label])=>'<div class="'+(ok?'ok':'warn')+'"><i></i><span>'+esc(k)+'</span><b>'+esc(label)+'</b></div>').join("")+'</div>';
+}
+const detailTabsBaseV531=detailTabsV38;
+detailTabsV38=function(n){
+ const r=detailTabsBaseV531(n);
+ const x=(state.collection||[]).find(y=>String(y.setNumber)===String(n));
+ renderDataLightV531(x,$("detailContent"));
+ return r;
+};
+
+function moduleDomMatrixV531(){
+ const g=$("moduleGrid");if(!g)return [];
+ const items=[...g.children];
+ const cols=8,rows=[];
+ for(let i=0;i<items.length;i+=cols)rows.push(items.slice(i,i+cols));
+ return rows;
+}
+function findModuleBlockV531(x){
+ const need=moduleNeedV528(x);
+ if(!need.known||need.count<=1)return null;
+ const matrix=moduleDomMatrixV531();if(!matrix.length)return null;
+ const variants=[[need.cols,need.rows]];
+ if(need.cols!==need.rows)variants.push([need.rows,need.cols]);
+ const used=new Set();
+ for(const [m,a] of Object.entries(state.modules||{}))if((a||[]).length)used.add(m);
+ for(const [cols,rows] of variants){
+   for(let r=0;r<=matrix.length-rows;r++){
+     for(let c=0;c<=8-cols;c++){
+       const mods=[];let ok=true;
+       for(let rr=0;rr<rows;rr++)for(let cc=0;cc<cols;cc++){
+         const el=matrix[r+rr]?.[c+cc],m=el?.dataset?.module;
+         if(!m||used.has(m)){ok=false;break}
+         mods.push(m);
+       }
+       if(ok&&mods.length===cols*rows)return {modules:mods,cols,rows};
+     }
+   }
+ }
+ return null;
+}
+window.assignSuggestedBlockV531=n=>{
+ const x=(state.collection||[]).find(y=>String(y.setNumber)===String(n));if(!x)return;
+ const block=findModuleBlockV531(x);if(!block)return alert("Aktuell wurde kein zusammenhängender freier Modulblock gefunden.");
+ for(const arr of Object.values(state.modules||{})){
+   const i=arr.indexOf(String(x.setNumber));if(i>=0)arr.splice(i,1);
+ }
+ for(const m of block.modules){
+   state.modules[m]=state.modules[m]||[];
+   if(!state.modules[m].includes(String(x.setNumber)))state.modules[m].push(String(x.setNumber));
+ }
+ x.modules=[...block.modules];x.module=block.modules[0]||"";
+ state.meta=state.meta||{};state.meta.lastModuleBlockAssignmentV531=new Date().toISOString();
+ persist();refresh();
+ alert(x.setNumber+" wurde auf "+block.modules.length+" zusammenhängende Module verteilt: "+block.modules.join(", "));
+};
+function renderBlockSuggestionV531(){
+ const box=$("cityBlockSuggestionV531");if(!box)return;
+ const candidates=(state.collection||[]).map(x=>({x,need:moduleNeedV528(x)})).filter(o=>o.need.known&&o.need.count>1&&!o.x.module);
+ if(!candidates.length){box.innerHTML='<span>✓ Keine ungeplanten Mehrmodul-Sets.</span>';return}
+ const o=candidates.sort((a,b)=>b.need.count-a.need.count)[0],block=findModuleBlockV531(o.x);
+ box.innerHTML='<div><span class="eyebrowV50">MEHRMODUL-PLANER</span><b>'+esc(o.x.setNumber)+' · '+esc(o.x.name)+'</b><small>Benötigt '+o.need.count+' Module ('+o.need.cols+'×'+o.need.rows+')</small></div>'+
+ (block?'<button class="btn" onclick="assignSuggestedBlockV531(\''+esc(o.x.setNumber)+'\')">Block '+block.modules.join(" · ")+' zuweisen</button>':'<span class="chip warn">Kein zusammenhängender Block frei</span>');
+}
+const renderCityPlannerBaseV531=renderCityPlannerV49;
+renderCityPlannerV49=function(){
+ const r=renderCityPlannerBaseV531();
+ setTimeout(renderBlockSuggestionV531,0);
+ return r;
+};
+
+function createSafetySnapshotV531(reason="Automatik"){
+ try{
+   const snap={createdAt:new Date().toISOString(),reason,state:structuredClone(state)};
+   localStorage.setItem("brick-city-manager-safety-snapshot-v531",JSON.stringify(snap));
+   state.meta=state.meta||{};state.meta.lastSafetySnapshotV531=snap.createdAt;
+   return snap;
+ }catch(e){return null}
+}
+window.restoreSafetySnapshotV531=()=>{
+ const raw=localStorage.getItem("brick-city-manager-safety-snapshot-v531");
+ if(!raw)return alert("Noch kein Sicherheits-Snapshot vorhanden.");
+ if(!confirm("Den letzten Sicherheits-Snapshot wiederherstellen? Der aktuelle lokale Stand wird ersetzt."))return;
+ try{
+   const snap=JSON.parse(raw);state=snap.state;persist();refresh();alert("Snapshot vom "+new Date(snap.createdAt).toLocaleString("de-DE")+" wurde wiederhergestellt.");
+ }catch(e){alert("Snapshot konnte nicht geladen werden.")}
+};
+const runAutopilotBaseV531=runAutopilotV530;
+runAutopilotV530=async function(){
+ createSafetySnapshotV531("Smart Autopilot");
+ return await runAutopilotBaseV531();
+};
+function renderSafetySnapshotControlV531(){
+ const settings=$("settings");if(!settings||$("safetySnapshotV531"))return;
+ const card=document.createElement("div");card.className="card wide";card.id="safetySnapshotV531";
+ const raw=localStorage.getItem("brick-city-manager-safety-snapshot-v531");let stamp="Noch keiner";
+ try{if(raw)stamp=new Date(JSON.parse(raw).createdAt).toLocaleString("de-DE")}catch{}
+ card.innerHTML='<div class="sectionHead"><div><h2>Sicherheits-Snapshot</h2><p class="hint">Vor größeren Automatikläufen wird automatisch ein lokaler Wiederherstellungspunkt erstellt.</p></div><button class="btn secondary" onclick="restoreSafetySnapshotV531()">Letzten Stand wiederherstellen</button></div><small>Letzter Snapshot: '+esc(stamp)+'</small>';
+ settings.prepend(card);
+}
+const refreshBaseV531=refresh;
+refresh=function(){
+ const r=refreshBaseV531();
+ renderBlockSuggestionV531();renderSafetySnapshotControlV531();
+ return r;
+};
+setTimeout(()=>{renderBlockSuggestionV531();renderSafetySnapshotControlV531()},250);
