@@ -2743,3 +2743,42 @@ refresh=function(){
  return r;
 };
 setTimeout(()=>{renderCityCoverageV528();renderNightCareV528();renderCollectorFastCompleteV528()},260);
+
+
+/* v50.28 reliable footprint final override */
+moduleFitsV35=function(x){
+ const mw=pV3(state.meta?.moduleWidth)||25.6,md=pV3(state.meta?.moduleDepth)||25.6,f=footprintV526(x);
+ if(!f)return null;
+ return (f.w<=mw&&f.d<=md)||(f.d<=mw&&f.w<=md);
+};
+const fitWarningReliableV528=fitWarningV28;
+fitWarningV28=function(x){
+ const mw=pV3(state.meta?.moduleWidth)||25.6,md=pV3(state.meta?.moduleDepth)||25.6,f=footprintV526(x);
+ if(!f)return "Keine verlässliche Stellfläche – Passform kann nicht geprüft werden.";
+ const fits=(f.w<=mw&&f.d<=md)||(f.d<=mw&&f.w<=md),need=moduleNeedV528(x);
+ if(fits)return "Passt in ein Standardmodul ("+mw+" × "+md+" cm).";
+ return "⚠ Größer als ein Standardmodul. Empfohlen: "+need.count+" Module ("+need.cols+" × "+need.rows+").";
+};
+const renderAnalysisReliableV528=renderAnalysisV3;
+renderAnalysisV3=function(){
+ const r=renderAnalysisReliableV528();
+ if($("aArea")){
+   const area=(state.collection||[]).reduce((s,x)=>s+footprintAreaCm2V526(x),0)/10000;
+   $("aArea").textContent=area.toFixed(2).replace(".",",")+" m²";
+ }
+ renderQualitySummaryV527();
+ return r;
+};
+const renderCityPlannerReliableV528=renderCityPlannerV49;
+renderCityPlannerV49=function(){
+ const r=renderCityPlannerReliableV528();
+ const stats=$("cityPlannerStatsV49");
+ if(stats){
+   const items=[...stats.querySelectorAll(".miniStat")];
+   const area=(state.collection||[]).reduce((s,x)=>s+footprintAreaCm2V526(x),0)/10000;
+   const target=items.find(el=>/Bekannte Setfläche/.test(el.textContent||""));
+   if(target?.querySelector("b"))target.querySelector("b").textContent=area.toFixed(2).replace(".",",")+" m²";
+ }
+ renderCityCoverageV528();
+ return r;
+};
