@@ -1099,3 +1099,17 @@ tbody tr:hover{background:#fafbfc}
 .collectorLoadingV541 small{opacity:.65}
 .ownedCountV541{font-weight:900}
 .collectorThemeTurboV541{content-visibility:auto;contain-intrinsic-size:96px}
+
+
+/* v50.42 Performance + Sammler UX */
+#collectorFeaturedV504,.collectorSetGridV504,.collectorThemeGridV504{content-visibility:auto;contain-intrinsic-size:800px}
+.collectorThemeTurboV541{content-visibility:auto;contain-intrinsic-size:92px}
+.collectorSetCardV504{content-visibility:auto;contain-intrinsic-size:300px}
+#collectorSortV542{min-width:190px}
+.ownedCountV541{font-weight:800}
+.collectorLoadingV541{padding:28px;border-radius:18px;background:rgba(0,0,0,.035);display:grid;gap:4px}
+.collectorLoadingV541 small{opacity:.65}
+@media(max-width:700px){
+ #collectorSortV542{width:100%;min-width:0}
+ .collectorThemeGridV504{grid-template-columns:1fr}
+}
