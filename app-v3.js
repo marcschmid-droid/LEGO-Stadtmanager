@@ -2636,3 +2636,110 @@ renderStatsV36=function(){
  return r;
 };
 setTimeout(()=>{renderQualitySummaryV527();renderQualityAssistantV35()},240);
+
+
+/* v50.28 city modules, source transparency, collector near-complete */
+function moduleNeedV528(x){
+ const fp=typeof footprintV526==="function"?footprintV526(x):null;
+ if(!fp)return {count:1,known:false,cols:1,rows:1};
+ const mw=pV3(state.meta?.moduleWidth)||25.6,md=pV3(state.meta?.moduleDepth)||25.6;
+ const a={cols:Math.max(1,Math.ceil(fp.w/mw)),rows:Math.max(1,Math.ceil(fp.d/md))};
+ const b={cols:Math.max(1,Math.ceil(fp.d/mw)),rows:Math.max(1,Math.ceil(fp.w/md))};
+ const pa=a.cols*a.rows,pb=b.cols*b.rows,best=pb<pa?b:a;
+ return {count:best.cols*best.rows,known:true,cols:best.cols,rows:best.rows,w:fp.w,d:fp.d};
+}
+const dynamicModuleCapacityBaseV528=dynamicModuleCapacityV502;
+dynamicModuleCapacityV502=function(){
+ const need=(state.collection||[]).reduce((s,x)=>s+moduleNeedV528(x).count,0);
+ const highestExisting=Math.max(0,...Object.keys(state.modules||{}).map(k=>Number(String(k).replace(/^M/i,""))||0));
+ return Math.ceil(Math.max(40,need+8,highestExisting)/8)*8;
+};
+function renderCityCoverageV528(){
+ const box=$("cityCoverageV528");if(!box)return;
+ const rows=state.collection||[],withFoot=rows.filter(x=>hasReliableFootprintV527(x)).length,without=Math.max(0,rows.length-withFoot);
+ const area=rows.reduce((s,x)=>s+footprintAreaCm2V526(x),0)/10000;
+ const multi=rows.filter(x=>moduleNeedV528(x).known&&moduleNeedV528(x).count>1).length;
+ const modules=rows.reduce((s,x)=>s+moduleNeedV528(x).count,0);
+ const pct=rows.length?Math.round(withFoot/rows.length*100):0;
+ box.innerHTML='<div class="cityCoverageHeadV528"><div><b>'+area.toFixed(2).replace(".",",")+' m² bekannte Stellfläche</b><span>'+withFoot+' von '+rows.length+' Sets · '+pct+' % Flächenabdeckung</span></div><strong>'+modules+' Modulplätze benötigt</strong></div>'+
+ '<div class="cityCoverageBarV528"><i style="width:'+pct+'%"></i></div>'+
+ '<div class="cityCoverageMetaV528"><span>'+without+' Sets ohne sichere Stellfläche</span><span>'+multi+' Mehrmodul-Set'+(multi===1?"":"s")+'</span></div>';
+}
+const renderCityPlannerBaseV528=renderCityPlannerV49;
+renderCityPlannerV49=function(){
+ const r=renderCityPlannerBaseV528();
+ renderCityCoverageV528();
+ const list=$("cityUnplannedV49");
+ if(list){
+   list.querySelectorAll(".cityUnplannedItemV49").forEach(btn=>{
+     const n=btn.getAttribute("onclick")?.match(/'([^']+)'/)?.[1],x=(state.collection||[]).find(y=>String(y.setNumber)===String(n));
+     if(!x)return;const need=moduleNeedV528(x),text=btn.querySelector(".cityUnplannedTextV49 small");
+     if(text&&need.known)text.textContent+=(need.count>1?" · "+need.count+" Module ("+need.cols+"×"+need.rows+")":" · 1 Modul");
+   });
+ }
+ return r;
+};
+const fitWarningBaseV528=fitWarningV28;
+fitWarningV28=function(x){
+ const base=fitWarningBaseV528(x),need=moduleNeedV528(x);
+ if(need.known&&need.count>1)return base+" Empfohlen: "+need.count+" Module ("+need.cols+" × "+need.rows+").";
+ return base;
+};
+function sourceRowsV528(x){
+ const e=enrichmentV3?.sets?.[String(x.setNumber)]||x.market||{};
+ const out=[];
+ if(x.imageUrl)out.push(["Bild",e.rebrickableUpdated?"Rebrickable":e.brickeconomyUpdated?"BrickEconomy":"Sammlung"]);
+ if(pV3(x.currentValue))out.push(["Marktwert",x.valueSource||e.marketSourceFallback||(e.brickeconomyUpdated?"BrickEconomy":"Sammlung")]);
+ if(hasReliableFootprintV527(x))out.push(["Stellfläche",x.footprintSource||"Eigene/strukturierte Maße"]);
+ else if(hasModelDimsV527(x))out.push(["Modellmaße",x.modelDimensionsSource||"Brickset"]);
+ if(x.barcode)out.push(["Barcode",(e.ean||e.upc)?"Online-Katalog":"Sammlung"]);
+ return out;
+}
+const detailTabsBaseV528=detailTabsV38;
+detailTabsV38=function(n){
+ detailTabsBaseV528(n);
+ const x=(state.collection||[]).find(y=>String(y.setNumber)===String(n)),d=$("detailContent");if(!x||!d)return;
+ const online=d.querySelector('.detailViewV38[data-view="online"]');if(!online)return;
+ const rows=sourceRowsV528(x);
+ let box=online.querySelector(".dataSourcesV528");
+ if(!box){box=document.createElement("div");box.className="dataSourcesV528";online.appendChild(box)}
+ box.innerHTML='<h3>Datenquellen</h3>'+(rows.length?rows.map(([k,v])=>'<div><span>'+esc(k)+'</span><b>'+esc(v)+'</b></div>').join(""):'<p class="hint">Noch keine Quelle zugeordnet.</p>');
+};
+async function renderCollectorFastCompleteV528(){
+ const box=$("collectorFastCompleteGridV528");if(!box)return;
+ const all=await loadAllSetsV46(false);if(!all?.sets)return;
+ const defs=collectorThemeDefsV504(all);
+ const rows=defs.map(def=>({def,p:collectorProgressV504(collectorRowsV504(all,def))}))
+   .filter(x=>x.p.total&&x.p.missing>=1&&x.p.missing<=5)
+   .sort((a,b)=>a.p.missing-b.p.missing||b.p.pct-a.p.pct||a.def.label.localeCompare(b.def.label,"de"))
+   .slice(0,8);
+ box.innerHTML=rows.length?rows.map(({def,p})=>
+   '<button class="collectorThemeCardV504 fastCompleteCardV528" onclick="openCollectorThemeV504(\''+esc(def.key)+'\')">'+
+   '<span class="collectorThemeIconV504">'+esc(def.icon||"✓")+'</span>'+
+   '<span class="collectorThemeCardMainV504"><b>'+esc(def.label)+'</b><small>Noch '+p.missing+' Set'+(p.missing===1?"":"s")+' · '+p.pct+' % komplett</small><span class="collectorMiniProgressV504"><i style="width:'+p.pct+'%"></i></span></span>'+
+   '<strong>'+p.pct+'%</strong></button>'
+ ).join(""):'<div class="card"><p class="hint">Aktuell gibt es keine Themenwelt mit nur noch 1–5 fehlenden Sets.</p></div>';
+}
+const renderCollectorThemesBaseV528=renderCollectorThemesV504;
+renderCollectorThemesV504=async function(){
+ const r=await renderCollectorThemesBaseV528();
+ await renderCollectorFastCompleteV528();
+ return r;
+};
+function renderNightCareV528(){
+ const box=$("nightCareStatusV528");if(!box)return;
+ const m=enrichmentV3?.meta||{},last=m.lastUpdated?new Date(m.lastUpdated).toLocaleString("de-DE"):"noch kein Lauf";
+ const err=(m.errors||[]).slice(-1)[0]||"";
+ let status="Automatik bereit";
+ if(m.rateLimited)status="API-Limit erreicht – nächster Lauf setzt automatisch fort";
+ else if(m.lastUpdated)status="Letzter Lauf: "+last;
+ box.querySelector("b").textContent="✓ Nachtpflege aktiv";
+ box.querySelector("small").textContent=status+(err&&!m.rateLimited?" · Letzte Meldung: "+err:"");
+}
+const refreshBaseV528=refresh;
+refresh=function(){
+ const r=refreshBaseV528();
+ renderCityCoverageV528();renderNightCareV528();setTimeout(renderCollectorFastCompleteV528,0);
+ return r;
+};
+setTimeout(()=>{renderCityCoverageV528();renderNightCareV528();renderCollectorFastCompleteV528()},260);
