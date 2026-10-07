@@ -3096,3 +3096,194 @@ refresh=function(){
  return r;
 };
 setTimeout(()=>{renderBlockSuggestionV531();renderSafetySnapshotControlV531()},250);
+
+
+/* v50.32 transparent market valuation + full collection price audit */
+function valuationModeV532(){
+ state.meta=state.meta||{};
+ return state.meta.valuationModeV532||"condition";
+}
+function marketSourceV532(e={},kind=""){
+ if(kind==="new"){
+   if(pV3(e.marketNewEUR))return e.bricklinkUpdated&&e.marketSourceFallback?"BrickLink · neu":"BrickEconomy · neu / OVP";
+ }
+ if(kind==="used"){
+   if(pV3(e.marketUsedEUR))return e.bricklinkUpdated&&e.marketSourceFallback?"BrickLink · gebraucht":"BrickEconomy · gebraucht";
+ }
+ return e.marketSourceFallback||"Online-Katalog";
+}
+function marketChoiceV532(x,e={},mode=valuationModeV532()){
+ const nu=pV3(e.marketNewEUR),us=pV3(e.marketUsedEUR);
+ if(mode==="manual")return {value:pV3(x?.currentValue),kind:"manual",source:x?.valueSource||"Manuell",reason:"Manueller Sammlungswert"};
+ if(mode==="new"){
+   if(nu)return {value:nu,kind:"new",source:marketSourceV532(e,"new"),reason:"Bewertungsmodus Neu / OVP"};
+   if(us)return {value:us,kind:"used",source:marketSourceV532(e,"used"),reason:"Neu-Wert fehlt · Gebrauchtwert als Fallback"};
+ }
+ if(mode==="used"){
+   if(us)return {value:us,kind:"used",source:marketSourceV532(e,"used"),reason:"Bewertungsmodus Gebraucht"};
+   if(nu)return {value:nu,kind:"new",source:marketSourceV532(e,"new"),reason:"Gebrauchtwert fehlt · Neu-Wert als Fallback"};
+ }
+ const cond=nV3(x?.condition||x?.buildStatus||"");
+ const wantsNew=cond.includes("neu")||cond.includes("ovp");
+ if(wantsNew&&nu)return {value:nu,kind:"new",source:marketSourceV532(e,"new"),reason:"Zustand Neu / OVP"};
+ if(!wantsNew&&us)return {value:us,kind:"used",source:marketSourceV532(e,"used"),reason:"Zustand Gebraucht"};
+ if(nu)return {value:nu,kind:"new",source:marketSourceV532(e,"new"),reason:"Passender Gebrauchtwert fehlt · Neu-Wert verwendet"};
+ if(us)return {value:us,kind:"used",source:marketSourceV532(e,"used"),reason:"Passender Neu-Wert fehlt · Gebrauchtwert verwendet"};
+ return {value:0,kind:"none",source:"Keine Marktdaten",reason:"Für dieses Set liegt noch kein Online-Marktwert vor"};
+}
+chooseMarketV3=function(x,e){
+ return marketChoiceV532(x,e).value;
+};
+function priceAuditCheckV532(e={}){
+ const nu=pV3(e.marketNewEUR),us=pV3(e.marketUsedEUR),lo=pV3(e.marketUsedLowEUR),hi=pV3(e.marketUsedHighEUR);
+ const issues=[];
+ if(!nu&&!us)issues.push("Keine Marktdaten");
+ if(lo&&us&&lo>us)issues.push("Gebrauchtwert unter Minimum");
+ if(hi&&us&&hi<us)issues.push("Gebrauchtwert über Maximum");
+ if(nu&&us&&us>nu*1.25)issues.push("Gebraucht deutlich über Neu");
+ return issues;
+}
+function renderPriceAuditStatusV532(){
+ const box=$("priceAuditStatusV532");if(!box)return;
+ const a=state.meta?.priceAuditV532;
+ const mode=valuationModeV532();
+ const modeLabel={condition:"zustandsgerecht",used:"gebraucht",new:"neu / OVP",manual:"manuell"}[mode]||mode;
+ if(!a){
+   box.innerHTML='<span>Bewertung: <b>'+esc(modeLabel)+'</b></span><small>Noch keine vollständige Prüfung in dieser Sitzung.</small>';
+   return;
+ }
+ box.innerHTML='<span>Bewertung: <b>'+esc(modeLabel)+'</b></span>'+
+   '<span><b>'+a.checked+'</b> Sets geprüft</span>'+
+   '<span><b>'+a.changed+'</b> Werte angepasst</span>'+
+   '<span><b>'+a.missing+'</b> ohne Marktdaten</span>'+
+   '<span><b>'+a.suspicious+'</b> auffällig</span>'+
+   '<small>Letzte Prüfung: '+new Date(a.at).toLocaleString("de-DE")+'</small>';
+}
+async function auditAllPricesV532(showMessage=false,forceReload=true){
+ if(typeof createSafetySnapshotV531==="function")createSafetySnapshotV531("Marktwert-Prüfung");
+ if(forceReload)await loadEnrichmentV3(true);
+ const mode=valuationModeV532(),now=new Date().toISOString();
+ let checked=0,changed=0,missing=0,suspicious=0;
+ const details=[];
+ for(const x of state.collection||[]){
+   const e=enrichmentV3.sets?.[String(x.setNumber)]||x.market||{};
+   const choice=marketChoiceV532(x,e,mode),issues=priceAuditCheckV532(e);
+   checked++;
+   if(!choice.value)missing++;
+   if(issues.length)suspicious++;
+   if(mode!=="manual"&&choice.value&&x.marketAuto!==false&&Math.abs(pV3(x.currentValue)-choice.value)>0.004){
+     x.currentValue=choice.value;changed++;
+   }
+   if(choice.value){
+     x.valueSource=choice.source;
+     x.valueReason=choice.reason;
+     x.valueCheckedAt=now;
+   }
+   x.market={...(x.market||{}),...e};
+   if(issues.length)details.push({setNumber:String(x.setNumber),issues});
+ }
+ state.meta=state.meta||{};
+ state.meta.priceAuditV532={at:now,mode,checked,changed,missing,suspicious,details:details.slice(0,30)};
+ persist();refresh();renderPricesV31();renderPriceAuditStatusV532();
+ if(showMessage)alert("Wertprüfung abgeschlossen.\n\nSets geprüft: "+checked+"\nWerte angepasst: "+changed+"\nOhne Marktdaten: "+missing+"\nAuffällige Datensätze: "+suspicious);
+ return state.meta.priceAuditV532;
+}
+window.auditAllPricesV532=auditAllPricesV532;
+
+priceRowsV31=function(){
+ const rows=[];
+ for(const x of state.collection||[]){
+   const e=enrichmentV3.sets?.[String(x.setNumber)]||x.market||{},choice=marketChoiceV532(x,e);
+   rows.push({
+     kind:"collection",setNumber:x.setNumber,name:x.name,purchase:pV3(x.purchasePrice),
+     own:pV3(x.currentValue),newv:pV3(e.marketNewEUR),used:pV3(e.marketUsedEUR),
+     low:pV3(e.marketUsedLowEUR),high:pV3(e.marketUsedHighEUR),market:choice.value,
+     source:choice.source,reason:choice.reason,limit:0
+   });
+ }
+ for(const w of state.wishlist||[]){
+   const e=enrichmentV3.sets?.[String(w.setNumber)]||w.market||{},market=pV3(e.marketNewEUR)||pV3(e.marketUsedEUR);
+   rows.push({
+     kind:"wishlist",setNumber:w.setNumber,name:w.name,purchase:0,own:pV3(w.offer)||pV3(w.price),
+     newv:pV3(e.marketNewEUR),used:pV3(e.marketUsedEUR),low:pV3(e.marketUsedLowEUR),high:pV3(e.marketUsedHighEUR),
+     market,source:e.marketSourceFallback||"Online-Katalog",reason:"Wunschliste",limit:pV3(w.limit)
+   });
+ }
+ return rows;
+};
+renderPricesV31=function(){
+ const body=$("priceTableV30");if(!body)return;
+ const q=nV3($("priceSearchV30")?.value),mode=$("priceModeV30")?.value||"all";
+ const rows=priceRowsV31().filter(r=>(mode==="all"||r.kind===mode)&&(!q||nV3(r.setNumber+" "+r.name).includes(q)));
+ const withMarket=rows.filter(r=>r.market).length,alerts=rows.filter(r=>r.kind==="wishlist"&&r.limit&&r.market&&r.market<=r.limit).length;
+ const suspect=rows.filter(r=>{
+   const e=enrichmentV3.sets?.[String(r.setNumber)]||{};return priceAuditCheckV532(e).length;
+ }).length;
+ if($("priceSummaryV30"))$("priceSummaryV30").innerHTML=
+   '<div class="miniStat"><span>Einträge</span><b>'+rows.length+'</b></div>'+
+   '<div class="miniStat"><span>mit Marktwert</span><b>'+withMarket+'</b></div>'+
+   '<div class="miniStat"><span>auffällig</span><b>'+suspect+'</b></div>'+
+   '<div class="miniStat"><span>unter Kaufgrenze</span><b>'+alerts+'</b></div>';
+ body.innerHTML=rows.length?rows.map(r=>{
+   const diff=r.kind==="collection"&&r.purchase&&r.market?r.market-r.purchase:0,pct=r.purchase&&diff?diff/r.purchase*100:0;
+   let status="–";
+   if(!r.market)status="Keine Marktdaten";
+   else if(r.kind==="wishlist"&&r.limit)status=r.market<=r.limit?"🟢 unter Kaufgrenze":"🔴 über Kaufgrenze";
+   else if(r.kind==="collection"&&r.purchase)status=diff>=0?"🟢 über Kaufpreis":"🔴 unter Kaufpreis";
+   const range=r.low||r.high?((r.low?euro(r.low):"–")+" – "+(r.high?euro(r.high):"–")):"–";
+   return '<tr><td><b>'+esc(r.setNumber)+'</b><br><small>'+(r.kind==="collection"?"Bestand":"Wunsch")+'</small></td>'+
+     '<td>'+esc(r.name)+'</td><td>'+(r.purchase?euro(r.purchase):"–")+'</td><td><b>'+euro(r.market||r.own)+'</b><br><small>'+esc(r.reason||"")+'</small></td>'+
+     '<td>'+euro(r.newv)+'</td><td>'+euro(r.used)+'</td><td>'+range+'</td>'+
+     '<td>'+(diff?euro(diff):"–")+'</td><td>'+(diff?(pct>=0?"+":"")+pct.toFixed(1).replace(".",",")+" %":"–")+'</td>'+
+     '<td><small>'+esc(r.source||"–")+'</small></td><td>'+esc(status)+'</td></tr>';
+ }).join(""):'<tr><td colspan="11">Keine Einträge gefunden.</td></tr>';
+ renderPriceAuditStatusV532();
+};
+
+function renderValuationDetailV532(x){
+ const root=$("detailContent");if(!root||!x)return;
+ let box=root.querySelector(".valuationDetailV532");
+ if(!box){box=document.createElement("div");box.className="valuationDetailV532 card wide";root.appendChild(box)}
+ const e=enrichmentV3.sets?.[String(x.setNumber)]||x.market||{},choice=marketChoiceV532(x,e);
+ const range=(pV3(e.marketUsedLowEUR)||pV3(e.marketUsedHighEUR))
+   ?((pV3(e.marketUsedLowEUR)?euro(e.marketUsedLowEUR):"–")+" – "+(pV3(e.marketUsedHighEUR)?euro(e.marketUsedHighEUR):"–")):"–";
+ box.innerHTML='<div class="sectionHead"><div><span class="eyebrowV50">WERTBEWERTUNG</span><h3>Warum dieser Wert?</h3></div><b>'+euro(choice.value)+'</b></div>'+
+   '<div class="detailFacts"><div class="fact"><small>Verwendeter Wert</small><b>'+euro(choice.value)+'</b></div>'+
+   '<div class="fact"><small>Markt gebraucht</small><b>'+euro(e.marketUsedEUR)+'</b></div>'+
+   '<div class="fact"><small>Markt neu / OVP</small><b>'+euro(e.marketNewEUR)+'</b></div>'+
+   '<div class="fact"><small>Gebraucht-Spanne</small><b>'+esc(range)+'</b></div>'+
+   '<div class="fact"><small>Quelle</small><b>'+esc(choice.source)+'</b></div>'+
+   '<div class="fact"><small>Auswahlgrund</small><b>'+esc(choice.reason)+'</b></div></div>';
+}
+const detailTabsBaseV532=detailTabsV38;
+detailTabsV38=function(n){
+ const r=detailTabsBaseV532(n);
+ const x=(state.collection||[]).find(y=>String(y.setNumber)===String(n));
+ renderValuationDetailV532(x);
+ return r;
+};
+
+function bindValuationV532(){
+ const sel=$("valuationModeV532"),audit=$("auditPricesV532");
+ if(sel){
+   sel.value=valuationModeV532();
+   sel.onchange=async()=>{
+     state.meta=state.meta||{};state.meta.valuationModeV532=sel.value;persist();
+     await auditAllPricesV532(false,false);
+   };
+ }
+ if(audit)audit.onclick=()=>auditAllPricesV532(true,true);
+}
+const loadEnrichmentBaseV532=loadEnrichmentV3;
+loadEnrichmentV3=async function(force=false){
+ const r=await loadEnrichmentBaseV532(force);
+ renderPriceAuditStatusV532();
+ return r;
+};
+bindValuationV532();
+setTimeout(async()=>{
+ renderPriceAuditStatusV532();
+ if(!state.meta?.priceAuditV532||state.meta.priceAuditV532.mode!==valuationModeV532()){
+   await auditAllPricesV532(false,false);
+ }
+},650);
