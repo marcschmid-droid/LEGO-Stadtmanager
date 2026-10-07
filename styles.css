@@ -729,3 +729,21 @@ tbody tr:hover{background:#fafbfc}
  .planStatusV519 .sectionHead>.btn{width:100%}
  .planLimitBoxV519{padding:20px}
 }
+
+
+/* v50.20 commercial readiness */
+.premiumTabV520{position:relative}
+.premiumTabV520 small{display:inline-block;margin-left:4px;padding:2px 5px;border-radius:999px;background:#fff0b8;color:#6d5200;font-size:8px;font-weight:950;vertical-align:middle}
+.premiumTabV520.premiumActiveV520 small{background:#dff5e4;color:#146b2b}
+.pricingTrialV520{display:grid;gap:4px;margin-top:14px}
+.pricingTrialV520 small{font-size:9px;color:#ffffffa8}
+.planBillingV520{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:4px}
+.planBillingV520>div{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fafbfc;display:grid;gap:3px}
+.planBillingV520 span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:900}
+.planBillingV520 b{font-size:11px}
+.cloudBackupStatusV520{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:10px}
+.cloudBackupStatusV520 span{color:var(--muted)}
+@media(max-width:720px){
+ .planBillingV520{grid-template-columns:1fr}
+ .premiumTabV520 small{display:block;margin:2px 0 0}
+}
