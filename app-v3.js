@@ -2241,3 +2241,157 @@ refresh=function(){
  return r;
 };
 setTimeout(bindCommercialV520,160);
+
+
+/* v50.21 onboarding, global search, goals, favorites, notifications, demo, feedback */
+function openUtilityV521(id){
+ const el=$(id);if(!el)return;
+ el.classList.add("show");el.setAttribute("aria-hidden","false");
+}
+function closeUtilityV521(id){
+ const el=$(id);if(!el)return;
+ el.classList.remove("show");el.setAttribute("aria-hidden","true");
+}
+function ensureUxStateV521(){
+ state.meta=state.meta||{};
+ state.meta.favoriteSets=Array.isArray(state.meta.favoriteSets)?state.meta.favoriteSets:[];
+ state.meta.feedbackDrafts=Array.isArray(state.meta.feedbackDrafts)?state.meta.feedbackDrafts:[];
+}
+function isFavoriteV521(n){ensureUxStateV521();return state.meta.favoriteSets.includes(String(n))}
+window.toggleFavoriteV521=n=>{
+ ensureUxStateV521();n=String(n);
+ if(isFavoriteV521(n))state.meta.favoriteSets=state.meta.favoriteSets.filter(x=>x!==n);
+ else state.meta.favoriteSets.push(n);
+ persist();renderGlobalSearchV521();renderHomeUxV521();
+};
+function renderGlobalSearchV521(){
+ const box=$("globalSearchResultsV521"),input=$("globalSearchInputV521");if(!box||!input)return;
+ const q=nV3(input.value||"");
+ if(!q){box.innerHTML='<p class="hint">Suche über Sammlung und Wunschliste. Favoriten kannst du mit ★ markieren.</p>';return}
+ const own=(state.collection||[]).filter(x=>nV3([x.setNumber,x.name,x.category,x.cityArea,x.storage].join(" ")).includes(q)).slice(0,12);
+ const wish=(state.wishlist||[]).filter(x=>nV3([x.setNumber,x.name,x.area,x.reason].join(" ")).includes(q)).slice(0,8);
+ let html="";
+ if(own.length)html+='<h3>Sammlung</h3>'+own.map(x=>'<div class="globalResultV521"><button class="favBtnV521 '+(isFavoriteV521(x.setNumber)?"active":"")+'" onclick="toggleFavoriteV521(\''+esc(x.setNumber)+'\')">★</button><button class="globalResultMainV521" onclick="closeUtilityV521(\'globalSearchV521\');showDetailV3(\''+esc(x.setNumber)+'\')"><b>'+esc(x.setNumber)+' · '+esc(x.name)+'</b><small>'+esc(x.cityArea||x.category||"Sammlung")+'</small></button></div>').join("");
+ if(wish.length)html+='<h3>Wunschliste</h3>'+wish.map(x=>'<div class="globalResultV521"><span class="favPlaceholderV521">♡</span><button class="globalResultMainV521" onclick="closeUtilityV521(\'globalSearchV521\');switchTab(\'wishlist\')"><b>'+esc(x.setNumber)+' · '+esc(x.name)+'</b><small>'+esc(x.area||"Wunschliste")+'</small></button></div>').join("");
+ if(!html)html='<p class="hint">Keine passenden Einträge gefunden.</p>';
+ box.innerHTML=html;
+}
+async function renderHomeSeriesGoalsV521(){
+ const box=$("homeSeriesGoalsV521");if(!box)return;
+ try{
+   const all=await loadAllSetsV46(false);if(!all?.sets){box.innerHTML='<p class="hint">Katalog wird geladen…</p>';return}
+   const defs=collectorFeaturedDefsV504();
+   const goals=defs.map(def=>{
+     const rows=collectorRowsV504(all,def),p=collectorProgressV504(rows);
+     const missing=rows.find(([n])=>collectorStatusForV504(n)==="missing");
+     return {def,p,missing};
+   }).filter(x=>x.p.total&&x.p.pct<100).sort((a,b)=>b.p.pct-a.p.pct||a.p.missing-b.p.missing).slice(0,3);
+   box.innerHTML=goals.length?goals.map(g=>{
+     const next=g.missing?g.missing[0]+" · "+(g.missing[1]?.[0]||"fehlendes Set"):"";
+     return '<button class="seriesGoalV521" onclick="switchTab(\'collector\');openCollectorThemeV504(\''+esc(g.def.key)+'\')"><div><b>'+esc(g.def.label)+'</b><small>'+g.p.owned+' von '+g.p.total+' vorhanden · '+g.p.missing+' fehlen</small></div><strong>'+g.p.pct+' %</strong><span class="seriesGoalBarV521"><i style="width:'+g.p.pct+'%"></i></span>'+(next?'<em>Nächstes: '+esc(next)+'</em>':'')+'</button>';
+   }).join(""):'<p class="hint">Deine angezeigten Top-Serien sind bereits komplett.</p>';
+ }catch{box.innerHTML='<p class="hint">Serienziele konnten gerade nicht geladen werden.</p>'}
+}
+function renderAchievementsV521(){
+ const box=$("homeAchievementsV521");if(!box)return;
+ const count=(state.collection||[]).length,favs=state.meta?.favoriteSets?.length||0,planned=(state.collection||[]).filter(x=>x.module).length;
+ const badges=[
+   {ok:count>=1,icon:"◆",label:"Erstes Set"},
+   {ok:count>=10,icon:"★",label:"10 Sets"},
+   {ok:count>=25,icon:"🏙",label:"25 Sets"},
+   {ok:planned>=10,icon:"▦",label:"10 geplant"},
+   {ok:favs>=3,icon:"♥",label:"3 Favoriten"}
+ ];
+ box.innerHTML=badges.map(x=>'<div class="achievementV521 '+(x.ok?"done":"")+'"><b>'+x.icon+'</b><span>'+esc(x.label)+'</span><small>'+(x.ok?"Erreicht":"Noch offen")+'</small></div>').join("");
+}
+function renderRecommendationsV521(){
+ const box=$("homeRecommendationsV521");if(!box)return;
+ const quality=(state.collection||[]).filter(x=>typeof qualityIssuesV35==="function"&&qualityIssuesV35(x).length).length;
+ const unplanned=(state.collection||[]).filter(x=>!x.module).length;
+ const wish=(state.wishlist||[]).length;
+ const recs=[];
+ if(quality)recs.push({title:quality+" Sets mit fehlenden Daten",text:"Bilder, Werte oder Maße ergänzen.",tab:"analysis"});
+ if(unplanned)recs.push({title:unplanned+" Sets noch ohne Stadtplatz",text:"Freie Module automatisch oder manuell zuordnen.",tab:"city"});
+ if(wish)recs.push({title:wish+" Sets auf deiner Wunschliste",text:"Prioritäten und Kaufgrenzen prüfen.",tab:"wishlist"});
+ if(!recs.length)recs.push({title:"Alles sauber gepflegt",text:"Öffne den Sammler-Katalog und suche dein nächstes Serienziel.",tab:"collector"});
+ box.innerHTML=recs.slice(0,3).map(r=>'<button onclick="switchTab(\''+r.tab+'\')"><b>'+esc(r.title)+'</b><small>'+esc(r.text)+'</small><span>Öffnen →</span></button>').join("");
+}
+function notificationItemsV521(){
+ const out=[];
+ const quality=(state.collection||[]).filter(x=>typeof qualityIssuesV35==="function"&&qualityIssuesV35(x).length).length;
+ const unplanned=(state.collection||[]).filter(x=>!x.module).length;
+ const alerts=state.meta?.wishAlerts?.length||0;
+ const trial=typeof trialInfoV520==="function"?trialInfoV520():{active:false,daysLeft:0};
+ if(quality)out.push({title:"Datenqualität",text:quality+" Sets brauchen Ergänzungen.",tab:"analysis"});
+ if(unplanned)out.push({title:"Stadtplanung",text:unplanned+" Sets haben noch keinen Modulplatz.",tab:"city"});
+ if(alerts)out.push({title:"Preisalarme",text:alerts+" Wunschlisten-Set"+(alerts===1?"":"s")+" unter Kaufgrenze.",tab:"wishlist"});
+ if(trial.active)out.push({title:"Premium-Test",text:"Noch "+trial.daysLeft+" Tag"+(trial.daysLeft===1?"":"e")+" Premium-Test.",tab:"users"});
+ return out;
+}
+function renderNotificationsV521(){
+ const rows=notificationItemsV521(),box=$("notificationListV521"),count=$("notificationCountV521");
+ if(count){count.textContent=rows.length?String(rows.length):"";count.classList.toggle("show",!!rows.length)}
+ if(box)box.innerHTML=rows.length?rows.map(r=>'<button class="noticeRowV521" onclick="closeUtilityV521(\'notificationsV521\');switchTab(\''+r.tab+'\')"><b>'+esc(r.title)+'</b><span>'+esc(r.text)+'</span><em>Öffnen →</em></button>').join(""):'<p class="hint">Aktuell gibt es keine offenen Hinweise.</p>';
+}
+function renderPremiumPreviewV521(){
+ const premium=typeof planInfoV519==="function"&&planInfoV519().key==="premium";
+ ["prices","analysis"].forEach(id=>{
+   const panel=$(id);if(!panel)return;
+   let banner=panel.querySelector(".premiumPreviewV521");
+   if(premium){banner?.remove();return}
+   if(!banner){
+     banner=document.createElement("div");banner.className="premiumPreviewV521";
+     banner.innerHTML='<div><b>Premium-Vorschau</b><span>Du kannst diesen Bereich ansehen. Premium schaltet den vollständigen Funktionsumfang frei.</span></div><button class="btn secondary">Tarife ansehen</button>';
+     banner.querySelector("button").onclick=()=>switchTab("plans");
+     panel.prepend(banner);
+   }
+ });
+}
+function printCollectionV521(){
+ switchTab("collection");
+ document.body.classList.add("printCollectionV521");
+ setTimeout(()=>window.print(),80);
+}
+window.addEventListener("afterprint",()=>document.body.classList.remove("printCollectionV521"));
+function saveFeedbackV521(){
+ ensureUxStateV521();
+ const text=$("feedbackTextV521")?.value.trim();if(!text)return alert("Bitte zuerst dein Feedback eingeben.");
+ state.meta.feedbackDrafts.unshift({type:$("feedbackTypeV521")?.value||"Feedback",text,date:new Date().toISOString(),version:"50.21"});
+ persist();
+ if($("feedbackStatusV521"))$("feedbackStatusV521").textContent="Gespeichert. Das Feedback bleibt in deinen App-Daten erhalten.";
+ if($("feedbackTextV521"))$("feedbackTextV521").value="";
+}
+function renderHomeUxV521(){
+ ensureUxStateV521();
+ renderAchievementsV521();renderRecommendationsV521();renderNotificationsV521();renderPremiumPreviewV521();
+ renderHomeSeriesGoalsV521();
+}
+function bindUxV521(){
+ ensureUxStateV521();
+ if($("globalSearchTopV521"))$("globalSearchTopV521").onclick=()=>{openUtilityV521("globalSearchV521");setTimeout(()=>$("globalSearchInputV521")?.focus(),30);renderGlobalSearchV521()};
+ if($("notificationsTopV521"))$("notificationsTopV521").onclick=()=>{renderNotificationsV521();openUtilityV521("notificationsV521")};
+ if($("globalSearchInputV521"))$("globalSearchInputV521").oninput=renderGlobalSearchV521;
+ document.querySelectorAll("[data-close-v521]").forEach(b=>b.onclick=()=>closeUtilityV521(b.dataset.closeV521));
+ document.querySelectorAll(".utilityModalV521").forEach(m=>m.onclick=e=>{if(e.target===m)closeUtilityV521(m.id)});
+ if($("onboardingStartV521"))$("onboardingStartV521").onclick=()=>{state.meta.onboardingDoneV521=true;persist();closeUtilityV521("onboardingV521");$("addBtn")?.click()};
+ if($("onboardingDoneV521"))$("onboardingDoneV521").onclick=()=>{state.meta.onboardingDoneV521=true;persist();closeUtilityV521("onboardingV521")};
+ if($("homeGoalsOpenV521"))$("homeGoalsOpenV521").onclick=()=>switchTab("collector");
+ if($("qualityQuickV521"))$("qualityQuickV521").onclick=()=>switchTab("analysis");
+ if($("printCollectionV521"))$("printCollectionV521").onclick=printCollectionV521;
+ if($("demoModeV521"))$("demoModeV521").onclick=()=>openUtilityV521("demoV521");
+ if($("changelogV521"))$("changelogV521").onclick=()=>openUtilityV521("changelogModalV521");
+ if($("feedbackV521"))$("feedbackV521").onclick=()=>openUtilityV521("feedbackModalV521");
+ if($("saveFeedbackV521"))$("saveFeedbackV521").onclick=saveFeedbackV521;
+ if(!state.meta.onboardingDoneV521&&!sessionStorage.getItem("onboardingSeenV521")){
+   sessionStorage.setItem("onboardingSeenV521","1");setTimeout(()=>openUtilityV521("onboardingV521"),500);
+ }
+ renderHomeUxV521();
+}
+const refreshBaseV521=refresh;
+refresh=function(){
+ const r=refreshBaseV521();
+ renderHomeUxV521();
+ setTimeout(bindUxV521,0);
+ return r;
+};
+setTimeout(bindUxV521,220);
