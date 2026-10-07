@@ -2807,3 +2807,105 @@ refresh=function(){
  return refreshBaseV529();
 };
 setTimeout(()=>{fillMissingConditionV529();refresh()},120);
+
+
+/* v50.30 Smart Autopilot */
+function autopilotSnapshotV530(){
+ const rows=state.collection||[];
+ const total=rows.length||1;
+ const metrics={
+   sets:rows.length,
+   missingImage:rows.filter(x=>!x.imageUrl).length,
+   missingValue:rows.filter(x=>!pV3(x.currentValue)).length,
+   missingDims:rows.filter(x=>!(hasFullDimsV527(x)||hasModelDimsV527(x)||hasReliableFootprintV527(x))).length,
+   missingFoot:rows.filter(x=>!hasReliableFootprintV527(x)).length,
+   missingBarcode:rows.filter(x=>!x.barcode).length,
+   missingModule:rows.filter(x=>!x.module).length,
+   missingStorage:rows.filter(x=>!x.storage).length,
+   incompleteCondition:rows.filter(x=>!x.condition||x.condition==="Unbekannt").length
+ };
+ const score=Math.max(0,Math.min(100,Math.round(
+   100-(
+     metrics.missingImage+
+     metrics.missingValue+
+     metrics.missingDims+
+     metrics.missingBarcode+
+     metrics.missingModule+
+     Math.min(metrics.missingStorage,rows.length)
+   )/(total*6)*100
+ )));
+ return {...metrics,score};
+}
+function autopilotActionsV530(m){
+ const out=[];
+ if(m.missingImage)out.push(["image",m.missingImage+" Bilder fehlen","Online-Daten ergänzen"]);
+ if(m.missingValue)out.push(["value",m.missingValue+" Marktwerte fehlen","Marktwerte nachladen"]);
+ if(m.missingDims)out.push(["dims",m.missingDims+" Maße fehlen","Maße ergänzen"]);
+ if(m.missingFoot)out.push(["footprint",m.missingFoot+" Stellflächen unsicher","Stadtplanung prüfen"]);
+ if(m.missingModule)out.push(["module",m.missingModule+" Sets ohne Modul","Stadt planen"]);
+ if(m.missingStorage)out.push(["storage",m.missingStorage+" Sets ohne Lagerort","Bestand ordnen"]);
+ if(m.missingBarcode)out.push(["barcode",m.missingBarcode+" Barcodes fehlen","Online-Daten ergänzen"]);
+ if(!out.length)out.push(["done","Sammlung sauber","Keine dringenden Aufgaben"]);
+ return out.slice(0,4);
+}
+function renderAutopilotV530(){
+ const box=$("megaAutoMetricsV530"),act=$("megaAutoActionsV530"),score=$("megaAutoScoreV530");
+ if(!(box&&act&&score))return;
+ const m=autopilotSnapshotV530();
+ score.textContent=m.score+"%";
+ box.innerHTML=[
+   ["Sets",m.sets],
+   ["Bilder offen",m.missingImage],
+   ["Werte offen",m.missingValue],
+   ["Maße offen",m.missingDims],
+   ["Ohne Modul",m.missingModule],
+   ["Ohne Lagerort",m.missingStorage]
+ ].map(([k,v])=>'<div><span>'+k+'</span><b>'+v+'</b></div>').join("");
+ act.innerHTML=autopilotActionsV530(m).map(([type,title,sub])=>
+   '<button type="button" data-auto-action="'+type+'"><span>'+esc(title)+'</span><small>'+esc(sub)+'</small><b>›</b></button>'
+ ).join("");
+ act.querySelectorAll("button").forEach(b=>b.onclick=()=>{
+   const t=b.dataset.autoAction;
+   if(["image","value","dims","barcode"].includes(t)){switchTab("analysis");setTimeout(()=>setQualityFilterV527(t==="image"?"image":t==="value"?"value":t==="dims"?"dims":"barcode"),80)}
+   else if(t==="footprint"){switchTab("analysis");setTimeout(()=>setQualityFilterV527("footprint"),80)}
+   else if(t==="module"){switchTab("city")}
+   else if(t==="storage"){switchTab("collection")}
+ });
+}
+async function runAutopilotV530(){
+ const btn=$("megaAutoRunV530"),p=$("megaAutoProgressV530");
+ if(btn)btn.disabled=true;
+ if(p){p.classList.remove("hidden");p.querySelector("span").textContent="Autopilot läuft…";p.querySelector("i").style.width="12%"}
+ try{
+   fillMissingConditionV529();
+   if(p)p.querySelector("i").style.width="30%";
+   await loadEnrichmentV3(true);
+   if(p)p.querySelector("i").style.width="48%";
+   if(typeof bulkEnrichCollectionV523==="function")await bulkEnrichCollectionV523();
+   if(p)p.querySelector("i").style.width="78%";
+   renderQualitySummaryV527();
+   renderQualityAssistantV35();
+   renderCityCoverageV528();
+   renderNightCareV528();
+   renderAutopilotV530();
+   if(p){p.querySelector("i").style.width="100%";p.querySelector("span").textContent="Fertig · Sammlung neu bewertet"}
+   setTimeout(()=>p?.classList.add("hidden"),1800);
+ }catch(e){
+   if(p){p.querySelector("span").textContent="Autopilot teilweise abgeschlossen";p.querySelector("i").style.width="100%"}
+ }finally{
+   if(btn)btn.disabled=false;
+ }
+}
+function bindAutopilotV530(){
+ const run=$("megaAutoRunV530"),ana=$("megaAutoAnalysisV530");
+ if(run)run.onclick=runAutopilotV530;
+ if(ana)ana.onclick=()=>switchTab("analysis");
+}
+const refreshBaseV530=refresh;
+refresh=function(){
+ const r=refreshBaseV530();
+ renderAutopilotV530();
+ return r;
+};
+bindAutopilotV530();
+setTimeout(renderAutopilotV530,220);
