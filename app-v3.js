@@ -3423,3 +3423,264 @@ setTimeout(async()=>{
    refresh();
  }catch(e){}
 },1100);
+
+
+/* v50.36 Intelligence Pack: Markt, Vertrauen, Referenzbestand, Exemplare, Ziele, Journal */
+function qtyTotalV536(){return (state.collection||[]).reduce((s,x)=>s+(pV3(x.quantity)||0),0)}
+function setKeyV536(n){return String(n||"").replace(/-\d+$/,"")}
+function enrichmentForV536(x){return enrichmentV3?.sets?.[setKeyV536(x?.setNumber)]||x?.market||{}}
+function quoteSourcesV536(x){
+ const e=enrichmentForV536(x),out=[];
+ const used=pV3(e.marketUsedEUR),high=pV3(e.marketUsedHighEUR),low=pV3(e.marketUsedLowEUR),nu=pV3(e.marketNewEUR);
+ if(used||high||low||nu)out.push({source:"BrickEconomy",used,newv:nu,low,high,updated:e.brickeconomyUpdated||e.updatedAt||""});
+ const blu=pV3(e.bricklinkUsedEUR||e.bricklinkUsedAvgEUR||e.bricklinkAvgUsedEUR);
+ const bln=pV3(e.bricklinkNewEUR||e.bricklinkNewAvgEUR||e.bricklinkAvgNewEUR);
+ const bll=pV3(e.bricklinkUsedLowEUR),blh=pV3(e.bricklinkUsedHighEUR);
+ if(blu||bln||bll||blh)out.push({source:"BrickLink",used:blu,newv:bln,low:bll,high:blh,updated:e.bricklinkUpdated||""});
+ const ref=pV3(x?.portalReferenceValue);
+ if(ref)out.push({source:x.portalReferenceSource||"Portal-Referenz",used:ref,newv:0,low:0,high:0,updated:x.portalReferenceDate||""});
+ return out;
+}
+function confidenceV536(x){
+ const e=enrichmentForV536(x),src=quoteSourcesV536(x);
+ const vals=[];
+ for(const s of src)for(const v of [s.used,s.high,s.newv])if(pV3(v))vals.push(pV3(v));
+ let score=src.length>=3?92:src.length===2?82:src.length===1?66:20;
+ if(vals.length>=2){const mn=Math.min(...vals),mx=Math.max(...vals),spread=mn?((mx-mn)/mn):1;if(spread>.7)score-=22;else if(spread>.4)score-=12;else if(spread<.18)score+=5}
+ const stamp=e.brickeconomyUpdated||e.updatedAt||"";
+ if(stamp){const age=(Date.now()-new Date(stamp).getTime())/86400000;if(age>60)score-=15;else if(age>30)score-=8}
+ if(!(pV3(e.marketUsedEUR)||pV3(e.marketNewEUR)))score-=15;
+ score=Math.max(5,Math.min(99,Math.round(score)));
+ return {score,label:score>=80?"hoch":score>=60?"mittel":"niedrig",sources:src.length};
+}
+function bandForSetV536(x){
+ const e=enrichmentForV536(x),q=Math.max(1,pV3(x.quantity)||1),choice=marketChoiceV532(x,e),c=pV3(choice.value)||pV3(x.currentValue);
+ let low=pV3(e.marketUsedLowEUR)||pV3(e.marketUsedEUR)||c,high=pV3(e.marketUsedHighEUR)||pV3(e.marketNewEUR)||c;
+ if(low&&high&&low>high)[low,high]=[high,low];
+ if(!low)low=c;if(!high)high=c;
+ return {low:low*q,mid:c*q,high:high*q};
+}
+function portfolioBandV536(){
+ return (state.collection||[]).reduce((a,x)=>{const b=bandForSetV536(x);a.low+=b.low;a.mid+=b.mid;a.high+=b.high;return a},{low:0,mid:0,high:0});
+}
+function trendFromRowsV536(rows,days){
+ if(!Array.isArray(rows)||rows.length<2)return null;
+ const now=Date.now(),cut=now-days*86400000;
+ const sorted=rows.map(r=>({t:new Date(r.date||r.updatedAt||0).getTime(),v:pV3(r.currentEUR)||pV3(r.value)||pV3(r.usedEUR)||pV3(r.newEUR)})).filter(r=>r.t&&r.v).sort((a,b)=>a.t-b.t);
+ if(sorted.length<2)return null;
+ const end=sorted[sorted.length-1],start=[...sorted].reverse().find(r=>r.t<=cut)||sorted[0];
+ if(!start?.v)return null;
+ return {abs:end.v-start.v,pct:(end.v-start.v)/start.v*100,start:start.v,end:end.v};
+}
+function setTrendV536(x,days=365){return trendFromRowsV536(state.priceHistory?.[setKeyV536(x.setNumber)]||[],days)}
+function portfolioHighlightsV536(){
+ const rows=(state.collection||[]).map(x=>{
+   const q=Math.max(1,pV3(x.quantity)||1),value=pV3(x.currentValue)*q,invest=pV3(x.purchasePrice)*q,gain=value-invest,tr=setTrendV536(x,365);
+   return {x,value,invest,gain,pct:invest?gain/invest*100:0,trend:tr?.pct??null};
+ });
+ const by=(k)=>[...rows].sort((a,b)=>(b[k]??-1e9)-(a[k]??-1e9))[0];
+ return {value:by("value"),gain:by("gain"),pct:by("pct"),trend:[...rows].filter(r=>r.trend!==null).sort((a,b)=>b.trend-a.trend)[0]||null};
+}
+function ensureJournalV536(){state.meta=state.meta||{};state.meta.changeJournalV536=state.meta.changeJournalV536||[]}
+function journalAddV536(type,title,detail=""){
+ ensureJournalV536();const j=state.meta.changeJournalV536;
+ j.unshift({at:new Date().toISOString(),type,title,detail});if(j.length>80)j.length=80;
+}
+function journalDetectV536(){
+ ensureJournalV536();
+ const band=portfolioBandV536(),sig={qty:qtyTotalV536(),unique:(state.collection||[]).length,value:Math.round(band.mid)};
+ const prev=state.meta.journalSignatureV536;
+ if(prev){
+   if(sig.qty!==prev.qty)journalAddV536("Bestand","Bestand geändert",(sig.qty>prev.qty?"+":"")+(sig.qty-prev.qty)+" Exemplare · jetzt "+sig.qty);
+   const dv=sig.value-prev.value;if(Math.abs(dv)>=25)journalAddV536("Marktwert","Portfolio neu bewertet",(dv>0?"+":"")+euro(dv)+" · jetzt "+euro(sig.value));
+ }
+ state.meta.journalSignatureV536=sig;
+}
+function ensureExemplarIdsV536(){
+ let changed=false;
+ for(const x of state.collection||[]){
+   x.exemplars=x.exemplars||[];
+   const q=Math.max(1,pV3(x.quantity)||1);
+   while(x.exemplars.length<q){x.exemplars.push({id:setKeyV536(x.setNumber)+"-"+(x.exemplars.length+1),legacy:true,date:x.purchaseDate||"",seller:x.seller||"",condition:x.condition||"Gebraucht",price:pV3(x.purchasePrice),shipping:0,box:"",complete:"",storage:x.storage||"",module:"",note:"Bestand automatisch getrennt"});changed=true}
+   x.exemplars.forEach((e,i)=>{if(!e.id){e.id=setKeyV536(x.setNumber)+"-"+(i+1);changed=true}if(e.module===undefined){e.module="";changed=true}});
+ }
+ return changed;
+}
+function ensureInventoryReferenceV536(){
+ state.meta=state.meta||{};
+ if(state.meta.inventoryReferenceV536)return;
+ if(qtyTotalV536()!==253)return;
+ const quantities={};for(const x of state.collection||[])quantities[setKeyV536(x.setNumber)]=pV3(x.quantity);
+ state.meta.inventoryReferenceV536={label:"Brickr-Referenz 07.10.2026",createdAt:new Date().toISOString(),total:253,quantities};
+ journalAddV536("Referenz","Brickr-Referenzbestand gespeichert","253 Exemplare");
+}
+function inventoryDiffV536(){
+ const ref=state.meta?.inventoryReferenceV536;if(!ref)return [];
+ const cur={};for(const x of state.collection||[])cur[setKeyV536(x.setNumber)]=pV3(x.quantity);
+ const keys=new Set([...Object.keys(ref.quantities||{}),...Object.keys(cur)]);
+ return [...keys].map(n=>({setNumber:n,ref:pV3(ref.quantities?.[n]),cur:pV3(cur[n])})).filter(r=>r.ref!==r.cur).sort((a,b)=>Math.abs(b.cur-b.ref)-Math.abs(a.cur-a.ref));
+}
+function resetInventoryReferenceV536(){
+ if(!confirm("Aktuellen Bestand als neue Referenz speichern?"))return;
+ const quantities={};for(const x of state.collection||[])quantities[setKeyV536(x.setNumber)]=pV3(x.quantity);
+ state.meta.inventoryReferenceV536={label:"Eigene Referenz",createdAt:new Date().toISOString(),total:qtyTotalV536(),quantities};journalAddV536("Referenz","Bestandsreferenz aktualisiert",qtyTotalV536()+" Exemplare");persist();renderIntelligenceV536();
+}
+window.resetInventoryReferenceV536=resetInventoryReferenceV536;
+
+function setPortalReferenceV536(n){
+ const x=(state.collection||[]).find(y=>setKeyV536(y.setNumber)===setKeyV536(n));if(!x)return;
+ const v=prompt("Vergleichswert eines anderen Portals für "+x.setNumber+" in €:",x.portalReferenceValue||"");if(v===null)return;
+ const num=Number(String(v).replace(",","."));
+ if(!Number.isFinite(num)||num<0)return alert("Bitte einen gültigen Euro-Wert eingeben.");
+ const src=prompt("Quelle / Portal: ",x.portalReferenceSource||"Brickr")||"Portal-Referenz";
+ x.portalReferenceValue=num;x.portalReferenceSource=src;x.portalReferenceDate=new Date().toISOString().slice(0,10);
+ journalAddV536("Portalvergleich",x.setNumber+" Referenzwert gespeichert",src+" · "+euro(num));persist();showDetailV3(x.setNumber);
+}
+window.setPortalReferenceV536=setPortalReferenceV536;
+
+function sourceTableV536(x){
+ const src=quoteSourcesV536(x);
+ if(!src.length)return '<p class="hint">Noch keine Marktquelle verfügbar.</p>';
+ return '<div class="sourceGridV536">'+src.map(s=>'<div><b>'+esc(s.source)+'</b><span>Gebraucht '+(s.used?euro(s.used):"–")+'</span><span>Neu '+(s.newv?euro(s.newv):"–")+'</span><span>Spanne '+(s.low||s.high?((s.low?euro(s.low):"–")+" – "+(s.high?euro(s.high):"–")):"–")+'</span></div>').join("")+'</div>';
+}
+function renderDetailIntelligenceV536(x){
+ const root=$("detailContent");if(!root||!x)return;
+ root.querySelectorAll(".intelDetailV536").forEach(e=>e.remove());
+ const conf=confidenceV536(x),e=enrichmentForV536(x),choice=marketChoiceV532(x,e),ref=pV3(x.portalReferenceValue),delta=ref&&choice.value?choice.value-ref:0;
+ const card=document.createElement("div");card.className="card wide intelDetailV536";
+ card.innerHTML='<div class="sectionHead"><div><span class="eyebrowV50">MARKT-INTELLIGENCE</span><h3>Quellen & Preisvertrauen</h3></div><div class="confidenceV536 c'+conf.label+'"><b>'+conf.score+'%</b><small>'+conf.label+'</small></div></div>'+
+ sourceTableV536(x)+
+ '<div class="detailFacts"><div class="fact"><small>Sammlerwert</small><b>'+euro(choice.value)+'</b></div><div class="fact"><small>Portal-Referenz</small><b>'+(ref?euro(ref):"–")+'</b></div><div class="fact"><small>Abweichung</small><b>'+(ref?(delta>=0?"+":"")+euro(delta):"–")+'</b></div><div class="fact"><small>Marktquellen</small><b>'+conf.sources+'</b></div></div>'+
+ '<div class="actions"><button class="btn secondary" onclick="setPortalReferenceV536(\''+esc(x.setNumber)+'\')">'+(ref?"Portalwert ändern":"Portalwert erfassen")+'</button></div>';
+ root.appendChild(card);
+}
+const detailBaseV536=showDetailV3;
+showDetailV3=function(n){detailBaseV536(n);const x=(state.collection||[]).find(y=>setKeyV536(y.setNumber)===setKeyV536(n));renderDetailIntelligenceV536(x)};
+
+function instancePlannerV536(){
+ state.meta=state.meta||{};state.meta.instanceModulesV536=state.meta.instanceModulesV536||{};
+ return state.meta.instanceModulesV536;
+}
+function autoPlaceInstancesV536(){
+ const map=instancePlannerV536(),allMods=[];
+ for(let i=1;i<=40;i++)allMods.push("M"+String(i).padStart(2,"0"));
+ const used=new Set(Object.values(map).flat());
+ let assigned=0;
+ for(const x of state.collection||[]){
+   const q=Math.max(1,pV3(x.quantity)||1);
+   if(q<2)continue;
+   for(let i=0;i<q;i++){
+     const key=setKeyV536(x.setNumber)+"#"+(i+1);if(map[key]?.length)continue;
+     const need=moduleNeedV528(x)?.count||1,free=allMods.filter(m=>!used.has(m)).slice(0,need);
+     if(free.length===need){map[key]=free;free.forEach(m=>used.add(m));assigned++}
+   }
+ }
+ journalAddV536("Stadtplanung","Exemplare automatisch eingeplant",assigned+" neue Exemplar-Platzierungen");persist();renderIntelligenceV536();
+}
+window.autoPlaceInstancesV536=autoPlaceInstancesV536;
+function clearInstancePlanV536(){
+ if(!confirm("Separate Exemplar-Platzierungen wirklich löschen?"))return;
+ state.meta.instanceModulesV536={};journalAddV536("Stadtplanung","Exemplar-Platzierungen zurückgesetzt","");persist();renderIntelligenceV536();
+}
+window.clearInstancePlanV536=clearInstancePlanV536;
+
+function renderHomeExecutiveV536(){
+ const home=$("home");if(!home)return;
+ let box=$("executiveV536");
+ if(!box){box=document.createElement("div");box.id="executiveV536";box.className="executiveV536";const hero=home.querySelector(".heroV50");hero?.insertAdjacentElement("afterend",box)}
+ const b=portfolioBandV536(),d=inventoryDiffV536(),h=portfolioHighlightsV536(),confRows=(state.collection||[]).map(confidenceV536),avg=confRows.length?Math.round(confRows.reduce((s,c)=>s+c.score,0)/confRows.length):0;
+ box.innerHTML='<div class="execHeadV536"><div><span class="eyebrowV50">EXECUTIVE SUMMARY</span><h2>Deine Sammlung in vier Zahlen</h2></div><button class="btn secondary" id="toggleTechV536">Technische Details</button></div>'+
+ '<div class="execGridV536"><div><span>Sammlerwert</span><b>'+euro(b.mid)+'</b><small>realistisch '+euro(b.low)+' – '+euro(b.high)+'</small></div><div><span>Bestand</span><b>'+qtyTotalV536()+'</b><small>'+(d.length?d.length+" Abweichungen zur Referenz":"✓ Referenzbestand passt")+'</small></div><div><span>Preisvertrauen</span><b>'+avg+'%</b><small>'+((state.collection||[]).filter(x=>confidenceV536(x).score<60).length)+' Sets prüfen</small></div><div><span>Top-Wert</span><b>'+(h.value?euro(h.value.value):"–")+'</b><small>'+(h.value?esc(h.value.x.setNumber+" "+h.value.x.name):"–")+'</small></div></div>';
+ const btn=$("toggleTechV536");if(btn)btn.onclick=()=>{
+   const tech=[home.querySelector(".commandGridV50"),home.querySelector(".megaAutopilotV530")].filter(Boolean);
+   const hidden=tech.every(e=>e.classList.contains("intelHiddenV536"));tech.forEach(e=>e.classList.toggle("intelHiddenV536",!hidden));btn.textContent=hidden?"Technische Details ausblenden":"Technische Details";
+ };
+}
+function ensurePanelCardV536(panelId,id,title,html){
+ const panel=$(panelId);if(!panel)return null;let box=$(id);if(!box){box=document.createElement("div");box.id=id;box.className="card wide intelligenceCardV536";panel.appendChild(box)}
+ box.innerHTML='<div class="sectionHead"><div><span class="eyebrowV50">BRICK CITY INTELLIGENCE</span><h2>'+title+'</h2></div></div>'+html;return box;
+}
+function renderAnalysisIntelV536(){
+ const b=portfolioBandV536(),h=portfolioHighlightsV536(),ph=state.meta?.portfolioHistory||[];
+ const t30=trendFromRowsV536(ph,30),t180=trendFromRowsV536(ph,180),t365=trendFromRowsV536(ph,365);
+ const fmt=t=>t?((t.pct>=0?"+":"")+t.pct.toFixed(1).replace(".",",")+" %"):"noch offen";
+ const lows=(state.collection||[]).map(x=>({x,c:confidenceV536(x)})).sort((a,b)=>a.c.score-b.c.score).slice(0,8);
+ ensurePanelCardV536("analysis","marketIntelV536","Marktwert, Korridor & Vertrauen",
+ '<div class="execGridV536"><div><span>Unterer Korridor</span><b>'+euro(b.low)+'</b></div><div><span>Sammlerwert</span><b>'+euro(b.mid)+'</b></div><div><span>Obere Spanne</span><b>'+euro(b.high)+'</b></div><div><span>12-Monats-Trend</span><b>'+fmt(t365)+'</b></div></div>'+
+ '<div class="trendStripV536"><span>30 Tage <b>'+fmt(t30)+'</b></span><span>6 Monate <b>'+fmt(t180)+'</b></span><span>12 Monate <b>'+fmt(t365)+'</b></span></div>'+
+ '<h3>Portfolio-Highlights</h3><div class="highlightGridV536">'+
+ (h.value?'<div><span>Höchster Gesamtwert</span><b>'+esc(h.value.x.setNumber)+'</b><small>'+esc(h.value.x.name)+' · '+euro(h.value.value)+'</small></div>':"")+
+ (h.gain?'<div><span>Größter Gewinn</span><b>'+esc(h.gain.x.setNumber)+'</b><small>'+euro(h.gain.gain)+'</small></div>':"")+
+ (h.pct?'<div><span>Beste Rendite</span><b>'+esc(h.pct.x.setNumber)+'</b><small>'+(h.pct.pct>=0?"+":"")+h.pct.pct.toFixed(1).replace(".",",")+' %</small></div>':"")+
+ (h.trend?'<div><span>Stärkster 12M-Trend</span><b>'+esc(h.trend.x.setNumber)+'</b><small>'+(h.trend.trend>=0?"+":"")+h.trend.trend.toFixed(1).replace(".",",")+' %</small></div>':"")+'</div>'+
+ '<h3>Niedrigstes Preisvertrauen</h3><div class="confidenceListV536">'+lows.map(r=>'<button class="miniSet" onclick="showDetailV3(\''+esc(r.x.setNumber)+'\')"><b>'+esc(r.x.setNumber)+'</b><span>'+r.c.score+'% · '+esc(r.c.label)+'</span></button>').join("")+'</div>');
+}
+function renderPricesIntelV536(){
+ const rows=(state.collection||[]).map(x=>({x,src:quoteSourcesV536(x),c:confidenceV536(x),choice:marketChoiceV532(x,enrichmentForV536(x))})).filter(r=>r.src.length||r.choice.value).sort((a,b)=>a.c.score-b.c.score).slice(0,25);
+ ensurePanelCardV536("prices","sourceCompareV536","Mehrquellen-Preisvergleich",
+ '<p class="hint">BrickEconomy ist aktiv. BrickLink wird automatisch ergänzt, sobald die Schnittstelle Daten liefert. Portalwerte kannst du im Set-Detail hinterlegen.</p>'+
+ '<div class="intelTableWrapV536"><table class="intelTableV536"><thead><tr><th>Set</th><th>Sammlerwert</th><th>Quellen</th><th>Vertrauen</th><th>Vergleich</th></tr></thead><tbody>'+
+ rows.map(r=>'<tr><td><button class="linkbtn" onclick="showDetailV3(\''+esc(r.x.setNumber)+'\')"><b>'+esc(r.x.setNumber)+'</b><br>'+esc(r.x.name)+'</button></td><td>'+euro(r.choice.value)+'</td><td>'+r.src.map(s=>esc(s.source)).join("<br>")+'</td><td><b>'+r.c.score+'%</b><br><small>'+esc(r.c.label)+'</small></td><td>'+r.src.map(s=>'<small>'+esc(s.source)+': '+euro(s.used||s.newv)+'</small>').join("<br>")+'</td></tr>').join("")+
+ '</tbody></table></div>');
+}
+function renderInventoryV536(){
+ const ref=state.meta?.inventoryReferenceV536,d=inventoryDiffV536();
+ ensurePanelCardV536("analysis","inventoryAuditV536","Automatischer Bestandsabgleich",
+ '<div class="detailFacts"><div class="fact"><small>Aktueller Bestand</small><b>'+qtyTotalV536()+'</b></div><div class="fact"><small>Referenz</small><b>'+(ref?ref.total:"–")+'</b></div><div class="fact"><small>Abweichungen</small><b>'+d.length+'</b></div><div class="fact"><small>Status</small><b>'+(ref?(d.length?"⚠ prüfen":"✓ identisch"):"Referenz fehlt")+'</b></div></div>'+
+ (d.length?'<div class="confidenceListV536">'+d.slice(0,20).map(r=>'<div class="diffRowV536"><b>'+esc(r.setNumber)+'</b><span>Referenz '+r.ref+' → aktuell '+r.cur+'</span><strong>'+(r.cur-r.ref>0?"+":"")+(r.cur-r.ref)+'</strong></div>').join("")+'</div>':'<p class="hint">Der aktuelle Bestand entspricht der gespeicherten Referenz.</p>')+
+ '<div class="actions"><button class="btn secondary" onclick="resetInventoryReferenceV536()">Aktuellen Bestand als Referenz setzen</button></div>');
+}
+function renderInstancePlannerV536(){
+ const multi=(state.collection||[]).filter(x=>pV3(x.quantity)>1),map=instancePlannerV536();
+ const total=multi.reduce((s,x)=>s+pV3(x.quantity),0),placed=Object.keys(map).length;
+ ensurePanelCardV536("city","instancePlannerV536","Separate Stadtplanung je Exemplar",
+ '<div class="detailFacts"><div class="fact"><small>Mehrfach-Sets</small><b>'+multi.length+'</b></div><div class="fact"><small>Einzel-Exemplare</small><b>'+total+'</b></div><div class="fact"><small>Separat platziert</small><b>'+placed+'</b></div></div>'+
+ '<div class="confidenceListV536">'+multi.slice(0,20).map(x=>{const q=pV3(x.quantity),n=[...Array(q)].filter((_,i)=>map[setKeyV536(x.setNumber)+"#"+(i+1)]?.length).length;return '<div class="diffRowV536"><b>'+esc(x.setNumber)+'</b><span>'+esc(x.name)+'</span><strong>'+n+'/'+q+'</strong></div>'}).join("")+'</div>'+
+ '<div class="actions"><button class="btn" onclick="autoPlaceInstancesV536()">Mehrfach-Sets automatisch platzieren</button><button class="btn secondary" onclick="clearInstancePlanV536()">Exemplar-Plan zurücksetzen</button></div>');
+}
+function renderCollectorGoalsV536(){
+ const defs=collectorFeaturedDefsV504?.()||[];
+ const goals=[];
+ for(const d of defs){
+   const nums=d.setNumbers||[];
+   if(!nums.length)continue;
+   const owned=nums.filter(n=>(state.collection||[]).some(x=>setKeyV536(x.setNumber)===String(n))).length,missing=nums.filter(n=>!(state.collection||[]).some(x=>setKeyV536(x.setNumber)===String(n)));
+   goals.push({label:d.label,owned,total:nums.length,missing});
+ }
+ goals.sort((a,b)=>(b.owned/b.total)-(a.owned/a.total));
+ ensurePanelCardV536("collector","collectorGoalsV536","Sammler-Ziele",
+ '<div class="goalGridV536">'+goals.map(g=>'<div><span>'+esc(g.label)+'</span><b>'+g.owned+'/'+g.total+'</b><div class="commandBarV50"><i style="width:'+Math.round(g.owned/g.total*100)+'%"></i></div><small>'+(g.missing.length?g.missing.length+" fehlen":"✓ komplett")+'</small></div>').join("")+'</div>');
+}
+function renderJournalV536(){
+ ensureJournalV536();const j=state.meta.changeJournalV536||[];
+ const html='<p class="hint">Automatisches Änderungsjournal für Bestand, Marktwerte, Referenzen und Stadtplanung.</p><div class="journalV536">'+(j.length?j.slice(0,30).map(r=>'<div><time>'+esc(new Date(r.at).toLocaleString("de-DE"))+'</time><b>'+esc(r.title)+'</b><span>'+esc(r.detail||r.type)+'</span></div>').join(""):'<p>Noch keine Änderungen protokolliert.</p>')+'</div>';
+ ensurePanelCardV536("settings","journalCardV536","Änderungsjournal",html);
+}
+function renderIntelligenceV536(){
+ ensureExemplarIdsV536();ensureInventoryReferenceV536();
+ renderHomeExecutiveV536();renderAnalysisIntelV536();renderPricesIntelV536();renderInventoryV536();renderInstancePlannerV536();renderCollectorGoalsV536();renderJournalV536();
+}
+const refreshBaseV536=refresh;
+refresh=function(){
+ ensureExemplarIdsV536();ensureInventoryReferenceV536();journalDetectV536();
+ const r=refreshBaseV536();setTimeout(renderIntelligenceV536,0);return r;
+};
+const auditBaseV536=auditAllPricesV532;
+auditAllPricesV532=async function(force=false,announce=false){
+ const before=portfolioBandV536().mid,r=await auditBaseV536(force,announce),after=portfolioBandV536().mid;
+ if(Math.abs(after-before)>=1)journalAddV536("Marktwert","Marktwerte neu berechnet",(after-before>=0?"+":"")+euro(after-before));
+ persist();renderIntelligenceV536();return r;
+};
+window.auditAllPricesV532=auditAllPricesV532;
+
+function migrateV536(){
+ state.meta=state.meta||{};
+ if(state.meta.intelligenceV536)return;
+ ensureExemplarIdsV536();
+ if(qtyTotalV536()===253)ensureInventoryReferenceV536();
+ state.meta.intelligenceV536={at:new Date().toISOString(),version:"50.36"};
+ journalAddV536("System","Intelligence Pack aktiviert","Mehrquellenpreise · Wertband · Vertrauen · Referenzbestand · Exemplarplanung · Journal");
+ persist();
+}
+migrateV536();
+setTimeout(renderIntelligenceV536,700);
