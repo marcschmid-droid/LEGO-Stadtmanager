@@ -708,3 +708,24 @@ tbody tr:hover{background:#fafbfc}
  .pricingCompareGridV516{min-width:610px}
  .pricingNoteV516{display:grid}
 }
+
+
+/* v50.19 plan limits */
+.planStatusV519{display:grid;gap:14px}
+.planUsageV519{display:grid;gap:7px}
+.planUsageV519>div:first-child{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.planUsageV519 span,.planUsageV519 small{font-size:11px;color:var(--muted)}
+.planUsageV519 b{font-size:13px}
+.planUsageBarV519{height:10px;border-radius:999px;background:#eceff2;overflow:hidden}
+.planUsageBarV519 i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#ffd500,#c91a09);transition:width .3s ease}
+.planLimitModalV519{position:fixed;inset:0;display:none;place-items:center;padding:18px;background:#0009;z-index:9999}
+.planLimitModalV519.show{display:grid}
+.planLimitBoxV519{position:relative;width:min(440px,100%);padding:24px;border-radius:22px;background:#fff;box-shadow:0 28px 80px #0004}
+.planLimitBoxV519 h2{margin:7px 0 8px;font-size:24px}
+.planLimitBoxV519 p{margin:0 0 16px;color:var(--muted);line-height:1.5}
+.planLimitCloseV519{position:absolute;right:12px;top:10px;width:34px;height:34px;border:0;border-radius:50%;background:#f1f2f4;font-size:22px;cursor:pointer}
+@media(max-width:720px){
+ .planStatusV519 .sectionHead{align-items:flex-start}
+ .planStatusV519 .sectionHead>.btn{width:100%}
+ .planLimitBoxV519{padding:20px}
+}
