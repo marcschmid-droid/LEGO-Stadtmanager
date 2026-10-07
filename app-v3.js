@@ -3356,3 +3356,26 @@ setTimeout(async()=>{
  const sel=$("valuationModeV532");if(sel)sel.value=valuationModeV532();
  if(valuationModeV532()==="collector")await auditAllPricesV532(false,false);
 },900);
+
+
+/* v50.34 Brickr quantity reconciliation */
+function reconcileBrickrQuantitiesV534(){
+ state.meta=state.meta||{};
+ if(state.meta.brickrQtyReconcileV534)return;
+ const wanted={"21045":3,"76453":2,"40680":2,"21338":2,"76415":2,"76388":2};
+ let changed=0;
+ for(const x of state.collection||[]){
+   const n=String(x.setNumber||"").replace(/-\d+$/,"");
+   const q=wanted[n];
+   if(q && (+x.quantity||0)<q){ x.quantity=q; changed++; }
+ }
+ state.meta.brickrQtyReconcileV534={
+   at:new Date().toISOString(),
+   changed,
+   expectedTotal:253,
+   source:"Brickr Fotoabgleich"
+ };
+ persist();
+}
+reconcileBrickrQuantitiesV534();
+setTimeout(()=>{try{renderAll?.();}catch(e){}},250);
