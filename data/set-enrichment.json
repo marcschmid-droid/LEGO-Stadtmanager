@@ -3,12 +3,16 @@
     "brickeconomyCursor": 79,
     "brickeconomyEnabled": false,
     "brickeconomyRequestsThisRun": 0,
+    "bricklinkEnabled": false,
+    "bricklinkRequestsThisRun": 0,
+    "bricksetEnabled": false,
+    "bricksetRequestsThisRun": 0,
     "errors": [],
-    "lastUpdated": "2026-10-06T19:32:26Z",
+    "lastUpdated": "2026-10-07T00:45:28Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
-    "rebrickableRequestsThisRun": 2,
-    "setCount": 3,
+    "rebrickableRequestsThisRun": 46,
+    "setCount": 49,
     "version": 1
   },
   "sets": {
@@ -2285,6 +2289,134 @@
       "year": 2025
     },
     "40766": {},
+    "40767": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/40767-1/156346.jpg",
+      "pieces": 250,
+      "rebrickableName": "Up-Scaled Baby Astronaut",
+      "rebrickableUpdated": "2026-10-07T00:44:59Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/40767-1/up-scaled-baby-astronaut/",
+      "year": 2025
+    },
+    "40782": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/40782-1/152227.jpg",
+      "pieces": 299,
+      "rebrickableName": "Tropical Rainforest Diorama",
+      "rebrickableUpdated": "2026-10-07T00:45:00Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/40782-1/tropical-rainforest-diorama/",
+      "year": 2025
+    },
+    "43020": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/43020-1/165343.jpg",
+      "pieces": 2842,
+      "rebrickableName": "FIFA World Cup Official Trophy",
+      "rebrickableUpdated": "2026-10-07T00:45:00Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/43020-1/fifa-world-cup-official-trophy/",
+      "year": 2026
+    },
+    "43179": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/43179-1/66915.jpg",
+      "pieces": 1739,
+      "rebrickableName": "Mickey Mouse & Minnie Mouse",
+      "rebrickableUpdated": "2026-10-07T00:45:01Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/43179-1/mickey-mouse-minnie-mouse/",
+      "year": 2020
+    },
+    "43212": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/43212-1/130806.jpg",
+      "pieces": 200,
+      "rebrickableName": "Disney Celebration Train",
+      "rebrickableUpdated": "2026-10-07T00:45:02Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/43212-1/disney-celebration-train/",
+      "year": 2023
+    },
+    "43230": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/43230-1/130704.jpg",
+      "pieces": 811,
+      "rebrickableName": "Walt Disney Tribute Camera",
+      "rebrickableUpdated": "2026-10-07T00:45:02Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/43230-1/walt-disney-tribute-camera/",
+      "year": 2023
+    },
+    "43242": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/43242-1/137500.jpg",
+      "pieces": 2228,
+      "rebrickableName": "Snow White and the Seven Dwarfs' Cottage",
+      "rebrickableUpdated": "2026-10-07T00:45:03Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/43242-1/snow-white-and-the-seven-dwarfs-cottage/",
+      "year": 2024
+    },
+    "43247": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/43247-1/140994.jpg",
+      "pieces": 1445,
+      "rebrickableName": "Young Simba the Lion King",
+      "rebrickableUpdated": "2026-10-07T00:45:04Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/43247-1/young-simba-the-lion-king/",
+      "year": 2024
+    },
+    "43269": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/43269-1/155014.jpg",
+      "pieces": 1722,
+      "rebrickableName": "101 Dalmatians Puppy",
+      "rebrickableUpdated": "2026-10-07T00:45:04Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/43269-1/101-dalmatians-puppy/",
+      "year": 2025
+    },
+    "43302": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/43302-1/174162.jpg",
+      "pieces": 3899,
+      "rebrickableName": "Main Street, U.S.A.",
+      "rebrickableUpdated": "2026-10-07T00:45:05Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/43302-1/main-street-usa/",
+      "year": 2026
+    },
+    "5009325": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/5009325-1/156638.jpg",
+      "pieces": 123,
+      "rebrickableName": "The Simpsons Living Room",
+      "rebrickableUpdated": "2026-10-07T00:45:27Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/5009325-1/the-simpsons-living-room/",
+      "year": 2025
+    },
+    "60051": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/60051-1/11541.jpg",
+      "pieces": 606,
+      "rebrickableName": "High-Speed Passenger Train",
+      "rebrickableUpdated": "2026-10-07T00:45:05Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/60051-1/high-speed-passenger-train/",
+      "year": 2014
+    },
+    "60205": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/60205-1/191.jpg",
+      "pieces": 20,
+      "rebrickableName": "Tracks",
+      "rebrickableUpdated": "2026-10-07T00:45:06Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/60205-1/tracks/",
+      "year": 2018
+    },
+    "60238": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/60238-1/192.jpg",
+      "pieces": 8,
+      "rebrickableName": "Switch Tracks",
+      "rebrickableUpdated": "2026-10-07T00:45:07Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/60238-1/switch-tracks/",
+      "year": 2018
+    },
+    "60304": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/60304-1/77141.jpg",
+      "pieces": 112,
+      "rebrickableName": "Road Plates",
+      "rebrickableUpdated": "2026-10-07T00:45:08Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/60304-1/road-plates/",
+      "year": 2021
+    },
+    "60381": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/60381-1/125964.jpg",
+      "pieces": 258,
+      "rebrickableName": "City Advent Calendar 2023",
+      "rebrickableUpdated": "2026-10-07T00:45:08Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/60381-1/city-advent-calendar-2023/",
+      "year": 2023
+    },
     "6769": {
       "imageUrl": "https://cdn.rebrickable.com/media/sets/6769-1/9073.jpg",
       "pieces": 688,
@@ -2293,6 +2425,22 @@
       "rebrickableUrl": "https://rebrickable.com/sets/6769-1/fort-legoredo/",
       "year": 1996
     },
+    "71006": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/71006-1/16042.jpg",
+      "pieces": 2547,
+      "rebrickableName": "The Simpsons House",
+      "rebrickableUpdated": "2026-10-07T00:45:10Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/71006-1/the-simpsons-house/",
+      "year": 2014
+    },
+    "71016": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/71016-1/152768.jpg",
+      "pieces": 2179,
+      "rebrickableName": "The Kwik-E-Mart",
+      "rebrickableUpdated": "2026-10-07T00:45:10Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/71016-1/the-kwik-e-mart/",
+      "year": 2015
+    },
     "71043": {
       "imageUrl": "https://cdn.rebrickable.com/media/sets/71043-1/15516.jpg",
       "pieces": 6020,
@@ -2300,6 +2448,46 @@
       "rebrickableUpdated": "2026-10-06T19:32:25Z",
       "rebrickableUrl": "https://rebrickable.com/sets/71043-1/hogwarts-castle/",
       "year": 2018
+    },
+    "72046": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/72046-1/159075.jpg",
+      "pieces": 421,
+      "rebrickableName": "Game Boy",
+      "rebrickableUpdated": "2026-10-07T00:45:11Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/72046-1/game-boy/",
+      "year": 2025
+    },
+    "72051": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/72051-1/178346.jpg",
+      "pieces": 1367,
+      "rebrickableName": "Donkey Kong Arcade",
+      "rebrickableUpdated": "2026-10-07T00:45:11Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/72051-1/donkey-kong-arcade/",
+      "year": 2026
+    },
+    "75968": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/75968-1/64533.jpg",
+      "pieces": 797,
+      "rebrickableName": "4 Privet Drive",
+      "rebrickableUpdated": "2026-10-07T00:45:12Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/75968-1/4-privet-drive/",
+      "year": 2020
+    },
+    "75978": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/75978-1/71783.jpg",
+      "pieces": 5548,
+      "rebrickableName": "Diagon Alley",
+      "rebrickableUpdated": "2026-10-07T00:45:12Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/75978-1/diagon-alley/",
+      "year": 2020
+    },
+    "76218": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76218-1/104030.jpg",
+      "pieces": 2713,
+      "rebrickableName": "Sanctum Sanctorum",
+      "rebrickableUpdated": "2026-10-07T00:45:13Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76218-1/sanctum-sanctorum/",
+      "year": 2022
     },
     "76386": {
       "brickeconomyName": "Hogwarts: Polyjuice Potion Mistake",
@@ -2315,6 +2503,190 @@
       "upc": "673419339735",
       "width": 12,
       "year": 2021
+    },
+    "76388": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76388-1/86339.jpg",
+      "pieces": 847,
+      "rebrickableName": "Hogsmeade Village Visit",
+      "rebrickableUpdated": "2026-10-07T00:45:13Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76388-1/hogsmeade-village-visit/",
+      "year": 2021
+    },
+    "76389": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76389-1/86353.jpg",
+      "pieces": 1171,
+      "rebrickableName": "Hogwarts Chamber Of Secrets",
+      "rebrickableUpdated": "2026-10-07T00:45:14Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76389-1/hogwarts-chamber-of-secrets/",
+      "year": 2021
+    },
+    "76393": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76393-1/86370.jpg",
+      "pieces": 1673,
+      "rebrickableName": "Harry Potter & Hermione Granger",
+      "rebrickableUpdated": "2026-10-07T00:45:14Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76393-1/harry-potter-hermione-granger/",
+      "year": 2021
+    },
+    "76402": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76402-1/100595.jpg",
+      "pieces": 651,
+      "rebrickableName": "Hogwarts: Dumbledore's Office",
+      "rebrickableUpdated": "2026-10-07T00:45:15Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76402-1/hogwarts-dumbledores-office/",
+      "year": 2022
+    },
+    "76403": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76403-1/100584.jpg",
+      "pieces": 990,
+      "rebrickableName": "The Ministry of Magic",
+      "rebrickableUpdated": "2026-10-07T00:45:15Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76403-1/the-ministry-of-magic/",
+      "year": 2022
+    },
+    "76408": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76408-1/100577.jpg",
+      "pieces": 1086,
+      "rebrickableName": "12 Grimmauld Place",
+      "rebrickableUpdated": "2026-10-07T00:45:16Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76408-1/12-grimmauld-place/",
+      "year": 2022
+    },
+    "76415": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76415-1/123256.jpg",
+      "pieces": 732,
+      "rebrickableName": "The Battle of Hogwarts",
+      "rebrickableUpdated": "2026-10-07T00:45:16Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76415-1/the-battle-of-hogwarts/",
+      "year": 2023
+    },
+    "76419": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76419-1/123597.jpg",
+      "pieces": 2660,
+      "rebrickableName": "Hogwarts Castle and Grounds",
+      "rebrickableUpdated": "2026-10-07T00:45:17Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76419-1/hogwarts-castle-and-grounds/",
+      "year": 2023
+    },
+    "76420": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76420-1/129929.jpg",
+      "pieces": 349,
+      "rebrickableName": "Triwizard Tournament: The Black Lake",
+      "rebrickableUpdated": "2026-10-07T00:45:17Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76420-1/triwizard-tournament-the-black-lake/",
+      "year": 2023
+    },
+    "76424": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76424-1/132989.jpg",
+      "pieces": 165,
+      "rebrickableName": "Flying Ford Anglia",
+      "rebrickableUpdated": "2026-10-07T00:45:18Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76424-1/flying-ford-anglia/",
+      "year": 2024
+    },
+    "76426": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76426-1/132971.jpg",
+      "pieces": 350,
+      "rebrickableName": "Hogwarts Castle Boathouse",
+      "rebrickableUpdated": "2026-10-07T00:45:18Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76426-1/hogwarts-castle-boathouse/",
+      "year": 2024
+    },
+    "76428": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76428-1/132974.jpg",
+      "pieces": 894,
+      "rebrickableName": "Hagrid's Hut: An Unexpected Visit",
+      "rebrickableUpdated": "2026-10-07T00:45:19Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76428-1/hagrids-hut-an-unexpected-visit/",
+      "year": 2024
+    },
+    "76430": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76430-1/132968.jpg",
+      "pieces": 365,
+      "rebrickableName": "Hogwarts Castle Owlery",
+      "rebrickableUpdated": "2026-10-07T00:45:19Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76430-1/hogwarts-castle-owlery/",
+      "year": 2024
+    },
+    "76432": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76432-1/133007.jpg",
+      "pieces": 172,
+      "rebrickableName": "Forbidden Forest: Magical Creatures",
+      "rebrickableUpdated": "2026-10-07T00:45:20Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76432-1/forbidden-forest-magical-creatures/",
+      "year": 2024
+    },
+    "76437": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76437-1/144660.jpg",
+      "pieces": 2403,
+      "rebrickableName": "The Burrow – Collectors' Edition",
+      "rebrickableUpdated": "2026-10-07T00:45:21Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76437-1/the-burrow-collectors-edition/",
+      "year": 2024
+    },
+    "76438": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76438-1/139882.jpg",
+      "pieces": 299,
+      "rebrickableName": "Harry Potter Advent Calendar 2024",
+      "rebrickableUpdated": "2026-10-07T00:45:21Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76438-1/harry-potter-advent-calendar-2024/",
+      "year": 2024
+    },
+    "76444": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76444-1/148676.jpg",
+      "pieces": 2750,
+      "rebrickableName": "Diagon Alley Wizarding Shops",
+      "rebrickableUpdated": "2026-10-07T00:45:22Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76444-1/diagon-alley-wizarding-shops/",
+      "year": 2025
+    },
+    "76445": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76445-1/155680.jpg",
+      "pieces": 390,
+      "rebrickableName": "Hogwarts Castle: Herbology Class",
+      "rebrickableUpdated": "2026-10-07T00:45:23Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76445-1/hogwarts-castle-herbology-class/",
+      "year": 2025
+    },
+    "76451": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76451-1/155721.jpg",
+      "pieces": 640,
+      "rebrickableName": "Privet Drive: Aunt Marge's Visit",
+      "rebrickableUpdated": "2026-10-07T00:45:23Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76451-1/privet-drive-aunt-marges-visit/",
+      "year": 2025
+    },
+    "76453": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/76453-1/148729.jpg",
+      "pieces": 1602,
+      "rebrickableName": "Malfoy Manor",
+      "rebrickableUpdated": "2026-10-07T00:45:24Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/76453-1/malfoy-manor/",
+      "year": 2025
+    },
+    "77012": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/77012-1/118767.jpg",
+      "pieces": 387,
+      "rebrickableName": "Fighter Plane Chase",
+      "rebrickableUpdated": "2026-10-07T00:45:25Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/77012-1/fighter-plane-chase/",
+      "year": 2023
+    },
+    "77013": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/77013-1/118776.jpg",
+      "pieces": 600,
+      "rebrickableName": "Escape from the Lost Tomb",
+      "rebrickableUpdated": "2026-10-07T00:45:25Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/77013-1/escape-from-the-lost-tomb/",
+      "year": 2023
+    },
+    "77015": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/77015-1/118770.jpg",
+      "pieces": 1545,
+      "rebrickableName": "Temple of the Golden Idol",
+      "rebrickableUpdated": "2026-10-07T00:45:26Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/77015-1/temple-of-the-golden-idol/",
+      "year": 2023
     }
   }
 }
