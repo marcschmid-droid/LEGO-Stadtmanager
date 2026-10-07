@@ -3939,3 +3939,73 @@ openPlanLimitV519=function(){
  if(m){m.classList.add("show");m.setAttribute("aria-hidden","false")}
 };
 setTimeout(()=>{renderPricingV516();renderPlanStatusV519();},120);
+
+
+/* v50.40 Commercial Launch */
+let checkoutPlanV540=null;
+function billingPeriodV540(){return pricingYearlyV516?"yearly":"monthly"}
+function billingEntryV540(plan){
+ const cfg=window.BRICK_BILLING||{},key=plan==="basic"?"collector":"pro",period=billingPeriodV540();
+ return {key,period,...(cfg[key]?.[period]||{})};
+}
+function openCommercialCheckoutV540(plan){
+ if(plan==="free"){switchTab("collection");return}
+ checkoutPlanV540=plan;
+ const entry=billingEntryV540(plan),label=plan==="basic"?"Collector":"Pro / Investor",period=entry.period==="yearly"?"Jahr":"Monat";
+ const title=$("checkoutTitleV540"),sum=$("checkoutSummaryV540"),pay=$("checkoutPayV540"),status=$("checkoutStatusV540"),terms=$("checkoutTermsV540"),m=$("checkoutModalV540");
+ if(title)title.textContent=label+" abonnieren";
+ if(sum)sum.innerHTML='<div class="checkoutPlanV540"><span>Tarif</span><b>'+label+'</b></div><div class="checkoutPlanV540"><span>Abrechnung</span><b>'+period+'</b></div><div class="checkoutPlanV540"><span>Preis</span><b>'+euro(entry.amount||0)+'</b></div><p class="hint">Der Vertrag wird über den externen Zahlungsanbieter abgeschlossen. Vor dem Absenden siehst du Tarif, Preis und Abrechnungszeitraum.</p>';
+ if(terms)terms.checked=false;
+ const ready=!!entry.paymentLink;
+ if(pay){pay.disabled=!ready;pay.textContent="Zahlungspflichtig bestellen"}
+ if(status)status.textContent=ready?"Nach Bestätigung wirst du zum sicheren Zahlungsanbieter weitergeleitet.":"Bezahlfunktion wird gerade freigeschaltet. Du kannst den 7-Tage-Pro-Test bereits nutzen.";
+ if(m){m.classList.add("show");m.setAttribute("aria-hidden","false")}
+}
+function closeCommercialCheckoutV540(){const m=$("checkoutModalV540");if(m){m.classList.remove("show");m.setAttribute("aria-hidden","true")}}
+function bindCommercialCheckoutV540(){
+ document.querySelectorAll(".pricingCtaV516").forEach(b=>b.onclick=()=>openCommercialCheckoutV540(b.dataset.plan));
+ if($("checkoutCloseV540"))$("checkoutCloseV540").onclick=closeCommercialCheckoutV540;
+ if($("checkoutCancelV540"))$("checkoutCancelV540").onclick=closeCommercialCheckoutV540;
+ if($("checkoutModalV540"))$("checkoutModalV540").onclick=e=>{if(e.target===$("checkoutModalV540"))closeCommercialCheckoutV540()};
+ if($("checkoutPayV540"))$("checkoutPayV540").onclick=()=>{
+   if(!$("checkoutTermsV540")?.checked)return alert("Bitte bestätige zuerst AGB, Widerruf und Datenschutz.");
+   const entry=billingEntryV540(checkoutPlanV540);
+   if(!entry.paymentLink)return alert("Der Zahlungsanbieter ist noch nicht verbunden. Der Checkout bleibt deshalb sicher gesperrt.");
+   location.href=entry.paymentLink;
+ };
+}
+function commercialLaunchStatusV540(){
+ const cfg=window.BRICK_BILLING||{},links=[
+   cfg.collector?.monthly?.paymentLink,cfg.collector?.yearly?.paymentLink,
+   cfg.pro?.monthly?.paymentLink,cfg.pro?.yearly?.paymentLink
+ ];
+ return {
+   pricing:true,
+   legal:true,
+   auth:!!window.LEGO_SUPABASE,
+   billing:links.every(Boolean),
+   support:!!cfg.supportEmail,
+   publicApp:true
+ };
+}
+function renderCommercialLaunchV540(){
+ const panel=$("settings");if(!panel)return;
+ let box=$("commercialLaunchV540");
+ if(!box){box=document.createElement("div");box.id="commercialLaunchV540";box.className="card wide commercialLaunchV540";panel.prepend(box)}
+ const s=commercialLaunchStatusV540(),rows=[
+   ["Öffentliche App","publicApp","GitHub Pages ist aktiv"],
+   ["Tarife","pricing","Free · Collector · Pro sind konfiguriert"],
+   ["Rechtstexte","legal","Impressum · Datenschutz · AGB · Widerruf"],
+   ["Benutzerkonten","auth","Supabase Auth / Cloud"],
+   ["Support","support","Supportkontakt hinterlegt"],
+   ["Zahlungsanbieter","billing","4 Checkout-Links für Monat/Jahr"]
+ ];
+ box.innerHTML='<div class="sectionHead"><div><span class="eyebrowV50">COMMERCIAL LAUNCH</span><h2>Launch-Status</h2><p class="hint">Technischer Status der kommerziellen Freigabe.</p></div><b class="launchScoreV540">'+rows.filter(r=>s[r[1]]).length+'/'+rows.length+'</b></div>'+
+ '<div class="launchGridV540">'+rows.map(([label,key,desc])=>'<div class="'+(s[key]?"ready":"blocked")+'"><b>'+(s[key]?"✓":"!")+' '+label+'</b><span>'+desc+'</span><small>'+(s[key]?"bereit":"noch offen")+'</small></div>').join("")+'</div>'+
+ (!s.billing?'<p class="launchBlockerV540"><b>Noch offen:</b> Stripe verbinden und die vier Payment Links hinterlegen. Bis dahin bleiben kostenpflichtige Bestellungen technisch gesperrt.</p>':'<p class="launchReadyV540"><b>Bezahl-Checkout ist vollständig aktiv.</b></p>');
+}
+const bindPricingBaseV540=bindPricingV516;
+bindPricingV516=function(){bindPricingBaseV540();bindCommercialCheckoutV540();renderCommercialLaunchV540()};
+const refreshBaseV540=refresh;
+refresh=function(){const r=refreshBaseV540();setTimeout(()=>{bindCommercialCheckoutV540();renderCommercialLaunchV540()},0);return r};
+setTimeout(()=>{bindCommercialCheckoutV540();renderCommercialLaunchV540()},300);
