@@ -747,3 +747,76 @@ tbody tr:hover{background:#fafbfc}
  .planBillingV520{grid-template-columns:1fr}
  .premiumTabV520 small{display:block;margin:2px 0 0}
 }
+
+
+/* v50.21 UX bundle */
+.notifyBtnV521{position:relative}
+#notificationCountV521{display:none;position:absolute;right:-2px;top:-3px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:#c91a09;color:#fff;font-size:9px;font-weight:950;line-height:16px}
+#notificationCountV521.show{display:block}
+.homeSmartGridV521{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-top:14px}
+.seriesGoalV521{width:100%;display:grid;grid-template-columns:1fr auto;gap:7px 12px;text-align:left;padding:12px 0;border:0;border-bottom:1px solid var(--line);background:transparent;cursor:pointer}
+.seriesGoalV521:last-child{border-bottom:0}
+.seriesGoalV521 div{display:grid;gap:2px}
+.seriesGoalV521 b{font-size:12px}
+.seriesGoalV521 small,.seriesGoalV521 em{font-size:9px;color:var(--muted);font-style:normal}
+.seriesGoalV521 strong{font-size:13px}
+.seriesGoalBarV521{grid-column:1/-1;height:7px;border-radius:999px;background:#edf0f2;overflow:hidden}
+.seriesGoalBarV521 i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ffd500,#c91a09)}
+.seriesGoalV521 em{grid-column:1/-1}
+.achievementGridV521{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.achievementV521{padding:11px;border-radius:13px;background:#f6f7f8;border:1px solid var(--line);display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:center;opacity:.55}
+.achievementV521.done{opacity:1;background:#fbfff8;border-color:#cbe5c8}
+.achievementV521>b{grid-row:1/3;font-size:18px}
+.achievementV521 span{font-size:10px;font-weight:900}
+.achievementV521 small{font-size:8px;color:var(--muted)}
+.recommendGridV521{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.recommendGridV521 button{display:grid;gap:5px;text-align:left;padding:13px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer}
+.recommendGridV521 b{font-size:11px}
+.recommendGridV521 small{font-size:9px;color:var(--muted);line-height:1.4}
+.recommendGridV521 span{font-size:9px;font-weight:900;color:var(--red)}
+.utilityModalV521{position:fixed;inset:0;display:none;place-items:center;padding:18px;background:#0009;z-index:10020}
+.utilityModalV521.show{display:grid}
+.utilityBoxV521{position:relative;width:min(620px,100%);max-height:min(82vh,760px);overflow:auto;padding:24px;border-radius:22px;background:#fff;box-shadow:0 28px 80px #0005}
+.utilityBoxV521 h2{margin:7px 0 14px;font-size:24px}
+.utilityCloseV521{position:absolute;right:12px;top:10px;width:34px;height:34px;border:0;border-radius:50%;background:#f1f2f4;font-size:22px;cursor:pointer}
+.onboardingStepsV521{display:grid;gap:10px;margin:14px 0 18px}
+.onboardingStepsV521>div{display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:13px}
+.onboardingStepsV521>div>b{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#111;color:#ffd500}
+.onboardingStepsV521 span{display:grid;gap:2px}.onboardingStepsV521 strong{font-size:11px}.onboardingStepsV521 small{font-size:9px;color:var(--muted)}
+.globalSearchInputV521{width:100%;font-size:16px;padding:13px 14px;border-radius:13px;border:1px solid var(--line);margin-bottom:12px}
+.globalSearchResultsV521{display:grid;gap:6px}
+.globalSearchResultsV521 h3{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:8px 0 2px}
+.globalResultV521{display:grid;grid-template-columns:36px 1fr;gap:7px;align-items:stretch}
+.favBtnV521,.favPlaceholderV521{display:grid;place-items:center;border:1px solid var(--line);border-radius:11px;background:#fff;font-size:16px}
+.favBtnV521{cursor:pointer;color:#a9a9a9}.favBtnV521.active{color:#d29c00;background:#fff8db}
+.globalResultMainV521{display:grid;gap:2px;text-align:left;border:1px solid var(--line);border-radius:11px;background:#fafbfc;padding:10px;cursor:pointer}
+.globalResultMainV521 b{font-size:10px}.globalResultMainV521 small{font-size:9px;color:var(--muted)}
+.noticeRowV521{width:100%;display:grid;grid-template-columns:1fr auto;gap:3px 10px;text-align:left;padding:12px;border:0;border-bottom:1px solid var(--line);background:transparent;cursor:pointer}
+.noticeRowV521 b{font-size:11px}.noticeRowV521 span{font-size:9px;color:var(--muted)}.noticeRowV521 em{grid-column:2;grid-row:1/3;align-self:center;font-style:normal;font-size:9px;font-weight:900;color:var(--red)}
+.demoGridV521{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.demoGridV521>div{padding:14px;border-radius:14px;background:#f6f7f8;display:grid;gap:3px}
+.demoGridV521 span{font-size:9px;color:var(--muted)}.demoGridV521 b{font-size:22px}
+.changeListV521{display:grid;gap:8px}.changeListV521>div{display:grid;gap:2px;padding:11px;border-radius:12px;background:#f7f8f9}.changeListV521 b{font-size:10px}.changeListV521 span{font-size:9px;color:var(--muted)}
+#feedbackModalV521 select,#feedbackModalV521 textarea{width:100%;margin-bottom:10px;border:1px solid var(--line);border-radius:12px;padding:11px;font:inherit}
+.premiumPreviewV521{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;margin-bottom:12px;border:1px solid #eadb9a;border-radius:14px;background:#fff9e7}
+.premiumPreviewV521>div{display:grid;gap:2px}.premiumPreviewV521 b{font-size:10px}.premiumPreviewV521 span{font-size:9px;color:#655d42}
+@media(max-width:720px){
+ .homeSmartGridV521,.recommendGridV521{grid-template-columns:1fr}
+ .utilityBoxV521{padding:20px;max-height:88vh}
+ .achievementGridV521{grid-template-columns:1fr 1fr}
+ .premiumPreviewV521{display:grid}
+ .headActions{gap:5px}
+ .headActions .iconbtn{min-width:38px}
+ .tabs{scroll-snap-type:x proximity}
+ .tab{scroll-snap-align:start}
+ .toolbar{gap:7px}
+ .toolbar input,.toolbar select{min-height:43px}
+ .btn,.rowbtn{min-height:42px}
+}
+@media print{
+ body.printCollectionV521 header,body.printCollectionV521 nav,body.printCollectionV521 .panel:not(#collection),body.printCollectionV521 #collection .toolbar,body.printCollectionV521 #collectionGrid{display:none!important}
+ body.printCollectionV521 #collection{display:block!important}
+ body.printCollectionV521 #collection .tablewrap{display:block!important;overflow:visible}
+ body.printCollectionV521 #collection table{width:100%;font-size:10pt}
+ body.printCollectionV521{background:#fff}
+}
