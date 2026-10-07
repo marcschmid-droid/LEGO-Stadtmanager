@@ -3907,3 +3907,35 @@ function renderUxV538(){setupCollectionViewV538();renderCollection();renderWishl
 const refreshBaseV538=refresh;
 refresh=function(){const r=refreshBaseV538();setTimeout(renderUxV538,0);return r};
 setTimeout(renderUxV538,700);
+
+
+/* v50.39 Pricing repositioning */
+renderPricingV516=function(){
+ const basic=$("basicPriceV516"),basicPeriod=$("basicPeriodV516"),premium=$("premiumPriceV516"),premiumPeriod=$("premiumPeriodV516");
+ if(basic)basic.textContent=pricingYearlyV516?"39,99 €":"3,99 €";
+ if(basicPeriod)basicPeriod.textContent=pricingYearlyV516?"pro Jahr":"pro Monat";
+ if(premium)premium.textContent=pricingYearlyV516?"69,99 €":"6,99 €";
+ if(premiumPeriod)premiumPeriod.textContent=pricingYearlyV516?"pro Jahr":"pro Monat";
+ $("pricingMonthlyV516")?.classList.toggle("active",!pricingYearlyV516);
+ $("pricingYearlyV516")?.classList.toggle("active",pricingYearlyV516);
+};
+planInfoV519=function(){
+ const key=planKeyV519(),trial=trialInfoV520();
+ if(trial.active)return {key:"premium",baseKey:key,label:"Pro Test",limit:Infinity,desc:"7 Tage Pro-Testphase aktiv.",trial:true};
+ return key==="premium"
+   ?{key,label:"Pro",limit:Infinity,desc:"Unbegrenzt viele Sets · Marktwerte, Portfolio und Analyse."}
+   :key==="basic"
+     ?{key,label:"Collector",limit:Infinity,desc:"Unbegrenzt viele Sets · Sammlung, Serien, Lagerung, Stadtplanung und Cloud."}
+     :{key:"free",label:"Free",limit:25,desc:"Bis zu 25 Sets verwalten."};
+};
+openPlanLimitV519=function(){
+ const info=planInfoV519(),m=$("planLimitModalV519");
+ const next=info.key==="free"?"Collector":"Pro";
+ const nextText=info.key==="free"
+   ?"Mit Collector verwaltest du unbegrenzt viele Sets und bekommst Serien, Lagerung, Stadtplanung und Cloud."
+   :"Mit Pro bekommst du zusätzlich Marktwerte, Preisentwicklung, Portfolioanalyse und Preisalarme.";
+ if($("planLimitTitleV519"))$("planLimitTitleV519").textContent="Dein "+info.label+"-Limit ist erreicht.";
+ if($("planLimitTextV519"))$("planLimitTextV519").textContent=nextText+" Dein bestehender Bestand wird nicht verändert.";
+ if(m){m.classList.add("show");m.setAttribute("aria-hidden","false")}
+};
+setTimeout(()=>{renderPricingV516();renderPlanStatusV519();},120);
