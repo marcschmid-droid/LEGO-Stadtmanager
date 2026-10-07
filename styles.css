@@ -994,3 +994,26 @@ tbody tr:hover{background:#fafbfc}
  .diffRowV536{grid-template-columns:80px 1fr auto}
 }
 @media(max-width:480px){.execGridV536{grid-template-columns:1fr}}
+
+
+/* v50.37 Premium KPI strip */
+.executiveV536{margin:20px 0 24px}
+.execHeadV537{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:12px}
+.execHeadV537 h2{margin:.2rem 0 0;font-size:1.45rem}
+.execTechBtnV537{border:0;background:transparent;font:inherit;font-weight:700;opacity:.7;cursor:pointer;padding:8px 0}
+.execRailV537{display:grid;grid-template-columns:1.35fr 1fr 1fr 1fr;gap:12px}
+.execHeroCardV537,.execMetricV537{position:relative;display:flex;align-items:center;gap:13px;min-height:112px;border-radius:20px;padding:18px;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(250,250,250,.92));box-shadow:0 8px 24px rgba(0,0,0,.06);overflow:hidden}
+.execHeroCardV537{min-height:126px}
+.execAccentV537{position:absolute;left:0;right:0;bottom:0;height:4px;background:currentColor;opacity:.9}
+.execIconV537{flex:0 0 42px;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(0,0,0,.055);font-weight:900;font-size:1.05rem}
+.execCopyV537{min-width:0}
+.execCopyV537>span{display:block;font-size:.78rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;opacity:.55}
+.execCopyV537>b{display:block;font-size:1.65rem;line-height:1.05;margin:7px 0 6px;letter-spacing:-.035em;white-space:nowrap}
+.execHeroCardV537 .execCopyV537>b{font-size:2rem}
+.execCopyV537>small{display:block;line-height:1.35;opacity:.68;overflow:hidden;text-overflow:ellipsis}
+.execTrustBarV537{position:absolute;left:18px;right:18px;bottom:10px;height:4px;background:rgba(0,0,0,.07);border-radius:999px;overflow:hidden}
+.execTrustBarV537 i{display:block;height:100%;border-radius:inherit;background:currentColor;opacity:.75}
+.themeV39.dark .execHeroCardV537,.themeV39.dark .execMetricV537,
+[data-theme="dark"] .execHeroCardV537,[data-theme="dark"] .execMetricV537{background:linear-gradient(145deg,rgba(35,35,38,.96),rgba(24,24,27,.94));box-shadow:0 8px 26px rgba(0,0,0,.22)}
+@media(max-width:1050px){.execRailV537{grid-template-columns:repeat(2,minmax(0,1fr))}.execHeroCardV537{grid-column:span 2}}
+@media(max-width:620px){.execRailV537{grid-template-columns:1fr}.execHeroCardV537{grid-column:auto}.execHeroCardV537,.execMetricV537{min-height:96px}.execCopyV537>b,.execHeroCardV537 .execCopyV537>b{font-size:1.55rem}.execHeadV537{align-items:flex-start}}
