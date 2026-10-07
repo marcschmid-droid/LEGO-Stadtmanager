@@ -3778,7 +3778,7 @@ function addDetailNavV538(x){
  const history=[...root.querySelectorAll(".card")].find(el=>/Preisverlauf/i.test(el.textContent||""));if(history)history.dataset.detailSectionV538="history";
  nav.querySelectorAll("button").forEach(b=>b.onclick=()=>{
    const key=b.dataset.go;
-   if(key==="city"){closeModal?.("detailModal");switchTab("city");return}
+   if(key==="city"){$("detailModal")?.classList.remove("show");switchTab("city");return}
    const target=root.querySelector('[data-detail-section-v538="'+key+'"]')||root.querySelector(key==="market"?".valuationDetailV532,.intelDetailV536":key==="copies"?".exemplars":key==="history"?".priceChartV37":"");
    target?.scrollIntoView({behavior:"smooth",block:"start"});
  });
