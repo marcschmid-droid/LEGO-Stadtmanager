@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install requests
-      - name: Check wishlists against current market data
+      - name: Check opted-in saved offers including shipping
         env:
           SUPABASE_URL: https://eeiokqujnpaxgncmcvsi.supabase.co
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

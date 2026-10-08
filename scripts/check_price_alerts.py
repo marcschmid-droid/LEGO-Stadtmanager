@@ -1,10 +1,27 @@
 #!/usr/bin/env python3
 import json, os, datetime as dt
+from html import escape
+from math import isfinite
 from pathlib import Path
 import requests
 
 ROOT=Path(__file__).resolve().parents[1]
 CAT=ROOT/"data"/"set-enrichment.json"
+def eligible_offer_total(w):
+    if not w.get("alertEnabledV545"):return None
+    shipping=w.get("offerShippingV545")
+    condition=w.get("offerConditionV545")
+    if shipping is None or shipping=="" or not condition:return None
+    target=w.get("alertConditionV545")
+    if target and target!=condition:return None
+    try:
+        offer=float(w.get("offer") or 0)
+        shipping=float(shipping)
+    except (ValueError,TypeError):return None
+    if not isfinite(offer) or not isfinite(shipping) or offer<=0 or shipping<0:return None
+    total=offer+shipping
+    return total if isfinite(total) else None
+
 SUPABASE_URL=os.getenv("SUPABASE_URL","https://eeiokqujnpaxgncmcvsi.supabase.co").rstrip("/")
 SERVICE=os.getenv("SUPABASE_SERVICE_ROLE_KEY","").strip()
 RESEND=os.getenv("RESEND_API_KEY","").strip()
@@ -56,21 +73,23 @@ for row in states:
     for w in state.get("wishlist",[]) or []:
         n=str(w.get("setNumber","")).strip()
         limit=float(w.get("limit") or 0)
-        if not n or limit<=0:continue
+        if not n or not isfinite(limit) or limit<=0:continue
         e=sets.get(n) or {}
-        market=float(e.get("marketNewEUR") or e.get("marketUsedEUR") or 0)
-        if market<=0 or market>limit:continue
-        hits.append((n,w.get("name") or e.get("brickeconomyName") or e.get("rebrickableName") or "",market,limit))
+        # Only opted-in concrete offers trigger alerts; market estimates are not offers.
+        market=eligible_offer_total(w)
+        if market is None or market>limit:continue
+        name=w.get("name") or e.get("brickeconomyName") or e.get("rebrickableName") or ""
         if (uid,n) not in seen:
             ir=requests.post(
                 SUPABASE_URL+"/rest/v1/price_alert_events",
                 headers={**headers,"Content-Type":"application/json","Prefer":"return=minimal"},
-                json={"user_id":uid,"set_number":n,"set_name":hits[-1][1],"market_price":market,"limit_price":limit},
+                json={"user_id":uid,"set_number":n,"set_name":name,"market_price":market,"limit_price":limit},
                 timeout=30
             )
             ir.raise_for_status();created+=1;seen.add((uid,n))
+            hits.append((n,name,market,limit))
     if hits and state.get("meta",{}).get("emailPriceAlerts") and RESEND and FROM_EMAIL and emails.get(uid):
-        lines="".join(f"<li><b>{n} · {name}</b>: {market:.2f} € (Kaufgrenze {limit:.2f} €)</li>" for n,name,market,limit in hits)
+        lines="".join(f"<li><b>{escape(n)} · {escape(name)}</b>: {market:.2f} € inkl. Versand (Kaufgrenze {limit:.2f} €)</li>" for n,name,market,limit in hits)
         er=requests.post(
             "https://api.resend.com/emails",
             headers={"Authorization":"Bearer "+RESEND,"Content-Type":"application/json"},
@@ -78,7 +97,7 @@ for row in states:
                 "from":FROM_EMAIL,
                 "to":[emails[uid]],
                 "subject":"Brick City Manager – Preisalarm",
-                "html":"<h2>Preisalarm</h2><p>Diese Wunschlisten-Sets liegen aktuell unter deiner Kaufgrenze:</p><ul>"+lines+"</ul><p>Brick City Manager</p>"
+                "html":"<h2>Preisalarm</h2><p>Diese gespeicherten Angebote liegen einschließlich Versand unter deiner Kaufgrenze. Bitte Verfügbarkeit beim Anbieter prüfen:</p><ul>"+lines+"</ul><p>Brick City Manager</p>"
             },
             timeout=30
         )

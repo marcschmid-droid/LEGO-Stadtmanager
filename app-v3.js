@@ -422,7 +422,7 @@ function checkWishAlertsV28(){
 }
 function renderWishAlertsV28(){
  let box=$("wishAlertsV28");if(!box){const home=$("home");if(!home)return;box=document.createElement("div");box.id="wishAlertsV28";box.className="card wide";home.appendChild(box)}
- const h=state.meta?.wishAlerts||[];box.innerHTML='<div class="sectionHead"><div><h2>Preisalarme</h2><p class="hint">Vergleich der aktuellen Online-Marktwerte mit deiner Kaufgrenze.</p></div><button class="btn secondary" id="notifyV28">Benachrichtigungen aktivieren</button></div>'+(h.length?h.map(x=>'<div class="alertRow"><b>'+esc(x.setNumber)+' · '+esc(x.name)+'</b><span>'+euro(x.market)+' ≤ '+euro(x.limit)+'</span></div>').join(""):'<p class="hint">Aktuell kein Set unter deiner Kaufgrenze.</p>');
+ const h=state.meta?.wishAlerts||[];box.innerHTML='<div class="sectionHead"><div><h2>Marktwert-Hinweise</h2><p class="hint">Vergleich von geschätzten Marktwerten mit deiner Kaufgrenze. Diese Werte sind keine Händlerangebote.</p></div><button class="btn secondary" id="notifyV28">Benachrichtigungen aktivieren</button></div>'+(h.length?h.map(x=>'<div class="alertRow"><b>'+esc(x.setNumber)+' · '+esc(x.name)+'</b><span>'+euro(x.market)+' ≤ '+euro(x.limit)+'</span></div>').join(""):'<p class="hint">Aktuell kein Set unter deiner Kaufgrenze.</p>');
  if($("notifyV28"))$("notifyV28").onclick=async()=>{if(!("Notification" in window))return alert("Benachrichtigungen werden von diesem Gerät nicht unterstützt.");const p=await Notification.requestPermission();alert(p==="granted"?"Benachrichtigungen aktiviert.":"Benachrichtigungen wurden nicht freigegeben.")};
  if(h.length&&("Notification" in window)&&Notification.permission==="granted"&&!sessionStorage.getItem("priceNoticeV28")){new Notification("Brick City Manager",{body:h.length+" Wunschlisten-Set"+(h.length>1?"s":"")+" unter deiner Kaufgrenze."});sessionStorage.setItem("priceNoticeV28","1")}
 }
@@ -974,7 +974,7 @@ renderWishAlertsV28=function(){
    paint();b.onclick=()=>{state.meta=state.meta||{};state.meta.emailPriceAlerts=!state.meta.emailPriceAlerts;persist();paint();alert(state.meta.emailPriceAlerts?"E-Mail-Preisalarme aktiviert. Versand erfolgt, sobald ein Mail-Absender serverseitig eingerichtet ist.":"E-Mail-Preisalarme deaktiviert.")};root.appendChild(b);
  }
  const box=$("wishAlertsV28");if(!box)return;const alerts=state.meta?.serverPriceAlerts||[];
- if(alerts.length){const div=document.createElement("div");div.className="serverAlertsV38";div.innerHTML='<h3>Server-Preisalarme</h3>'+alerts.slice(0,8).map(a=>'<div class="alertRow"><b>'+esc(a.set_number)+' · '+esc(a.set_name||"")+'</b><span>'+euro(a.market_price)+' ≤ '+euro(a.limit_price)+'</span></div>').join("");box.appendChild(div)}
+ if(alerts.length){const div=document.createElement("div");div.className="serverAlertsV38";div.innerHTML='<h3>Server-Preishinweise</h3>'+alerts.slice(0,8).map(a=>'<div class="alertRow"><b>'+esc(a.set_number)+' · '+esc(a.set_name||"")+'</b><span>'+euro(a.market_price)+' ≤ '+euro(a.limit_price)+'</span></div>').join("");box.appendChild(div)}
 };
 
 async function renderAdminV38(){
