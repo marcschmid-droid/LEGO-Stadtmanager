@@ -1122,3 +1122,6 @@ tbody tr:hover{background:#fafbfc}
 
 /* v50.46 */
 .exPhotoV546{width:130px;height:100px;object-fit:contain;margin:8px;border-radius:8px}#savedFiltersV546 input{max-width:100%;min-width:0}#detailWorkflowV546 input[type=checkbox]{width:auto}#undoV546{white-space:nowrap}@media(max-width:600px){.headActions{flex-wrap:wrap}#savedFiltersV546 .actions{flex-wrap:wrap}}
+
+/* v50.47 */
+.selectV547{width:20px!important;height:20px!important;margin:6px;accent-color:#c91a09}#inventoryOpsV547 td input,#sharedEditorV547 td input{max-width:160px;min-width:65px;box-sizing:border-box}#batchV547 .actions{flex-wrap:wrap}#batchV547 input,#sharedCollectionsV547 input{min-width:0;max-width:100%}#inventoryOpsV547 summary{font-weight:700;cursor:pointer}

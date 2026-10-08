@@ -5,7 +5,7 @@ const dom=new JSDOM(html,{url:'https://example.com/',runScripts:'outside-only',p
 w.structuredClone=structuredClone;w.jspdf=require(root+'/vendor/jspdf.js');w.qrcode=require(root+'/vendor/qrcode.js');w.indexedDB=require('fake-indexeddb').indexedDB;w.alert=()=>{};w.confirm=()=>true;w.prompt=()=>null;w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};
 w.fetch=async url=>{const p=String(url).replace(/^\.\//,'').split('?')[0];try{const data=JSON.parse(fs.readFileSync(root+'/'+p));return {ok:true,json:async()=>data}}catch{return {ok:false,json:async()=>({})}}};
 w.addEventListener('error',e=>{errors.push(e.error?.message||e.message);e.preventDefault()});w.HTMLCanvasElement.prototype.getContext=()=>null;
-for(const file of ['seed-data.js','app.js','app-v3.js','improvements-v544.js','customer-value-v545.js','usability-v546.js']){try{vm.runInContext(fs.readFileSync(root+'/'+file,'utf8'),ctx,{filename:file})}catch(e){errors.push(file+': '+e.stack)}}
+for(const file of ['seed-data.js','app.js','app-v3.js','improvements-v544.js','customer-value-v545.js','usability-v546.js','collection-ops-v547.js','shared-collections-v547.js']){try{vm.runInContext(fs.readFileSync(root+'/'+file,'utf8'),ctx,{filename:file})}catch(e){errors.push(file+': '+e.stack)}}
 const ev=s=>vm.runInContext(s,ctx);
 (async()=>{await new Promise(r=>setTimeout(r,1100));
 assert.equal(ev("parseNumbersV544('10326,10326 10255-1').counts.get('10326')"),2);assert.equal(ev("parseNumbersV544('abc').invalid.length"),1);
@@ -40,6 +40,26 @@ const compact=await ev("createPortfolioV545({collection:Array.from({length:200},
 const labels=await ev('exportLabelsV545(false)');assert(labels);fs.writeFileSync(testOutput+'/labels-test.pdf',Buffer.from(labels.output('arraybuffer')));
 assert.equal(ev("buildOptionsV545(1500,100,100).length"),1);
 
+ev("switchTab('collection');opsV547.selected=new Set(['10326','10255']);$('batchStorageV547').value='Neues Regal';$('batchTagsV547').value='Stadt, Stadt, Selten';batchEditV547()");
+assert.equal(ev('state.collection[0].storage'),'Neues Regal');assert.equal(ev('state.collection[0].tagsV547.length'),2);
+ev('compareSelectedV547()');assert(w.document.getElementById('compareV547').textContent.includes('Naturhistorisches Museum'));
+ev('startInventoryV547()');await ev("inventoryScanV547('10326')");assert.equal(ev('inventoryRowsV547()[0].delta'),-1);
+await ev("inventoryScanV547('https://example.com/?set=10326')");assert.equal(ev('inventoryRowsV547()[0].delta'),0);
+ev("renderDetailOpsV547('10326');$('loanToV547').value='Test';$('loanQtyV547').value='2';$('loanAddV547').click()");assert.equal(ev('availableLoansV547(state.collection[0])'),0);
+ev("$('loanToV547').value='Noch jemand';$('loanQtyV547').value='1';$('loanAddV547').click()");assert.equal(ev('state.collection[0].loansV547.length'),1);
+ev("document.querySelector('[data-loan-return]').click()");assert.equal(ev('availableLoansV547(state.collection[0])'),2);
+assert.equal(ev('sharedCopyV547().collection[0].purchasePrice'),undefined);assert.equal(ev('sharedCopyV547().collection[0].loansV547'),undefined);
+ev("cloudUserV3={id:'sync-test'};syncInfoV547().revision='2026-01-01T00:00:00Z';syncInfoV547().dirty=true;globalThis.syncPredicates=[];cloudV3={from:()=>({update:()=>({eq:function(k,v){syncPredicates.push([k,v]);return this},select:function(){return this},maybeSingle:async()=>({data:{updated_at:'2026-10-08T00:00:00Z'}})})})}");
+await ev('cloudSaveV3()');assert.equal(ev('syncInfoV547().dirty'),false);assert.equal(ev('syncPredicates[1][0]'),'updated_at');
+ev("cloudV3={from:()=>({update:()=>({eq:function(){return this},select:function(){return this},maybeSingle:async()=>({data:null})}),select:()=>({eq:function(){return this},maybeSingle:async()=>({data:{state:blankStateV3(),updated_at:'new-remote'}})})})};syncInfoV547().dirty=true");
+const beforeConflict=ev('JSON.stringify(state.collection)');await ev('cloudSaveV3()');assert.equal(ev('JSON.stringify(state.collection)'),beforeConflict);assert.equal(ev('syncInfoV547().conflict.revision'),'new-remote');ev("globalThis.resolveSessionV547=null;cloudV3={from:()=>({select:()=>({eq:function(){return this},maybeSingle:()=>new Promise(resolve=>resolveSessionV547=resolve)})})};localStorage.setItem(cloudCacheKeyV3('switch-test'),JSON.stringify({...state,collection:[{setNumber:'10326',name:'Cached',quantity:3}]}));syncInfoV547('switch-test').dirty=true;syncInfoV547('switch-test').revision='old'");
+const sessionTask=ev("cloudSessionV3({user:{id:'switch-test',email:'test@example.com'}})");assert.equal(ev('state.collection[0].quantity'),3);
+ev('state.collection[0].quantity=4;persist()');await ev('cloudSaveV3()');assert.equal(ev('opsV547.saving.size'),0);
+ev("resolveSessionV547({data:null,error:new Error('Offline')})");await sessionTask;assert.equal(ev('state.collection[0].quantity'),4);
+ev('cloudUserV3=null;cloudV3=null;clearTimeout(cloudSaveTimerV3)');
+
+
+ev("state.collection=[{setNumber:'10326',name:'Naturhistorisches Museum',quantity:2},{setNumber:'10255',name:'Assembly Square',quantity:1}];refresh()");
 ev('baselineV546()');const oldQty=ev('state.collection[0].quantity');ev('state.collection[0].quantity+=1;persist()');assert.equal(ev('workflowV546.sessions.get(ownerV544()).undo.length'),1);assert(ev('state.collection[0].updatedAtV546'));ev('undoV546()');assert.equal(ev('state.collection[0].quantity'),oldQty);
 assert.equal(ev("matchesFilterV546({name:'A',condition:'Neu / OVP'},{kind:'sealed'})"),true);
 assert.equal(ev("matchesFilterV546({box:'Unbekannt'},{kind:'nobox'})"),false);
@@ -48,7 +68,7 @@ assert.equal(ev("pdfAuditV546({collection:[{purchasePrice:0,condition:'Unbekannt
 ev("state.wishlist=[{setNumber:'1',name:'A',offer:60,offerShippingV545:5,priority:1},{setNumber:'2',name:'B',offer:50,offerShippingV545:5,priority:2}]");assert.equal(ev('budgetSummaryV546(100).filter(r=>r.fit).length'),1);
 ev("switchTab('collection');$('filterNameV546').value='Testansicht';$('filterKindV546').value='sealed';$('saveFilterV546').click();$('savedSelectV546').value=state.meta.savedFiltersV546.at(-1).id;$('savedSelectV546').onchange()");assert.equal(ev('filteredV3().length'),0);ev("$('clearFilterV546').click()");assert.equal(ev('filteredV3().length'),2);
 ev("showDetailV3('10326');$('buildPageV546').value='15';$('buildStageV546').value='Beutel 4';$('progressSaveV546').click()");assert.equal(ev("state.collection[0].buildProgressV546.page"),15);
-console.log('Workflow checks: undo, timestamps, filters, audit, budget passed.');
+console.log('Workflow checks: undo, filters, batch edit, comparison, inventory, loan limits, sharing privacy and cloud CAS/conflict passed.');
 
 console.log('Validation files:',testOutput);console.log('PDF pages:',pdf.doc.getNumberOfPages(),'QR pages:',labels.getNumberOfPages());
 

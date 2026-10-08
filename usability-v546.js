@@ -57,4 +57,4 @@ const refreshWorkflowBaseV546=refresh;refresh=function(){const r=refreshWorkflow
 const switchWorkflowBaseV546=switchTab;switchTab=function(id){const r=switchWorkflowBaseV546(id);renderWorkflowV546();return r};
 const sessionWorkflowBaseV546=cloudSessionV3;cloudSessionV3=async function(s){workflowV546.filter=null;workflowV546.suspended=true;try{return await sessionWorkflowBaseV546(s)}finally{baselineV546();workflowV546.suspended=false;renderWorkflowV546()}};
 const exportWorkflowBaseV546=exportPortfolioV545;exportPortfolioV545=async function(){renderPdfAuditV546();return exportWorkflowBaseV546()};
-setTimeout(()=>{baselineV546();renderWorkflowV546();if($('pdfCreateV545'))$('pdfCreateV545').onclick=exportPortfolioV545;if($('appVersion'))$('appVersion').textContent='v50.46'},600);
+setTimeout(()=>{baselineV546();renderWorkflowV546();if($('pdfCreateV545'))$('pdfCreateV545').onclick=exportPortfolioV545;if($('appVersion'))$('appVersion').textContent='v50.47'},600);

@@ -185,4 +185,4 @@ const refreshBeforeV544=refresh;refresh=function(){const r=refreshBeforeV544();r
 const tabBeforeV544=switchTab;switchTab=function(id){const r=tabBeforeV544(id);if(id==='collector'){state.meta=state.meta||{};if(!state.meta.visitedCollectorV544){state.meta.visitedCollectorV544=true;persist()}}if(id==='plans')loadSubscriptionV544();renderReliabilityV544();return r};
 const sessionBeforeV544=cloudSessionV3;cloudSessionV3=async function(s){reliabilityV544.importRows=[];reliabilityV544.subscription=null;reliabilityV544.subscriptionUser=null;const r=await sessionBeforeV544(s);await loadSubscriptionV544();renderReliabilityV544();return r};
 window.addEventListener('online',()=>{cloudSaveV3(true);renderBackupsV544()});window.addEventListener('offline',()=>{cloudStatusV3('Offline · Änderungen werden lokal gespeichert.');renderBackupsV544()});
-setTimeout(()=>{snapshotV544('Startstand');renderReliabilityV544();if($('appVersion'))$('appVersion').textContent='v50.46'},400);
+setTimeout(()=>{snapshotV544('Startstand');renderReliabilityV544();if($('appVersion'))$('appVersion').textContent='v50.47'},400);

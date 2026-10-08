@@ -78,4 +78,4 @@ function renderCustomerV545(){if($('collection')?.classList.contains('active'))r
 const refreshCustomerBaseV545=refresh;refresh=function(){const r=refreshCustomerBaseV545();renderCustomerV545();return r};
 const switchCustomerBaseV545=switchTab;switchTab=function(id){const r=switchCustomerBaseV545(id);renderCustomerV545();return r};
 const sessionCustomerBaseV545=cloudSessionV3;cloudSessionV3=async function(s){const r=await sessionCustomerBaseV545(s);deepLinkV545();return r};
-setTimeout(()=>{renderCustomerV545();deepLinkV545();if($('appVersion'))$('appVersion').textContent='v50.46'},500);
+setTimeout(()=>{renderCustomerV545();deepLinkV545();if($('appVersion'))$('appVersion').textContent='v50.47'},500);
