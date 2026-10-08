@@ -17,7 +17,7 @@ language sql stable security definer set search_path=public as $$
  select case when c.owner_id=auth.uid() then 'owner' else (select m.role from public.shared_collection_members_v547 m where m.collection_id=c.id and m.user_id=auth.uid()) end
  from public.shared_collections_v547 c where c.id=p_id;
 $$;
-revoke all on function public.shared_role_v547(uuid) from public;
+revoke all on function public.shared_role_v547(uuid) from public,anon;
 grant execute on function public.shared_role_v547(uuid) to authenticated;
 drop policy if exists "shared read" on public.shared_collections_v547;
 create policy "shared read" on public.shared_collections_v547 for select to authenticated using(public.shared_role_v547(id) is not null);
@@ -51,5 +51,5 @@ begin
  else insert into public.shared_collection_members_v547(collection_id,user_id,role) values(p_id,target,p_role) on conflict(collection_id,user_id) do update set role=excluded.role;end if;
  return true;
 end; $$;
-revoke all on function public.save_shared_v547(uuid,timestamptz,jsonb),public.grant_shared_v547(uuid,text,text) from public;
+revoke all on function public.save_shared_v547(uuid,timestamptz,jsonb),public.grant_shared_v547(uuid,text,text) from public,anon;
 grant execute on function public.save_shared_v547(uuid,timestamptz,jsonb),public.grant_shared_v547(uuid,text,text) to authenticated;

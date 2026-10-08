@@ -2,10 +2,10 @@ const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const {JSDOM}=require('jsdom');
 const root=require('path').resolve(__dirname,'..'),testOutput=fs.mkdtempSync(require('path').join(require('os').tmpdir(),'bcm-validation-')),html=fs.readFileSync(root+'/index.html','utf8').replace(/<script\b[^>]*>[\s\S]*?<\/script>/g,'');
 const dom=new JSDOM(html,{url:'https://example.com/',runScripts:'outside-only',pretendToBeVisual:true});const w=dom.window,ctx=dom.getInternalVMContext(),errors=[];
-w.structuredClone=structuredClone;w.jspdf=require(root+'/vendor/jspdf.js');w.qrcode=require(root+'/vendor/qrcode.js');w.indexedDB=require('fake-indexeddb').indexedDB;w.alert=()=>{};w.confirm=()=>true;w.prompt=()=>null;w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};
+w.Blob=Blob;w.FileReader=class{readAsDataURL(blob){blob.arrayBuffer().then(buffer=>{this.result='data:'+blob.type+';base64,'+Buffer.from(buffer).toString('base64');this.onload?.()},()=>this.onerror?.())}};w.structuredClone=structuredClone;w.TextEncoder=TextEncoder;Object.defineProperty(w.crypto,'subtle',{value:require('crypto').webcrypto.subtle});w.jspdf=require(root+'/vendor/jspdf.js');w.qrcode=require(root+'/vendor/qrcode.js');w.indexedDB=require('fake-indexeddb').indexedDB;w.alert=()=>{};w.confirm=()=>true;w.prompt=()=>null;w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};
 w.fetch=async url=>{const p=String(url).replace(/^\.\//,'').split('?')[0];try{const data=JSON.parse(fs.readFileSync(root+'/'+p));return {ok:true,json:async()=>data}}catch{return {ok:false,json:async()=>({})}}};
 w.addEventListener('error',e=>{errors.push(e.error?.message||e.message);e.preventDefault()});w.HTMLCanvasElement.prototype.getContext=()=>null;
-for(const file of ['seed-data.js','app.js','app-v3.js','improvements-v544.js','customer-value-v545.js','usability-v546.js','collection-ops-v547.js','shared-collections-v547.js']){try{vm.runInContext(fs.readFileSync(root+'/'+file,'utf8'),ctx,{filename:file})}catch(e){errors.push(file+': '+e.stack)}}
+for(const file of ['vendor/portfolio-fonts.js','seed-data.js','app.js','app-v3.js','improvements-v544.js','customer-value-v545.js','usability-v546.js','collection-ops-v547.js','shared-collections-v547.js','customer-experience-v548.js','billing-client-v548.js']){try{vm.runInContext(fs.readFileSync(root+'/'+file,'utf8'),ctx,{filename:file})}catch(e){errors.push(file+': '+e.stack)}}
 const ev=s=>vm.runInContext(s,ctx);
 (async()=>{await new Promise(r=>setTimeout(r,1100));
 assert.equal(ev("parseNumbersV544('10326,10326 10255-1').counts.get('10326')"),2);assert.equal(ev("parseNumbersV544('abc').invalid.length"),1);
@@ -37,6 +37,8 @@ ev("state.collection[0].buildProgressV546={stage:'Beutel 3',page:10};state.colle
 const pdf=await ev("createPortfolioV545(structuredClone(state),{owner:'Testsammlung - PDF-Prüfung'},async()=>fixtureData,async()=>new Blob([Uint8Array.from(atob(fixtureData.split(',')[1]),c=>c.charCodeAt(0))],{type:'image/png'}))");
 fs.writeFileSync(testOutput+'/map-test.pdf',Buffer.from(pdf.doc.output('arraybuffer')));assert.equal(pdf.missingPhotos,0);assert.equal(pdf.missingReceipts,0);
 const compact=await ev("createPortfolioV545({collection:Array.from({length:200},(_,i)=>({...state.collection[1],setNumber:String(10000+i)}))},{details:false,photos:false,receipts:false,locations:false})");fs.writeFileSync(testOutput+'/compact-test.pdf',Buffer.from(compact.doc.output('arraybuffer')));
+const salePDF=await ev("createPortfolioV545(structuredClone(state),{purpose:'sale',photos:false,receipts:false,locations:false})");fs.writeFileSync(testOutput+'/sale-test.pdf',Buffer.from(salePDF.doc.output('arraybuffer')));
+const insurancePDF=await ev("createPortfolioV545(structuredClone(state),{purpose:'insurance',photos:false,receipts:false})");fs.writeFileSync(testOutput+'/insurance-test.pdf',Buffer.from(insurancePDF.doc.output('arraybuffer')));
 const labels=await ev('exportLabelsV545(false)');assert(labels);fs.writeFileSync(testOutput+'/labels-test.pdf',Buffer.from(labels.output('arraybuffer')));
 assert.equal(ev("buildOptionsV545(1500,100,100).length"),1);
 
@@ -58,6 +60,17 @@ ev('state.collection[0].quantity=4;persist()');await ev('cloudSaveV3()');assert.
 ev("resolveSessionV547({data:null,error:new Error('Offline')})");await sessionTask;assert.equal(ev('state.collection[0].quantity'),4);
 ev('cloudUserV3=null;cloudV3=null;clearTimeout(cloudSaveTimerV3)');
 
+
+ev("cloudUserV3=null;cloudV3={from:()=>{throw Error('Cloud should not be called for local set')}};enrichmentV3={sets:{}};allSetsV46={sets:{'54321':['Offline Set',2026,100,'test-image','54321-1']}}");
+const known=await ev("lookupSetOnlineV45('54321-1')");assert.equal(known.rebrickableName,'Offline Set');assert.equal(known.imageUrl,'test-image');
+ev("globalThis.delayedLookupV548=null;globalThis.originalLookupV548=lookupSetOnlineV45;lookupSetOnlineV45=()=>new Promise(r=>delayedLookupV548=r);openSet();$('fSet').value='54321'");const fillTask=ev('fillSetFromCatalogV32()');ev("$('fSet').value='11111';delayedLookupV548({rebrickableName:'Wrong response'})");await fillTask;assert.equal(w.document.getElementById('fName').value,'');ev('lookupSetOnlineV45=originalLookupV548;closeSet();cloudV3=null');
+ev("state.collection=[{setNumber:'10326',name:'Backuptest',quantity:2,receiptsV545:[{id:'portable-image'}],exemplars:[]}];state.wishlist=[];state.meta.subscriptionPlan='premium';state.meta.premiumTrialStartedAt='2099-01-01';");
+await ev("receiptActionV545('put','local:portable-image',new Blob([Uint8Array.from(atob(fixtureData.split(',')[1]),c=>c.charCodeAt(0))],{type:'image/png'}))");
+const portable=await ev('makePortableBackupV548()');assert.equal(portable.payload.assets.length,1);assert.equal(portable.payload.missing.length,0);w.portableFixtureV548=JSON.parse(JSON.stringify(portable));await ev('validatePortableV548(portableFixtureV548)');
+w.corruptedFixtureV548=JSON.parse(JSON.stringify(portable));w.corruptedFixtureV548.payload.state.collection[0].quantity=999;await assert.rejects(ev('validatePortableV548(corruptedFixtureV548)'),/Prüfsumme/);
+ev('state.collection=[];switchTab("settings")');await ev('prepareRestoreV548(portableFixtureV548)');assert.equal(ev('state.collection.length'),0);await ev('applyRestoreV548()');assert.equal(ev('state.collection[0].quantity'),2);assert.equal(ev('state.meta.subscriptionPlan'),undefined);assert.equal(ev('state.meta.premiumTrialStartedAt'),undefined);
+ev("state.collection=Array.from({length:500},(_,i)=>({setNumber:String(10000+i),name:'Set '+i,quantity:1}));switchTab('collection');renderCollection()");assert.equal(w.document.querySelectorAll('#collectionGrid .setcard').length,36);ev("$('collectionMoreV548').click()");assert.equal(w.document.querySelectorAll('#collectionGrid .setcard').length,72);ev("$('search').value='10499';renderCollection()");assert.equal(w.document.querySelectorAll('#collectionGrid .setcard').length,1);ev("$('search').value='';renderCollection()");assert.equal(w.document.querySelectorAll('#collectionGrid .setcard').length,36);
+ev("openCommercialCheckoutV540('premium')");assert.equal(w.document.getElementById('checkoutPayV540').disabled,true);
 
 ev("state.collection=[{setNumber:'10326',name:'Naturhistorisches Museum',quantity:2},{setNumber:'10255',name:'Assembly Square',quantity:1}];refresh()");
 ev('baselineV546()');const oldQty=ev('state.collection[0].quantity');ev('state.collection[0].quantity+=1;persist()');assert.equal(ev('workflowV546.sessions.get(ownerV544()).undo.length'),1);assert(ev('state.collection[0].updatedAtV546'));ev('undoV546()');assert.equal(ev('state.collection[0].quantity'),oldQty);

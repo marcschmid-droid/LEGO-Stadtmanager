@@ -1,0 +1,3 @@
+# Stripe webhooks use verified Stripe signatures; browser requests verify Supabase JWTs in the handler.
+[functions.billing]
+verify_jwt = false

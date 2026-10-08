@@ -1270,6 +1270,8 @@ function catalogRowToLegacyV45(r={}){
   width:r.width,
   depth:r.depth,
   height:r.height,
+  updatedAt:r.source_updated_at||null,
+  marketSource:r.market_source||"Online-Katalog",
   retired:r.retired,
   onlineDb:true
  };

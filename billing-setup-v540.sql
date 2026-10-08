@@ -37,5 +37,5 @@ as $$
   limit 1;
 $$;
 
-revoke all on function public.my_subscription() from public;
+revoke all on function public.my_subscription() from public,anon;
 grant execute on function public.my_subscription() to authenticated;

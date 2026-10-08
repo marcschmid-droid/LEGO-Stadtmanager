@@ -1125,3 +1125,14 @@ tbody tr:hover{background:#fafbfc}
 
 /* v50.47 */
 .selectV547{width:20px!important;height:20px!important;margin:6px;accent-color:#c91a09}#inventoryOpsV547 td input,#sharedEditorV547 td input{max-width:160px;min-width:65px;box-sizing:border-box}#batchV547 .actions{flex-wrap:wrap}#batchV547 input,#sharedCollectionsV547 input{min-width:0;max-width:100%}#inventoryOpsV547 summary{font-weight:700;cursor:pointer}
+
+/* v50.48 mobile-first bounded collection and clear evidence. */
+#collectionGrid .setcard{content-visibility:auto;contain-intrinsic-size:auto 370px;cursor:pointer}
+#collectionGrid img{object-fit:contain;width:100%;height:220px}
+.valueEvidenceV548{font-size:.78rem;color:var(--muted,#626b76);margin:8px 0}
+#collectionMoreV548{display:block;margin:20px auto;min-height:44px}
+#collectionMoreV548[hidden]{display:none}
+.evidenceV548{display:grid;grid-template-columns:130px 1fr;gap:8px}.evidenceV548 dd{margin:0;overflow-wrap:anywhere}
+.guideStepsV548{padding:0;display:flex;gap:12px;list-style:none}.guideStepsV548 li{padding:12px;border:1px solid #d9dde3;border-radius:12px;flex:1}.guideStepsV548 .done{background:#edf8ef;color:#236232}
+#guideV548 .actions,#backupsV544 .actions{flex-wrap:wrap}
+@media(max-width:600px){.guideStepsV548{flex-direction:column}.evidenceV548{grid-template-columns:1fr}.evidenceV548 dt{font-weight:bold}.evidenceV548 dd{margin-bottom:6px}#collectionGrid .setcard{contain-intrinsic-size:auto 330px}}
