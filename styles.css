@@ -1136,3 +1136,36 @@ tbody tr:hover{background:#fafbfc}
 .guideStepsV548{padding:0;display:flex;gap:12px;list-style:none}.guideStepsV548 li{padding:12px;border:1px solid #d9dde3;border-radius:12px;flex:1}.guideStepsV548 .done{background:#edf8ef;color:#236232}
 #guideV548 .actions,#backupsV544 .actions{flex-wrap:wrap}
 @media(max-width:600px){.guideStepsV548{flex-direction:column}.evidenceV548{grid-template-columns:1fr}.evidenceV548 dt{font-weight:bold}.evidenceV548 dd{margin-bottom:6px}#collectionGrid .setcard{contain-intrinsic-size:auto 330px}}
+
+/* v50.49: aufgeräumter Startbildschirm */
+#home.homeMinimalV549{max-width:100%;padding-bottom:24px}
+#home .homeLegacyV549{display:none!important}
+#home .homeHeroV549{grid-template-columns:1fr;min-height:205px;padding:30px 32px;margin-bottom:17px;border-radius:22px;background:linear-gradient(120deg,#17191c 0%,#302626 68%,#8b1d18 140%)}
+#home .homeHeroV549:before{opacity:.35}
+#home .homeHeroV549 h2{font-size:clamp(29px,4vw,39px);letter-spacing:-.9px;margin:9px 0}
+#home .homeHeroV549 p{font-size:14px}
+#home .homeEyebrowV549{color:#ffdf68;font-size:10px;font-weight:800;letter-spacing:1.5px}
+#home .homeHeroV549 .heroActionsV50{margin-top:20px}
+#home .homeHeroV549 .btn{min-height:44px;border-radius:11px}
+#home .homeKpisV549{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
+#home .homeKpisV549 .card{min-width:0;padding:19px 20px;border:1px solid #eee;border-radius:17px;box-shadow:0 4px 16px #17202b08}
+#home .homeKpisV549 .card span{font-size:12px}
+#home .homeKpisV549 .card b{font-size:clamp(20px,2.8vw,30px);line-height:1.2;overflow-wrap:anywhere}
+#home .homeFocusV549{display:block;margin-bottom:15px}
+#home .homeFocusV549 .commandCardV50{min-height:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px 16px;align-items:center;padding:20px 22px}
+#home .homeFocusV549 .commandCardV50>span{grid-column:1/-1}
+#home .homeFocusV549 .commandCardV50>b{font-size:18px;min-width:0;overflow-wrap:anywhere}
+#home .homeCityPreviewV549{border-radius:20px;min-height:215px;margin-top:0;overflow:hidden}
+#home .homeCityPreviewV549 .homeCityPreviewContentV50 h2{font-size:clamp(22px,3vw,30px)}
+@media(max-width:600px){
+ #home .homeHeroV549{padding:24px 20px;min-height:0}
+ #home .homeHeroV549 .heroActionsV50{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+ #home .homeHeroV549 .btn{font-size:12px;padding:11px 8px}
+ #home .homeKpisV549{gap:7px}
+ #home .homeKpisV549 .card{padding:13px 10px}
+ #home .homeKpisV549 .card b{font-size:20px}
+ #home .homeKpisV549 .subnote{font-size:9px}
+ #home .homeFocusV549 .commandCardV50{padding:16px;grid-template-columns:1fr}
+ #home .homeFocusV549 .commandCardV50>b{font-size:17px}
+ #home .homeCityPreviewV549{min-height:190px}
+}
