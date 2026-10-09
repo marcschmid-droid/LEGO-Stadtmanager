@@ -92,4 +92,4 @@ function renderDetailOpsV547(n){const root=$('detailContent'),x=state.collection
 const detailOpsBaseV547=detailTabsV38;detailTabsV38=function(n){const r=detailOpsBaseV547(n);renderDetailOpsV547(n);return r};
 function renderOpsV547(){if($('collection')?.classList.contains('active')){renderBatchV547();decorateSelectionV547();refreshTagsV547();renderInventoryOpsV547()}if($('users')?.classList.contains('active'))renderSyncConflictV547()}
 const refreshOpsBaseV547=refresh;refresh=function(){const r=refreshOpsBaseV547();renderOpsV547();return r};const switchOpsBaseV547=switchTab;switchTab=function(id){const r=switchOpsBaseV547(id);renderOpsV547();return r};
-setTimeout(()=>{renderOpsV547();if($('appVersion'))$('appVersion').textContent='v50.60'},700);
+setTimeout(()=>{renderOpsV547();if($('appVersion'))$('appVersion').textContent='v50.62'},700);
