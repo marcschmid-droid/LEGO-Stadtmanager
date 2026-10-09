@@ -1,5 +1,5 @@
-const CACHE="brick-city-manager-v50-r55";
-const ASSETS=["./index.html","./styles.css?v=50.55","./app.js?v=50.55","./app-v3.js?v=50.55","./improvements-v544.js?v=50.55","./customer-value-v545.js?v=50.55","./usability-v546.js?v=50.55","./collection-ops-v547.js?v=50.55","./shared-collections-v547.js?v=50.55","./customer-experience-v548.js?v=50.55","./billing-client-v548.js?v=50.55","./billing-config.js?v=50.55","./supabase-config.js?v=50.55","./seed-data.js","./manifest.webmanifest","./icon.svg?v=50.55","./ursprungsstadt.jpg","./data/set-enrichment.json","./impressum.html","./datenschutz.html","./vendor/supabase.js?v=50.55","./vendor/zxing.js?v=50.55"];
+const CACHE="brick-city-manager-v50-r56";
+const ASSETS=["./index.html","./styles.css?v=50.56","./app.js?v=50.56","./app-v3.js?v=50.56","./improvements-v544.js?v=50.56","./customer-value-v545.js?v=50.56","./usability-v546.js?v=50.56","./collection-ops-v547.js?v=50.56","./shared-collections-v547.js?v=50.56","./customer-experience-v548.js?v=50.56","./billing-client-v548.js?v=50.56","./billing-config.js?v=50.56","./supabase-config.js?v=50.56","./seed-data.js","./manifest.webmanifest","./icon.svg?v=50.56","./ursprungsstadt.jpg","./data/set-enrichment.json","./impressum.html","./datenschutz.html","./vendor/supabase.js?v=50.56","./vendor/zxing.js?v=50.56"];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))).then(()=>self.skipWaiting()));
 self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener("fetch",e=>{
@@ -19,7 +19,7 @@ self.addEventListener("fetch",e=>{
    return;
  }
  // Same-version immutable assets render immediately from cache. Images and data refresh in background.
- const immutable=url.searchParams.get("v")==="50.55";
+ const immutable=url.searchParams.get("v")==="50.56";
  e.respondWith(caches.match(e.request).then(hit=>{
   if(hit&&immutable)return hit;
   const network=fetch(e.request).then(r=>{if(r.ok){const c=r.clone();return caches.open(CACHE).then(x=>x.put(e.request,c)).then(()=>r)}return r}).catch(()=>hit||Response.error());
