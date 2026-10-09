@@ -3924,6 +3924,8 @@ renderPricingV516=function(){
  $("pricingYearlyV516")?.classList.toggle("active",pricingYearlyV516);
 };
 planInfoV519=function(){
+ // Operator exemption must also be present in this final pricing override.
+ if(isAdminV36())return {key:"premium",label:"Administrator",limit:Infinity,desc:"Alle Funktionen und unbegrenzte Sets (Betreiberkonto).",admin:true};
  const key=planKeyV519(),trial=trialInfoV520();
  if(trial.active)return {key:"premium",baseKey:key,label:"Pro Test",limit:Infinity,desc:"7 Tage Pro-Testphase aktiv.",trial:true};
  return key==="premium"
