@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#c91a09">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="icon" href="./icon.svg?v=50.53">
-<link rel="apple-touch-icon" href="./icon.svg?v=50.53">
-<link rel="stylesheet" href="./styles.css?v=50.53">
+<link rel="icon" href="./icon.svg?v=50.54">
+<link rel="apple-touch-icon" href="./icon.svg?v=50.54">
+<link rel="stylesheet" href="./styles.css?v=50.54">
 <title>Brick City Manager</title><meta name="application-name" content="Brick City Manager"><meta name="apple-mobile-web-app-title" content="Brick City Manager">
 <script>
 (async()=>{
-  const V="50.53";
+  const V="50.54";
   if(localStorage.getItem("lego-app-shell-version")!==V){
     try{
       if("serviceWorker" in navigator){
@@ -30,7 +30,7 @@
 </script></head>
 <body class="themeV39">
 <header><div class="head">
-  <div class="brandV39"><img src="./icon.svg?v=50.53" alt="" class="brandIconV39" decoding="async"><div><h1>Brick City Manager <span class="versionPillV553" id="visibleVersionV553">v50.53</span></h1><small>Sammlung · Einkauf · Stadt · Züge · <b id="appVersion">v50.53</b></small></div></div>
+  <div class="brandV39"><img src="./icon.svg?v=50.54" alt="" class="brandIconV39" decoding="async"><div><h1>Brick City Manager <span class="versionPillV553" id="visibleVersionV553">v50.54</span></h1><small>Sammlung · Einkauf · Stadt · Züge · <b id="appVersion">v50.54</b></small></div></div>
   <div class="headActions"><button id="globalSearchTopV521" class="iconbtn" title="App durchsuchen">⌕</button><button id="notificationsTopV521" class="iconbtn notifyBtnV521" title="Hinweise">🔔<span id="notificationCountV521"></span></button><button id="userTop" class="iconbtn userbadge" title="Benutzer wechseln">👤</button><button id="scanTop" class="iconbtn" title="Barcode scannen">▣</button><button id="addTop" class="btn">＋ Set</button></div>
 </div></header>
 
@@ -71,7 +71,7 @@
 .tabsGroupedV550 .navMenuV550 .tab.hidden{display:none!important}
 .tabsGroupedV550 .tab:before{display:none!important}
 @media(max-width:650px){.tabsGroupedV550{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.tabsGroupedV550>.tab,.tabsGroupedV550>.navGroupV550>summary{width:100%;font-size:13px;padding:9px 7px}.tabsGroupedV550>.navGroupV550:last-child{grid-column:span 2}.tabsGroupedV550>.navGroupV550:nth-last-child(-n+2) .navMenuV550{left:auto;right:0}}
-/* v50.53: Mobile navigation must never cover content. */
+/* v50.54: Mobile navigation must never cover content. */
 @media(max-width:650px){
   body.themeV39 nav.tabs.tabsGroupedV550{
     position:relative!important;top:auto!important;bottom:auto!important;
@@ -121,7 +121,7 @@
   body.themeV39 nav.tabs.tabsGroupedV550 .navMenuV550 .tab.hidden{display:none!important}
   body.themeV39 main{padding-bottom:32px!important}
 }
-/* v50.53: compact, readable collection tools on small screens.
+/* v50.54: compact, readable collection tools on small screens.
    The navigation layout is intentionally untouched. */
 @media(max-width:650px){
   #collection>.toolbar{
@@ -175,7 +175,7 @@ document.addEventListener("click",function(e){
     <div class="homeCityPreviewContentV50"><span class="eyebrowV50">DEINE STADT</span><h2>Deine Stadt wächst.</h2><p>Entdecke deinen Stadtplan und finde Platz für deine Sets.</p></div>
   </div>
   <div class="homeLegacyV549" aria-hidden="true">
-<div class="homeVersionBadgeV508">Brick City Manager <b>v50.53</b></div>
+<div class="homeVersionBadgeV508">Brick City Manager <b>v50.54</b></div>
 <div class="commandGridV50"><div class="commandCardV50 commandProgressV50"><span>Stadtfortschritt</span><b id="v50CityPct">0 %</b><div class="commandBarV50"><i id="v50CityBar"></i></div><p id="v50CityText"></p></div><div class="commandCardV50"><b id="v50Unplanned">0</b></div><div class="commandCardV50"><b id="v50Quality">0 %</b><small id="v50QualityText"></small></div></div>
   <div class="megaAutopilotV530">
     <div class="megaAutoHeadV530"><div><span class="eyebrowV50">SMART AUTOPILOT</span><h2>Ein Knopf. Deine Sammlung wird aufgeräumt.</h2><p>Der Autopilot ergänzt sichere Online-Daten, bereinigt fehlende Zustände und zeigt dir danach die wichtigsten offenen Baustellen.</p></div><div class="megaAutoScoreV530"><small>GESAMTSTATUS</small><b id="megaAutoScoreV530">0%</b></div></div>
@@ -211,6 +211,12 @@ document.addEventListener("click",function(e){
 </section>
 
 <section id="wishlist" class="panel">
+  <div class="card" id="classifiedsWatchV554" style="margin-bottom:14px">
+    <h3 style="margin:0 0 7px">🔔 LEGO-Kleinanzeigen-Suche</h3>
+    <p class="hint" style="margin:0 0 10px">Findet Setnummern deiner Wunschliste, die noch nicht in deiner Sammlung sind, und öffnet die passenden Kleinanzeigen-Suchen. Automatische Angebotsüberwachung und Push-Nachrichten sind noch nicht aktiv.</p>
+    <div id="classifiedsMissingV554" style="display:grid;gap:8px"></div>
+    <button class="btn secondary" id="classifiedsRefreshV554" type="button" style="margin-top:9px">Fehlende Sets aktualisieren</button>
+  </div>
   <div class="toolbar"><button class="btn" id="wishAdd">＋ Wunsch</button><button class="btn secondary" id="purchaseGeneral">＋ Kauf erfassen</button></div><div id="wishCards" class="wishgrid"></div>
   <div class="tablewrap legacyWishTableV515" aria-hidden="true"><table>
     <thead><tr><th>Prio</th><th>Set</th><th>Name</th><th>Bereich</th><th>Preis</th><th></th></tr></thead>
@@ -458,7 +464,7 @@ document.addEventListener("click",function(e){
 <div id="detailModal" class="modal"><div class="sheet"><div class="sectionHead"><h2 id="detailTitle">Setdetails</h2><button class="closeX" id="closeDetail">×</button></div><div id="detailContent"></div></div></div>
 <div id="purchaseModal" class="modal"><div class="sheet"><div class="sectionHead"><h2>Kauf erfassen</h2><button class="closeX" id="closePurchaseX">×</button></div><div class="form"><label>Setnummer<input id="pSet"></label><label>Name<input id="pName"></label><label>Anzahl<input id="pQty" type="number" min="1" value="1"></label><label>Preis je Stück (€)<input id="pPrice" type="number" step="0.01"></label><label>Versand (€)<input id="pShipping" type="number" step="0.01"></label><label>Kaufdatum<input id="pDate" type="date"></label><label>Verkäufer / Quelle<input id="pSeller"></label><label>Lagerort gesamt<input id="pStorage"></label><label>Raum<input id="pStorageRoom"></label><label>Regal<input id="pStorageShelf"></label><label>Fach / Box<input id="pStorageBin"></label><label>Zustand<select id="pCondition"><option>Unbekannt</option><option>Neu / OVP</option><option>Gebraucht vollständig</option><option>Gebraucht unvollständig</option></select></label><label>Stadtbereich<input id="pArea"></label><label>Modul<input id="pModule" placeholder="z. B. M27"></label><label>Originalkarton<select id="pBox"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Vollständig?<select id="pComplete"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Notiz<textarea id="pNote"></textarea></label></div><div class="actions right"><button class="btn secondary" id="cancelPurchase">Abbrechen</button><button class="btn" id="savePurchase">Kauf speichern</button></div></div></div>
 <div id="exemplarModalV37" class="modal"><div class="sheet"><div class="sectionHead"><h2 id="exemplarTitleV37">Exemplar bearbeiten</h2><button class="closeX" id="closeExemplarV37">×</button></div><div class="form"><label>Kaufdatum<input id="exDateV37" type="date"></label><label>Verkäufer / Quelle<input id="exSellerV37"></label><label>Zustand<select id="exConditionV37"><option>Unbekannt</option><option>Neu / OVP</option><option>Gebraucht vollständig</option><option>Gebraucht unvollständig</option></select></label><label>Kaufpreis (€)<input id="exPriceV37" type="number" step="0.01"></label><label>Versandanteil (€)<input id="exShippingV37" type="number" step="0.01"></label><label>Originalkarton<select id="exBoxV37"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Vollständig?<select id="exCompleteV37"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Lagerort<input id="exStorageV37"></label><label>Notiz<textarea id="exNoteV37"></textarea></label></div><div class="actions right"><button class="btn secondary" id="cancelExemplarV37">Abbrechen</button><button class="btn" id="saveExemplarV37">Speichern</button></div></div></div><div id="scannerModal" class="modal"><div class="sheet"><div class="sectionHead"><h2>Barcode scannen</h2><button class="closeX" id="closeScanner">×</button></div><video id="scannerVideo" playsinline muted></video><p id="scannerStatus" class="hint">Kamera wird vorbereitet…</p><div class="actions"><label class="btn" id="photoBarcodeLabel">📷 Barcode fotografieren<input id="barcodePhoto" type="file" accept="image/*" capture="environment" hidden></label><button class="btn secondary" id="manualBarcode">Barcode manuell eingeben</button></div></div></div>
-<script src="./vendor/supabase.js?v=50.53"></script><script src="./supabase-config.js?v=50.53"></script><script src="./vendor/zxing.js?v=50.53"></script><script src="./billing-config.js?v=50.53"></script><script src="./seed-data.js"></script><script src="./app.js?v=50.53"></script><script src="./app-v3.js?v=50.53"></script><script src="./improvements-v544.js?v=50.53"></script><script src="./customer-value-v545.js?v=50.53"></script><script src="./usability-v546.js?v=50.53"></script><script src="./collection-ops-v547.js?v=50.53"></script><script src="./shared-collections-v547.js?v=50.53"></script><script src="./customer-experience-v548.js?v=50.53"></script><script src="./billing-client-v548.js?v=50.53"></script>
+<script src="./vendor/supabase.js?v=50.54"></script><script src="./supabase-config.js?v=50.54"></script><script src="./vendor/zxing.js?v=50.54"></script><script src="./billing-config.js?v=50.54"></script><script src="./seed-data.js"></script><script src="./app.js?v=50.54"></script><script src="./app-v3.js?v=50.54"></script><script src="./improvements-v544.js?v=50.54"></script><script src="./customer-value-v545.js?v=50.54"></script><script src="./usability-v546.js?v=50.54"></script><script src="./collection-ops-v547.js?v=50.54"></script><script src="./shared-collections-v547.js?v=50.54"></script><script src="./customer-experience-v548.js?v=50.54"></script><script src="./billing-client-v548.js?v=50.54"></script>
 <div class="utilityModalV521" id="onboardingV521" aria-hidden="true"><div class="utilityBoxV521 onboardingBoxV521"><button class="utilityCloseV521" data-close-v521="onboardingV521">×</button><span class="eyebrowV50">WILLKOMMEN</span><h2>Brick City Manager in 3 Schritten</h2><div class="onboardingStepsV521"><div><b>1</b><span><strong>Sammlung starten</strong><small>Füge dein erstes Set hinzu oder importiere deinen Bestand.</small></span></div><div><b>2</b><span><strong>Sammlerwelt wählen</strong><small>Sieh deinen Serienfortschritt und fehlende Sets.</small></span></div><div><b>3</b><span><strong>Stadt planen</strong><small>Ordne deine Sets Modulen und Stadtbereichen zu.</small></span></div></div><div class="actions"><button class="btn" id="onboardingStartV521">Erstes Set hinzufügen</button><button class="btn secondary" id="onboardingDoneV521">Später</button></div></div></div>
 <div class="utilityModalV521" id="globalSearchV521" aria-hidden="true"><div class="utilityBoxV521 searchBoxV521"><button class="utilityCloseV521" data-close-v521="globalSearchV521">×</button><span class="eyebrowV50">GLOBALE SUCHE</span><h2>Alles an einer Stelle finden</h2><input id="globalSearchInputV521" class="globalSearchInputV521" placeholder="Setnummer, Name, Bereich, Wunschliste …" autocomplete="off"><div id="globalSearchResultsV521" class="globalSearchResultsV521"></div></div></div>
 <div class="utilityModalV521" id="notificationsV521" aria-hidden="true"><div class="utilityBoxV521"><button class="utilityCloseV521" data-close-v521="notificationsV521">×</button><span class="eyebrowV50">HINWEISE</span><h2>Was deine Aufmerksamkeit braucht</h2><div id="notificationListV521"></div></div></div>
@@ -483,4 +489,34 @@ document.addEventListener("click",function(e){
 <div class="checkoutLegalV540"><label><input type="checkbox" id="checkoutTermsV540"> Ich akzeptiere die <a href="./agb.html" target="_blank">AGB</a> und habe die <a href="./widerruf.html" target="_blank">Widerrufsbelehrung</a> sowie die <a href="./datenschutz.html" target="_blank">Datenschutzerklärung</a> zur Kenntnis genommen.</label></div>
 <div class="actions right"><button class="btn secondary" id="checkoutCancelV540">Abbrechen</button><button class="btn" id="checkoutPayV540">Zahlungspflichtig bestellen</button></div>
 <p id="checkoutStatusV540" class="hint"></p>
-</div></div></body></html>
+</div></div><script>
+(function(){
+ const digits=v=>String(v??"").match(/\d{4,7}/)?.[0]||"";
+ const clean=v=>String(v??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
+ function render(){
+  const root=document.getElementById("classifiedsMissingV554");if(!root)return;
+  const data=(typeof state!=="undefined"&&state)?state:null;
+  if(!data){root.textContent="Sammlung wird geladen …";return}
+  const owned=new Set((data.collection||[]).filter(x=>Number(x.quantity??1)>0).map(x=>digits(x.setNumber||x.number)).filter(Boolean));
+  const missing=[...new Map((data.wishlist||[]).filter(x=>{const n=digits(x.setNumber||x.number);return n&&!owned.has(n)}).map(x=>[digits(x.setNumber||x.number),x])).values()];
+  if(!missing.length){root.textContent="Keine fehlenden Sets mit Setnummer auf deiner Wunschliste. Ergänze fehlende Sets dort zuerst.";return}
+  root.replaceChildren();
+  missing.slice(0,60).forEach(x=>{
+   const n=digits(x.setNumber||x.number);const row=document.createElement("div");
+   row.style.cssText="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:9px 0;border-bottom:1px solid #e9e9e9";
+   const label=document.createElement("span");label.textContent=n+" · "+(x.name||"LEGO Set");
+   label.style.cssText="font-size:13px;overflow-wrap:anywhere;flex:1;min-width:125px";
+   const link=document.createElement("a");link.className="btn secondary";link.textContent="Angebote suchen ↗";link.target="_blank";link.rel="noopener noreferrer";
+   link.href="https://www.kleinanzeigen.de/s-lego-"+encodeURIComponent(n)+"/k0";
+   row.append(label,link);root.append(row);
+  });
+  if(missing.length>60){const note=document.createElement("small");note.textContent="Erste 60 von "+missing.length+" fehlenden Sets angezeigt.";root.append(note)}
+ }
+ document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("classifiedsRefreshV554")?.addEventListener("click",render);
+  document.querySelectorAll('[data-tab="wishlist"]').forEach(btn=>btn.addEventListener("click",()=>setTimeout(render,80)));
+  render();
+ });
+})();
+</script>
+</body></html>
