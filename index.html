@@ -35,15 +35,53 @@
 </div></header>
 
 <main>
-<nav class="tabs">
-  <button class="tab active" data-tab="home">Übersicht</button>
-  <button class="tab" data-tab="collection">Sammlung</button>
-  <button class="tab" data-tab="wishlist">Einkauf</button>
-  <button class="tab" data-tab="collector">Sammler</button>
-  <button class="tab" data-tab="city">Stadt</button>
-  <button class="tab" data-tab="trains">Züge</button><button class="tab premiumTabV520" data-tab="prices">Preise <small>Premium</small></button><button class="tab premiumTabV520" data-tab="analysis">Analyse <small>Premium</small></button>
-  <button class="tab" data-tab="plans">Tarife</button><button class="tab" data-tab="users">Konto</button><button class="tab hidden" id="adminTabV36" data-tab="admin">Admin</button><button class="tab" data-tab="settings">Daten</button>
+<nav class="tabs tabsGroupedV550" aria-label="Hauptnavigation">
+  <button class="tab active" data-tab="home">Start</button>
+  <details class="navGroupV550"><summary>Sammlung</summary><div class="navMenuV550">
+    <button class="tab" data-tab="collection">Meine Sets</button>
+    <button class="tab" data-tab="collector">Serien &amp; Sammlerziele</button>
+    <button class="tab" data-tab="wishlist">Wünsche &amp; Einkäufe</button>
+  </div></details>
+  <details class="navGroupV550"><summary>Stadtplanung</summary><div class="navMenuV550">
+    <button class="tab" data-tab="city">Stadtplan</button>
+    <button class="tab" data-tab="trains">Züge &amp; Schienen</button>
+  </div></details>
+  <details class="navGroupV550"><summary>Werte &amp; Analyse</summary><div class="navMenuV550">
+    <button class="tab premiumTabV520" data-tab="prices">Preise</button>
+    <button class="tab premiumTabV520" data-tab="analysis">Analysen</button>
+  </div></details>
+  <details class="navGroupV550"><summary>Mehr</summary><div class="navMenuV550">
+    <button class="tab" data-tab="users">Konto</button>
+    <button class="tab" data-tab="plans">Tarife</button>
+    <button class="tab" data-tab="settings">Daten &amp; Einstellungen</button>
+    <button class="tab hidden" id="adminTabV36" data-tab="admin">Administration</button>
+  </div></details>
 </nav>
+<style id="navGroupedStylesV550">
+.tabsGroupedV550{display:flex!important;align-items:stretch;gap:8px;overflow:visible!important;flex-wrap:wrap;position:relative;z-index:50}
+.tabsGroupedV550>.tab,.tabsGroupedV550>.navGroupV550>summary{box-sizing:border-box;min-height:44px;display:flex;align-items:center;justify-content:center;padding:10px 15px;border-radius:12px;border:1px solid var(--line,#ddd);background:var(--card,#fff);color:inherit;font-size:14px;font-weight:650;cursor:pointer;white-space:nowrap;list-style:none;box-shadow:none}
+.tabsGroupedV550>.navGroupV550>summary::-webkit-details-marker{display:none}
+.tabsGroupedV550>.navGroupV550>summary:after{content:"⌄";font-size:12px;margin-left:8px;opacity:.6}
+.tabsGroupedV550>.tab.active,.tabsGroupedV550>.navGroupV550:has(.tab.active)>summary{background:var(--red,#c91a09);color:white;border-color:var(--red,#c91a09)}
+.tabsGroupedV550 .navGroupV550{position:relative}
+.tabsGroupedV550 .navMenuV550{position:absolute;top:calc(100% + 5px);left:0;z-index:100;min-width:230px;max-width:min(300px,90vw);padding:7px;border:1px solid var(--line,#ddd);background:var(--card,#fff);border-radius:14px;box-shadow:0 14px 32px #0002;display:grid;gap:3px}
+.tabsGroupedV550 .navMenuV550 .tab{display:block!important;width:100%;text-align:left;border-radius:9px;padding:12px 14px;margin:0;box-shadow:none;background:transparent;color:inherit;font-size:14px;white-space:normal}
+.tabsGroupedV550 .navMenuV550 .tab:hover{background:#9992}
+.tabsGroupedV550 .navMenuV550 .tab.active{background:var(--red,#c91a09);color:#fff}
+.tabsGroupedV550 .navMenuV550 .tab.hidden{display:none!important}
+.tabsGroupedV550 .tab:before{display:none!important}
+@media(max-width:650px){.tabsGroupedV550{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.tabsGroupedV550>.tab,.tabsGroupedV550>.navGroupV550>summary{width:100%;font-size:13px;padding:9px 7px}.tabsGroupedV550>.navGroupV550:last-child{grid-column:span 2}.tabsGroupedV550>.navGroupV550:nth-last-child(-n+2) .navMenuV550{left:auto;right:0}}
+</style>
+<script>
+document.addEventListener("click",function(e){
+ const nav=document.querySelector(".tabsGroupedV550");if(!nav)return;
+ const selected=e.target.closest(".tabsGroupedV550 .tab[data-tab]");
+ if(selected){nav.querySelectorAll("details[open]").forEach(d=>d.removeAttribute("open"));return;}
+ const summary=e.target.closest(".tabsGroupedV550 summary");
+ if(summary){nav.querySelectorAll("details[open]").forEach(d=>{if(d!==summary.parentElement)d.removeAttribute("open")});return;}
+ if(!nav.contains(e.target))nav.querySelectorAll("details[open]").forEach(d=>d.removeAttribute("open"));
+});
+</script>
 
 <section id="home" class="panel active homeMinimalV549">
   <div class="heroV50 homeHeroV549">
