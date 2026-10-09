@@ -2,6 +2,12 @@
 (function(){
   'use strict';
   const initialSave=cloudSaveV3;
+  // Stop allocating a new full JSON snapshot on every edit; leave existing snapshots intact.
+  const originalSnapshotV561=snapshotV544;
+  snapshotV544=function(reason='Automatische Sicherung',force=false){
+    if(!force)return true;
+    return originalSnapshotV561(reason,true);
+  };
   let checking=false;
   function collectionSignature(s){
     return JSON.stringify((s?.collection||[]).map(x=>[String(x.setNumber),Number(x.quantity||1)]).sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true})));
