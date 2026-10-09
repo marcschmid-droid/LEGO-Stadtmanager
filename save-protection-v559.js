@@ -23,7 +23,9 @@
     const user=cloudUserV3?.id;
     if(!user||!cloudV3||cloudApplyingV3)return;
     if(checking){if(show)cloudStatusV3('Speicherung läuft bereits. Bitte kurz den Status prüfen.');return}
-    if(!safeRecoveryCopy('Vor Cloud-Abgleich'))return;
+    // A full extra local copy can exhaust iOS storage. Continue with the verified cloud path,
+    // but show an explicit warning if a recovery copy could not be written.
+    const recoveryReady=safeRecoveryCopy('Vor Cloud-Abgleich');
     if(!navigator.onLine){cloudStatusV3('Offline: nur lokal gespeichert, Cloud noch NICHT bestätigt.');return}
     checking=true;
     try{
@@ -72,9 +74,22 @@
     box.innerHTML='<h2>Speicherprüfung & Rettungskopie</h2><p class="hint">Eine lokale Sicherheitskopie wird vor jedem Cloud-Abgleich angelegt. Der Cloud-Bestand wird nach dem Speichern kontrolliert. Nicht bestätigte Speicherungen und Konflikte werden gemeldet.</p><div class="actions"><button class="btn secondary" id="exportProtectionV559">Sicherungen herunterladen</button></div>';
     $('exportProtectionV559').onclick=exportRecovery;
   }
+  // Never silently lose a save request when localStorage has reached its quota.
+  const basePersistProtectedV559=persist;
+  persist=function(){
+    try{return basePersistProtectedV559()}
+    catch(error){
+      if(error?.name==='QuotaExceededError'||/quota/i.test(String(error?.message))){
+        cloudStatusV3('GERÄTESPEICHER VOLL: lokale Speicherung nicht bestätigt. Bitte Backup exportieren und Cloud-Status prüfen.');
+        if(cloudUserV3?.id)queueCloudSaveV3();
+        return;
+      }
+      throw error;
+    }
+  };
   const oldRender=renderSyncConflictV547;
   renderSyncConflictV547=function(){oldRender();showProtection()};
   const oldSwitch=switchTab;
   switchTab=function(id){const r=oldSwitch(id);if(id==='users')showProtection();return r};
-  document.addEventListener('DOMContentLoaded',showProtection);
+  document.addEventListener('DOMContentLoaded',()=>{showProtection();const badge=$('appVersion');if(badge)badge.textContent='v50.60';document.querySelectorAll('#visibleVersionV553').forEach(el=>el.textContent='v50.60')});
 })();
