@@ -7,17 +7,23 @@
     return JSON.stringify((s?.collection||[]).map(x=>[String(x.setNumber),Number(x.quantity||1)]).sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true})));
   }
   function safeRecoveryCopy(label){
-    if(!cloudUserV3)return false;
+    // No additional full-state copies in localStorage: iOS quota is limited.
+    // Existing historical recovery copies remain untouched until the owner exports them.
+    return true;
+  }
+  function cleanupAfterExport(){
+    if(!cloudUserV3)return;
+    if(!confirm('Du hast eine Rettungskopie heruntergeladen? Alte lokale Vollsicherungen dieses Kontos entfernen, um Speicher freizugeben? Die Cloud-Sammlung wird NICHT verändert.'))return;
+    const key=backupKeyV544();
+    // Do not remove the newest checkpoint; discard older duplicated full snapshots.
     try{
-      const key='bcm-recovery-v559:'+cloudUserV3.id;
-      const rows=JSON.parse(localStorage.getItem(key)||'[]');
-      rows.unshift({time:new Date().toISOString(),label,state:structuredClone(state)});
-      localStorage.setItem(key,JSON.stringify(rows.slice(0,3)));
-      return true;
-    }catch(err){
-      cloudStatusV3('Lokale Sicherung fehlgeschlagen. Bitte Backup JSON exportieren: '+String(err?.message||err));
-      return false;
-    }
+      const rows=backupRowsV544();
+      if(rows.length>1)localStorage.setItem(key,JSON.stringify(rows.slice(0,1)));
+      localStorage.removeItem('bcm-recovery-v559:'+cloudUserV3.id);
+      localStorage.removeItem('brick-city-backups-v544-local');
+      cloudStatusV3('Alte lokale Kopien bereinigt. Cloud-Bestand unverändert. Bitte Speicherung erneut prüfen.');
+    }catch(err){cloudStatusV3('Speicherbereinigung nicht vollständig: '+String(err?.message||err))}
+    renderSyncConflictV547();
   }
   cloudSaveV3=async function(show=false){
     const user=cloudUserV3?.id;
@@ -25,7 +31,7 @@
     if(checking){if(show)cloudStatusV3('Speicherung läuft bereits. Bitte kurz den Status prüfen.');return}
     // A full extra local copy can exhaust iOS storage. Continue with the verified cloud path,
     // but show an explicit warning if a recovery copy could not be written.
-    const recoveryReady=safeRecoveryCopy('Vor Cloud-Abgleich');
+    safeRecoveryCopy('Vor Cloud-Abgleich');
     if(!navigator.onLine){cloudStatusV3('Offline: nur lokal gespeichert, Cloud noch NICHT bestätigt.');return}
     checking=true;
     try{
@@ -71,8 +77,9 @@
   function showProtection(){
     const box=cardV544('users','saveProtectionV559','Speicherprüfung & Rettungskopie');
     if(!box)return;
-    box.innerHTML='<h2>Speicherprüfung & Rettungskopie</h2><p class="hint">Eine lokale Sicherheitskopie wird vor jedem Cloud-Abgleich angelegt. Der Cloud-Bestand wird nach dem Speichern kontrolliert. Nicht bestätigte Speicherungen und Konflikte werden gemeldet.</p><div class="actions"><button class="btn secondary" id="exportProtectionV559">Sicherungen herunterladen</button></div>';
+    box.innerHTML='<h2>Speicherprüfung & Rettungskopie</h2><p class="hint">Eine lokale Sicherheitskopie wird vor jedem Cloud-Abgleich angelegt. Der Cloud-Bestand wird nach dem Speichern kontrolliert. Nicht bestätigte Speicherungen und Konflikte werden gemeldet.</p><div class="actions"><button class="btn secondary" id="exportProtectionV559">Sicherungen herunterladen</button><button class="btn secondary" id="cleanupProtectionV559">Alte lokale Kopien bereinigen</button></div>';
     $('exportProtectionV559').onclick=exportRecovery;
+    $('cleanupProtectionV559').onclick=cleanupAfterExport;
   }
   // Never silently lose a save request when localStorage has reached its quota.
   const basePersistProtectedV559=persist;
@@ -91,5 +98,5 @@
   renderSyncConflictV547=function(){oldRender();showProtection()};
   const oldSwitch=switchTab;
   switchTab=function(id){const r=oldSwitch(id);if(id==='users')showProtection();return r};
-  document.addEventListener('DOMContentLoaded',()=>{showProtection();const badge=$('appVersion');if(badge)badge.textContent='v50.60';document.querySelectorAll('#visibleVersionV553').forEach(el=>el.textContent='v50.60')});
+  document.addEventListener('DOMContentLoaded',()=>{showProtection();const badge=$('appVersion');if(badge)badge.textContent='v50.61';document.querySelectorAll('#visibleVersionV553').forEach(el=>el.textContent='v50.61')});
 })();
