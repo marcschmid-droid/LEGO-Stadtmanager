@@ -7,7 +7,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg?v=50.48">
 <link rel="apple-touch-icon" href="./icon.svg?v=50.48">
-<link rel="stylesheet" href="./styles.css?v=50.48">
+<link rel="stylesheet" href="./styles.css?v=50.49">
 <title>Brick City Manager</title><meta name="application-name" content="Brick City Manager"><meta name="apple-mobile-web-app-title" content="Brick City Manager">
 <script>
 (async()=>{
@@ -45,15 +45,30 @@
   <button class="tab" data-tab="plans">Tarife</button><button class="tab" data-tab="users">Konto</button><button class="tab hidden" id="adminTabV36" data-tab="admin">Admin</button><button class="tab" data-tab="settings">Daten</button>
 </nav>
 
-<section id="home" class="panel active">
-  <div class="homeVersionBadgeV508">Brick City Manager <b>v50.48</b></div>
-  <div class="heroV50"><div><span class="eyebrowV50">VERSION 50.48 · SAMMLUNG & INVENTUR</span><h2>Deine Brick City. Eine Zentrale.</h2><p>Planung, Sammlung, Wert und nächste Schritte – jetzt direkt auf einen Blick.</p><div class="heroActionsV50"><button class="btn v50Primary" id="v50PlanNext">Nächstes Set einplanen</button><button class="btn v50Ghost" id="v50Scan">Set scannen</button><button class="btn v50Ghost" id="v50Showcase">Showcase</button><button class="btn v50Ghost" id="v50Plans">Tarife</button></div></div><div class="hero50Mark heroVersionCompactV527"><small>AKTUELLE VERSION</small><span>v50.48</span></div></div>
-  <div class="commandGridV50">
-    <div class="commandCardV50 commandProgressV50"><div class="commandHeadV50"><span>Stadtfortschritt</span><b id="v50CityPct">0 %</b></div><div class="commandBarV50"><i id="v50CityBar"></i></div><p id="v50CityText">Planung wird geladen…</p></div>
-    <div class="commandCardV50"><span>Nächster sinnvoller Schritt</span><b id="v50NextAction">–</b><button class="linkbtnV50" id="v50NextActionBtn">Öffnen →</button></div>
-    <div class="commandCardV50"><span>Noch ohne Stadtplatz</span><b id="v50Unplanned">0</b><small>Sets ohne Modulzuordnung</small></div>
-    <div class="commandCardV50"><span>Datenqualität</span><b id="v50Quality">0 %</b><small id="v50QualityText">Sammlung prüfen</small></div>
+<section id="home" class="panel active homeMinimalV549">
+  <div class="heroV50 homeHeroV549">
+    <div><span class="homeEyebrowV549">DEINE SAMMLUNG. DEINE STADT.</span>
+      <h2>Deine Brick City.</h2>
+      <p>Alles Wichtige auf einen Blick.</p>
+      <div class="heroActionsV50"><button class="btn v50Primary" id="quickAdd">＋ Set hinzufügen</button><button class="btn v50Ghost" id="v50OpenCity">Stadtplan öffnen →</button></div>
+    </div>
   </div>
+  <div class="cards homeKpisV549" aria-label="Sammlung auf einen Blick">
+    <div class="card"><span>Sets</span><b id="kUnique">0</b></div>
+    <div class="card"><span>Exemplare</span><b id="kQty">0</b></div>
+    <div class="card"><span>Investment</span><b id="kInvest">0 €</b><small id="investRef" class="subnote"></small></div>
+  </div>
+  <div class="commandGridV50 homeFocusV549">
+    <div class="commandCardV50"><span>Dein nächster Schritt</span><b id="v50NextAction">–</b><button class="linkbtnV50" id="v50NextActionBtn">Jetzt öffnen →</button></div>
+  </div>
+  <div class="homeCityPreviewV50 homeCityPreviewV549">
+    <img src="./ursprungsstadt.jpg?v=8" alt="Vorschau deiner Brick City" loading="lazy">
+    <div class="homeCityPreviewShadeV50"></div>
+    <div class="homeCityPreviewContentV50"><span class="eyebrowV50">DEINE STADT</span><h2>Deine Stadt wächst.</h2><p>Entdecke deinen Stadtplan und finde Platz für deine Sets.</p></div>
+  </div>
+  <div class="homeLegacyV549" aria-hidden="true">
+<div class="homeVersionBadgeV508">Brick City Manager <b>v50.48</b></div>
+<div class="commandGridV50"><div class="commandCardV50 commandProgressV50"><span>Stadtfortschritt</span><b id="v50CityPct">0 %</b><div class="commandBarV50"><i id="v50CityBar"></i></div><p id="v50CityText"></p></div><div class="commandCardV50"><b id="v50Unplanned">0</b></div><div class="commandCardV50"><b id="v50Quality">0 %</b><small id="v50QualityText"></small></div></div>
   <div class="megaAutopilotV530">
     <div class="megaAutoHeadV530"><div><span class="eyebrowV50">SMART AUTOPILOT</span><h2>Ein Knopf. Deine Sammlung wird aufgeräumt.</h2><p>Der Autopilot ergänzt sichere Online-Daten, bereinigt fehlende Zustände und zeigt dir danach die wichtigsten offenen Baustellen.</p></div><div class="megaAutoScoreV530"><small>GESAMTSTATUS</small><b id="megaAutoScoreV530">0%</b></div></div>
     <div id="megaAutoMetricsV530" class="megaAutoMetricsV530"></div>
@@ -61,18 +76,9 @@
     <div class="actions"><button class="btn v50Primary" id="megaAutoRunV530">Autopilot starten</button><button class="btn secondary" id="megaAutoAnalysisV530">Details ansehen</button></div>
     <div id="megaAutoProgressV530" class="megaAutoProgressV530 hidden"><span></span><i></i></div>
   </div>
-  <div class="homeCityPreviewV50">
-    <img src="./ursprungsstadt.jpg?v=8" alt="Vorschau der Brick City">
-    <div class="homeCityPreviewShadeV50"></div>
-    <div class="homeCityPreviewContentV50"><span class="eyebrowV50">DEINE STADT</span><h2>Vom Bestand zum Stadtbild.</h2><p>Öffne den Plan, finde freie Plätze und ordne Sets direkt zu.</p><button class="btn v50Primary" id="v50OpenCity">Stadtplan öffnen</button></div>
-  </div>
-  <div class="homeSectionTitleV50"><div><span>Sammlung</span><h3>Die wichtigsten Zahlen</h3></div><small>Details findest du in Sammlung und Analyse.</small></div>
-  <div class="cards">
-    <div class="card"><span>Eindeutige Sets</span><b id="kUnique">0</b></div>
-    <div class="card"><span>Exemplare</span><b id="kQty">0</b></div>
-    <div class="card"><span>Investment (Master)</span><b id="kInvest">0 €</b><small id="investRef" class="subnote"></small></div>
-    <div class="card"><span>Wunschliste</span><b id="kWish">0</b></div><div class="card"><span>Erfasster Wert</span><b id="kValue">0 €</b><small>nur gepflegte Werte</small></div><div class="card"><span>Gewinn / Verlust</span><b id="kGain">0 €</b><small id="kGainPct">0 %</small></div>
-  </div>
+
+<div class="cards"><div class="card"><b id="kWish">0</b></div><div class="card"><b id="kValue">0 €</b></div><div class="card"><b id="kGain">0 €</b><small id="kGainPct"></small></div></div>
+<div class="heroActionsV50"><button id="v50PlanNext">Nächstes Set einplanen</button><button id="v50Scan">Set scannen</button><button id="v50Showcase">Showcase</button><button id="v50Plans">Tarife</button></div>
   <div class="card wide">
     <h2>Schnellstart</h2>
     <p>Deine bestätigte Sammlung ist als Startbestand enthalten. Neue Käufe kannst du direkt eintragen oder aus der Einkaufsliste übernehmen.</p>
@@ -84,6 +90,8 @@
     <div class="card wide"><div class="sectionHead"><div><span class="eyebrowV50">ERFOLGE</span><h2>Sammler-Meilensteine</h2></div></div><div id="homeAchievementsV521" class="achievementGridV521"></div></div>
   </div>
   <div class="card wide"><div class="sectionHead"><div><span class="eyebrowV50">EMPFEHLUNGEN</span><h2>Was du als Nächstes tun könntest</h2></div></div><div id="homeRecommendationsV521" class="recommendGridV521"></div></div>
+
+</div>
 </section>
 
 <section id="collection" class="panel">
