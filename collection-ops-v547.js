@@ -10,7 +10,7 @@ async function conflictV547(user){const {data,error}=await readRemoteV547(user);
 cloudSaveV3=async function(){
  const user=cloudUserV3?.id;if(!user||!cloudV3||cloudApplyingV3||opsV547.loading.has(user))return;
  const s=syncInfoV547(user);if(s.conflict){renderSyncConflictV547();return}
- localStorage.setItem(cloudCacheKeyV3(user),JSON.stringify(state));if(!navigator.onLine){cloudStatusV3('Offline · Änderungen lokal gesichert.');return}
+ try{localStorage.setItem(cloudCacheKeyV3(user),JSON.stringify(state))}catch(e){cloudStatusV3('Gerätespeicher voll: nur Cloud-Speicherung möglich. Bitte Backup exportieren.')}if(!navigator.onLine){cloudStatusV3('Offline · Änderungen lokal gesichert.');return}
  if(s.revision===undefined){cloudStatusV3('Cloud-Version noch nicht geladen. Bitte anmelden oder erneut synchronisieren.');return}
  if(opsV547.saving.has(user)){opsV547.again.add(user);return}
  opsV547.saving.add(user);const epoch=opsV547.epoch,copy=structuredClone(state),signature=JSON.stringify(copy);cloudStatusV3('Synchronisierung läuft…');
@@ -20,7 +20,7 @@ cloudSaveV3=async function(){
   const {data,error}=await query.select('updated_at').maybeSingle();if(cloudUserV3?.id!==user||epoch!==opsV547.epoch)return;
   if(error){if(error.code==='23505')await conflictV547(user);else cloudStatusV3('Synchronisierung fehlgeschlagen. Lokal bleibt erhalten.');return}
   if(!data){await conflictV547(user);return}
-  s.revision=data.updated_at;s.dirty=JSON.stringify(state)!==signature;storeSyncV547(user,s);cloudStatusV3('Synchronisiert: '+new Date().toLocaleTimeString('de-DE'));
+  s.revision=data.updated_at;s.dirty=JSON.stringify(state)!==signature;try{storeSyncV547(user,s)}catch(e){cloudStatusV3('Cloud gespeichert, aber lokaler Versionsspeicher voll.')}cloudStatusV3('Synchronisiert: '+new Date().toLocaleTimeString('de-DE'));
   if(s.dirty)opsV547.again.add(user);
  }catch{if(cloudUserV3?.id===user)cloudStatusV3('Cloud nicht erreichbar · lokal gesichert.')}finally{opsV547.saving.delete(user);if(opsV547.again.delete(user)&&cloudUserV3?.id===user&&epoch===opsV547.epoch&&!s.conflict)queueCloudSaveV3()}
 };
@@ -65,4 +65,4 @@ function renderDetailOpsV547(n){const root=$('detailContent'),x=state.collection
 const detailOpsBaseV547=detailTabsV38;detailTabsV38=function(n){const r=detailOpsBaseV547(n);renderDetailOpsV547(n);return r};
 function renderOpsV547(){if($('collection')?.classList.contains('active')){renderBatchV547();decorateSelectionV547();refreshTagsV547();renderInventoryOpsV547()}if($('users')?.classList.contains('active'))renderSyncConflictV547()}
 const refreshOpsBaseV547=refresh;refresh=function(){const r=refreshOpsBaseV547();renderOpsV547();return r};const switchOpsBaseV547=switchTab;switchTab=function(id){const r=switchOpsBaseV547(id);renderOpsV547();return r};
-setTimeout(()=>{renderOpsV547();if($('appVersion'))$('appVersion').textContent='v50.48'},700);
+setTimeout(()=>{renderOpsV547();if($('appVersion'))$('appVersion').textContent='v50.60'},700);
