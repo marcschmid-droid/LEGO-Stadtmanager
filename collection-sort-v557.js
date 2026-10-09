@@ -2,6 +2,8 @@
 (function(){
   const KEY="brickCollectionSortV557";
   const options=[
+    ["added-desc","Zuletzt hinzugefügt"],
+    ["added-asc","Zuerst hinzugefügt"],
     ["number-asc","Setnummer: aufsteigend"],
     ["number-desc","Setnummer: absteigend"],
     ["date-desc","Kaufdatum: neueste zuerst"],
@@ -19,10 +21,21 @@
       .map(v=>Date.parse(String(v).slice(0,10))).filter(Number.isFinite);
     return dates.length?Math.min(...dates):null;
   }
+  function addedOf(x){
+    const vals=[x.addedAt,x.createdAt,x.dateAdded,x.importedAt,x.created_at,x.addedDate]
+      .map(v=>v?Date.parse(v):NaN).filter(Number.isFinite);
+    return vals.length?Math.min(...vals):null;
+  }
   function sortCollection(rows){
     const [field,direction]=mode.split("-");
     const sign=direction==="desc"?-1:1;
+    const order=new Map((state.collection||[]).map((x,i)=>[String(x.setNumber),i]));
     return [...rows].sort((a,b)=>{
+      if(field==="added"){
+        const av=addedOf(a),bv=addedOf(b);
+        if(av!==null&&bv!==null&&av!==bv)return sign*(av-bv);
+        return sign*((order.get(String(a.setNumber))??0)-(order.get(String(b.setNumber))??0));
+      }
       if(field==="number")return sign*numeric.compare(String(a.setNumber||""),String(b.setNumber||""));
       const av=field==="date"?dateOf(a):Number(a.purchasePrice);
       const bv=field==="date"?dateOf(b):Number(b.purchasePrice);
