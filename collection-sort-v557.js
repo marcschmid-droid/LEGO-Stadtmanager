@@ -15,7 +15,7 @@
   const numeric=new Intl.Collator("de",{numeric:true,sensitivity:"base"});
   function dateOf(x){
     const dates=[x.purchaseDate,...(Array.isArray(x.exemplars)?x.exemplars.map(e=>e.date||e.purchaseDate):[])]
-      .filter(v=>v&&/^\\d{4}-\\d{2}-\\d{2}/.test(String(v)))
+      .filter(v=>v&&/^\d{4}-\d{2}-\d{2}/.test(String(v)))
       .map(v=>Date.parse(String(v).slice(0,10))).filter(Number.isFinite);
     return dates.length?Math.min(...dates):null;
   }
