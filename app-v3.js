@@ -2107,6 +2107,8 @@ function trialInfoV520(){
  return {started,ends,active,daysLeft:active?Math.max(1,Math.ceil((ends-Date.now())/86400000)):0};
 }
 function planInfoV519(){
+ // The signed-in operator account is not subject to consumer collection tiers.
+ if(isAdminV36())return {key:"admin",label:"Administrator",limit:Infinity,desc:"Unbegrenzte Set-Verwaltung (Betreiberkonto)."};
  const key=planKeyV519(),trial=trialInfoV520();
  if(trial.active)return {key:"premium",baseKey:key,label:"Premium Test",limit:Infinity,desc:"7 Tage Premium-Testphase aktiv.",trial:true};
  return key==="premium"
