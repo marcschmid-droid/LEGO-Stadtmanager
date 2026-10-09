@@ -43,7 +43,34 @@ cloudSessionV3=async function(session){
 };
 function renderSyncConflictV547(){const box=cardV544('users','syncConflictV547','Synchronisierung & Gerätekonflikte');if(!box)return;const c=cloudUserV3?syncInfoV547().conflict:null;box.innerHTML='<h2>Synchronisierung & Gerätekonflikte</h2>'+(c?'<p>Auf einem anderen Gerät wurde zwischenzeitlich gespeichert. Beide Stände bleiben erhalten, bis du eine Auswahl triffst.</p><div class="actions"><button class="btn secondary" id="syncBothV547">Beide Stände herunterladen</button><button class="btn secondary" id="syncRemoteV547">Cloud-Stand übernehmen</button><button class="btn secondary" id="syncLocalV547">Meinen Stand bewusst speichern</button></div>':'<p class="hint">Cloud-Schreibvorgänge prüfen die zuletzt geladene Version. Änderungen eines anderen Geräts werden nicht automatisch überschrieben.</p>');if(!c)return;
  $('syncBothV547').onclick=()=>downloadValueV545(JSON.stringify({local:state,remote:c.remote},null,2),'Brick-City-Konflikt.json','application/json');
- const resolve=async local=>{if(!confirm(local?'Deinen lokalen Stand anstelle der angezeigten Cloud-Version speichern?':'Den angezeigten Cloud-Stand übernehmen? Dein aktueller Stand wird lokal gesichert.'))return;if(!snapshotV544('Vor Konfliktauflösung',true))return alert(reliabilityV544.backupError);const user=cloudUserV3.id,s=syncInfoV547(user);try{const rows=[...backupRowsV544()];rows.unshift({createdAt:new Date().toISOString(),reason:'Cloud-Stand vor Konfliktauflösung',state:structuredClone(c.remote)});localStorage.setItem(backupKeyV544(),JSON.stringify(rows.slice(0,5)))}catch{return alert('Sicherung fehlgeschlagen. Bitte beide Stände herunterladen.')}s.revision=c.revision;s.conflict=null;s.dirty=local;if(!local)applyCloudStateV547(c.remote);storeSyncV547(user,s);if(local)await cloudSaveV3();else{localStorage.setItem(cloudCacheKeyV3(user),JSON.stringify(state));cloudStatusV3('Cloud-Stand übernommen.')}renderSyncConflictV547()};$('syncRemoteV547').onclick=()=>resolve(false);$('syncLocalV547').onclick=()=>resolve(true);
+ const resolve=async local=>{
+ if(!confirm(local?'Den lokalen Bestand mit allen Sets in die Cloud übertragen? Bitte nur fortfahren, wenn du die Konfliktdatei bereits heruntergeladen hast.':'Den Cloud-Stand übernehmen? Bitte vorher beide Stände herunterladen.'))return;
+ const user=cloudUserV3?.id;if(!user)return;
+ const sync=syncInfoV547(user);
+ if(local){
+   const copy=structuredClone(state),remote=c.remote||blankStateV3();
+   const localMap=new Map((copy.collection||[]).map(x=>[String(x.setNumber),x]));
+   const missing=(remote.collection||[]).filter(x=>!localMap.has(String(x.setNumber))||Number(localMap.get(String(x.setNumber)).quantity||1)<Number(x.quantity||1));
+   if(missing.length){cloudStatusV3('Abbruch: Cloud enthält '+missing.length+' Sets oder Stückzahlen, die lokal fehlen. Bitte beide Stände herunterladen.');return}
+   cloudStatusV3('Gesicherter Cloud-Abgleich läuft…');
+   try{
+     const stamp=new Date(Math.max(Date.now(),Date.parse(c.revision||'1970-01-01')+1)).toISOString();
+     let q=c.revision===null?cloudV3.from('user_state').insert({user_id:user,state:copy,updated_at:stamp}):cloudV3.from('user_state').update({state:copy,updated_at:stamp}).eq('user_id',user).eq('updated_at',c.revision);
+     const {data,error}=await q.select('updated_at').maybeSingle();
+     if(error||!data){cloudStatusV3('Konflikt bleibt bestehen: Cloud wurde nicht überschrieben. '+(error?.message||'Version inzwischen geändert'));return}
+     const verified=await cloudV3.from('user_state').select('state,updated_at').eq('user_id',user).maybeSingle();
+     if(verified.error||JSON.stringify((verified.data?.state?.collection||[]).map(x=>[String(x.setNumber),Number(x.quantity||1)]).sort())!==JSON.stringify((copy.collection||[]).map(x=>[String(x.setNumber),Number(x.quantity||1)]).sort())){cloudStatusV3('Cloud-Abgleich nicht bestätigt. Bitte Sicherungsdatei behalten.');return}
+     sync.revision=verified.data.updated_at;sync.conflict=null;sync.dirty=false;
+     try{storeSyncV547(user,sync)}catch{}
+     try{localStorage.setItem(cloudCacheKeyV3(user),JSON.stringify(copy))}catch{}
+     cloudStatusV3('Cloud bestätigt: '+copy.collection.length+' Sets gespeichert.');renderSyncConflictV547();
+   }catch(error){cloudStatusV3('Cloud-Abgleich fehlgeschlagen: '+String(error?.message||error))}
+   return;
+ }
+ if(!snapshotV544('Vor Konfliktauflösung',true))return alert(reliabilityV544.backupError);
+ try{const rows=[...backupRowsV544()];rows.unshift({createdAt:new Date().toISOString(),reason:'Cloud-Stand vor Konfliktauflösung',state:structuredClone(c.remote)});localStorage.setItem(backupKeyV544(),JSON.stringify(rows.slice(0,5)))}catch{return alert('Sicherung fehlgeschlagen. Bitte beide Stände herunterladen.')}
+ sync.revision=c.revision;sync.conflict=null;sync.dirty=false;applyCloudStateV547(c.remote);try{storeSyncV547(user,sync)}catch{}cloudStatusV3('Cloud-Stand übernommen.');renderSyncConflictV547()
+};$('syncRemoteV547').onclick=()=>resolve(false);$('syncLocalV547').onclick=()=>resolve(true);
 }
 function tagsV547(text){return [...new Set(String(text||'').split(',').map(t=>t.trim()).filter(Boolean))].slice(0,30)}
 filteredV3=function(){const q=nV3($('search')?.value),area=$('areaFilter')?.value;return state.collection.filter(x=>(!q||nV3([x.setNumber,x.name,x.category,x.cityArea,x.storage,x.module,x.customCategoryV547,...(x.tagsV547||[])].join(' ')).includes(q))&&(!area||x.cityArea===area)&&(!opsV547.tag||(x.tagsV547||[]).includes(opsV547.tag))&&(!workflowV546.filter||matchesFilterV546({...x,name:x.name+' '+(x.tagsV547||[]).join(' ')+' '+(x.customCategoryV547||'')},workflowV546.filter))).sort((a,b)=>String(a.setNumber).localeCompare(String(b.setNumber),undefined,{numeric:true}))};
