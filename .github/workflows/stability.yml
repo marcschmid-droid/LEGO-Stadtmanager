@@ -18,5 +18,6 @@ jobs:
           node --check customer-experience-v548.js
           node --check focus-v564.js
           node --check ui-repair-v569.js
+          node --check collection-view-v571.js
       - name: Regressionstests
         run: node --test tests/stability.test.cjs
