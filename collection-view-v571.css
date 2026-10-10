@@ -11,3 +11,5 @@ body.themeV39 #collection .tablewrap,body.themeV39 #collection #collectionGrid,b
 #stableCollectionV571 .stableBodyV571 small{color:#64748b}
 #stableCollectionV571 .stablePricesV571{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:12px;font-weight:600}
 @media(max-width:600px){#stableCollectionV571 .stableGridV571{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}#stableCollectionV571 .stableImageV571{height:145px;padding:8px}#stableCollectionV571 .stableBodyV571{padding:9px}}
+
+body.themeV39 #collection:not(.bcm-expanded) > #stableCollectionV571 {display:block!important}
