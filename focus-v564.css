@@ -22,3 +22,31 @@ body.themeV39 #collection .setgrid{grid-template-columns:repeat(2,minmax(0,1fr))
 body.themeV39 #collection .setcard{border-radius:14px!important}
 body.themeV39 #collection .setcard .pic img{transform:none!important}
 }
+
+/* v50.66: actual cards are .setcardV538, not the legacy .pic/.body cards. */
+body.themeV39 #collectionGrid .setcardV538 .setVisualV538{
+ aspect-ratio:4/3!important;height:auto!important;min-height:155px!important;
+ background:white!important;overflow:hidden!important;display:flex!important;
+ justify-content:center!important;align-items:center!important;padding:14px!important;box-sizing:border-box!important
+}
+body.themeV39 #collectionGrid .setcardV538 .setVisualV538 img{
+ display:block!important;width:100%!important;height:100%!important;max-width:100%!important;
+ max-height:100%!important;object-fit:contain!important;object-position:center!important;
+ padding:0!important;margin:0!important;transform:none!important;position:static!important;
+ clip-path:none!important
+}
+body.themeV39 #collectionGrid .setcardV538 .setMetaV538,
+body.themeV39 #collectionGrid .setcardV538 .setValueRowV538,
+body.themeV39 #collectionGrid .setcardV538 .setFootV538,
+body.themeV39 #collectionGrid .setcardV538 .valueEvidenceV548,
+body.themeV39 #collectionGrid .setcardV538 .miniTrendV538{display:none!important}
+body.themeV39 #collectionGrid .setcardV538 .setBodyV538{padding:10px 12px 14px!important}
+body.themeV39 #collectionGrid .setcardV538 .setNoV538{font-size:12px!important;color:#6b7280!important;font-weight:700!important;letter-spacing:.04em!important}
+body.themeV39 #collectionGrid .setcardV538 h3{font-size:14px!important;line-height:1.35!important;margin:5px 0 0!important;min-height:0!important}
+body.themeV39 #collectionGrid .setcardV538 .selectV547{position:absolute!important;z-index:5;top:10px;left:10px}
+body.themeV39 #collectionGrid .setcardV538{position:relative!important}
+@media(max-width:650px){
+ body.themeV39 #collectionGrid .setcardV538 .setVisualV538{aspect-ratio:1/1!important;min-height:0!important;padding:12px!important}
+ body.themeV39 #collectionGrid .setcardV538 .setBodyV538{padding:9px!important}
+ body.themeV39 #collectionGrid .setcardV538 h3{font-size:12.5px!important}
+}
