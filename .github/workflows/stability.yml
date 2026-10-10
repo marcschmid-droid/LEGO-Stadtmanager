@@ -1,0 +1,22 @@
+name: Stabilitaetspruefung
+on:
+  push:
+    branches: [stabilisierung-2026-10]
+  pull_request:
+    branches: [main]
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JavaScript Syntax pruefen
+        run: |
+          node --check collection-metrics-v570.js
+          node --check customer-experience-v548.js
+          node --check focus-v564.js
+          node --check ui-repair-v569.js
+      - name: Regressionstests
+        run: node --test tests/stability.test.cjs
