@@ -1,0 +1,18 @@
+/* v50.68 - klare Startseite mit genau vier Kennzahlen */
+body.themeV39 #home .homeHeroV549,
+body.themeV39 #home .homeFocusV549,
+body.themeV39 #home .homeCityPreviewV549,
+body.themeV39 #home .homeLegacyV549,
+body.themeV39 #home .heroV50,
+body.themeV39 #home .homeCityPreviewV50 {display:none!important}
+body.themeV39 #home .homeKpisV549 {display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important;margin:12px 0 16px!important}
+body.themeV39 #home .homeKpisV549 .card {display:flex!important;flex-direction:column!important;justify-content:center!important;gap:8px!important;padding:22px!important;min-height:140px!important;box-shadow:none!important;border-radius:16px!important}
+body.themeV39 #home .homeKpisV549 .card span {font-size:13px!important;color:#64748b!important}
+body.themeV39 #home .homeKpisV549 .card b {font-size:clamp(22px,4vw,34px)!important;line-height:1.15!important;overflow-wrap:anywhere!important}
+body.themeV39 #home .homeKpisV549 .card small {font-size:11px!important;color:#64748b!important}
+body.themeV39 #home #homeOverviewTitleV568 {font-size:22px;margin:12px 0 7px}
+body.themeV39 #home #homeSimpleActionsV568 {display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+body.themeV39 #collection #collectionSummaryV538 {grid-template-columns:repeat(2,minmax(0,1fr))!important}
+body.themeV39 #collection #collectionSummaryV538>div:nth-child(3){display:none!important}
+body.themeV39 #collection .toolbar {margin-bottom:12px!important}
+@media(max-width:600px){body.themeV39 #home .homeKpisV549{gap:9px!important}body.themeV39 #home .homeKpisV549 .card{padding:15px!important;min-height:120px!important}}
