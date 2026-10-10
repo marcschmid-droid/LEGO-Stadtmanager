@@ -1,7 +1,7 @@
 /* Stable, pure collection calculations. No storage or cloud mutations. */
 (function(root){
  'use strict';
- function num(v){const n=typeof v==='number'?v:Number(String(v??'').replace(/\s/g,'').replace(',','.'));return Number.isFinite(n)&&n>=0?n:null}
+ function num(v){if(v===null||v===undefined||String(v).trim()==='')return null;const n=typeof v==='number'?v:Number(String(v??'').replace(/\s/g,'').replace(',','.'));return Number.isFinite(n)&&n>=0?n:null}
  function metrics(s){
    const collection=Array.isArray(s?.collection)?s.collection:[];
    const count=collection.length;
