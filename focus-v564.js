@@ -21,7 +21,8 @@
   }
   // Display the visual collection by default only when currently in table view.
   const grid=document.getElementById('collectionGrid'),toggle=document.getElementById('toggleView');
-  if(grid?.classList.contains('hidden')&&toggle)toggle.click();
+  if(grid){grid.classList.remove('hidden');collection.querySelector('.tablewrap')?.classList.remove('showCompactV538');}
+  // setupCollectionViewV538 controls grid visibility; don't click the legacy view switch.
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,800));else setTimeout(init,800);
 })();
