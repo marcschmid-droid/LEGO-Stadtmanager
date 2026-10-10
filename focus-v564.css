@@ -50,3 +50,12 @@ body.themeV39 #collectionGrid .setcardV538{position:relative!important}
  body.themeV39 #collectionGrid .setcardV538 .setBodyV538{padding:9px!important}
  body.themeV39 #collectionGrid .setcardV538 h3{font-size:12.5px!important}
 }
+
+/* v50.67: show the two useful prices again */
+body.themeV39 #collectionGrid .setcardV538 .setValueRowV538{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important;margin:9px 0 0!important}
+body.themeV39 #collectionGrid .setcardV538 .setValueRowV538>div{grid-column:auto!important;padding:8px!important;background:#f5f6f8!important;border-radius:9px!important;min-width:0!important}
+body.themeV39 #collectionGrid .setcardV538 .setValueRowV538 small{font-size:10px!important}
+body.themeV39 #collectionGrid .setcardV538 .setValueRowV538 b{font-size:12px!important;white-space:nowrap!important}
+body.themeV39 #collectionGrid .setcardV538 .setVisualV538{height:190px!important;min-height:0!important;aspect-ratio:auto!important}
+body.themeV39 #collectionGrid .setcardV538 .setVisualV538 img{object-fit:contain!important;max-height:165px!important}
+@media(max-width:650px){body.themeV39 #collectionGrid .setcardV538 .setVisualV538{height:175px!important}body.themeV39 #collectionGrid .setcardV538 .setVisualV538 img{max-height:152px!important}}
