@@ -1,0 +1,66 @@
+/* Brick City Manager v50.63 – calmer mobile design, uncropped set images. */
+:root{--bcm-border:#e7e9ed}
+body.themeV39 #collection .setcard .pic,
+body.themeV39 #collectionGrid .setcard .pic,
+body.themeV39 .setgrid .setcard .pic{
+ height:clamp(165px,34vw,230px)!important;min-height:165px!important;
+ padding:12px!important;background:#fff!important;overflow:hidden!important;
+ display:flex!important;align-items:center!important;justify-content:center!important
+}
+body.themeV39 #collection .setcard .pic img,
+body.themeV39 #collectionGrid .setcard .pic img,
+body.themeV39 .setgrid .setcard .pic img{
+ display:block!important;max-width:100%!important;max-height:100%!important;
+ width:100%!important;height:100%!important;object-fit:contain!important;
+ object-position:center center!important;transform:none!important;
+ clip-path:none!important;border-radius:0!important
+}
+body.themeV39 #collection .setcard,
+body.themeV39 #collectionGrid .setcard{
+ border:1px solid var(--bcm-border)!important;border-radius:16px!important;
+ box-shadow:0 3px 12px #17202b0b!important;background:#fff!important
+}
+body.themeV39 #collection .setcard .body{padding:12px!important}
+body.themeV39 #collection .setcard .name{font-size:14px!important;line-height:1.35!important}
+body.themeV39 #collection .setcard .chips{gap:5px!important}
+body.themeV39 #collection .setcard .chip:nth-child(n+4){display:none!important}
+body.themeV39 #collection .thumb{object-fit:contain!important;background:white!important;padding:3px!important}
+body.themeV39 #home .homeLegacyV549{display:none!important}
+body.themeV39 #home .homeKpisV549{gap:10px!important}
+body.themeV39 #home .homeKpisV549 .card{min-height:105px!important;background:white!important;box-shadow:0 2px 12px #1420320d!important}
+body.themeV39 .tabsGroupedV550>.navGroupV550>summary:after{margin-left:4px}
+body.themeV39 #collection .toolbar{box-shadow:none!important}
+@media(max-width:650px){
+ body.themeV39 header .brandV39 small{font-size:11px!important}
+ body.themeV39 .headActions #scanTop{display:none!important}
+ body.themeV39 main nav.tabs.tabsGroupedV550{
+  display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  padding:6px!important;gap:4px!important;border-radius:13px!important;
+  margin-bottom:12px!important
+ }
+ body.themeV39 main nav.tabs.tabsGroupedV550>.tab,
+ body.themeV39 main nav.tabs.tabsGroupedV550>.navGroupV550>summary{
+  min-height:47px!important;padding:8px 2px!important;font-size:10.5px!important;
+  line-height:1.15!important;white-space:normal!important;text-align:center!important;
+  letter-spacing:-.2px!important
+ }
+ body.themeV39 main nav.tabs.tabsGroupedV550>.navGroupV550:last-child{grid-column:auto!important}
+ body.themeV39 main nav.tabs.tabsGroupedV550>.navGroupV550[open]{grid-column:1/-1!important}
+ body.themeV39 main nav.tabs.tabsGroupedV550>.navGroupV550[open]>.navMenuV550{
+  display:grid!important;grid-template-columns:1fr 1fr!important;gap:5px!important
+ }
+ body.themeV39 #home .homeKpisV549{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ body.themeV39 #home .homeKpisV549 .card{padding:12px 7px!important;min-width:0!important;min-height:90px!important}
+ body.themeV39 #home .homeKpisV549 .card span{font-size:11px!important}
+ body.themeV39 #home .homeKpisV549 .card b{font-size:clamp(15px,4vw,22px)!important;overflow-wrap:anywhere!important}
+ body.themeV39 #home .homeKpisV549 .subnote{display:none!important}
+ body.themeV39 #home .homeCityPreviewV549{min-height:165px!important}
+ body.themeV39 #collection .setgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+ body.themeV39 #collection .setcard .pic{height:172px!important;min-height:0!important;padding:10px!important}
+ body.themeV39 #collection .setcard .body{padding:10px!important}
+ body.themeV39 #collection .setcard .name{font-size:12.5px!important}
+ body.themeV39 #collection .setcard .chip{font-size:10px!important}
+ body.themeV39 #collection>.toolbar{grid-template-columns:1fr 1fr!important;gap:8px!important}
+ body.themeV39 #collection>.toolbar #collectionSortV557{grid-column:1/-1!important;width:100%!important}
+}
+@media(max-width:370px){body.themeV39 #collection .setcard .pic{height:145px!important}}
