@@ -1,0 +1,24 @@
+/* v50.64: primary actions first, secondary collection / city tools on demand */
+body.themeV39 #collection:not(.bcm-expanded) > :not(.toolbar):not(.tablewrap):not(#collectionGrid):not(#collectionEssentialsV564){display:none!important}
+body.themeV39 #city:not(.bcm-expanded) > :not(.bcm-primary-city):not(#cityEssentialsV564){display:none!important}
+body.themeV39 #collection .setcard .chips,
+body.themeV39 #collection .setcard .chip,
+body.themeV39 #collection .setcard .meta,
+body.themeV39 #collection .setcard .extras{display:none!important}
+body.themeV39 #collection .setcard .body{min-height:86px!important}
+body.themeV39 #collection .setcard .num{font-size:12px!important;color:#6b7280!important}
+body.themeV39 #collection .setcard .name{font-size:14px!important;margin:4px 0!important;line-height:1.3!important}
+body.themeV39 #collection .setcard .pic{height:220px!important;min-height:0!important;padding:14px!important;box-sizing:border-box!important;background:#fff!important}
+body.themeV39 #collection .setcard .pic img{object-fit:contain!important;object-position:center!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important}
+#collectionEssentialsV564,#cityEssentialsV564{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:8px 0 16px}
+#collectionEssentialsV564 button,#cityEssentialsV564 button{font-size:13px;padding:10px 14px;border-radius:11px}
+body.themeV39 #collection .toolbar{position:static!important;top:auto!important}
+body.themeV39 #city>.bcm-primary-city{display:block}
+@media(max-width:650px){
+body.themeV39 #collection .setcard .pic{height:185px!important;padding:8px!important}
+body.themeV39 #collection .setcard .body{min-height:78px!important;padding:10px!important}
+body.themeV39 #collection .setcard .name{font-size:13px!important}
+body.themeV39 #collection .setgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+body.themeV39 #collection .setcard{border-radius:14px!important}
+body.themeV39 #collection .setcard .pic img{transform:none!important}
+}
