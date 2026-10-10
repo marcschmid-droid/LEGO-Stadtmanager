@@ -48,7 +48,7 @@ const detailEvidenceBaseV548=detailTabsV38;detailTabsV38=function(n){const r=det
 renderCollection=function(){
  if(!$('collection')?.classList.contains('active'))return;
  const data=filteredV3(),key=ownerV544()+'|'+($('search')?.value||'')+'|'+($('areaFilter')?.value||'')+'|'+opsV547.tag+'|'+JSON.stringify(workflowV546.filter);
- if(key!==experienceV548.renderKey){experienceV548.renderKey=key;experienceV548.renderLimit=36}
+ if(key!==experienceV548.renderKey){experienceV548.renderKey=key;experienceV548.renderLimit=Number.MAX_SAFE_INTEGER}
  const rows=data.slice(0,experienceV548.renderLimit),grid=$('collectionGrid'),body=$('collectionBody');if(!grid||!body)return;
  setupCollectionViewV538();let head=$('collectionSummaryV538');if(!head){head=document.createElement('div');head.id='collectionSummaryV538';head.className='collectionSummaryV538';$('collection').querySelector('.toolbar')?.after(head)}
  head.innerHTML='<div><span>Gefunden</span><b>'+data.length+'</b><small>'+data.reduce((s,x)=>s+Number(x.quantity||1),0)+' Exemplare</small></div><div><span>Wert</span><b>'+euro(data.reduce((s,x)=>s+Number(x.currentValue||0)*Number(x.quantity||1),0))+'</b><small>erfasste Schätzung</small></div><div><span>Sichtbar</span><b>'+rows.length+' / '+data.length+'</b><small>weitere Sets bei Bedarf laden</small></div>';
