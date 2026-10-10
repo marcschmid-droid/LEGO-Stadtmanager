@@ -1,0 +1,12 @@
+body.themeV39 #collection #emergencyCollectionV573,body.themeV39 #collection:not(.bcm-expanded)>#emergencyCollectionV573{display:block!important;width:100%!important}
+body.themeV39 #collection #collectionGrid,body.themeV39 #collection .tablewrap,body.themeV39 #collection #stableCollectionV571,body.themeV39 #collection #collectionSummaryV538{display:none!important}
+#emergencyCollectionV573 .emergencyInfoV573{font-size:14px;color:#64748b;margin:10px 0 14px}
+#emergencyCollectionV573 .emergencyListV573{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+#emergencyCollectionV573 .emergencySetV573{background:white;color:#18212d;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;min-width:0;text-align:left;padding:0;cursor:pointer}
+#emergencyCollectionV573 .emergencyVisualV573{height:175px;padding:10px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;color:#9ca3af}
+#emergencyCollectionV573 .emergencyVisualV573 img{width:100%;height:100%;object-fit:contain}
+#emergencyCollectionV573 .emergencyBodyV573{display:flex;flex-direction:column;gap:7px;padding:12px}
+#emergencyCollectionV573 .emergencyBodyV573 small{color:#64748b}
+#emergencyCollectionV573 .emergencyBodyV573 strong{font-size:14px}
+#emergencyCollectionV573 .emergencyPricesV573{font-size:12px;font-weight:600;display:flex;gap:6px;justify-content:space-between;flex-wrap:wrap}
+@media(max-width:600px){#emergencyCollectionV573 .emergencyListV573{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#emergencyCollectionV573 .emergencyVisualV573{height:145px}}
