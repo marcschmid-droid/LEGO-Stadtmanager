@@ -1,7 +1,7 @@
 name: Stabilitaetspruefung
 on:
   push:
-    branches: [stabilisierung-2026-10]
+    branches: [main, stabilisierung-2026-10]
   pull_request:
     branches: [main]
 jobs:
