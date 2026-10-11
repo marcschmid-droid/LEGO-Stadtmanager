@@ -20,6 +20,7 @@ jobs:
           node --check ui-repair-v569.js
           node --check collection-view-v571.js
           node --check catalog-resilience-v579.js
+          node --check instant-set-lookup-v582.js
           node --check recognition-feedback-v575.js
           node --check catalog-diagnostics-v576.js
           node --check collection-emergency-v573.js
