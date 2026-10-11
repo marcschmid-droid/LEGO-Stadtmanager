@@ -80,8 +80,8 @@ for row in requests_rows:
                     "retired":j.get("retired"),
                     "brickeconomyUpdated":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())
                 });changed=True
-                row_changed=bool(j.get("current_value_new") or j.get("current_value_used"))
-                if row_changed:
+                has_price=bool(j.get("current_value_new") or j.get("current_value_used"))
+                if has_price:
                     payload={
                         "set_number":n,
                         "name":j.get("name") or e.get("rebrickableName") or "LEGO "+n,
@@ -102,6 +102,7 @@ for row in requests_rows:
                         headers={**headers,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"},
                         json=payload,timeout=30)
                     response.raise_for_status()
+                    row_changed=True
                     print("CATALOG_PRICE_SAVED set="+n)
             except Exception as ex:
                 errors.append(f"BrickEconomy {n}: {ex}")
