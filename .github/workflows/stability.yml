@@ -26,5 +26,7 @@ jobs:
           node --check catalog-diagnostics-v576.js
           node --check collection-emergency-v573.js
           node --check collection-integrity-v583.js
+      - name: Python Katalogprozess pruefen
+        run: python -m py_compile scripts/process_catalog_requests.py
       - name: Regressionstests
         run: node --test tests/*.test.cjs
