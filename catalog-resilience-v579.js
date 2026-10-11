@@ -35,14 +35,15 @@ async function completeCatalog(n){
 }
 lookupSetOnlineV45=async function(input){
  const n=clean(input);if(!/^\d{4,7}$/.test(n))return null;
- const local=lookupLocal(n);if(local)return local;
+ const local=lookupLocal(n);
  if(jobs.has(n))return jobs.get(n);
  const task=(async()=>{
   const [full,remote]=await Promise.all([completeCatalog(n),online(n)]);
   // Prefer authenticated or independent cloud pricing when available, but always retain full catalog metadata.
-  if(remote&&full)return {...full,...Object.fromEntries(Object.entries(remote).filter(([k,v])=>v!==null&&v!==undefined&&v!=='')),sourceV579:'full+cloud'};
+  const metadata=local||full;
+  if(remote&&metadata)return {...metadata,...Object.fromEntries(Object.entries(remote).filter(([k,v])=>v!==null&&v!==undefined&&v!=='')),sourceV579:'full+cloud'};
   if(remote)return remote;
-  if(full)return full;
+  if(metadata)return metadata;
   try{return await oldLookup(n)}catch(_){return null}
  })();
  jobs.set(n,task);
