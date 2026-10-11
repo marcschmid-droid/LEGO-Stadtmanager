@@ -1,7 +1,7 @@
 name: Stabilitaetspruefung
 on:
   push:
-    branches: [stabilisierung-2026-10]
+    branches: [main, stabilisierung-2026-10]
   pull_request:
     branches: [main]
 jobs:
@@ -24,4 +24,4 @@ jobs:
           node --check catalog-diagnostics-v576.js
           node --check collection-emergency-v573.js
       - name: Regressionstests
-        run: node --test tests/stability.test.cjs
+        run: node --test tests/*.test.cjs

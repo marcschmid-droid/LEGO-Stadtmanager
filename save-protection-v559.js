@@ -104,5 +104,5 @@
   renderSyncConflictV547=function(){oldRender();showProtection()};
   const oldSwitch=switchTab;
   switchTab=function(id){const r=oldSwitch(id);if(id==='users')showProtection();return r};
-  document.addEventListener('DOMContentLoaded',()=>{showProtection();const badge=$('appVersion');if(badge)badge.textContent='v50.79';document.querySelectorAll('#visibleVersionV553').forEach(el=>el.textContent='v50.79')});
+  document.addEventListener('DOMContentLoaded',()=>{showProtection();const badge=$('appVersion');if(badge)badge.textContent='v50.80';document.querySelectorAll('#visibleVersionV553').forEach(el=>el.textContent='v50.80')});
 })();
