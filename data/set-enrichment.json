@@ -18,9 +18,10 @@
       "BrickEconomy 40874: RATE_LIMIT",
       "BrickEconomy 7622: RATE_LIMIT",
       "BrickEconomy 40529: RATE_LIMIT",
-      "BrickEconomy 40820: RATE_LIMIT"
+      "BrickEconomy 40820: RATE_LIMIT",
+      "BrickEconomy 7622: RATE_LIMIT"
     ],
-    "lastUpdated": "2026-10-11T18:41:54Z",
+    "lastUpdated": "2026-10-11T23:29:19Z",
     "rateLimited": true,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 6,
@@ -4165,7 +4166,7 @@
       "imageUrl": "https://cdn.rebrickable.com/media/sets/7622-1/65693.jpg",
       "pieces": 275,
       "rebrickableName": "Race for the Stolen Treasure",
-      "rebrickableUpdated": "2026-10-11T18:41:53Z",
+      "rebrickableUpdated": "2026-10-11T23:29:19Z",
       "rebrickableUrl": "https://rebrickable.com/sets/7622-1/race-for-the-stolen-treasure/",
       "year": 2008
     },
