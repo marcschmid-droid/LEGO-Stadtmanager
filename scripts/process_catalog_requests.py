@@ -20,7 +20,7 @@ if not SERVICE.startswith("sb_secret_"):
     headers["Authorization"]="Bearer "+SERVICE
 r=requests.get(
     SUPABASE_URL+"/rest/v1/catalog_requests",
-    params={"select":"set_number,requested_at","order":"requested_at.asc","limit":"5"},
+    params={"select":"set_number,requested_at","order":"requested_at.asc","limit":str(min(2,max(1,int(os.getenv("MARKET_PRICE_BATCH_SIZE","2")))) )},
     headers=headers,timeout=30
 )
 r.raise_for_status()
@@ -32,6 +32,7 @@ if not requests_rows:
 data=json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {"meta":{},"sets":{}}
 sets=data.setdefault("sets",{})
 errors=[];changed=False
+rate_limited=False
 
 def api_num(n):
     return n if "-" in n else n+"-1"
@@ -109,10 +110,16 @@ for row in requests_rows:
                     print("CATALOG_PRICE_SAVED set="+n)
             except Exception as ex:
                 errors.append(f"BrickEconomy {n}: {ex}")
+                if "RATE_LIMIT" in str(ex):
+                    rate_limited=True
         if not sets.get(n):
             errors.append(f"No metadata for {n}")
     except Exception as ex:
         errors.append(f"Catalog request {n}: {ex}")
+
+    if rate_limited:
+        print("PRICE_SOURCE_RATE_LIMIT: stopping this run; queued sets remain for next scheduled attempt")
+        break
 
     # The real catalog_requests schema has only set_number and requested_at.
     # Acknowledge only when a market price was actually obtained; metadata-only\n    # lookups must remain queued for a future licensed pricing source.
