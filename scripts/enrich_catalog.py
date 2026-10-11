@@ -229,13 +229,16 @@ if BS_KEY:
             errors.append(f"Brickset {n}: {ex}")
         time.sleep(0.18)
 
-if BE_KEY and numbers and not REQUESTS_ONLY:
+if BE_KEY and numbers:
     cursor=int(meta.get("brickeconomyCursor",0)) % len(numbers)
     # Missing market data first, in collection priority order. After coverage is
     # complete, continue round-robin refreshes for already known sets.
     missing=[n for n in numbers if not (sets.get(n,{}).get("marketNewEUR") or sets.get(n,{}).get("marketUsedEUR"))]
     batch=missing[:BE_BATCH]
-    if len(batch)<BE_BATCH:
+    # Hourly requested-set jobs must not spend quota refreshing already priced sets.
+    if REQUESTS_ONLY and not missing:
+        batch=[]
+    if not REQUESTS_ONLY and len(batch)<BE_BATCH:
         for k in range(len(numbers)):
             n=numbers[(cursor+k)%len(numbers)]
             if n not in batch:
