@@ -8,15 +8,16 @@
   let button=$('catalogDiagnoseV576');
   if(!button){button=document.createElement('button');button.id='catalogDiagnoseV576';button.type='button';button.className='btn secondary';button.textContent='Abfrage diagnostizieren';button.style.cssText='display:block;margin:8px 0;font-size:12px';status.after(button)}
   button.onclick=async()=>{
+   status.textContent='Diagnose gestartet – bitte warten…';
    const n=String(input.value||'').trim().replace(/-1$/,'');
    const run=++currentRun;
    if(!/^\d{4,7}$/.test(n)){status.textContent='Ungültige Setnummer';return}
    const messages=[];const report=t=>{if(run===currentRun)status.textContent='Diagnose '+n+': '+t};
    const valid=r=>r&&typeof r==='object';
-   const local=typeof enrichmentV3!=='undefined'&&enrichmentV3?.sets?.[n];
+   const local=(()=>{try{return typeof enrichmentV3!=='undefined'&&enrichmentV3?.sets?.[n]}catch{return null}})();
    if(valid(local))messages.push('Lokaler Katalog: Treffer');
    else messages.push('Lokaler Katalog: kein Treffer');
-   const all=typeof allSetsV46!=='undefined'&&allSetsV46?.sets?.[n];
+   const all=(()=>{try{return typeof allSetsV46!=='undefined'&&allSetsV46?.sets?.[n]}catch{return null}})();
    if(valid(all))messages.push('Gesamtkatalog: Treffer');
    else messages.push('Gesamtkatalog: nicht lokal geladen oder kein Treffer');
    if(!navigator.onLine){messages.push('Gerät meldet offline');report(messages.join(' · '));return}
