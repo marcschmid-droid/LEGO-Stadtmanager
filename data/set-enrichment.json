@@ -2,7 +2,7 @@
   "meta": {
     "brickeconomyCursor": 153,
     "brickeconomyEnabled": true,
-    "brickeconomyRequestsThisRun": 21,
+    "brickeconomyRequestsThisRun": 1,
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
     "bricksetEnabled": true,
@@ -10,7 +10,7 @@
     "errors": [
       "BrickEconomy 40586: RATE_LIMIT"
     ],
-    "lastUpdated": "2026-10-11T11:07:58Z",
+    "lastUpdated": "2026-10-11T11:45:26Z",
     "rateLimited": true,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 0,
@@ -330,7 +330,7 @@
     "10246": {
       "brickeconomyName": "Detective's Office",
       "brickeconomyUpdated": "2026-10-11T03:36:59Z",
-      "bricksetUpdated": "2026-10-11T11:07:26Z",
+      "bricksetUpdated": "2026-10-11T11:45:02Z",
       "ean": "5702015348386",
       "forecast2yEUR": 465.78,
       "forecast5yEUR": 590.03,
@@ -383,7 +383,7 @@
     "10251": {
       "brickeconomyName": "Brick Bank",
       "brickeconomyUpdated": "2026-10-11T03:37:00Z",
-      "bricksetUpdated": "2026-10-11T11:07:28Z",
+      "bricksetUpdated": "2026-10-11T11:45:03Z",
       "ean": "5702015591058",
       "forecast2yEUR": 767.79,
       "forecast5yEUR": 1070.92,
@@ -436,7 +436,7 @@
     "10255": {
       "brickeconomyName": "Assembly Square",
       "brickeconomyUpdated": "2026-10-11T03:37:00Z",
-      "bricksetUpdated": "2026-10-11T11:07:29Z",
+      "bricksetUpdated": "2026-10-11T11:45:04Z",
       "ean": "5702015865272",
       "forecast2yEUR": 394.07,
       "forecast5yEUR": 483.79,
@@ -465,7 +465,7 @@
     "10258": {
       "brickeconomyName": "London Bus",
       "brickeconomyUpdated": "2026-10-11T03:37:01Z",
-      "bricksetUpdated": "2026-10-11T11:07:29Z",
+      "bricksetUpdated": "2026-10-11T11:45:05Z",
       "ean": "0067341926437",
       "forecast2yEUR": 153.49,
       "forecast5yEUR": 172.65,
@@ -518,7 +518,7 @@
     "10260": {
       "brickeconomyName": "Downtown Diner",
       "brickeconomyUpdated": "2026-10-11T03:37:01Z",
-      "bricksetUpdated": "2026-10-11T11:07:31Z",
+      "bricksetUpdated": "2026-10-11T11:45:06Z",
       "ean": "5702016111842",
       "forecast2yEUR": 489.07,
       "forecast5yEUR": 667.53,
@@ -595,7 +595,7 @@
     "10266": {
       "brickeconomyName": "NASA Apollo 11 Lunar Lander",
       "brickeconomyUpdated": "2026-10-11T03:37:02Z",
-      "bricksetUpdated": "2026-10-11T11:07:33Z",
+      "bricksetUpdated": "2026-10-11T11:45:08Z",
       "ean": "5702016368277",
       "forecast2yEUR": 120.03,
       "forecast5yEUR": 141.3,
@@ -624,7 +624,7 @@
     "10267": {
       "brickeconomyName": "Gingerbread House",
       "brickeconomyUpdated": "2026-10-11T03:37:02Z",
-      "bricksetUpdated": "2026-10-11T11:07:33Z",
+      "bricksetUpdated": "2026-10-11T11:45:09Z",
       "ean": "5702016368284",
       "forecast2yEUR": 167.82,
       "forecast5yEUR": 208.33,
@@ -653,7 +653,7 @@
     "10270": {
       "brickeconomyName": "Bookshop",
       "brickeconomyUpdated": "2026-10-11T03:37:03Z",
-      "bricksetUpdated": "2026-10-11T11:07:34Z",
+      "bricksetUpdated": "2026-10-11T11:45:09Z",
       "ean": "5702016667974",
       "forecast2yEUR": 276.53,
       "forecast5yEUR": 345.09,
@@ -706,7 +706,7 @@
     "10278": {
       "brickeconomyName": "Police Station",
       "brickeconomyUpdated": "2026-10-11T03:37:03Z",
-      "bricksetUpdated": "2026-10-11T11:07:35Z",
+      "bricksetUpdated": "2026-10-11T11:45:10Z",
       "ean": "5702016913729",
       "forecast2yEUR": 302.22,
       "forecast5yEUR": 346.62,
@@ -783,7 +783,7 @@
     "10293": {
       "brickeconomyName": "Santa's Visit",
       "brickeconomyUpdated": "2026-10-11T03:37:04Z",
-      "bricksetUpdated": "2026-10-11T11:07:37Z",
+      "bricksetUpdated": "2026-10-11T11:45:12Z",
       "ean": "702016914313",
       "forecast2yEUR": 137.92,
       "forecast5yEUR": 164.81,
@@ -812,7 +812,7 @@
     "10297": {
       "brickeconomyName": "Boutique Hotel",
       "brickeconomyUpdated": "2026-10-11T03:37:04Z",
-      "bricksetUpdated": "2026-10-11T11:07:38Z",
+      "bricksetUpdated": "2026-10-11T11:45:12Z",
       "ean": "5702017151847",
       "forecast2yEUR": 211.74,
       "forecast5yEUR": 225.49,
@@ -865,7 +865,7 @@
     "10308": {
       "brickeconomyName": "Holiday Main Street",
       "brickeconomyUpdated": "2026-10-11T03:37:04Z",
-      "bricksetUpdated": "2026-10-11T11:07:38Z",
+      "bricksetUpdated": "2026-10-11T11:45:13Z",
       "ean": "5702017153285",
       "forecast2yEUR": 161.55,
       "forecast5yEUR": 194.65,
@@ -984,7 +984,7 @@
     "10325": {
       "brickeconomyName": "Alpine Lodge",
       "brickeconomyUpdated": "2026-10-11T03:37:05Z",
-      "bricksetUpdated": "2026-10-11T11:07:39Z",
+      "bricksetUpdated": "2026-10-11T11:45:13Z",
       "ean": "5702017416953",
       "forecast2yEUR": 157.23,
       "forecast5yEUR": 206.1,
@@ -1013,7 +1013,7 @@
     "10326": {
       "brickeconomyName": "Natural History Museum",
       "brickeconomyUpdated": "2026-10-11T03:37:05Z",
-      "bricksetUpdated": "2026-10-11T11:07:40Z",
+      "bricksetUpdated": "2026-10-11T11:45:14Z",
       "ean": "5702017589886",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -1288,7 +1288,7 @@
     "10362": {
       "brickeconomyName": "French Café",
       "brickeconomyUpdated": "2026-10-11T03:37:08Z",
-      "bricksetUpdated": "2026-10-11T11:07:41Z",
+      "bricksetUpdated": "2026-10-11T11:45:15Z",
       "ean": "5702017815886",
       "forecast2yEUR": 73.63,
       "forecast5yEUR": 78.41,
@@ -1413,7 +1413,7 @@
     "11371": {
       "brickeconomyName": "Shopping Street",
       "brickeconomyUpdated": "2026-10-11T03:37:09Z",
-      "bricksetUpdated": "2026-10-11T11:07:45Z",
+      "bricksetUpdated": "2026-10-11T11:45:18Z",
       "ean": "5702018032046",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -1442,7 +1442,7 @@
     "11375": {
       "brickeconomyName": "Ferrari F2004 & Michael Schumacher",
       "brickeconomyUpdated": "2026-10-11T03:37:09Z",
-      "bricksetUpdated": "2026-10-11T11:07:46Z",
+      "bricksetUpdated": "2026-10-11T11:45:19Z",
       "ean": "5702018063583",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -1543,7 +1543,7 @@
     "21023": {
       "brickeconomyName": "Flatiron Building, New York",
       "brickeconomyUpdated": "2026-10-11T03:37:11Z",
-      "bricksetUpdated": "2026-10-11T11:07:48Z",
+      "bricksetUpdated": "2026-10-11T11:45:21Z",
       "ean": "6900743189946",
       "forecast2yEUR": 101.2,
       "forecast5yEUR": 115.56,
@@ -1572,7 +1572,7 @@
     "21024": {
       "brickeconomyName": "Louvre",
       "brickeconomyUpdated": "2026-10-11T03:37:11Z",
-      "bricksetUpdated": "2026-10-11T11:07:49Z",
+      "bricksetUpdated": "2026-10-11T11:45:22Z",
       "ean": "5702015354288",
       "forecast2yEUR": 175.86,
       "forecast5yEUR": 221.52,
@@ -1601,7 +1601,7 @@
     "21027": {
       "brickeconomyName": "Berlin",
       "brickeconomyUpdated": "2026-10-11T03:37:11Z",
-      "bricksetUpdated": "2026-10-11T11:07:49Z",
+      "bricksetUpdated": "2026-10-11T11:45:23Z",
       "ean": null,
       "forecast2yEUR": 239.28,
       "forecast5yEUR": 281.42,
@@ -1630,7 +1630,7 @@
     "21028": {
       "brickeconomyName": "New York City",
       "brickeconomyUpdated": "2026-10-11T03:37:12Z",
-      "bricksetUpdated": "2026-10-11T11:07:50Z",
+      "bricksetUpdated": "2026-10-11T11:45:23Z",
       "ean": "0743138282213",
       "forecast2yEUR": 47.48,
       "forecast5yEUR": 52.61,
@@ -1659,7 +1659,7 @@
     "21029": {
       "brickeconomyName": "Buckingham Palace",
       "brickeconomyUpdated": "2026-10-11T03:37:12Z",
-      "bricksetUpdated": "2026-10-11T11:07:50Z",
+      "bricksetUpdated": "2026-10-11T11:45:24Z",
       "ean": "0044968699432",
       "forecast2yEUR": 157.5,
       "forecast5yEUR": 208.47,
@@ -1688,7 +1688,7 @@
     "21034": {
       "brickeconomyName": "London",
       "brickeconomyUpdated": "2026-10-11T03:37:12Z",
-      "bricksetUpdated": "2026-10-11T11:07:51Z",
+      "bricksetUpdated": "2026-10-11T11:45:25Z",
       "ean": "0780116962446",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -1717,7 +1717,7 @@
     "21036": {
       "brickeconomyName": "Arc de Triomphe",
       "brickeconomyUpdated": "2026-10-11T03:37:12Z",
-      "bricksetUpdated": "2026-10-11T11:07:52Z",
+      "bricksetUpdated": "2026-10-11T11:45:25Z",
       "ean": "5702015865357",
       "forecast2yEUR": 150.18,
       "forecast5yEUR": 196.42,
@@ -2774,7 +2774,7 @@
     "40261": {
       "brickeconomyName": "Thanksgiving Harvest",
       "brickeconomyUpdated": "2026-10-10T03:36:07Z",
-      "bricksetUpdated": "2026-10-11T11:06:51Z",
+      "bricksetUpdated": "2026-10-11T11:44:26Z",
       "ean": "5702015868464",
       "forecast2yEUR": 20.43,
       "forecast5yEUR": 23.45,
@@ -3370,7 +3370,7 @@
     "40782": {
       "brickeconomyName": "Tropical Rainforest Diorama",
       "brickeconomyUpdated": "2026-10-10T03:36:07Z",
-      "bricksetUpdated": "2026-10-11T11:06:54Z",
+      "bricksetUpdated": "2026-10-11T11:44:28Z",
       "ean": null,
       "forecast2yEUR": 35.25,
       "forecast5yEUR": 44.75,
@@ -3447,7 +3447,7 @@
     "43212": {
       "brickeconomyName": "Disney Celebration Train",
       "brickeconomyUpdated": "2026-10-10T03:36:08Z",
-      "bricksetUpdated": "2026-10-11T11:06:55Z",
+      "bricksetUpdated": "2026-10-11T11:44:30Z",
       "ean": "5702017424798",
       "forecast2yEUR": 37.93,
       "forecast5yEUR": 42.02,
@@ -3533,7 +3533,7 @@
     "43242": {
       "brickeconomyName": "Snow White and the Seven Dwarfs' Cottage",
       "brickeconomyUpdated": "2026-10-10T03:36:08Z",
-      "bricksetUpdated": "2026-10-11T11:06:56Z",
+      "bricksetUpdated": "2026-10-11T11:44:31Z",
       "ean": "5702017591032",
       "forecast2yEUR": 348.17,
       "forecast5yEUR": 428.44,
@@ -3610,7 +3610,7 @@
     "43302": {
       "brickeconomyName": "Main Street, U.S.A.",
       "brickeconomyUpdated": "2026-10-10T03:36:09Z",
-      "bricksetUpdated": "2026-10-11T11:06:58Z",
+      "bricksetUpdated": "2026-10-11T11:44:33Z",
       "ean": "5702018066904",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -3639,7 +3639,7 @@
     "5009325": {
       "brickeconomyName": "The Simpsons Living Room",
       "brickeconomyUpdated": "2026-10-10T03:36:16Z",
-      "bricksetUpdated": "2026-10-11T11:07:18Z",
+      "bricksetUpdated": "2026-10-11T11:44:54Z",
       "ean": "5702018021804",
       "forecast2yEUR": 51.0,
       "forecast5yEUR": 61.29,
@@ -3740,7 +3740,7 @@
     "60304": {
       "brickeconomyName": "Road Plates",
       "brickeconomyUpdated": "2026-10-10T03:36:10Z",
-      "bricksetUpdated": "2026-10-11T11:07:00Z",
+      "bricksetUpdated": "2026-10-11T11:44:36Z",
       "ean": "5702016912289",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -3817,7 +3817,7 @@
     "60381": {
       "brickeconomyName": "Advent Calendar",
       "brickeconomyUpdated": "2026-10-10T03:36:10Z",
-      "bricksetUpdated": "2026-10-11T11:07:01Z",
+      "bricksetUpdated": "2026-10-11T11:44:37Z",
       "ean": "5702017415581",
       "forecast2yEUR": 42.16,
       "forecast5yEUR": 49.13,
@@ -3942,7 +3942,7 @@
     "71043": {
       "brickeconomyName": "Hogwarts Castle",
       "brickeconomyUpdated": "2026-10-10T03:36:06Z",
-      "bricksetUpdated": "2026-10-11T11:06:50Z",
+      "bricksetUpdated": "2026-10-11T11:44:26Z",
       "ean": "5702016110319",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -4004,7 +4004,7 @@
     "72051": {
       "brickeconomyName": "Donkey Kong Arcade",
       "brickeconomyUpdated": "2026-10-10T03:36:11Z",
-      "bricksetUpdated": "2026-10-11T11:07:03Z",
+      "bricksetUpdated": "2026-10-11T11:44:39Z",
       "ean": "5702018063842",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -4057,7 +4057,7 @@
     "75978": {
       "brickeconomyName": "Diagon Alley",
       "brickeconomyUpdated": "2026-10-10T03:36:11Z",
-      "bricksetUpdated": "2026-10-11T11:07:04Z",
+      "bricksetUpdated": "2026-10-11T11:44:40Z",
       "ean": "5702016668094",
       "forecast2yEUR": 585.38,
       "forecast5yEUR": 719.46,
@@ -4119,7 +4119,7 @@
     "76386": {
       "brickeconomyName": "Hogwarts: Polyjuice Potion Mistake",
       "brickeconomyUpdated": "2026-10-11T03:37:08Z",
-      "bricksetUpdated": "2026-10-11T11:07:42Z",
+      "bricksetUpdated": "2026-10-11T11:45:15Z",
       "depth": 6,
       "ean": "5702016913507",
       "forecast2yEUR": 28.7,
@@ -4152,7 +4152,7 @@
     "76388": {
       "brickeconomyName": "Hogsmeade Village Visit",
       "brickeconomyUpdated": "2026-10-10T03:36:11Z",
-      "bricksetUpdated": "2026-10-11T11:07:05Z",
+      "bricksetUpdated": "2026-10-11T11:44:41Z",
       "ean": "5702016913675",
       "forecast2yEUR": 75.42,
       "forecast5yEUR": 83.57,
@@ -4181,7 +4181,7 @@
     "76389": {
       "brickeconomyName": "Hogwarts Chamber of Secrets",
       "brickeconomyUpdated": "2026-10-10T03:36:12Z",
-      "bricksetUpdated": "2026-10-11T11:07:06Z",
+      "bricksetUpdated": "2026-10-11T11:44:42Z",
       "ean": "5702016913583",
       "forecast2yEUR": 157.56,
       "forecast5yEUR": 182.26,
@@ -4234,7 +4234,7 @@
     "76402": {
       "brickeconomyName": "Hogwarts: Dumbledore's Office",
       "brickeconomyUpdated": "2026-10-10T03:36:12Z",
-      "bricksetUpdated": "2026-10-11T11:07:07Z",
+      "bricksetUpdated": "2026-10-11T11:44:43Z",
       "ean": "5702017153438",
       "forecast2yEUR": 72.58,
       "forecast5yEUR": 80.41,
@@ -4325,7 +4325,7 @@
     "76415": {
       "brickeconomyName": "The Battle of Hogwarts",
       "brickeconomyUpdated": "2026-10-10T03:36:13Z",
-      "bricksetUpdated": "2026-10-11T11:07:08Z",
+      "bricksetUpdated": "2026-10-11T11:44:44Z",
       "ean": "5702017413198",
       "forecast2yEUR": 92.49,
       "forecast5yEUR": 110.25,
@@ -4354,7 +4354,7 @@
     "76419": {
       "brickeconomyName": "Hogwarts Castle and Grounds",
       "brickeconomyUpdated": "2026-10-10T03:36:13Z",
-      "bricksetUpdated": "2026-10-11T11:07:09Z",
+      "bricksetUpdated": "2026-10-11T11:44:44Z",
       "ean": "5702017413228",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -4383,7 +4383,7 @@
     "76420": {
       "brickeconomyName": "Triwizard Tournament: The Black Lake",
       "brickeconomyUpdated": "2026-10-10T03:36:13Z",
-      "bricksetUpdated": "2026-10-11T11:07:09Z",
+      "bricksetUpdated": "2026-10-11T11:44:45Z",
       "ean": "5702017413235",
       "forecast2yEUR": 67.99,
       "forecast5yEUR": 89.02,
@@ -4436,7 +4436,7 @@
     "76424": {
       "brickeconomyName": "Flying Ford Anglia",
       "brickeconomyUpdated": "2026-10-10T03:36:13Z",
-      "bricksetUpdated": "2026-10-11T11:07:10Z",
+      "bricksetUpdated": "2026-10-11T11:44:46Z",
       "ean": "5702017583075",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -4465,7 +4465,7 @@
     "76426": {
       "brickeconomyName": "Hogwarts Castle Boathouse",
       "brickeconomyUpdated": "2026-10-10T03:36:13Z",
-      "bricksetUpdated": "2026-10-11T11:07:11Z",
+      "bricksetUpdated": "2026-10-11T11:44:47Z",
       "ean": "5702017583099",
       "forecast2yEUR": 86.98,
       "forecast5yEUR": 109.63,
@@ -4494,7 +4494,7 @@
     "76428": {
       "brickeconomyName": "Hagrid's Hut: An Unexpected Visit",
       "brickeconomyUpdated": "2026-10-10T03:36:14Z",
-      "bricksetUpdated": "2026-10-11T11:07:12Z",
+      "bricksetUpdated": "2026-10-11T11:44:47Z",
       "ean": "5702017583105",
       "forecast2yEUR": 77.89,
       "forecast5yEUR": 90.59,
@@ -4523,7 +4523,7 @@
     "76430": {
       "brickeconomyName": "Hogwarts Owlery",
       "brickeconomyUpdated": "2026-10-10T03:36:14Z",
-      "bricksetUpdated": "2026-10-11T11:07:12Z",
+      "bricksetUpdated": "2026-10-11T11:44:48Z",
       "ean": "5702017583129",
       "forecast2yEUR": 66.98,
       "forecast5yEUR": 89.73,
@@ -4552,7 +4552,7 @@
     "76432": {
       "brickeconomyName": "Forbidden Forest: Magical Creatures",
       "brickeconomyUpdated": "2026-10-10T03:36:14Z",
-      "bricksetUpdated": "2026-10-11T11:07:13Z",
+      "bricksetUpdated": "2026-10-11T11:44:49Z",
       "ean": "5702017599502",
       "forecast2yEUR": 34.29,
       "forecast5yEUR": 39.86,
@@ -4662,7 +4662,7 @@
     "76444": {
       "brickeconomyName": "Diagon Alley: Wizarding Shops",
       "brickeconomyUpdated": "2026-10-10T03:36:15Z",
-      "bricksetUpdated": "2026-10-11T11:07:14Z",
+      "bricksetUpdated": "2026-10-11T11:44:50Z",
       "ean": "5702017812823",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -4691,7 +4691,7 @@
     "76445": {
       "brickeconomyName": "Hogwarts Castle: Herbology Class",
       "brickeconomyUpdated": "2026-10-10T03:36:15Z",
-      "bricksetUpdated": "2026-10-11T11:07:14Z",
+      "bricksetUpdated": "2026-10-11T11:44:51Z",
       "ean": "5702017812830",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -4720,7 +4720,7 @@
     "76451": {
       "brickeconomyName": "Privet Drive: Aunt Marge's Visit",
       "brickeconomyUpdated": "2026-10-10T03:36:15Z",
-      "bricksetUpdated": "2026-10-11T11:07:15Z",
+      "bricksetUpdated": "2026-10-11T11:44:51Z",
       "ean": "5702017812892",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -4749,7 +4749,7 @@
     "76453": {
       "brickeconomyName": "Malfoy Manor",
       "brickeconomyUpdated": "2026-10-10T03:36:15Z",
-      "bricksetUpdated": "2026-10-11T11:07:16Z",
+      "bricksetUpdated": "2026-10-11T11:44:52Z",
       "ean": "5702017812915",
       "forecast2yEUR": 195.99,
       "forecast5yEUR": 224.84,
@@ -4778,7 +4778,7 @@
     "77012": {
       "brickeconomyName": "Fighter Plane Chase",
       "brickeconomyUpdated": "2026-10-10T03:36:15Z",
-      "bricksetUpdated": "2026-10-11T11:07:16Z",
+      "bricksetUpdated": "2026-10-11T11:44:52Z",
       "ean": "5702017190457",
       "forecast2yEUR": 51.18,
       "forecast5yEUR": 68.25,
@@ -4807,7 +4807,7 @@
     "77013": {
       "brickeconomyName": "Escape from the Lost Tomb",
       "brickeconomyUpdated": "2026-10-10T03:36:16Z",
-      "bricksetUpdated": "2026-10-11T11:07:17Z",
+      "bricksetUpdated": "2026-10-11T11:44:53Z",
       "ean": "5702017190464",
       "forecast2yEUR": 60.33,
       "forecast5yEUR": 78.33,
@@ -4836,7 +4836,7 @@
     "77015": {
       "brickeconomyName": "Temple of the Golden Idol",
       "brickeconomyUpdated": "2026-10-10T03:36:16Z",
-      "bricksetUpdated": "2026-10-11T11:07:18Z",
+      "bricksetUpdated": "2026-10-11T11:44:53Z",
       "ean": "5702017190488",
       "forecast2yEUR": 202.43,
       "forecast5yEUR": 232.02,
