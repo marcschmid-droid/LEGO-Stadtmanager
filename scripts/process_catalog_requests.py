@@ -17,7 +17,7 @@ if not SERVICE:
 headers={"apikey":SERVICE,"Authorization":"Bearer "+SERVICE}
 r=requests.get(
     SUPABASE_URL+"/rest/v1/catalog_requests",
-    params={"status":"eq.pending","select":"id,set_number","order":"created_at.asc","limit":"20"},
+    params={"select":"set_number,requested_at","order":"requested_at.asc","limit":"20"},
     headers=headers,timeout=30
 )
 r.raise_for_status()
@@ -40,8 +40,8 @@ def get_json(url,headers=None):
     return rr.json()
 
 for row in requests_rows:
-    rid=row["id"];n=str(row["set_number"]).strip().split("-",1)[0]
-    status="done"
+    n=str(row["set_number"]).strip().split("-",1)[0]
+    row_changed=False
     try:
         e=sets.setdefault(n,{})
         if RB_KEY:
@@ -55,7 +55,7 @@ for row in requests_rows:
                     "pieces":j.get("num_parts") or e.get("pieces"),
                     "rebrickableUrl":j.get("set_url") or e.get("rebrickableUrl"),
                     "rebrickableUpdated":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())
-                });changed=True
+                });changed=True;row_changed=True
             except Exception as ex:
                 errors.append(f"Rebrickable {n}: {ex}")
         if BE_KEY:
@@ -83,19 +83,19 @@ for row in requests_rows:
             except Exception as ex:
                 errors.append(f"BrickEconomy {n}: {ex}")
         if not sets.get(n):
-            status="failed"
+            errors.append(f"No metadata for {n}")
     except Exception as ex:
         errors.append(f"Catalog request {n}: {ex}")
-        status="failed"
 
-    patch={"status":status,"processed_at":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())}
-    pr=requests.patch(
-        SUPABASE_URL+"/rest/v1/catalog_requests",
-        params={"id":f"eq.{rid}"},
-        headers={**headers,"Content-Type":"application/json","Prefer":"return=minimal"},
-        json=patch,timeout=30
-    )
-    pr.raise_for_status()
+    # The real catalog_requests schema has only set_number and requested_at.
+    # Acknowledge only successful lookups; failed/missing-key requests remain for retry.
+    if row_changed:
+        pr=requests.delete(
+            SUPABASE_URL+"/rest/v1/catalog_requests",
+            params={"set_number":f"eq.{row['set_number']}","requested_at":f"eq.{row['requested_at']}"},
+            headers=headers,timeout=30
+        )
+        pr.raise_for_status()
 
 if changed:
     meta=data.setdefault("meta",{})
