@@ -24,12 +24,12 @@
    button.disabled=true;report('Online-Katalog wird geprüft…');
    try{
     const result=await Promise.race([
-      cloudV3.from('catalog_sets').select('set_number,market_new_eur,market_used_eur').eq('set_number',n).maybeSingle(),
+      cloudV3.from('catalog_sets').select('*').eq('set_number',n).maybeSingle(),
       new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),5500))
     ]);
     if(result.error){const e=result.error;messages.push(e.code==='42501'||e.code==='PGRST301'?'Online-Zugriff verweigert':'Online-Katalogfehler ('+String(e.code||'unbekannt')+')')}
     else if(!result.data)messages.push('Online-Katalog: kein Eintrag');
-    else {const row=result.data;const price=Number(row.market_used_eur)||Number(row.market_new_eur)||0;messages.push(price>0?'Online-Katalog: Marktwert vorhanden':'Online-Katalog: Eintrag vorhanden, Marktwert fehlt')}
+    else {const row=result.data;const price=Number(row.market_used_eur)||Number(row.market_new_eur)||Number(row.marketUsedEUR)||Number(row.marketNewEUR)||0;messages.push(price>0?'Online-Katalog: Marktwert vorhanden':'Online-Katalog: Eintrag vorhanden, Marktwert fehlt')}
    }catch(err){messages.push(err?.message==='timeout'?'Online-Abfrage: Zeitüberschreitung':'Online-Abfrage technisch fehlgeschlagen')}
    finally{button.disabled=false}
    report(messages.join(' · '));
