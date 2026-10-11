@@ -22,6 +22,10 @@ BL_TOKEN_VALUE=os.getenv("BRICKLINK_TOKEN_VALUE","").strip()
 BL_TOKEN_SECRET=os.getenv("BRICKLINK_TOKEN_SECRET","").strip()
 BE_BATCH=max(1,min(int(os.getenv("BRICKECONOMY_BATCH_SIZE","90")),90))
 REQUESTS_ONLY=os.getenv("REQUESTS_ONLY","").strip()=="1"
+if REQUESTS_ONLY and not (RB_KEY or BE_KEY):
+    raise SystemExit("CONFIGURATION_ERROR: REBRICKABLE_API_KEY and BRICKECONOMY_API_KEY are both missing; no catalog data can be fetched")
+if REQUESTS_ONLY and not BE_KEY:
+    print("WARNING: BRICKECONOMY_API_KEY missing; new market values cannot be populated by this workflow")
 UA="LEGO-Stadtmanager/1.0 (+https://github.com/marcschmid-droid/LEGO-Stadtmanager)"
 
 def load():

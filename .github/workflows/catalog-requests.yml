@@ -17,6 +17,7 @@ jobs:
       - name: Resolve requested set numbers
         env:
           REBRICKABLE_API_KEY: ${{ secrets.REBRICKABLE_API_KEY }}
+          BRICKECONOMY_API_KEY: ${{ secrets.BRICKECONOMY_API_KEY }}
           REQUESTS_ONLY: "1"
         run: python scripts/enrich_catalog.py
       - name: Commit catalog updates
