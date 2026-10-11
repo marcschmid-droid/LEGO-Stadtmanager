@@ -14,7 +14,10 @@ UA="Brick-City-Manager/1.0"
 if not SERVICE:
     raise SystemExit("SUPABASE_SERVICE_ROLE_KEY missing")
 
-headers={"apikey":SERVICE,"Authorization":"Bearer "+SERVICE}
+headers={"apikey":SERVICE}
+# sb_secret_* keys are API gateway keys, not JWT bearer tokens.
+if not SERVICE.startswith("sb_secret_"):
+    headers["Authorization"]="Bearer "+SERVICE
 r=requests.get(
     SUPABASE_URL+"/rest/v1/catalog_requests",
     params={"select":"set_number,requested_at","order":"requested_at.asc","limit":"5"},
