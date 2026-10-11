@@ -17,7 +17,7 @@ if not SERVICE:
 headers={"apikey":SERVICE,"Authorization":"Bearer "+SERVICE}
 r=requests.get(
     SUPABASE_URL+"/rest/v1/catalog_requests",
-    params={"select":"set_number,requested_at","order":"requested_at.asc","limit":"20"},
+    params={"select":"set_number,requested_at","order":"requested_at.asc","limit":"5"},
     headers=headers,timeout=30
 )
 r.raise_for_status()
