@@ -14,6 +14,7 @@ jobs:
           node-version: '22'
       - name: JavaScript Syntax pruefen
         run: |
+          node --check app-v3.js
           node --check collection-metrics-v570.js
           node --check customer-experience-v548.js
           node --check focus-v564.js
