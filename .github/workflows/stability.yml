@@ -24,4 +24,4 @@ jobs:
           node --check catalog-diagnostics-v576.js
           node --check collection-emergency-v573.js
       - name: Regressionstests
-        run: node --test tests/stability.test.cjs
+        run: node --test tests/*.test.cjs
