@@ -1,0 +1,11 @@
+body.themeV39 #collection:not(.bcm-expanded)>#valueAuditV574{display:block!important}
+#valueAuditV574{margin:10px 0 18px;padding:14px}
+#valueAuditV574 .valueAuditTopV574{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+#valueAuditV574 .valueAuditTopV574 strong{font-size:15px}
+#valueAuditV574 .valueAuditTopV574 span{color:#64748b;font-size:13px}
+#valueAuditV574 .valueAuditTopV574 button{margin-left:auto}
+#valueAuditV574 .valueAuditListV574{display:grid;gap:8px;max-height:430px;overflow:auto}
+#valueAuditV574 .valueAuditRowV574{display:flex;align-items:center;justify-content:space-between;gap:9px;background:#f7f8fa;border-radius:10px;padding:9px}
+#valueAuditV574 .valueAuditRowV574>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+#valueAuditV574 .valueAuditRowV574 strong{font-size:13px}
+#valueAuditV574 .valueAuditRowV574 small{font-size:12px;color:#64748b}
