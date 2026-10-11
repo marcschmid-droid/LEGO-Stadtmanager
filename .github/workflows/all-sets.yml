@@ -5,8 +5,9 @@ on:
   push:
     paths:
       - "scripts/build_all_sets.py"
+      - ".github/workflows/all-sets.yml"
   schedule:
-    - cron: "42 4 * * 1"
+    - cron: "42 4 * * *"
 
 permissions:
   contents: write
