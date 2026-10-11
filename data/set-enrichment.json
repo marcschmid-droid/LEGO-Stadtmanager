@@ -1,25 +1,20 @@
 {
   "meta": {
-    "brickeconomyCursor": 153,
+    "brickeconomyCursor": 43,
     "brickeconomyEnabled": true,
     "brickeconomyRequestsThisRun": 1,
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
-    "bricksetEnabled": true,
-    "bricksetRequestsThisRun": 95,
+    "bricksetEnabled": false,
+    "bricksetRequestsThisRun": 0,
     "errors": [
-      "BrickEconomy 40586: RATE_LIMIT",
-      "BrickEconomy 71043: RATE_LIMIT",
-      "BrickEconomy 6769: RATE_LIMIT",
-      "BrickEconomy 40261: RATE_LIMIT",
-      "BrickEconomy 40767: RATE_LIMIT",
-      "BrickEconomy 40782: RATE_LIMIT"
+      "BrickEconomy 7622: RATE_LIMIT"
     ],
-    "lastUpdated": "2026-10-11T12:07:23Z",
+    "lastUpdated": "2026-10-11T12:39:36Z",
     "rateLimited": true,
     "rebrickableEnabled": true,
-    "rebrickableRequestsThisRun": 0,
-    "setCount": 183,
+    "rebrickableRequestsThisRun": 6,
+    "setCount": 55,
     "version": 1
   },
   "sets": {
@@ -2612,6 +2607,14 @@
       "upc": "673419423731",
       "year": 2026
     },
+    "21373": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/21373-1/181158.jpg",
+      "pieces": 4712,
+      "rebrickableName": "Downton Abbey",
+      "rebrickableUpdated": "2026-10-11T12:39:33Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/21373-1/downton-abbey/",
+      "year": 2026
+    },
     "30645": {
       "brickeconomyName": "Snowman",
       "brickeconomyUpdated": "2026-10-11T11:07:55Z",
@@ -2857,10 +2860,13 @@
       "brickeconomyName": "Children's Amusement Park",
       "brickeconomyUrl": "https://www.brickeconomy.com/set/40529-1/lego-childrens-amusement-park",
       "ean": "5702017166421",
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/40529-1/100904.jpg",
       "manualUpdated": "2026-10-06T18:07:36.868Z",
       "minifigs": 2,
       "pieces": 170,
       "rebrickableName": "Children's Amusement Park",
+      "rebrickableUpdated": "2026-10-11T12:39:36Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/40529-1/childrens-amusement-park/",
       "retired": true,
       "rrpEUR": 14.99,
       "subtheme": "Gift With Purchase",
@@ -3400,6 +3406,30 @@
       "theme": "Promotional",
       "upc": null,
       "year": 2025
+    },
+    "40809": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/40809-1/160750.jpg",
+      "pieces": 498,
+      "rebrickableName": "Festive Gingerbread House",
+      "rebrickableUpdated": "2026-10-11T12:39:35Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/40809-1/festive-gingerbread-house/",
+      "year": 2025
+    },
+    "40820": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/40820-1/160760.jpg",
+      "pieces": 761,
+      "rebrickableName": "Up-Scaled Santa Minifigure",
+      "rebrickableUpdated": "2026-10-11T12:39:34Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/40820-1/up-scaled-santa-minifigure/",
+      "year": 2025
+    },
+    "40874": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/40874-1/180574.jpg",
+      "pieces": 873,
+      "rebrickableName": "Santa's Holiday Countdown",
+      "rebrickableUpdated": "2026-10-11T12:39:35Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/40874-1/santas-holiday-countdown/",
+      "year": 2026
     },
     "43020": {
       "brickeconomyName": "FIFA World Cup Official Trophy",
@@ -4120,6 +4150,14 @@
       "theme": "Marvel Super Heroes",
       "upc": "673419356541",
       "year": 2022
+    },
+    "7622": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/7622-1/65693.jpg",
+      "pieces": 275,
+      "rebrickableName": "Race for the Stolen Treasure",
+      "rebrickableUpdated": "2026-10-11T12:39:33Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/7622-1/race-for-the-stolen-treasure/",
+      "year": 2008
     },
     "76386": {
       "brickeconomyName": "Hogwarts: Polyjuice Potion Mistake",
