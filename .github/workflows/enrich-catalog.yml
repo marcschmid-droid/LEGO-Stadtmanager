@@ -36,7 +36,7 @@ jobs:
           BRICKLINK_CONSUMER_SECRET: ${{ secrets.BRICKLINK_CONSUMER_SECRET }}
           BRICKLINK_TOKEN_VALUE: ${{ secrets.BRICKLINK_TOKEN_VALUE }}
           BRICKLINK_TOKEN_SECRET: ${{ secrets.BRICKLINK_TOKEN_SECRET }}
-          BRICKECONOMY_BATCH_SIZE: "80"
+          BRICKECONOMY_BATCH_SIZE: "20"
         run: python scripts/enrich_catalog.py
       - name: Änderungen speichern
         run: |
