@@ -8,9 +8,14 @@
     "bricksetEnabled": false,
     "bricksetRequestsThisRun": 0,
     "errors": [
-      "BrickEconomy 7622: RATE_LIMIT"
+      "BrickEconomy 7622: RATE_LIMIT",
+      "BrickEconomy 40809: RATE_LIMIT",
+      "BrickEconomy 40874: RATE_LIMIT",
+      "BrickEconomy 7622: RATE_LIMIT",
+      "BrickEconomy 40529: RATE_LIMIT",
+      "BrickEconomy 40820: RATE_LIMIT"
     ],
-    "lastUpdated": "2026-10-11T12:39:36Z",
+    "lastUpdated": "2026-10-11T12:44:43Z",
     "rateLimited": true,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 6,
@@ -2865,7 +2870,7 @@
       "minifigs": 2,
       "pieces": 170,
       "rebrickableName": "Children's Amusement Park",
-      "rebrickableUpdated": "2026-10-11T12:39:36Z",
+      "rebrickableUpdated": "2026-10-11T12:44:42Z",
       "rebrickableUrl": "https://rebrickable.com/sets/40529-1/childrens-amusement-park/",
       "retired": true,
       "rrpEUR": 14.99,
@@ -3411,7 +3416,7 @@
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40809-1/160750.jpg",
       "pieces": 498,
       "rebrickableName": "Festive Gingerbread House",
-      "rebrickableUpdated": "2026-10-11T12:39:35Z",
+      "rebrickableUpdated": "2026-10-11T12:44:41Z",
       "rebrickableUrl": "https://rebrickable.com/sets/40809-1/festive-gingerbread-house/",
       "year": 2025
     },
@@ -3419,7 +3424,7 @@
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40820-1/160760.jpg",
       "pieces": 761,
       "rebrickableName": "Up-Scaled Santa Minifigure",
-      "rebrickableUpdated": "2026-10-11T12:39:34Z",
+      "rebrickableUpdated": "2026-10-11T12:44:43Z",
       "rebrickableUrl": "https://rebrickable.com/sets/40820-1/up-scaled-santa-minifigure/",
       "year": 2025
     },
@@ -3427,7 +3432,7 @@
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40874-1/180574.jpg",
       "pieces": 873,
       "rebrickableName": "Santa's Holiday Countdown",
-      "rebrickableUpdated": "2026-10-11T12:39:35Z",
+      "rebrickableUpdated": "2026-10-11T12:44:42Z",
       "rebrickableUrl": "https://rebrickable.com/sets/40874-1/santas-holiday-countdown/",
       "year": 2026
     },
@@ -4155,7 +4160,7 @@
       "imageUrl": "https://cdn.rebrickable.com/media/sets/7622-1/65693.jpg",
       "pieces": 275,
       "rebrickableName": "Race for the Stolen Treasure",
-      "rebrickableUpdated": "2026-10-11T12:39:33Z",
+      "rebrickableUpdated": "2026-10-11T12:44:42Z",
       "rebrickableUrl": "https://rebrickable.com/sets/7622-1/race-for-the-stolen-treasure/",
       "year": 2008
     },
