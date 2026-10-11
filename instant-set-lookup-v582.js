@@ -8,7 +8,7 @@ async function live(n){
  if(!client||!navigator.onLine)return null;
  try{
    const res=await Promise.race([
-     client.functions.invoke('set-lookup',{method:'GET',headers:{},body:undefined,query:{set:n}}),
+     client.functions.invoke('set-lookup?set='+encodeURIComponent(n),{method:'GET'}),
      new Promise(resolve=>setTimeout(()=>resolve({error:{message:'timeout'}}),6500))
    ]);
    if(res?.error||!res?.data?.name)return null;
