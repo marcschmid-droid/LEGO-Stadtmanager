@@ -55,7 +55,7 @@ for row in requests_rows:
                     "pieces":j.get("num_parts") or e.get("pieces"),
                     "rebrickableUrl":j.get("set_url") or e.get("rebrickableUrl"),
                     "rebrickableUpdated":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())
-                });changed=True;row_changed=True
+                });changed=True
             except Exception as ex:
                 errors.append(f"Rebrickable {n}: {ex}")
         if BE_KEY:
@@ -80,6 +80,7 @@ for row in requests_rows:
                     "retired":j.get("retired"),
                     "brickeconomyUpdated":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())
                 });changed=True
+                row_changed=bool(j.get("current_value_new") or j.get("current_value_used"))
             except Exception as ex:
                 errors.append(f"BrickEconomy {n}: {ex}")
         if not sets.get(n):
@@ -88,7 +89,7 @@ for row in requests_rows:
         errors.append(f"Catalog request {n}: {ex}")
 
     # The real catalog_requests schema has only set_number and requested_at.
-    # Acknowledge only successful lookups; failed/missing-key requests remain for retry.
+    # Acknowledge only when a market price was actually obtained; metadata-only\n    # lookups must remain queued for a future licensed pricing source.
     if row_changed:
         pr=requests.delete(
             SUPABASE_URL+"/rest/v1/catalog_requests",
