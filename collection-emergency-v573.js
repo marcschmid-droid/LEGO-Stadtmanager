@@ -44,7 +44,7 @@
     const title=document.createElement('strong');title.textContent=String(x.name||'LEGO Set');
     const prices=document.createElement('div');prices.className='emergencyPricesV573';
     const buy=document.createElement('span');buy.textContent='Kauf '+euro(x.purchasePrice);
-    const val=document.createElement('span');val.textContent='Wert '+euro(x.currentValue);
+    const val=document.createElement('span');val.textContent='Wert '+(Number(x.currentValue)>0?euro(x.currentValue):'Nicht erfasst');
     prices.append(buy,val);body.append(number,title,prices);card.append(visual,body);
     card.onclick=()=>{if(typeof showDetailV3==='function')showDetailV3(String(x.setNumber))};
     fragment.append(card)
