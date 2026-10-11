@@ -38,7 +38,9 @@ async function initCloudV3(){
  const {data}=await cloudV3.auth.getSession();await cloudSessionV3(data.session);
  cloudV3.auth.onAuthStateChange((_e,s)=>setTimeout(()=>cloudSessionV3(s),0));
 }
+let cloudLoadEpochV584=0;
 async function cloudSessionV3(session){
+ const loadEpoch=++cloudLoadEpochV584;
  cloudUserV3=session?.user||null;
  $("cloudSignedOut")?.classList.toggle("hidden",!!cloudUserV3);
  $("cloudSignedIn")?.classList.toggle("hidden",!cloudUserV3);
@@ -54,15 +56,29 @@ async function cloudSessionV3(session){
  }
  cloudStatusV3("Cloud-Daten werden geladen…");
  const cacheKey=cloudCacheKeyV3(cloudUserV3.id);
- const {data,error}=await cloudV3.from("user_state").select("state").eq("user_id",cloudUserV3.id).maybeSingle();
+ const requestedUser=cloudUserV3.id;
+ const {data,error}=await cloudV3.from("user_state").select("state").eq("user_id",requestedUser).maybeSingle();
+ // Earlier sign-in or refresh requests must never replace a newer account state.
+ if(loadEpoch!==cloudLoadEpochV584||cloudUserV3?.id!==requestedUser)return;
  if(error){
    const cached=localStorage.getItem(cacheKey);
    if(cached){try{cloudApplyingV3=true;state=JSON.parse(cached);migrate();migrateV3();refresh();cloudApplyingV3=false;cloudStatusV3("Offline-Kopie geladen. Cloud aktuell nicht erreichbar.");return}catch{}}
    cloudStatusV3("Cloud-Daten konnten nicht geladen werden: "+error.message);return;
  }
  if(data?.state){
+   // Protect newer device-only additions: do not silently discard sets in the
+   // account-specific cache that are missing from the fetched cloud snapshot.
+   let cachedState=null;
+   try{cachedState=JSON.parse(localStorage.getItem(cacheKey)||"null")}catch{}
+   const remoteNumbers=new Set((data.state.collection||[]).map(x=>String(x.setNumber)));
+   const unsynced=(cachedState?.collection||[]).filter(x=>!remoteNumbers.has(String(x.setNumber)));
+   if(unsynced.length){
+     cloudApplyingV3=true;state=cachedState;migrate();migrateV3();refresh();cloudApplyingV3=false;
+     cloudStatusV3("STOPP: "+unsynced.length+" lokale Sets fehlen in der Cloud. Kein Bestand überschrieben. Bitte Sicherung und Cloud-Konflikt prüfen.");
+     return;
+   }
    cloudApplyingV3=true;state=data.state;migrate();migrateV3();refresh();cloudApplyingV3=false;
-   localStorage.setItem(cacheKey,JSON.stringify(state));persistBaseV3();cloudStatusV3("Cloud-Daten geladen.");
+   localStorage.setItem(cacheKey,JSON.stringify(state));persistBaseV3();cloudStatusV3("Cloud-Daten geladen: "+state.collection.length+" Sets.");
  }else{
    // First login: import the existing pre-v21 local collection once.
    const legacy=localStorage.getItem(STORE);
