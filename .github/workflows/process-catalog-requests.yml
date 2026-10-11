@@ -1,6 +1,11 @@
 name: Process catalog requests
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/process_catalog_requests.py'
+      - '.github/workflows/process-catalog-requests.yml'
   schedule:
     - cron: "23 */6 * * *"
 permissions:

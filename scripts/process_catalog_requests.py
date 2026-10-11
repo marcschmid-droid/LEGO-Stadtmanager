@@ -80,7 +80,30 @@ for row in requests_rows:
                     "retired":j.get("retired"),
                     "brickeconomyUpdated":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())
                 });changed=True
-                row_changed=bool(j.get("current_value_new") or j.get("current_value_used"))
+                has_price=bool(j.get("current_value_new") or j.get("current_value_used"))
+                if has_price:
+                    payload={
+                        "set_number":n,
+                        "name":j.get("name") or e.get("rebrickableName") or "LEGO "+n,
+                        "source_updated_at":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())
+                    }
+                    existing=requests.get(SUPABASE_URL+"/rest/v1/catalog_sets",
+                        params={"set_number":"eq."+n,"select":"name,market_new_eur,market_used_eur"},
+                        headers=headers,timeout=30)
+                    existing.raise_for_status()
+                    old=(existing.json() or [{}])[0]
+                    for field,key in (("market_new_eur","current_value_new"),("market_used_eur","current_value_used")):
+                        value=j.get(key)
+                        payload[field]=value if value is not None else old.get(field)
+                    if old.get("name") and payload["name"]=="LEGO "+n:
+                        payload["name"]=old["name"]
+                    response=requests.post(SUPABASE_URL+"/rest/v1/catalog_sets",
+                        params={"on_conflict":"set_number"},
+                        headers={**headers,"Content-Type":"application/json","Prefer":"resolution=merge-duplicates,return=minimal"},
+                        json=payload,timeout=30)
+                    response.raise_for_status()
+                    row_changed=True
+                    print("CATALOG_PRICE_SAVED set="+n)
             except Exception as ex:
                 errors.append(f"BrickEconomy {n}: {ex}")
         if not sets.get(n):
