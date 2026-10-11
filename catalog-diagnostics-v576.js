@@ -21,11 +21,20 @@
    if(valid(all))messages.push('Gesamtkatalog: Treffer');
    else messages.push('Gesamtkatalog: nicht lokal geladen oder kein Treffer');
    if(!navigator.onLine){messages.push('Gerät meldet offline');report(messages.join(' · '));return}
-   if(typeof cloudV3==='undefined'||!cloudV3){messages.push('Online-Katalog nicht verbunden');report(messages.join(' · '));return}
+   // Public catalog diagnostics must not depend on the authenticated collection session.
+   let client=typeof cloudV3!=='undefined'?cloudV3:null;
+   if(!client){
+     const cfg=window.LEGO_SUPABASE;
+     if(window.supabase?.createClient&&cfg?.url&&cfg?.publishableKey){
+       try{client=window.supabase.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});messages.push('Separater Katalogzugang gestartet')}
+       catch(e){messages.push('Katalog-Client konnte nicht gestartet werden')}
+     }else messages.push('Katalog-Bibliothek oder Konfiguration fehlt');
+   }
+   if(!client){report(messages.join(' · '));return}
    button.disabled=true;report('Online-Katalog wird geprüft…');
    try{
     const result=await Promise.race([
-      cloudV3.from('catalog_sets').select('*').eq('set_number',n).maybeSingle(),
+      client.from('catalog_sets').select('*').eq('set_number',n).maybeSingle(),
       new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),5500))
     ]);
     if(result.error){const e=result.error;messages.push(e.code==='42501'||e.code==='PGRST301'?'Online-Zugriff verweigert':'Online-Katalogfehler ('+String(e.code||'unbekannt')+')')}
