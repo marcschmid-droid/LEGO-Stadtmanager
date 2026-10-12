@@ -89,9 +89,10 @@ async function cloudSessionV3(session){
 }
 async function cloudSaveV3(show=false){
  if(!cloudV3||!cloudUserV3||cloudApplyingV3)return;
- localStorage.setItem(cloudCacheKeyV3(cloudUserV3.id),JSON.stringify(state));
+ try{localStorage.setItem(cloudCacheKeyV3(cloudUserV3.id),JSON.stringify(state))}catch(e){console.warn("Cloud cache full; syncing directly",e)}
  const {error}=await cloudV3.from("user_state").upsert({user_id:cloudUserV3.id,state,updated_at:new Date().toISOString()},{onConflict:"user_id"});
  if(show)cloudStatusV3(error?"Synchronisierung fehlgeschlagen: "+error.message:"Synchronisiert: "+new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}));
+ return {error};
 }
 function queueCloudSaveV3(){if(!cloudUserV3||cloudApplyingV3)return;clearTimeout(cloudSaveTimerV3);cloudSaveTimerV3=setTimeout(()=>cloudSaveV3(false),700)}
 const persistBaseV3=persist;
