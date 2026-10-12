@@ -448,7 +448,7 @@ document.addEventListener("click",function(e){
 <label>Kategorie<input id="fCat"></label><label>Breite (cm)<input id="fWidth" type="number" step="0.1"></label>
 <label>Tiefe (cm)<input id="fDepth" type="number" step="0.1"></label><label>Höhe (cm)<input id="fHeight" type="number" step="0.1"></label>
 <label>Bild-URL (optional)<input id="fImage" type="url" placeholder="https://…"></label><label>Modul<input id="fModule" placeholder="z. B. M27"></label><label>Zustand<select id="fCondition"><option>Unbekannt</option><option>Neu / OVP</option><option>Gebraucht vollständig</option><option>Gebraucht unvollständig</option></select></label><label>Bauzustand<select id="fBuild"><option>Unbekannt</option><option>Aufgebaut</option><option>Zerlegt</option><option>OVP</option><option>Teilaufgebaut</option></select></label><label>Lagerort gesamt<input id="fStorage" placeholder="wird aus Raum / Regal / Fach gebildet"></label><label>Raum<input id="fStorageRoom" placeholder="z. B. Keller"></label><label>Regal<input id="fStorageShelf" placeholder="z. B. Regal A"></label><label>Fach / Box<input id="fStorageBin" placeholder="z. B. Fach 3"></label><label>Barcode / EAN<input id="fBarcode"></label><label>Kaufdatum<input id="fPurchaseDate" type="date"></label><label>Verkäufer / Quelle<input id="fSeller"></label><label>Notiz<textarea id="fNote"></textarea></label>
-</div><div class="actions right"><button class="btn secondary" id="cancelSet">Abbrechen</button><button class="btn" id="saveSet">Speichern</button></div>
+</div><div class="actions right"><button class="btn secondary" id="cancelSet">Abbrechen</button><button class="btn" id="saveSet" type="button">Speichern</button></div>
 </div></div>
 
 <div id="wishModal" class="modal"><div class="sheet">
@@ -533,33 +533,24 @@ document.addEventListener("click",function(e){
 <script src="./collection-metrics-v570.js?v=50.71"></script>
 <script src="./stability-ui-v570.js?v=50.71"></script>
 <script src="./collection-view-v571.js?v=50.71"></script>
-<script src="./collection-emergency-v573.js?v=50.85"></script><script src="./valuation-audit-v574.js?v=50.85"></script><script src="./recognition-feedback-v575.js?v=50.85"></script><script src="./catalog-diagnostics-v576.js?v=50.85"></script><script src="./catalog-resilience-v579.js?v=50.85"></script><script src="./instant-set-lookup-v582.js?v=50.85"></script><script src="./collection-integrity-v583.js?v=50.85"></script><script>
-/* Set save click bridge. No collection writes except through the existing save routine. */
+<script src="./collection-emergency-v573.js?v=50.85"></script><script src="./valuation-audit-v574.js?v=50.85"></script><script src="./recognition-feedback-v575.js?v=50.85"></script><script src="./catalog-diagnostics-v576.js?v=50.85"></script><script src="./catalog-resilience-v579.js?v=50.85"></script><script src="./instant-set-lookup-v582.js?v=50.85"></script><script src="./collection-integrity-v583.js?v=50.85"></script>
+<script>
 (function(){
- document.addEventListener('click',function(e){
-  var button=e.target&&e.target.closest&&e.target.closest('#saveSet');
-  if(!button)return;
-  e.preventDefault();
-  e.stopImmediatePropagation();
+ function handleSave(event){
+  var target=event.target;
+  if(!target||!target.closest||!target.closest('#saveSet'))return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
   try{
-   if(typeof saveSetLoggedV37!=='function')throw new Error('Speicherfunktion nicht geladen');
-   var number=document.getElementById('fSet');
-   var name=document.getElementById('fName');
-   if(!number||!number.value.trim()||!name||!name.value.trim()){
-    alert('Bitte Setnummer und Namen prüfen.');return;
-   }
-   var setNumber=number.value.trim();
+   if(typeof saveSetLoggedV37!=='function')throw Error('Speicherfunktion nicht geladen');
+   var num=document.getElementById('fSet'),name=document.getElementById('fName');
+   if(!num||!name||!num.value.trim()||!name.value.trim())throw Error('Setnummer oder Setname fehlt');
+   var n=num.value.trim();
    saveSetLoggedV37();
-   var modal=document.getElementById('setModal');
-   if(modal&&modal.classList.contains('show')){
-    alert('Speichern konnte nicht abgeschlossen werden. Bitte Eingaben prüfen.');return;
-   }
-   alert('Speichervorgang für Set '+setNumber+' lokal abgeschlossen. Bitte nach erneutem Öffnen kontrollieren.');
-  }catch(err){
-   console.error('SAVE_CLICK_BRIDGE',err);
-   alert('Speichern fehlgeschlagen: '+String(err&&err.message||err));
-  }
- },true);
+   if(document.getElementById('setModal')?.classList.contains('show'))throw Error('Das Bearbeitungsfenster wurde nicht geschlossen');
+   alert('Set '+n+' lokal gespeichert. Cloud-Abgleich bitte prüfen.');
+  }catch(error){alert('Speichern fehlgeschlagen: '+String(error.message||error));}
+ }
+ document.addEventListener('click',handleSave,true);
 })();
-</script>
-</body></html>
+</script></body></html>
