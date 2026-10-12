@@ -14,7 +14,7 @@ async function initCloudV3(){
  const cfg=window.LEGO_SUPABASE;if(!cfg||!window.supabase)return;
  cloudV3=window.supabase.createClient(cfg.url,cfg.publishableKey);
  if($("userTop"))$("userTop").onclick=()=>switchTab("users");
- if($("cloudLogin"))$("cloudLogin").onclick=async()=>{const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;const {error}=await cloudV3.auth.signInWithPassword({email,password});if(error)alert(error.message)};
+ // Login clicks are handled centrally in the early document capture handler.
  if($("cloudRegister"))$("cloudRegister").onclick=async()=>{const email=$("cloudEmail").value.trim(),password=$("cloudPassword").value;if(!email||password.length<6)return alert("Bitte E-Mail und mindestens 6 Zeichen Passwort eingeben.");const {data,error}=await cloudV3.auth.signUp({email,password,options:{emailRedirectTo:"https://marcschmid-droid.github.io/LEGO-Stadtmanager/"}});if(error)return alert(error.message);alert(data.session?"Konto erstellt und angemeldet.":"Konto erstellt. Bitte bestätige die E-Mail und melde dich danach an.")};
  if($("cloudLogout"))$("cloudLogout").onclick=async()=>{await cloudV3.auth.signOut()};
  if($("cloudDeleteData"))$("cloudDeleteData").onclick=async()=>{
@@ -1175,7 +1175,7 @@ function bindAccountV40(){
    if(tab){e.preventDefault();switchTab(tab.dataset.tab)}
  });
  if($("userTop"))$("userTop").onclick=()=>switchTab("users");
- if($("cloudLogin"))$("cloudLogin").onclick=loginV40;
+ // Avoid duplicate login click handlers.
  if($("cloudPassword"))$("cloudPassword").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();loginV40()}});
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bindAccountV40);else bindAccountV40();
