@@ -4432,3 +4432,42 @@ function bindImmediateMarketPriceV584(){
  bind("savePurchase","pSet");
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bindImmediateMarketPriceV584);else bindImmediateMarketPriceV584();
+
+
+/* v50.85 reliable save button */
+function bindReliableSetSaveV585(){
+ const btn=$("saveSet");
+ if(!btn||btn.dataset.reliableSaveV585)return;
+ btn.dataset.reliableSaveV585="1";
+ btn.addEventListener("click",function(event){
+   event.preventDefault();
+   event.stopImmediatePropagation();
+   const n=String($("fSet")?.value||"").trim();
+   const name=String($("fName")?.value||"").trim();
+   if(!n){alert("Bitte zuerst eine LEGO-Setnummer eingeben.");$("fSet")?.focus();return}
+   if(!name){
+     // An online lookup can still be pending; saving the set must not depend on it.
+     $("fName").value="LEGO Set "+n;
+   }
+   if(!editing&&!canAddNewSetV519(n)){
+     openPlanLimitV519();
+     return;
+   }
+   const before=JSON.stringify((state.collection||[]).find(x=>String(x.setNumber)===n)||null);
+   const wasEditing=!!editing;
+   try{
+     saveSetLoggedV37();
+     const after=(state.collection||[]).find(x=>String(x.setNumber)===n);
+     if(!after||$("setModal")?.classList.contains("show")){
+       alert("Das Set konnte nicht gespeichert werden. Bitte die Eingaben prüfen.");
+       return;
+     }
+     if(!wasEditing&&before==="null")immediateMarketPriceV584(n);
+   }catch(error){
+     console.error("SET_SAVE_ERROR",error);
+     alert("Speichern fehlgeschlagen: "+String(error?.message||error));
+   }
+ },true);
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bindReliableSetSaveV585);
+else bindReliableSetSaveV585();
