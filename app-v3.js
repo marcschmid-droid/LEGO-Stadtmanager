@@ -4370,3 +4370,65 @@ switchTab=function(id){
  }
  return r;
 };
+
+
+/* v50.84 immediate market price after new set save */
+async function immediateMarketPriceV584(setNumber){
+ const n=String(setNumber||"").trim().replace(/-1$/,"");
+ if(!/^\d{4,7}$/.test(n))return false;
+ try{
+   if(!(await ensureCloudReadyV40())||!cloudV3)return false;
+   const {data:sessionData}=await cloudV3.auth.getSession();
+   if(!sessionData?.session)return false;
+   const {data,error}=await cloudV3.functions.invoke("set-lookup",{body:{set_number:n}});
+   if(error||!data)return false;
+   if(data.status!=="price_loaded"&&data.status!=="cached_price")return false;
+   const x=(state.collection||[]).find(y=>String(y.setNumber).replace(/-1$/,"")===n);
+   if(!x)return true;
+   x.market={...(x.market||{}),
+     brickeconomyName:data.name||x.market?.brickeconomyName||x.name||"",
+     imageUrl:data.image_url||x.market?.imageUrl||x.imageUrl||"",
+     theme:data.theme||x.market?.theme||"",
+     subtheme:data.subtheme||x.market?.subtheme||"",
+     year:data.year??x.market?.year,
+     pieces:data.pieces??x.market?.pieces,
+     minifigs:data.minifigs??x.market?.minifigs,
+     rrpEUR:Number(data.rrp_eur||x.market?.rrpEUR||0)||null,
+     marketNewEUR:Number(data.market_new_eur||0)||null,
+     marketUsedEUR:Number(data.market_used_eur||0)||null,
+     marketUsedLowEUR:Number(data.market_used_low_eur||0)||null,
+     marketUsedHighEUR:Number(data.market_used_high_eur||0)||null,
+     growth12mPct:data.growth_12m_pct??x.market?.growth12mPct,
+     updatedAt:data.source_updated_at||new Date().toISOString(),
+     marketSource:"BrickEconomy"
+   };
+   if(!x.imageUrl&&data.image_url)x.imageUrl=data.image_url;
+   if(!Number(x.currentValue||0)){
+     const condition=String(x.condition||"").toLowerCase();
+     const preferred=condition.includes("neu")||condition.includes("ovp")
+       ? Number(data.market_new_eur||0)
+       : Number(data.market_used_eur||0)||Number(data.market_new_eur||0);
+     if(preferred>0){x.currentValue=preferred;x.valueSource="BrickEconomy";}
+   }
+   persist();refresh();
+   return true;
+ }catch{return false}
+}
+function bindImmediateMarketPriceV584(){
+ const bind=(id,field)=>{
+   const btn=$(id);if(!btn||btn.dataset.immediateMarketV584)return;
+   btn.dataset.immediateMarketV584="1";
+   btn.addEventListener("click",()=>{
+     const n=String($(field)?.value||"").trim().replace(/-1$/,"");
+     if(!/^\d{4,7}$/.test(n))return;
+     const existed=(state.collection||[]).some(x=>String(x.setNumber).replace(/-1$/,"")===n);
+     setTimeout(()=>{
+       const existsNow=(state.collection||[]).some(x=>String(x.setNumber).replace(/-1$/,"")===n);
+       if(!existed&&existsNow)immediateMarketPriceV584(n);
+     },150);
+   });
+ };
+ bind("saveSet","fSet");
+ bind("savePurchase","pSet");
+}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bindImmediateMarketPriceV584);else bindImmediateMarketPriceV584();
