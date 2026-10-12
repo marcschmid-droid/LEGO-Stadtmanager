@@ -4445,6 +4445,7 @@ function bindReliableSetSaveV585(){
    const n=String($("fSet")?.value||"").trim();
    const name=String($("fName")?.value||"").trim();
    if(!n){alert("Bitte zuerst eine LEGO-Setnummer eingeben.");$("fSet")?.focus();return}
+   if(!name&&editing){alert("Bitte einen Setnamen eingeben.");$("fName")?.focus();return}
    if(!name){
      // An online lookup can still be pending; saving the set must not depend on it.
      $("fName").value="LEGO Set "+n;
