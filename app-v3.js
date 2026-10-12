@@ -787,7 +787,7 @@ function bindHistoryV37(){
  renderHistoryV37();
 }
 
-const saveSetCoreV37=saveSet;
+var saveSetCoreV37=saveSet;
 function saveSetLoggedV37(){
  const setNo=$("fSet")?.value.trim(),wasEditing=!!editing,before=wasEditing?((state.collection||[]).find(x=>String(x.setNumber)===String(editing))||null):null;
  const r=saveSetCoreV37();
