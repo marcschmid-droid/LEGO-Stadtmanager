@@ -47,11 +47,9 @@ async function cloudSessionV3(session){
  if($("cloudUserEmail"))$("cloudUserEmail").textContent=cloudUserV3?.email||"";
  updateAccountBadgeV3();
  if(!cloudUserV3){
-   cloudApplyingV3=true;
-   state=blankStateV3();migrate();migrateV3();refresh();
-   cloudApplyingV3=false;
-   cloudStatusV3("");
-   switchTab("users");
+   // A missing or expired session must NEVER erase the device collection.
+   cloudStatusV3("Nicht angemeldet. Deine lokale Sammlung bleibt erhalten.");
+   updateAccountBadgeV3();
    return;
  }
  cloudStatusV3("Cloud-Daten werden geladen…");
