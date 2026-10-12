@@ -789,7 +789,7 @@ function bindHistoryV37(){
 
 const saveSetCoreV37=saveSet;
 function saveSetLoggedV37(){
- const setNo=$("fSet")?.value.trim(),wasEditing=!!editing,before=wasEditing?structuredClone(state.collection.find(x=>String(x.setNumber)===String(editing))||null):null;
+ const setNo=$("fSet")?.value.trim(),wasEditing=!!editing,before=wasEditing?((state.collection||[]).find(x=>String(x.setNumber)===String(editing))||null):null;
  const r=saveSetCoreV37();
  const after=state.collection.find(x=>String(x.setNumber)===String(setNo||before?.setNumber));
  if(after){logV37(wasEditing?"edit":"add",(wasEditing?"Set geändert: ":"Set hinzugefügt: ")+after.setNumber,after.setNumber);persist();renderHistoryV37()}
