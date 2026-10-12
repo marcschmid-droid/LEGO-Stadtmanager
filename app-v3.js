@@ -4440,34 +4440,25 @@ function bindReliableSetSaveV585(){
  if(!btn||btn.dataset.reliableSaveV585)return;
  btn.dataset.reliableSaveV585="1";
  btn.addEventListener("click",function(event){
-   event.preventDefault();
-   event.stopImmediatePropagation();
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  try{
    const n=String($("fSet")?.value||"").trim();
    const name=String($("fName")?.value||"").trim();
-   if(!n){alert("Bitte zuerst eine LEGO-Setnummer eingeben.");$("fSet")?.focus();return}
-   if(!name&&editing){alert("Bitte einen Setnamen eingeben.");$("fName")?.focus();return}
-   if(!name){
-     // An online lookup can still be pending; saving the set must not depend on it.
-     $("fName").value="LEGO Set "+n;
-   }
-   if(!editing&&!canAddNewSetV519(n)){
-     openPlanLimitV519();
-     return;
-   }
-   const before=JSON.stringify((state.collection||[]).find(x=>String(x.setNumber)===n)||null);
+   if(!n||!name){alert("Bitte Setnummer und Setnamen eingeben.");return;}
+   const original=(state.collection||[]).find(x=>String(x.setNumber)===String(editing||n));
+   if(!editing&&!original&&!canAddNewSetV519(n)){openPlanLimitV519();return;}
    const wasEditing=!!editing;
-   try{
-     saveSetLoggedV37();
-     const after=(state.collection||[]).find(x=>String(x.setNumber)===n);
-     if(!after||$("setModal")?.classList.contains("show")){
-       alert("Das Set konnte nicht gespeichert werden. Bitte die Eingaben prüfen.");
-       return;
-     }
-     if(!wasEditing&&before==="null")immediateMarketPriceV584(n);
-   }catch(error){
-     console.error("SET_SAVE_ERROR",error);
-     alert("Speichern fehlgeschlagen: "+String(error?.message||error));
-   }
+   saveSetLoggedV37();
+   const after=(state.collection||[]).find(x=>String(x.setNumber)===n);
+   if(!after){alert("Speichern fehlgeschlagen: Set ist nicht in der Sammlung.");return;}
+   if($("setModal")?.classList.contains("show")){alert("Speichern wurde nicht abgeschlossen. Bitte Eingaben kontrollieren.");return;}
+   if(!wasEditing&&!original&&typeof immediateMarketPriceV584==="function")immediateMarketPriceV584(n);
+   alert("Set "+n+" gespeichert. Bitte nach dem Neuladen prüfen, ob die Änderung erhalten bleibt.");
+  }catch(error){
+   console.error("SET_SAVE_ERROR",error);
+   alert("Speichern fehlgeschlagen: "+String(error?.message||error));
+  }
  },true);
 }
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bindReliableSetSaveV585);
