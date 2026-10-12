@@ -59,9 +59,8 @@ async function cloudSessionV3(session){
  // Earlier sign-in or refresh requests must never replace a newer account state.
  if(loadEpoch!==cloudLoadEpochV584||cloudUserV3?.id!==requestedUser)return;
  if(error){
-   const cached=localStorage.getItem(cacheKey);
-   if(cached){try{cloudApplyingV3=true;state=JSON.parse(cached);migrate();migrateV3();refresh();cloudApplyingV3=false;cloudStatusV3("Offline-Kopie geladen. Cloud aktuell nicht erreichbar.");return}catch{}}
-   cloudStatusV3("Cloud-Daten konnten nicht geladen werden: "+error.message);return;
+   cloudStatusV3("Cloud-Daten konnten nicht geladen werden: "+error.message+". Lokale Sammlung unverändert.");
+   return;
  }
  if(data?.state){
    // Protect newer device-only additions: do not silently discard sets in the
@@ -71,8 +70,7 @@ async function cloudSessionV3(session){
    const remoteNumbers=new Set((data.state.collection||[]).map(x=>String(x.setNumber)));
    const unsynced=(cachedState?.collection||[]).filter(x=>!remoteNumbers.has(String(x.setNumber)));
    if(unsynced.length){
-     cloudApplyingV3=true;state=cachedState;migrate();migrateV3();refresh();cloudApplyingV3=false;
-     cloudStatusV3("STOPP: "+unsynced.length+" lokale Sets fehlen in der Cloud. Kein Bestand überschrieben. Bitte Sicherung und Cloud-Konflikt prüfen.");
+     cloudStatusV3("STOPP: "+unsynced.length+" lokale Sets fehlen in der Cloud. Lokale Sammlung unverändert.");
      return;
    }
    // Never replace a nonempty device collection with a differing cloud snapshot.
@@ -82,7 +80,9 @@ async function cloudSessionV3(session){
      return;
    }
    cloudApplyingV3=true;state=data.state;migrate();migrateV3();refresh();cloudApplyingV3=false;
-   localStorage.setItem(cacheKey,JSON.stringify(state));persistBaseV3();cloudStatusV3("Cloud-Daten geladen: "+state.collection.length+" Sets.");
+   try{localStorage.setItem(cacheKey,JSON.stringify(state))}catch(e){console.warn("Cloud cache quota",e)}
+   try{persistBaseV3()}catch(e){console.warn("Local quota",e)}
+   cloudStatusV3("Cloud-Daten geladen: "+state.collection.length+" Sets.");
  }else{
    // First login: import the existing pre-v21 local collection once.
    const legacy=localStorage.getItem(STORE);
