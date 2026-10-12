@@ -561,8 +561,6 @@ document.addEventListener("click",function(e){
    if(index<0&&typeof canAddNewSetV519==='function'&&!canAddNewSetV519(n)){if(typeof openPlanLimitV519==='function')openPlanLimitV519();return}
    var storeKey=typeof STORE!=='undefined'?STORE:null;
    if(!storeKey)throw Error('Speicherschlüssel nicht verfügbar');
-   var backup=JSON.stringify(state);
-   try{localStorage.setItem(storeKey+'-before-save-'+Date.now(),backup)}catch(e){throw Error('Sicherung nicht möglich: '+e.message)}
    if(index>=0)state.collection[index]=item;else state.collection.push(item);
    try{localStorage.setItem(storeKey,JSON.stringify(state))}catch(e){if(index>=0)state.collection[index]=old;else state.collection.pop();throw e}
    try{if(typeof queueCloudSaveV3==='function')queueCloudSaveV3()}catch(e){console.warn('Cloud sync queued failed',e)}
