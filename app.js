@@ -28,12 +28,13 @@ function init(){
 function persist(){localStorage.setItem(STORE,JSON.stringify(state))}
 function switchTab(id){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===id))}
 function refresh(){
- $("kUnique").textContent=state.collection.length;
- $("kQty").textContent=state.collection.reduce((s,x)=>s+Number(x.quantity||0),0);
+ const setText=(id,value)=>{const node=$(id);if(node)node.textContent=value};
+ setText("kUnique",state.collection.length);
+ setText("kQty",state.collection.reduce((s,x)=>s+Number(x.quantity||0),0));
  const inv=state.collection.reduce((s,x)=>s+Number(x.quantity||0)*Number(x.purchasePrice||0),0);
- $("kInvest").textContent=euro(inv);
- $("investRef").textContent=state.meta?.brickrInvestmentReference?"Brickr-Referenz: "+euro(state.meta.brickrInvestmentReference):"";
- $("kWish").textContent=state.wishlist.length;
+ setText("kInvest",euro(inv));
+ setText("investRef",state.meta?.brickrInvestmentReference?"Brickr-Referenz: "+euro(state.meta.brickrInvestmentReference):"");
+ setText("kWish",state.wishlist.length);
  renderCollection();renderWishlist();renderTracks();renderOffers();
 }
 function renderCollection(){
