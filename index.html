@@ -12,10 +12,36 @@
 <link rel="stylesheet" href="./focus-v564.css?v=50.71">
 <link rel="stylesheet" href="./dashboard-simple-v568.css?v=50.71">
 <style>body.themeV39 #home > :not(#homeOverviewTitleV568):not(.homeKpisV549):not(#homeSimpleActionsV568){display:none!important}body.themeV39 #collection .tablewrap{display:none!important}body.themeV39 #collection #collectionGrid{display:grid!important}</style>
+<script>
+/* Login handler registered before application scripts, no collection mutation. */
+(function(){
+ document.addEventListener('click',async function(e){
+  if(!e.target?.closest?.('#cloudLogin'))return;
+  e.preventDefault();e.stopImmediatePropagation();
+  var button=document.getElementById('cloudLogin');
+  var email=document.getElementById('cloudEmail')?.value.trim();
+  var password=document.getElementById('cloudPassword')?.value;
+  if(!email||!password){alert('Bitte E-Mail und Passwort eingeben.');return}
+  button.disabled=true;button.textContent='Anmeldung läuft…';
+  try{
+   var cfg=window.LEGO_SUPABASE;
+   if(!cfg||!window.supabase)throw Error('Cloud-Bibliothek nicht geladen. Bitte neu öffnen.');
+   var client=(typeof cloudV3!=='undefined'&&cloudV3)?cloudV3:window.supabase.createClient(cfg.url,cfg.publishableKey);
+   var response=await client.auth.signInWithPassword({email:email,password:password});
+   if(response.error)throw response.error;
+   if(!response.data?.session)throw Error('Keine gültige Sitzung erhalten.');
+   if(typeof cloudV3!=='undefined'&&!cloudV3)cloudV3=client;
+   if(typeof cloudSessionV3==='function')await cloudSessionV3(response.data.session);
+   alert('Anmeldung erfolgreich. Bitte prüfe den Kontostatus. Deine lokale Sammlung wurde nicht gelöscht.');
+  }catch(error){console.error('LOGIN_FIX',error);alert('Anmeldung fehlgeschlagen: '+String(error?.message||error))}
+  finally{button.disabled=false;button.textContent='Anmelden'}
+ },true);
+})();
+</script>
 <title>Brick City Manager</title><meta name="application-name" content="Brick City Manager"><meta name="apple-mobile-web-app-title" content="Brick City Manager">
 <script>
 (async()=>{
-  const V="50.87-hotfix2";
+  const V="50.87-loginfix3";
   if(localStorage.getItem("lego-app-shell-version")!==V){
     try{
       if("serviceWorker" in navigator){
@@ -568,28 +594,6 @@ document.addEventListener("click",function(e){
    document.getElementById('setModal')?.classList.remove('show');
    alert('Set '+n+' auf diesem Gerät gespeichert. Cloud-Synchronisierung bitte prüfen.');
   }catch(error){console.error('SAVE_RESCUE',error);alert('Speichern fehlgeschlagen: '+String(error?.message||error))}
- },true);
-})();
-</script><script>
-/* Independent login click diagnostics, without changing collection data. */
-(function(){
- document.addEventListener('click',async function(e){
-  if(!e.target?.closest?.('#cloudLogin'))return;
-  e.preventDefault();e.stopImmediatePropagation();
-  var button=document.getElementById('cloudLogin');
-  var email=document.getElementById('cloudEmail')?.value.trim();
-  var password=document.getElementById('cloudPassword')?.value;
-  if(!email||!password){alert('Bitte E-Mail und Passwort eingeben.');return}
-  button.disabled=true;button.textContent='Anmeldung läuft…';
-  try{
-   var cfg=window.LEGO_SUPABASE;
-   if(!cfg||!window.supabase)throw Error('Cloud-Bibliothek oder Konfiguration nicht geladen');
-   var client=typeof cloudV3!=='undefined'&&cloudV3?cloudV3:window.supabase.createClient(cfg.url,cfg.publishableKey);
-   var result=await client.auth.signInWithPassword({email:email,password:password});
-   if(result.error)throw result.error;
-   alert('Anmeldung angenommen. Deine lokale Sammlung bleibt geschützt. Bitte Kontostatus prüfen.');
-  }catch(error){alert('Anmeldung fehlgeschlagen: '+String(error?.message||error))}
-  finally{button.disabled=false;button.textContent='Anmelden'}
  },true);
 })();
 </script></body></html>
