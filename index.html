@@ -535,22 +535,41 @@ document.addEventListener("click",function(e){
 <script src="./collection-view-v571.js?v=50.71"></script>
 <script src="./collection-emergency-v573.js?v=50.85"></script><script src="./valuation-audit-v574.js?v=50.85"></script><script src="./recognition-feedback-v575.js?v=50.85"></script><script src="./catalog-diagnostics-v576.js?v=50.85"></script><script src="./catalog-resilience-v579.js?v=50.85"></script><script src="./instant-set-lookup-v582.js?v=50.85"></script><script src="./collection-integrity-v583.js?v=50.85"></script>
 <script>
+/* Production emergency save: independent of partially initialized app-v3.js */
 (function(){
- function handleSave(event){
-  var target=event.target;
-  if(!target||!target.closest||!target.closest('#saveSet'))return;
-  event.preventDefault();
-  event.stopImmediatePropagation();
+ document.addEventListener('click',function(event){
+  if(!event.target?.closest?.('#saveSet'))return;
+  event.preventDefault();event.stopImmediatePropagation();
   try{
-   if(typeof saveSetLoggedV37!=='function')throw Error('Speicherfunktion nicht geladen');
-   var num=document.getElementById('fSet'),name=document.getElementById('fName');
-   if(!num||!name||!num.value.trim()||!name.value.trim())throw Error('Setnummer oder Setname fehlt');
-   var n=num.value.trim();
-   saveSetLoggedV37();
-   if(document.getElementById('setModal')?.classList.contains('show'))throw Error('Das Bearbeitungsfenster wurde nicht geschlossen');
-   alert('Set '+n+' lokal gespeichert. Cloud-Abgleich bitte prüfen.');
-  }catch(error){alert('Speichern fehlgeschlagen: '+String(error.message||error));}
- }
- document.addEventListener('click',handleSave,true);
+   if(typeof state==='undefined'||!Array.isArray(state.collection))throw Error('Sammlung nicht geladen');
+   var get=function(id){return document.getElementById(id)?.value??''};
+   var n=String(get('fSet')).trim(),name=String(get('fName')).trim();
+   if(!n||!name)throw Error('Setnummer und Setname fehlen');
+   var key=typeof editing!=='undefined'&&editing?String(editing):n;
+   var index=state.collection.findIndex(function(x){return String(x.setNumber)===key});
+   var old=index>=0?state.collection[index]:null;
+   var numeric=function(id,fallback){var v=String(get(id)).trim().replace(',','.');return v===''?fallback:Number(v)};
+   var item=Object.assign({},old||{},{
+    setNumber:n,name:name,quantity:Math.max(1,numeric('fQty',old?.quantity||1)),
+    purchasePrice:numeric('fPrice',old?.purchasePrice||0),
+    currentValue:numeric('fValue',old?.currentValue||0),
+    cityArea:String(get('fArea')).trim(),category:String(get('fCat')).trim(),
+    imageUrl:String(get('fImage')).trim(),note:String(get('fNote')).trim()
+   });
+   ['Width','Depth','Height'].forEach(function(k){var v=String(get('f'+k)).trim();item[k.toLowerCase()]=v===''?(old?.[k.toLowerCase()]??null):Number(v.replace(',','.'))});
+   if(!Number.isFinite(item.purchasePrice)||!Number.isFinite(item.currentValue))throw Error('Preisangaben ungültig');
+   if(index<0&&typeof canAddNewSetV519==='function'&&!canAddNewSetV519(n)){if(typeof openPlanLimitV519==='function')openPlanLimitV519();return}
+   var storeKey=typeof STORE!=='undefined'?STORE:null;
+   if(!storeKey)throw Error('Speicherschlüssel nicht verfügbar');
+   var backup=JSON.stringify(state);
+   try{localStorage.setItem(storeKey+'-before-save-'+Date.now(),backup)}catch(e){throw Error('Sicherung nicht möglich: '+e.message)}
+   if(index>=0)state.collection[index]=item;else state.collection.push(item);
+   try{localStorage.setItem(storeKey,JSON.stringify(state))}catch(e){if(index>=0)state.collection[index]=old;else state.collection.pop();throw e}
+   try{if(typeof queueCloudSaveV3==='function')queueCloudSaveV3()}catch(e){console.warn('Cloud sync queued failed',e)}
+   try{if(typeof refresh==='function')refresh()}catch(e){console.warn('Refresh failed',e)}
+   document.getElementById('setModal')?.classList.remove('show');
+   alert('Set '+n+' auf diesem Gerät gespeichert. Cloud-Synchronisierung bitte prüfen.');
+  }catch(error){console.error('SAVE_RESCUE',error);alert('Speichern fehlgeschlagen: '+String(error?.message||error))}
+ },true);
 })();
 </script></body></html>
