@@ -77,6 +77,12 @@ async function cloudSessionV3(session){
      cloudStatusV3("STOPP: "+unsynced.length+" lokale Sets fehlen in der Cloud. Kein Bestand überschrieben. Bitte Sicherung und Cloud-Konflikt prüfen.");
      return;
    }
+   // Never replace a nonempty device collection with a differing cloud snapshot.
+   const localCollection=Array.isArray(state?.collection)?state.collection:[];
+   if(localCollection.length&&JSON.stringify(localCollection)!==JSON.stringify(data.state.collection||[])){
+     cloudStatusV3("Lokale Sammlung geschützt: Cloud-Daten weichen ab. Kein Bestand überschrieben.");
+     return;
+   }
    cloudApplyingV3=true;state=data.state;migrate();migrateV3();refresh();cloudApplyingV3=false;
    localStorage.setItem(cacheKey,JSON.stringify(state));persistBaseV3();cloudStatusV3("Cloud-Daten geladen: "+state.collection.length+" Sets.");
  }else{
