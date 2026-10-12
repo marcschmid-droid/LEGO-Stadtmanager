@@ -7,7 +7,7 @@ on:
       - 'scripts/process_catalog_requests.py'
       - '.github/workflows/process-catalog-requests.yml'
   schedule:
-    - cron: "23 * * * *"
+    - cron: "23 */6 * * *"
 permissions:
   contents: write
 concurrency:
