@@ -55,7 +55,17 @@ async function cloudSessionV3(session){
  cloudStatusV3("Cloud-Daten werden geladen…");
  const cacheKey=cloudCacheKeyV3(cloudUserV3.id);
  const requestedUser=cloudUserV3.id;
- const {data,error}=await cloudV3.from("user_state").select("state").eq("user_id",requestedUser).maybeSingle();
+ let cloudResponse;
+ try{
+   cloudResponse=await Promise.race([
+     Promise.resolve(cloudV3.from("user_state").select("state").eq("user_id",requestedUser).maybeSingle()),
+     new Promise((_,reject)=>setTimeout(()=>reject(new Error("Zeitüberschreitung nach 15 Sekunden")),15000))
+   ]);
+ }catch(e){
+   if(loadEpoch===cloudLoadEpochV584&&cloudUserV3?.id===requestedUser)cloudStatusV3("Cloud-Abfrage fehlgeschlagen: "+String(e?.message||e)+". Deine lokale Sammlung bleibt unverändert.");
+   return;
+ }
+ const {data,error}=cloudResponse;
  // Earlier sign-in or refresh requests must never replace a newer account state.
  if(loadEpoch!==cloudLoadEpochV584||cloudUserV3?.id!==requestedUser)return;
  if(error){
@@ -87,7 +97,7 @@ async function cloudSessionV3(session){
    // First login: import the existing pre-v21 local collection once.
    const legacy=localStorage.getItem(STORE);
    if(legacy){try{const old=JSON.parse(legacy);if((old.collection||[]).length){cloudApplyingV3=true;state=old;migrate();migrateV3();cloudApplyingV3=false;}}catch{}}
-   await cloudSaveV3(true);cloudStatusV3("Deine bestehende Sammlung wurde diesem Konto zugeordnet.");
+   cloudStatusV3("Noch keine Cloud-Sicherung gefunden. Lokale Sammlung unverändert; keine automatische Übertragung.");
  }
  refresh();
 }
