@@ -533,4 +533,33 @@ document.addEventListener("click",function(e){
 <script src="./collection-metrics-v570.js?v=50.71"></script>
 <script src="./stability-ui-v570.js?v=50.71"></script>
 <script src="./collection-view-v571.js?v=50.71"></script>
-<script src="./collection-emergency-v573.js?v=50.85"></script><script src="./valuation-audit-v574.js?v=50.85"></script><script src="./recognition-feedback-v575.js?v=50.85"></script><script src="./catalog-diagnostics-v576.js?v=50.85"></script><script src="./catalog-resilience-v579.js?v=50.85"></script><script src="./instant-set-lookup-v582.js?v=50.85"></script><script src="./collection-integrity-v583.js?v=50.85"></script></body></html>
+<script src="./collection-emergency-v573.js?v=50.85"></script><script src="./valuation-audit-v574.js?v=50.85"></script><script src="./recognition-feedback-v575.js?v=50.85"></script><script src="./catalog-diagnostics-v576.js?v=50.85"></script><script src="./catalog-resilience-v579.js?v=50.85"></script><script src="./instant-set-lookup-v582.js?v=50.85"></script><script src="./collection-integrity-v583.js?v=50.85"></script><script>
+/* Set save click bridge. No collection writes except through the existing save routine. */
+(function(){
+ document.addEventListener('click',function(e){
+  var button=e.target&&e.target.closest&&e.target.closest('#saveSet');
+  if(!button)return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  try{
+   if(typeof saveSetLoggedV37!=='function')throw new Error('Speicherfunktion nicht geladen');
+   var number=document.getElementById('fSet');
+   var name=document.getElementById('fName');
+   if(!number||!number.value.trim()||!name||!name.value.trim()){
+    alert('Bitte Setnummer und Namen prüfen.');return;
+   }
+   var setNumber=number.value.trim();
+   saveSetLoggedV37();
+   var modal=document.getElementById('setModal');
+   if(modal&&modal.classList.contains('show')){
+    alert('Speichern konnte nicht abgeschlossen werden. Bitte Eingaben prüfen.');return;
+   }
+   alert('Speichervorgang für Set '+setNumber+' lokal abgeschlossen. Bitte nach erneutem Öffnen kontrollieren.');
+  }catch(err){
+   console.error('SAVE_CLICK_BRIDGE',err);
+   alert('Speichern fehlgeschlagen: '+String(err&&err.message||err));
+  }
+ },true);
+})();
+</script>
+</body></html>
