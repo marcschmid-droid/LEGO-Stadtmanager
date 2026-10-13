@@ -36,8 +36,10 @@ jobs:
           BRICKLINK_CONSUMER_SECRET: ${{ secrets.BRICKLINK_CONSUMER_SECRET }}
           BRICKLINK_TOKEN_VALUE: ${{ secrets.BRICKLINK_TOKEN_VALUE }}
           BRICKLINK_TOKEN_SECRET: ${{ secrets.BRICKLINK_TOKEN_SECRET }}
-          BRICKECONOMY_API_KEY: ${{ secrets.BRICKECONOMY_API_KEY }}
-          BRICKECONOMY_BATCH_SIZE: "20"
+          # Price API calls are reserved for process-catalog-requests.yml.
+          # This job enriches metadata without consuming BrickEconomy quota.
+          REQUESTS_ONLY: "1"
+          BRICKECONOMY_BATCH_SIZE: "0"
         run: python scripts/enrich_catalog.py
       - name: Änderungen speichern
         run: |
