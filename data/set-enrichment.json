@@ -11,13 +11,13 @@
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
-    "bricksetEnabled": false,
-    "bricksetRequestsThisRun": 0,
+    "bricksetEnabled": true,
+    "bricksetRequestsThisRun": 40,
     "errors": [],
-    "lastUpdated": "2026-10-13T01:37:44Z",
+    "lastUpdated": "2026-10-13T03:39:06Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
-    "rebrickableRequestsThisRun": 2,
+    "rebrickableRequestsThisRun": 0,
     "setCount": 46,
     "version": 1
   },
@@ -1973,7 +1973,12 @@
       "year": 2018
     },
     "21054": {
+      "bricksetUpdated": "2026-10-13T03:39:05Z",
       "imageUrl": "https://cdn.rebrickable.com/media/sets/21054-1/64201.jpg",
+      "modelDimension1": 11.0,
+      "modelDimension2": 47.0,
+      "modelDimension3": 20.0,
+      "modelDimensionsSource": "Brickset",
       "pieces": 1483,
       "rebrickableName": "The White House",
       "rebrickableUpdated": "2026-10-13T01:37:44Z",
@@ -3464,7 +3469,12 @@
       "year": 2025
     },
     "40809": {
+      "bricksetUpdated": "2026-10-13T03:39:04Z",
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40809-1/160750.jpg",
+      "modelDimension1": 12.5,
+      "modelDimension2": 11.5,
+      "modelDimension3": 15.0,
+      "modelDimensionsSource": "Brickset",
       "pieces": 498,
       "rebrickableName": "Festive Gingerbread House",
       "rebrickableUpdated": "2026-10-11T18:41:52Z",
@@ -3472,7 +3482,7 @@
       "year": 2025
     },
     "40820": {
-      "bricksetUpdated": "2026-10-12T05:28:09Z",
+      "bricksetUpdated": "2026-10-13T03:39:03Z",
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40820-1/160760.jpg",
       "modelDimension1": 17.5,
       "modelDimension2": 27.3,
@@ -3485,7 +3495,12 @@
       "year": 2025
     },
     "40874": {
+      "bricksetUpdated": "2026-10-13T03:39:02Z",
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40874-1/180574.jpg",
+      "modelDimension1": 20.0,
+      "modelDimension2": 13.0,
+      "modelDimension3": 12.0,
+      "modelDimensionsSource": "Brickset",
       "pieces": 873,
       "rebrickableName": "Santa's Holiday Countdown",
       "rebrickableUpdated": "2026-10-11T18:41:53Z",
@@ -3629,7 +3644,7 @@
     "43242": {
       "brickeconomyName": "Snow White and the Seven Dwarfs' Cottage",
       "brickeconomyUpdated": "2026-10-10T03:36:08Z",
-      "bricksetUpdated": "2026-10-13T01:26:08Z",
+      "bricksetUpdated": "2026-10-13T03:38:36Z",
       "ean": "5702017591032",
       "forecast2yEUR": 348.17,
       "forecast5yEUR": 428.44,
@@ -3706,7 +3721,7 @@
     "43302": {
       "brickeconomyName": "Main Street, U.S.A.",
       "brickeconomyUpdated": "2026-10-10T03:36:09Z",
-      "bricksetUpdated": "2026-10-13T01:26:10Z",
+      "bricksetUpdated": "2026-10-13T03:38:38Z",
       "ean": "5702018066904",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -3735,7 +3750,7 @@
     "5009325": {
       "brickeconomyName": "The Simpsons Living Room",
       "brickeconomyUpdated": "2026-10-10T03:36:16Z",
-      "bricksetUpdated": "2026-10-13T01:26:37Z",
+      "bricksetUpdated": "2026-10-13T03:39:02Z",
       "ean": "5702018021804",
       "forecast2yEUR": 51.0,
       "forecast5yEUR": 61.29,
@@ -3836,7 +3851,7 @@
     "60304": {
       "brickeconomyName": "Road Plates",
       "brickeconomyUpdated": "2026-10-10T03:36:10Z",
-      "bricksetUpdated": "2026-10-13T01:26:14Z",
+      "bricksetUpdated": "2026-10-13T03:38:41Z",
       "ean": "5702016912289",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -3913,7 +3928,7 @@
     "60381": {
       "brickeconomyName": "Advent Calendar",
       "brickeconomyUpdated": "2026-10-10T03:36:10Z",
-      "bricksetUpdated": "2026-10-13T01:26:15Z",
+      "bricksetUpdated": "2026-10-13T03:38:42Z",
       "ean": "5702017415581",
       "forecast2yEUR": 42.16,
       "forecast5yEUR": 49.13,
@@ -4100,7 +4115,7 @@
     "72051": {
       "brickeconomyName": "Donkey Kong Arcade",
       "brickeconomyUpdated": "2026-10-10T03:36:11Z",
-      "bricksetUpdated": "2026-10-13T01:26:18Z",
+      "bricksetUpdated": "2026-10-13T03:38:44Z",
       "ean": "5702018063842",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -4153,7 +4168,7 @@
     "75978": {
       "brickeconomyName": "Diagon Alley",
       "brickeconomyUpdated": "2026-10-10T03:36:11Z",
-      "bricksetUpdated": "2026-10-13T01:26:19Z",
+      "bricksetUpdated": "2026-10-13T03:38:45Z",
       "ean": "5702016668094",
       "forecast2yEUR": 585.38,
       "forecast5yEUR": 719.46,
@@ -4270,7 +4285,7 @@
     "76388": {
       "brickeconomyName": "Hogsmeade Village Visit",
       "brickeconomyUpdated": "2026-10-10T03:36:11Z",
-      "bricksetUpdated": "2026-10-13T01:26:20Z",
+      "bricksetUpdated": "2026-10-13T03:38:46Z",
       "ean": "5702016913675",
       "forecast2yEUR": 75.42,
       "forecast5yEUR": 83.57,
@@ -4299,7 +4314,7 @@
     "76389": {
       "brickeconomyName": "Hogwarts Chamber of Secrets",
       "brickeconomyUpdated": "2026-10-10T03:36:12Z",
-      "bricksetUpdated": "2026-10-13T01:26:21Z",
+      "bricksetUpdated": "2026-10-13T03:38:47Z",
       "ean": "5702016913583",
       "forecast2yEUR": 157.56,
       "forecast5yEUR": 182.26,
@@ -4352,7 +4367,7 @@
     "76402": {
       "brickeconomyName": "Hogwarts: Dumbledore's Office",
       "brickeconomyUpdated": "2026-10-10T03:36:12Z",
-      "bricksetUpdated": "2026-10-13T01:26:23Z",
+      "bricksetUpdated": "2026-10-13T03:38:48Z",
       "ean": "5702017153438",
       "forecast2yEUR": 72.58,
       "forecast5yEUR": 80.41,
@@ -4443,7 +4458,7 @@
     "76415": {
       "brickeconomyName": "The Battle of Hogwarts",
       "brickeconomyUpdated": "2026-10-10T03:36:13Z",
-      "bricksetUpdated": "2026-10-13T01:26:24Z",
+      "bricksetUpdated": "2026-10-13T03:38:49Z",
       "ean": "5702017413198",
       "forecast2yEUR": 92.49,
       "forecast5yEUR": 110.25,
@@ -4472,7 +4487,7 @@
     "76419": {
       "brickeconomyName": "Hogwarts Castle and Grounds",
       "brickeconomyUpdated": "2026-10-10T03:36:13Z",
-      "bricksetUpdated": "2026-10-13T01:26:24Z",
+      "bricksetUpdated": "2026-10-13T03:38:50Z",
       "ean": "5702017413228",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -4501,7 +4516,7 @@
     "76420": {
       "brickeconomyName": "Triwizard Tournament: The Black Lake",
       "brickeconomyUpdated": "2026-10-10T03:36:13Z",
-      "bricksetUpdated": "2026-10-13T01:26:25Z",
+      "bricksetUpdated": "2026-10-13T03:38:50Z",
       "ean": "5702017413235",
       "forecast2yEUR": 67.99,
       "forecast5yEUR": 89.02,
@@ -4554,7 +4569,7 @@
     "76424": {
       "brickeconomyName": "Flying Ford Anglia",
       "brickeconomyUpdated": "2026-10-10T03:36:13Z",
-      "bricksetUpdated": "2026-10-13T01:26:26Z",
+      "bricksetUpdated": "2026-10-13T03:38:51Z",
       "ean": "5702017583075",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -4583,7 +4598,7 @@
     "76426": {
       "brickeconomyName": "Hogwarts Castle Boathouse",
       "brickeconomyUpdated": "2026-10-10T03:36:13Z",
-      "bricksetUpdated": "2026-10-13T01:26:27Z",
+      "bricksetUpdated": "2026-10-13T03:38:52Z",
       "ean": "5702017583099",
       "forecast2yEUR": 86.98,
       "forecast5yEUR": 109.63,
@@ -4612,7 +4627,7 @@
     "76428": {
       "brickeconomyName": "Hagrid's Hut: An Unexpected Visit",
       "brickeconomyUpdated": "2026-10-10T03:36:14Z",
-      "bricksetUpdated": "2026-10-13T01:26:27Z",
+      "bricksetUpdated": "2026-10-13T03:38:53Z",
       "ean": "5702017583105",
       "forecast2yEUR": 77.89,
       "forecast5yEUR": 90.59,
@@ -4641,7 +4656,7 @@
     "76430": {
       "brickeconomyName": "Hogwarts Owlery",
       "brickeconomyUpdated": "2026-10-10T03:36:14Z",
-      "bricksetUpdated": "2026-10-13T01:26:28Z",
+      "bricksetUpdated": "2026-10-13T03:38:54Z",
       "ean": "5702017583129",
       "forecast2yEUR": 66.98,
       "forecast5yEUR": 89.73,
@@ -4670,7 +4685,7 @@
     "76432": {
       "brickeconomyName": "Forbidden Forest: Magical Creatures",
       "brickeconomyUpdated": "2026-10-10T03:36:14Z",
-      "bricksetUpdated": "2026-10-13T01:26:30Z",
+      "bricksetUpdated": "2026-10-13T03:38:54Z",
       "ean": "5702017599502",
       "forecast2yEUR": 34.29,
       "forecast5yEUR": 39.86,
@@ -4780,7 +4795,7 @@
     "76444": {
       "brickeconomyName": "Diagon Alley: Wizarding Shops",
       "brickeconomyUpdated": "2026-10-10T03:36:15Z",
-      "bricksetUpdated": "2026-10-13T01:26:31Z",
+      "bricksetUpdated": "2026-10-13T03:38:56Z",
       "ean": "5702017812823",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -4809,7 +4824,7 @@
     "76445": {
       "brickeconomyName": "Hogwarts Castle: Herbology Class",
       "brickeconomyUpdated": "2026-10-10T03:36:15Z",
-      "bricksetUpdated": "2026-10-13T01:26:32Z",
+      "bricksetUpdated": "2026-10-13T03:38:57Z",
       "ean": "5702017812830",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -4838,7 +4853,7 @@
     "76451": {
       "brickeconomyName": "Privet Drive: Aunt Marge's Visit",
       "brickeconomyUpdated": "2026-10-10T03:36:15Z",
-      "bricksetUpdated": "2026-10-13T01:26:33Z",
+      "bricksetUpdated": "2026-10-13T03:38:58Z",
       "ean": "5702017812892",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -4867,7 +4882,7 @@
     "76453": {
       "brickeconomyName": "Malfoy Manor",
       "brickeconomyUpdated": "2026-10-10T03:36:15Z",
-      "bricksetUpdated": "2026-10-13T01:26:34Z",
+      "bricksetUpdated": "2026-10-13T03:38:59Z",
       "ean": "5702017812915",
       "forecast2yEUR": 195.99,
       "forecast5yEUR": 224.84,
@@ -4896,7 +4911,7 @@
     "77012": {
       "brickeconomyName": "Fighter Plane Chase",
       "brickeconomyUpdated": "2026-10-10T03:36:15Z",
-      "bricksetUpdated": "2026-10-13T01:26:35Z",
+      "bricksetUpdated": "2026-10-13T03:38:59Z",
       "ean": "5702017190457",
       "forecast2yEUR": 51.18,
       "forecast5yEUR": 68.25,
@@ -4925,7 +4940,7 @@
     "77013": {
       "brickeconomyName": "Escape from the Lost Tomb",
       "brickeconomyUpdated": "2026-10-10T03:36:16Z",
-      "bricksetUpdated": "2026-10-13T01:26:36Z",
+      "bricksetUpdated": "2026-10-13T03:39:00Z",
       "ean": "5702017190464",
       "forecast2yEUR": 60.33,
       "forecast5yEUR": 78.33,
@@ -4954,7 +4969,7 @@
     "77015": {
       "brickeconomyName": "Temple of the Golden Idol",
       "brickeconomyUpdated": "2026-10-10T03:36:16Z",
-      "bricksetUpdated": "2026-10-13T01:26:36Z",
+      "bricksetUpdated": "2026-10-13T03:39:01Z",
       "ean": "5702017190488",
       "forecast2yEUR": 202.43,
       "forecast5yEUR": 232.02,
