@@ -11,14 +11,14 @@
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
-    "bricksetEnabled": true,
-    "bricksetRequestsThisRun": 35,
+    "bricksetEnabled": false,
+    "bricksetRequestsThisRun": 0,
     "errors": [],
-    "lastUpdated": "2026-10-13T01:26:37Z",
+    "lastUpdated": "2026-10-13T01:37:44Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
-    "rebrickableRequestsThisRun": 0,
-    "setCount": 41,
+    "rebrickableRequestsThisRun": 2,
+    "setCount": 46,
     "version": 1
   },
   "sets": {
@@ -1544,6 +1544,14 @@
       "upc": "673419190510",
       "year": 2014
     },
+    "21020": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/21020-1/13035.jpg",
+      "pieces": 731,
+      "rebrickableName": "Trevi Fountain",
+      "rebrickableUpdated": "2026-10-13T01:37:43Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/21020-1/trevi-fountain/",
+      "year": 2014
+    },
     "21023": {
       "brickeconomyName": "Flatiron Building, New York",
       "brickeconomyUpdated": "2026-10-11T03:37:11Z",
@@ -1963,6 +1971,14 @@
       "theme": "Architecture",
       "upc": "673419298551",
       "year": 2018
+    },
+    "21054": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/21054-1/64201.jpg",
+      "pieces": 1483,
+      "rebrickableName": "The White House",
+      "rebrickableUpdated": "2026-10-13T01:37:44Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/21054-1/the-white-house/",
+      "year": 2020
     },
     "21056": {
       "brickeconomyName": "Taj Mahal",
