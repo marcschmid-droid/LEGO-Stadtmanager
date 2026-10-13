@@ -9,7 +9,7 @@
    const valueKnown=collection.filter(x=>num(x.currentValue)!==null);
    const value=valueKnown.reduce((a,x)=>a+(num(x.currentValue)??0)*(num(x.quantity)??1),0);
    const recorded=collection.filter(x=>num(x.purchasePrice)!==null);
-   const purchases=recorded.reduce((a,x)=>a+(num(x.purchasePrice)??0)*(num(x.quantity)??1),0);
+   const purchases=recorded.reduce((a,x)=>a+(num(x.purchasePrice)??0),0);
    const baseline=num(s?.meta?.investmentBaseline)??num(s?.meta?.brickrInvestmentReference);
    const investment=baseline!==null?baseline+collection.reduce((a,x)=>a+(Array.isArray(x.exemplars)?x.exemplars:[]).filter(e=>e.addedAfterBaseline).reduce((b,e)=>b+(num(e.price)??0),0),0):recorded.length===collection.length?purchases:null;
    const completeValue=count>0&&valueKnown.length===count;
