@@ -156,9 +156,9 @@ function syncModuleV3(x){for(const m in state.modules)state.modules[m]=state.mod
 const oldOpenSetV3=openSet;openSet=function(x=null){oldOpenSetV3(x);if($("fModule"))$("fModule").value=x?.module||"";if($("fCondition"))$("fCondition").value=x?.condition||"Unbekannt";if($("fBuild"))$("fBuild").value=x?.buildStatus||"Unbekannt";if($("fStorage"))$("fStorage").value=x?.storage||"";if($("fBarcode"))$("fBarcode").value=x?.barcode||"";if($("fPurchaseDate"))$("fPurchaseDate").value=x?.purchaseDate||"";if($("fSeller"))$("fSeller").value=x?.seller||""}
 const oldSaveSetV3=saveSet;saveSet=function(){const was=editing;oldSaveSetV3();const n=was||$("fSet")?.value?.trim();const x=state.collection.find(y=>y.setNumber===n);if(x){x.module=$("fModule")?.value.trim().toUpperCase()||x.module||"";x.condition=$("fCondition")?.value||x.condition||"Unbekannt";x.buildStatus=$("fBuild")?.value||x.buildStatus||"Unbekannt";x.storage=$("fStorage")?.value.trim()||x.storage||"";x.barcode=$("fBarcode")?.value.trim()||x.barcode||"";x.purchaseDate=$("fPurchaseDate")?.value||x.purchaseDate||"";x.seller=$("fSeller")?.value.trim()||x.seller||"";syncModuleV3(x);persist();refresh()}}
 window.showDetailV3=n=>{const x=state.collection.find(y=>y.setNumber===n);if(!x)return;const qty=Math.max(1,pV3(x.quantity)||1),totalMarket=pV3(x.currentValue)*qty,totalPaid=pV3(x.purchasePrice),gain=totalMarket-totalPaid;$("detailTitle").textContent=x.setNumber+" · "+x.name;$("detailContent").innerHTML='<div class="detailHero"><div class="detailPic">'+(x.imageUrl?'<img src="'+esc(x.imageUrl)+'">':'<b>LEGO '+esc(x.setNumber)+'</b>')+'</div><div><div class="detailFacts"><div class="fact"><small>Anzahl</small><b>'+pV3(x.quantity)+'</b></div><div class="fact"><small>Kaufpreis gesamt</small><b>'+euro(totalPaid)+'</b></div><div class="fact"><small>Aktueller Wert gesamt</small><b>'+euro(totalMarket)+'</b></div><div class="fact"><small>Gewinn / Verlust</small><b>'+euro(gain)+'</b></div><div class="fact"><small>Stadtbereich</small><b>'+esc(x.cityArea||"–")+'</b></div><div class="fact"><small>Modul</small><b>'+esc(x.module||"–")+'</b></div><div class="fact"><small>Maße</small><b>'+((pV3(x.width)&&pV3(x.depth)&&pV3(x.height))?((x.width??"–")+' × '+(x.depth??"–")+' × '+(x.height??"–")+' cm'):(Array.isArray(x.modelDimensions)&&x.modelDimensions.filter(v=>pV3(v)>0).length===3?(x.modelDimensions.join(" × ")+' cm · '+esc(x.modelDimensionsSource||"Modellmaße")):"–"))+'</b></div><div class="fact"><small>Zustand</small><b>'+esc(x.condition||"–")+'</b></div><div class="fact"><small>Bauzustand</small><b>'+esc(x.buildStatus||"–")+'</b></div><div class="fact"><small>Lagerort</small><b>'+esc(x.storage||"–")+'</b></div></div><div class="actions"><button class="btn" onclick="editSet(\''+esc(x.setNumber)+'\');document.getElementById(\'detailModal\').classList.remove(\'show\')">Bearbeiten</button><button class="btn secondary" onclick="purchaseSetV3(\''+esc(x.setNumber)+'\')">Weiteres Exemplar kaufen</button></div></div></div>'+(x.note?'<div class="card wide"><b>Notiz</b><p>'+esc(x.note)+'</p></div>':"")+'<div class="card wide marketCard">'+((x.market&&Object.keys(x.market).length)?'<h3>Online-Daten</h3><div class="detailFacts"><div class="fact"><small>Marktwert neu</small><b>'+euro(x.market.marketNewEUR)+'</b></div><div class="fact"><small>Marktwert gebraucht</small><b>'+euro(x.market.marketUsedEUR)+'</b></div><div class="fact"><small>UVP EU</small><b>'+euro(x.market.rrpEUR)+'</b></div><div class="fact"><small>12-Monats-Wachstum</small><b>'+(x.market.growth12mPct??'–')+' %</b></div></div>':'')+'</div><div class="exemplars"><h3>Einzel-Exemplare / Käufe</h3>'+((x.exemplars||[]).length?x.exemplars.map((e,i)=>'<div class="exemplar"><b>#'+(i+1)+'</b> · '+(e.date||"ohne Datum")+' · '+esc(e.condition||"Unbekannt")+' · '+esc(e.seller||"Quelle unbekannt")+' · '+euro(e.price)+'</div>').join(""):'<p class="hint">Noch keine Einzelkäufe separat erfasst.</p>')+'</div>';$("detailModal").classList.add("show")}
-function openPurchaseV3(w=null,x=null){purchaseFromWishV3=w?.setNumber||null;$("pSet").value=x?.setNumber||w?.setNumber||"";$("pName").value=x?.name||w?.name||"";$("pQty").value=1;$("pPrice").value=w?.offer||w?.price||x?.purchasePrice||"";$("pShipping").value="";$("pDate").value=new Date().toLocaleDateString("sv-SE");$("pSeller").value="";$("pCondition").value=x?.condition||"Unbekannt";$("pArea").value=x?.cityArea||w?.area||w?.cityArea||"";$("pModule").value=x?.module||"";$("pBox").value="";$("pComplete").value="";$("pNote").value=w?.reason||"";$("purchaseModal").classList.add("show")}
+function openPurchaseV3(w=null,x=null){purchaseFromWishV3=w?.setNumber||null;$("pSet").value=x?.setNumber||w?.setNumber||"";$("pName").value=x?.name||w?.name||"";$("pQty").value=1;$("pPrice").value=w?.offer||w?.price||(x?.quantity?pV3(x.purchasePrice)/pV3(x.quantity):x?.purchasePrice)||"";$("pShipping").value="";$("pDate").value=new Date().toLocaleDateString("sv-SE");$("pSeller").value="";$("pCondition").value=x?.condition||"Unbekannt";$("pArea").value=x?.cityArea||w?.area||w?.cityArea||"";$("pModule").value=x?.module||"";$("pBox").value="";$("pComplete").value="";$("pNote").value=w?.reason||"";$("purchaseModal").classList.add("show")}
 window.buyWishV3=n=>{const w=state.wishlist.find(x=>x.setNumber===n);if(w)openPurchaseV3(w)};window.purchaseSetV3=n=>{const x=state.collection.find(y=>y.setNumber===n);$("detailModal").classList.remove("show");if(x)openPurchaseV3(null,x)}
-function savePurchaseV3(){const n=$("pSet").value.trim(),name=$("pName").value.trim();if(!n||!name)return alert("Setnummer und Name fehlen.");const qty=Math.max(1,pV3($("pQty").value)||1),price=pV3($("pPrice").value),ship=pV3($("pShipping").value),unit=price+ship/qty;let x=state.collection.find(y=>y.setNumber===n);if(!x){x={setNumber:n,name,quantity:0,purchasePrice:0,currentValue:0,cityArea:$("pArea").value.trim(),category:"",module:$("pModule").value.trim().toUpperCase(),imageUrl:"",condition:$("pCondition").value,buildStatus:"Unbekannt",storage:"",barcode:"",note:"",exemplars:[]};state.collection.push(x)}const oq=pV3(x.quantity),tot=oq*pV3(x.purchasePrice)+qty*unit;x.quantity=oq+qty;x.purchasePrice=x.quantity?tot/x.quantity:unit;x.cityArea=$("pArea").value.trim()||x.cityArea;x.module=$("pModule").value.trim().toUpperCase()||x.module;x.condition=$("pCondition").value||x.condition;x.exemplars=x.exemplars||[];for(let i=0;i<qty;i++)x.exemplars.push({date:$("pDate").value,seller:$("pSeller").value.trim(),condition:$("pCondition").value,price:unit,shipping:ship,box:$("pBox").value,complete:$("pComplete").value,note:$("pNote").value.trim(),addedAfterBaseline:true});if(purchaseFromWishV3)state.wishlist=state.wishlist.filter(w=>w.setNumber!==purchaseFromWishV3);syncModuleV3(x);persist();refresh();$("purchaseModal").classList.remove("show");purchaseFromWishV3=null;switchTab("collection")}
+function savePurchaseV3(){const n=$("pSet").value.trim(),name=$("pName").value.trim();if(!n||!name)return alert("Setnummer und Name fehlen.");const qty=Math.max(1,pV3($("pQty").value)||1),price=pV3($("pPrice").value),ship=pV3($("pShipping").value),unit=price+ship/qty;let x=state.collection.find(y=>y.setNumber===n);if(!x){x={setNumber:n,name,quantity:0,purchasePrice:0,currentValue:0,cityArea:$("pArea").value.trim(),category:"",module:$("pModule").value.trim().toUpperCase(),imageUrl:"",condition:$("pCondition").value,buildStatus:"Unbekannt",storage:"",barcode:"",note:"",exemplars:[]};state.collection.push(x)}const oq=pV3(x.quantity),tot=pV3(x.purchasePrice)+qty*unit;x.quantity=oq+qty;x.purchasePrice=tot;x.cityArea=$("pArea").value.trim()||x.cityArea;x.module=$("pModule").value.trim().toUpperCase()||x.module;x.condition=$("pCondition").value||x.condition;x.exemplars=x.exemplars||[];for(let i=0;i<qty;i++)x.exemplars.push({date:$("pDate").value,seller:$("pSeller").value.trim(),condition:$("pCondition").value,price:unit,shipping:ship,box:$("pBox").value,complete:$("pComplete").value,note:$("pNote").value.trim(),addedAfterBaseline:true});if(purchaseFromWishV3)state.wishlist=state.wishlist.filter(w=>w.setNumber!==purchaseFromWishV3);syncModuleV3(x);persist();refresh();$("purchaseModal").classList.remove("show");purchaseFromWishV3=null;switchTab("collection")}
 async function scanV3(){
  $("scannerModal").classList.add("show");
  $("scannerStatus").textContent="Kamera wird vorbereitet…";
@@ -329,7 +329,7 @@ function ensureV28State(){
  state.collection=(state.collection||[]).map(x=>{
    x.exemplars=x.exemplars||[];
    const q=Math.max(1,pV3(x.quantity)||1);
-   while(x.exemplars.length<q)x.exemplars.push({legacy:true,date:x.purchaseDate||"",seller:x.seller||"",condition:x.condition||"Unbekannt",price:pV3(x.purchasePrice),shipping:0,box:"",complete:"",note:"Historischer Bestand"});
+   while(x.exemplars.length<q)x.exemplars.push({legacy:true,date:x.purchaseDate||"",seller:x.seller||"",condition:x.condition||"Unbekannt",price:pV3(x.purchasePrice)/q,shipping:0,box:"",complete:"",note:"Historischer Bestand"});
    return x;
  });
 }
@@ -387,7 +387,7 @@ window.editExemplarV28=(setNumber,index)=>{
  const condition=prompt("Zustand:",e.condition||"Unbekannt")??e.condition;
  const note=prompt("Notiz:",e.note||"")??e.note;
  Object.assign(e,{price:pV3(String(price).replace(",",".")),date,seller,condition,note});
- const vals=x.exemplars.map(v=>pV3(v.price)).filter(v=>v>0);if(vals.length)x.purchasePrice=vals.reduce((a,b)=>a+b,0)/vals.length;
+ const vals=x.exemplars.map(v=>pV3(v.price)).filter(v=>v>0);if(vals.length)x.purchasePrice=vals.reduce((a,b)=>a+b,0);
  persist();refresh();showDetailV3(setNumber);
 };
 window.deleteExemplarV28=(setNumber,index)=>{
@@ -696,8 +696,8 @@ function renderStatsV36(){
  const topV=$("topValueV36"),topG=$("topGainV36"),areaBox=$("areaValueV36"),cov=$("coverageV36");
  if(!(topV&&topG&&areaBox&&cov))return;
  const rows=(state.collection||[]).map(x=>{
-   const qty=pV3(x.quantity),market=pV3(x.currentValue),purchase=pV3(x.purchasePrice),value=qty*market,gain=qty*(market-purchase);
-   return {...x,qty,market,purchase,value,gain,pct:purchase?((market-purchase)/purchase*100):0};
+   const qty=pV3(x.quantity),market=pV3(x.currentValue),purchase=pV3(x.purchasePrice),value=qty*market,gain=value-purchase;
+   return {...x,qty,market,purchase,value,gain,pct:purchase?(gain/purchase*100):0};
  });
  const bestValue=[...rows].sort((a,b)=>b.value-a.value).slice(0,10);
  const bestGain=[...rows].filter(x=>x.market&&x.purchase).sort((a,b)=>b.gain-a.gain).slice(0,10);
@@ -838,7 +838,7 @@ function bindExemplarV37(){
  if($("saveExemplarV37"))$("saveExemplarV37").onclick=()=>{
    const x=state.collection.find(y=>String(y.setNumber)===exemplarEditV37.setNumber),e=x?.exemplars?.[exemplarEditV37.index];if(!e)return;
    Object.assign(e,{date:$("exDateV37").value,price:pV3($("exPriceV37").value),seller:$("exSellerV37").value.trim(),storage:$("exStorageV37").value.trim(),condition:$("exConditionV37").value,box:$("exBoxV37").value,complete:$("exCompleteV37").value,note:$("exNoteV37").value.trim(),legacy:false});
-   const priced=x.exemplars.map(v=>pV3(v.price)).filter(v=>v>0);if(priced.length)x.purchasePrice=priced.reduce((a,b)=>a+b,0)/priced.length;
+   const priced=x.exemplars.map(v=>pV3(v.price)).filter(v=>v>0);if(priced.length)x.purchasePrice=priced.reduce((a,b)=>a+b,0);
    logV37("exemplar","Exemplar #"+(exemplarEditV37.index+1)+" von "+x.setNumber+" geändert",x.setNumber);persist();refresh();closeExemplarV37();showDetailV3(x.setNumber);
  };
 }
@@ -1116,7 +1116,7 @@ function bindExemplarV37(){
  if($("saveExemplarV37"))$("saveExemplarV37").onclick=()=>{
   const x=state.collection.find(y=>String(y.setNumber)===exemplarEditV37.setNumber),e=x?.exemplars?.[exemplarEditV37.index];if(!e)return closeExemplarV37();
   Object.assign(e,{date:$("exDateV37").value,seller:$("exSellerV37").value.trim(),condition:$("exConditionV37").value,price:pV3($("exPriceV37").value),shipping:pV3($("exShippingV37").value),box:$("exBoxV37").value,complete:$("exCompleteV37").value,storage:$("exStorageV37").value.trim(),note:$("exNoteV37").value.trim(),legacy:false});
-  const vals=(x.exemplars||[]).map(v=>pV3(v.price)).filter(v=>v>0);if(vals.length)x.purchasePrice=vals.reduce((a,b)=>a+b,0)/vals.length;
+  const vals=(x.exemplars||[]).map(v=>pV3(v.price)).filter(v=>v>0);if(vals.length)x.purchasePrice=vals.reduce((a,b)=>a+b,0);
   persist();refresh();closeExemplarV37();showDetailV3(x.setNumber);
  };
 }
@@ -3536,7 +3536,7 @@ function ensureExemplarIdsV536(){
  for(const x of state.collection||[]){
    x.exemplars=x.exemplars||[];
    const q=Math.max(1,pV3(x.quantity)||1);
-   while(x.exemplars.length<q){x.exemplars.push({id:setKeyV536(x.setNumber)+"-"+(x.exemplars.length+1),legacy:true,date:x.purchaseDate||"",seller:x.seller||"",condition:x.condition||"Gebraucht",price:pV3(x.purchasePrice),shipping:0,box:"",complete:"",storage:x.storage||"",module:"",note:"Bestand automatisch getrennt"});changed=true}
+   while(x.exemplars.length<q){x.exemplars.push({id:setKeyV536(x.setNumber)+"-"+(x.exemplars.length+1),legacy:true,date:x.purchaseDate||"",seller:x.seller||"",condition:x.condition||"Gebraucht",price:pV3(x.purchasePrice)/q,shipping:0,box:"",complete:"",storage:x.storage||"",module:"",note:"Bestand automatisch getrennt"});changed=true}
    x.exemplars.forEach((e,i)=>{if(!e.id){e.id=setKeyV536(x.setNumber)+"-"+(i+1);changed=true}if(e.module===undefined){e.module="";changed=true}});
  }
  return changed;
@@ -3910,7 +3910,7 @@ function topCardV538(x,i,kind,max){
 const renderStatsBaseV538=renderStatsV36;
 renderStatsV36=function(){
  renderStatsBaseV538();
- const rows=(state.collection||[]).map(x=>{const qty=pV3(x.quantity),market=pV3(x.currentValue),purchase=pV3(x.purchasePrice),value=qty*market,gain=qty*(market-purchase);return {...x,qty,market,purchase,value,gain,pct:purchase?((market-purchase)/purchase*100):0}});
+ const rows=(state.collection||[]).map(x=>{const qty=pV3(x.quantity),market=pV3(x.currentValue),purchase=pV3(x.purchasePrice),value=qty*market,gain=value-purchase;return {...x,qty,market,purchase,value,gain,pct:purchase?(gain/purchase*100):0}});
  const bestV=[...rows].sort((a,b)=>b.value-a.value).slice(0,10),bestG=[...rows].filter(x=>x.market&&x.purchase).sort((a,b)=>b.gain-a.gain).slice(0,10);
  const mv=Math.max(...bestV.map(x=>x.value),1),mg=Math.max(...bestG.map(x=>Math.max(0,x.gain)),1);
  if($("topValueV36"))$("topValueV36").innerHTML='<div class="rankListV538">'+bestV.map((x,i)=>topCardV538(x,i,"value",mv)).join("")+'</div>';
