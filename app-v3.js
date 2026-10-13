@@ -3510,7 +3510,7 @@ function trendFromRowsV536(rows,days){
 function setTrendV536(x,days=365){return trendFromRowsV536(state.priceHistory?.[setKeyV536(x.setNumber)]||[],days)}
 function portfolioHighlightsV536(){
  const rows=(state.collection||[]).map(x=>{
-   const q=Math.max(1,pV3(x.quantity)||1),value=pV3(x.currentValue)*q,invest=pV3(x.purchasePrice)*q,gain=value-invest,tr=setTrendV536(x,365);
+   const q=Math.max(1,pV3(x.quantity)||1),value=pV3(x.currentValue)*q,invest=pV3(x.purchasePrice),gain=value-invest,tr=setTrendV536(x,365);
    return {x,value,invest,gain,pct:invest?gain/invest*100:0,trend:tr?.pct??null};
  });
  const by=(k)=>[...rows].sort((a,b)=>(b[k]??-1e9)-(a[k]??-1e9))[0];
