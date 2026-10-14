@@ -18,7 +18,7 @@ async function handleWebhook(req:Request){const signature=req.headers.get('strip
  const current=strongestSubscription(list.data)||sub,record=subscriptionRecord(current);if(!record)return response({received:true});
  await database('rpc/apply_billing_event_v548','POST',{p_event_id:event.id,p_event_created:event.created,p_user_id:mapping[0].user_id,p_subscription:record});return response({received:true});
 }
-Deno.serve(async(req:Request)=>{if(req.method==='OPTIONS')return new Response(null,{headers:cors});if(req.method==='GET'){try{return response({ready:!!Deno.env.get('STRIPE_RESTRICTED_KEY')&&!!await getWebhookSecret()})}catch{return response({ready:false})}}if(req.method!=='POST')return response({error:'Method not allowed'},405);try{
+Deno.serve(async(req:Request)=>{if(req.method==='OPTIONS')return new Response(null,{headers:cors});if(req.method==='GET')return response({error:'Method not allowed'},405);if(req.method!=='POST')return response({error:'Method not allowed'},405);try{
  if(req.headers.has('stripe-signature'))return await handleWebhook(req);
  if(req.headers.get('origin')!==ORIGIN)return response({error:'Origin not allowed'},403);
  const authorization=req.headers.get('authorization');if(!authorization)return response({error:'Please sign in'},401);
