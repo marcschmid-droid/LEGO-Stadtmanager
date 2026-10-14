@@ -29,14 +29,13 @@
   function sortCollection(rows){
     const [field,direction]=mode.split("-");
     const sign=direction==="desc"?-1:1;
-    const order=new Map((state.collection||[]).map((x,i)=>[String(x.setNumber),i]));
     return [...rows].sort((a,b)=>{
       if(field==="added"){
         const av=addedOf(a),bv=addedOf(b);
         if(av===null&&bv!==null)return 1;
         if(bv===null&&av!==null)return -1;
         if(av!==null&&bv!==null&&av!==bv)return sign*(av-bv);
-        return sign*((order.get(String(a.setNumber))??0)-(order.get(String(b.setNumber))??0));
+        return -numeric.compare(String(a.setNumber||""),String(b.setNumber||""));
       }
       if(field==="number")return sign*numeric.compare(String(a.setNumber||""),String(b.setNumber||""));
       const av=field==="date"?dateOf(a):Number(a.purchasePrice);
