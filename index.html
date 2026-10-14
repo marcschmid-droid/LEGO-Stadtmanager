@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="de">
-<head>
+<head><script id="loginEntryGuard">/* The collection must only load after explicit login entry. No stored sets are modified. */
+(function(){try{if(sessionStorage.getItem('brick-login-entry-5096')==='allow'){sessionStorage.removeItem('brick-login-entry-5096');return}location.replace('./anmelden.html?entry=5096')}catch(e){location.replace('./anmelden.html?entry=5096')}})();
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#c91a09">
