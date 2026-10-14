@@ -362,7 +362,7 @@ window.addEventListener("online",()=>updateSyncV28("Verbindung wiederhergestellt
 window.addEventListener("offline",()=>updateSyncV28());
 
 const cloudSaveBaseV28=cloudSaveV3;
-cloudSaveV3=async function(show=false){updateSyncV28("Synchronisiere…");const r=await cloudSaveBaseV28(show);updateSyncV28("Cloud aktuell · "+new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}));return r};
+cloudSaveV3=async function(show=false){updateSyncV28("Synchronisiere…");try{const r=await cloudSaveBaseV28(show);updateSyncV28(r?.error?"Synchronisierung fehlgeschlagen: "+r.error.message:cloudUserV3?"Cloud aktuell · "+new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}):"Nicht angemeldet. Lokale Daten bleiben erhalten.");return r}catch(e){updateSyncV28("Synchronisierung fehlgeschlagen: "+String(e?.message||e));throw e}};
 const badgeBaseV28=updateAccountBadgeV3;
 updateAccountBadgeV3=function(){badgeBaseV28();if($("userTop")&&cloudUserV3&&state.meta?.profileName){$("userTop").textContent=state.meta.profileName.charAt(0).toUpperCase();$("userTop").title=state.meta.profileName+" · "+cloudUserV3.email}if($("profileNameV28"))$("profileNameV28").value=state.meta?.profileName||""};
 
