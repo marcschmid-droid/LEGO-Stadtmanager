@@ -23,7 +23,8 @@ function init(){
  if(saved){try{state=JSON.parse(saved)}catch{}}
  else if(window.LEGO_SEED_DATA){state=JSON.parse(JSON.stringify(window.LEGO_SEED_DATA))}
  migrate();persist();bind();refresh();
- if("serviceWorker" in navigator)navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
+ /* Disable offline service worker until stale-version issue is resolved. Preserve all local collection storage. */
+if("serviceWorker" in navigator)navigator.serviceWorker.getRegistrations().then(regs=>Promise.all(regs.filter(r=>r.scope.includes("/LEGO-Stadtmanager/")).map(r=>r.unregister()))).catch(()=>{});
 }
 function persist(){localStorage.setItem(STORE,JSON.stringify(state))}
 function switchTab(id){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id===id))}
