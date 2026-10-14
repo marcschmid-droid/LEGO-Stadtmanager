@@ -5,18 +5,21 @@
     "brickeconomyRequestsThisRun": 0,
     "brickeconomyUsage": {
       "quota": 100,
-      "remaining": 70,
+      "remaining": 60,
       "resets_at": "2026-10-15T00:00:00Z",
-      "used_today": 30
+      "used_today": 40
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
     "bricksetEnabled": false,
     "bricksetRequestsThisRun": 0,
     "errors": [
-      "Rebrickable 1036: 404 Client Error: Not Found for url: https://rebrickable.com/api/v3/lego/sets/1036-1/"
+      "Rebrickable 1036: 404 Client Error: Not Found for url: https://rebrickable.com/api/v3/lego/sets/1036-1/",
+      "Rebrickable 1036: 404 Client Error: Not Found for url: https://rebrickable.com/api/v3/lego/sets/1036-1/",
+      "BrickEconomy 1036: 400 Client Error: Bad Request for url: https://www.brickeconomy.com/api/v1/set/1036-1?currency=EUR",
+      "No metadata for 1036"
     ],
-    "lastUpdated": "2026-10-14T08:57:56Z",
+    "lastUpdated": "2026-10-14T13:05:33Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 2,
@@ -1293,11 +1296,25 @@
     },
     "1036": {},
     "10361": {
+      "brickeconomyName": "Holiday Express Train",
+      "brickeconomyUpdated": "2026-10-14T13:05:31Z",
+      "ean": "5702017829197",
+      "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/10361-1/161069.jpg",
+      "marketNewEUR": 119.99,
+      "marketUsedEUR": null,
+      "marketUsedHighEUR": null,
+      "marketUsedLowEUR": null,
+      "minifigs": 4,
       "pieces": 956,
       "rebrickableName": "Holiday Express Train",
-      "rebrickableUpdated": "2026-10-14T04:50:31Z",
+      "rebrickableUpdated": "2026-10-14T13:05:31Z",
       "rebrickableUrl": "https://rebrickable.com/sets/10361-1/holiday-express-train/",
+      "retired": false,
+      "rrpEUR": 119.99,
+      "subtheme": "Winter Village",
+      "theme": "Icons",
+      "upc": "673419408264",
       "year": 2025
     },
     "10362": {
