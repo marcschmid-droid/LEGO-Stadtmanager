@@ -83,14 +83,14 @@ function saveSet(){
  cityArea:$("fArea").value.trim(),category:$("fCat").value.trim(),width:$("fWidth").value===""?null:Number($("fWidth").value),depth:$("fDepth").value===""?null:Number($("fDepth").value),
  height:$("fHeight").value===""?null:Number($("fHeight").value),imageUrl:$("fImage").value.trim(),note:$("fNote").value.trim()};
  if(editing){const i=state.collection.findIndex(x=>x.setNumber===editing);if(i>=0)state.collection[i]={...state.collection[i],...o}}
- else{const ex=state.collection.find(x=>x.setNumber===n);if(ex){ex.quantity=Number(ex.quantity||0)+o.quantity;if(o.purchasePrice)ex.purchasePrice=o.purchasePrice;if(o.imageUrl)ex.imageUrl=o.imageUrl}else state.collection.push(o);state.wishlist=state.wishlist.filter(x=>x.setNumber!==n)}
+ else{const ex=state.collection.find(x=>x.setNumber===n);if(ex){ex.quantity=Number(ex.quantity||0)+o.quantity;if(o.purchasePrice)ex.purchasePrice=o.purchasePrice;if(o.imageUrl)ex.imageUrl=o.imageUrl}else state.collection.push({...o,addedAt:new Date().toISOString()});state.wishlist=state.wishlist.filter(x=>x.setNumber!==n)}
  persist();refresh();closeSet();
 }
 window.editSet=n=>{const x=state.collection.find(y=>y.setNumber===n);if(x)openSet(x)};
 window.delSet=n=>{if(confirm("Set wirklich löschen?")){state.collection=state.collection.filter(x=>x.setNumber!==n);persist();refresh()}};
 window.delWish=n=>{state.wishlist=state.wishlist.filter(x=>x.setNumber!==n);persist();refresh()};
 window.buyWish=n=>{const w=state.wishlist.find(x=>x.setNumber===n);if(!w)return;const ex=state.collection.find(x=>x.setNumber===n);
- if(ex)ex.quantity=Number(ex.quantity||0)+1;else state.collection.push({setNumber:w.setNumber,name:w.name,quantity:1,purchasePrice:Number(w.price||0),currentValue:0,cityArea:w.area||w.cityArea||"",category:"",imageUrl:w.imageUrl||"",note:w.reason||""});
+ if(ex)ex.quantity=Number(ex.quantity||0)+1;else state.collection.push({setNumber:w.setNumber,name:w.name,quantity:1,purchasePrice:Number(w.price||0),currentValue:0,cityArea:w.area||w.cityArea||"",category:"",imageUrl:w.imageUrl||"",note:w.reason||"",addedAt:new Date().toISOString()});
  state.wishlist=state.wishlist.filter(x=>x.setNumber!==n);persist();refresh();switchTab("collection");
 };
 
@@ -101,7 +101,7 @@ async function importCsv(f){
  const iSet=find("artikelnummer","setnummer"),iName=find("setname"),iQty=find("anzahl"),iPrice=find("investment je stück","kaufpreis"),iValue=find("aktueller wert je stück"),iCat=find("kategorie"),iArea=find("stadtbereich"),iNote=find("planungshinweis","notiz");let count=0;
  for(const l of ls.slice(1)){const p=parseLine(l,d),num=(p[iSet]||"").trim(),name=(p[iName]||"").trim();if(!num||!name)continue;const val=i=>i>=0?p[i]:"";
  const obj={setNumber:num,name,quantity:Number(val(iQty)||1),purchasePrice:Number(String(val(iPrice)||"0").replace(",",".")),currentValue:Number(String(val(iValue)||"0").replace(",",".")),category:val(iCat)||"",cityArea:val(iArea)||"",note:val(iNote)||""};
- const ex=state.collection.find(x=>x.setNumber===num);if(ex)Object.assign(ex,obj);else state.collection.push(obj);count++}
+ const ex=state.collection.find(x=>x.setNumber===num);if(ex)Object.assign(ex,obj);else state.collection.push({...obj,addedAt:new Date().toISOString()});count++}
  persist();refresh();alert(count+" Zeilen importiert.");
 }
 function csvEsc(v){const s=String(v??"");return /[;"\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
