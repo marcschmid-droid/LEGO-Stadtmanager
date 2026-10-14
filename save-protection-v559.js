@@ -10,7 +10,8 @@
   };
   let checking=false;
   function collectionSignature(s){
-    return JSON.stringify((s?.collection||[]).map(x=>[String(x.setNumber),Number(x.quantity||1)]).sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true})));
+    const canonical=v=>Array.isArray(v)?v.map(canonical):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])])):v;
+    return JSON.stringify((s?.collection||[]).map(canonical).sort((a,b)=>String(a.setNumber).localeCompare(String(b.setNumber),undefined,{numeric:true})));
   }
   function safeRecoveryCopy(label){
     // No additional full-state copies in localStorage: iOS quota is limited.
@@ -104,5 +105,5 @@
   renderSyncConflictV547=function(){oldRender();showProtection()};
   const oldSwitch=switchTab;
   switchTab=function(id){const r=oldSwitch(id);if(id==='users')showProtection();return r};
-  document.addEventListener('DOMContentLoaded',()=>{showProtection();const badge=$('appVersion');if(badge)badge.textContent='v50.87';document.querySelectorAll('#visibleVersionV553').forEach(el=>el.textContent='v50.87')});
+  document.addEventListener('DOMContentLoaded',()=>{showProtection();const badge=$('appVersion');if(badge)badge.textContent='v50.88';document.querySelectorAll('#visibleVersionV553').forEach(el=>el.textContent='v50.88')});
 })();
