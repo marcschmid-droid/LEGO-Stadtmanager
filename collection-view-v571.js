@@ -19,7 +19,7 @@
    if(sort==='number-desc')return -number();
    if(sort==='price-desc')return numeric('purchasePrice',-1);
    if(sort==='price-asc')return numeric('purchasePrice',1);
-   if(sort==='added-desc'||sort==='added-asc'){const key=x=>Date.parse(x.addedAt||x.createdAt||x.dateAdded||x.importedAt||'')||0;return (sort==='added-desc'?-1:1)*(key(a)-key(b))||number()}
+   if(sort==='added-desc'||sort==='added-asc'){const key=x=>{const dates=[x.addedAt,x.createdAt,x.dateAdded,x.importedAt,x.created_at,x.addedDate].map(v=>v?Date.parse(v):NaN).filter(Number.isFinite);return dates.length?Math.max(...dates):null};const av=key(a),bv=key(b);if(av===null&&bv!==null)return 1;if(bv===null&&av!==null)return -1;if(av!==null&&bv!==null&&av!==bv)return (sort==='added-desc'?-1:1)*(av-bv);return items.indexOf(a)-items.indexOf(b)}
    if(sort==='date-desc'||sort==='date-asc'){const key=x=>Date.parse(x.purchaseDate||x.exemplars?.[0]?.date||'')||0;return (sort==='date-desc'?-1:1)*(key(a)-key(b))||number()}
    return number();
   });
