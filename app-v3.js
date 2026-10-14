@@ -104,7 +104,19 @@ async function cloudSessionV3(session){
 async function cloudSaveV3(show=false){
  if(!cloudV3||!cloudUserV3||cloudApplyingV3)return;
  try{localStorage.setItem(cloudCacheKeyV3(cloudUserV3.id),JSON.stringify(state))}catch(e){console.warn("Cloud cache full; syncing directly",e)}
- const {error}=await cloudV3.from("user_state").upsert({user_id:cloudUserV3.id,state,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+ // Never overwrite a cloud collection if the device does not contain all its sets.
+ // This check is intentionally conservative: conflicting records require review.
+ const userId=cloudUserV3.id;
+ const snapshot=JSON.parse(JSON.stringify(state));
+ const {data:remote,error:readError}=await cloudV3.from("user_state").select("state").eq("user_id",userId).maybeSingle();
+ if(readError){if(show)cloudStatusV3("Cloud-Abgleich blockiert: "+readError.message);return {error:readError}}
+ if(cloudUserV3?.id!==userId)return {error:{message:"Konto während des Abgleichs gewechselt"}};
+ const remoteSets=Array.isArray(remote?.state?.collection)?remote.state.collection:[];
+ const localSets=Array.isArray(snapshot.collection)?snapshot.collection:[];
+ const localIds=new Set(localSets.map(x=>String(x.setNumber)));
+ const missing=remoteSets.filter(x=>!localIds.has(String(x.setNumber)));
+ if(missing.length){const error={message:"STOPP: "+missing.length+" Cloud-Sets fehlen lokal. Keine Daten überschrieben."};cloudStatusV3(error.message);return {error}}
+ const {error}=await cloudV3.from("user_state").upsert({user_id:userId,state:snapshot,updated_at:new Date().toISOString()},{onConflict:"user_id"});
  if(show)cloudStatusV3(error?"Synchronisierung fehlgeschlagen: "+error.message:"Synchronisiert: "+new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}));
  return {error};
 }
