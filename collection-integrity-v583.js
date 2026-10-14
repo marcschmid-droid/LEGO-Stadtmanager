@@ -3,6 +3,7 @@
  'use strict';
  const el=id=>document.getElementById(id);
  let running=false,lastUser='',lastChecked=0;
+ function homeWarning(message){const home=el('home');if(!home)return;let p=el('homeCloudDifferenceV583');if(!p){p=document.createElement('div');p.id='homeCloudDifferenceV583';p.setAttribute('role','alert');p.style.cssText='padding:12px;margin:12px 0;border:2px solid #b45309;border-radius:12px;background:#fff7ed;color:#7c2d12;font-weight:650';home.prepend(p)}p.textContent=message;p.hidden=!message}
  function panel(){
   const root=el('collection');if(!root)return;
   let p=el('collectionIntegrityV583');
@@ -13,7 +14,7 @@
   const box=panel();if(!box)return;
   const local=typeof state!=='undefined'&&Array.isArray(state?.collection)?state.collection.length:0;
   const id=typeof cloudUserV3!=='undefined'?cloudUserV3?.id:null;
-  if(!id||typeof cloudV3==='undefined'||!cloudV3){box.textContent='Sammlung: '+local+' Sets geladen · Cloud-Abgleich nur nach Anmeldung möglich.';return}
+  if(!id||typeof cloudV3==='undefined'||!cloudV3){homeWarning('');box.textContent='Sammlung: '+local+' Sets geladen · Cloud-Abgleich nur nach Anmeldung möglich.';return}
   if(running)return;
   if(!force&&lastUser===id&&Date.now()-lastChecked<90000)return;
   running=true;box.textContent='Sammlung: '+local+' Sets geladen · Cloud-Bestand wird geprüft…';
@@ -25,6 +26,7 @@
    if(!Array.isArray(remote)){box.textContent='Sammlung: '+local+' Sets · Cloud hat keinen lesbaren Sammlungsbestand. Keine Daten verändert.';return}
    const missing=remote.filter(x=>!(state?.collection||[]).some(y=>String(y.setNumber)===String(x.setNumber)));
    const diff=remote.length!==local||missing.length>0;
+   homeWarning(diff?'Achtung: Die App zeigt '+local+' Sets, die Cloud enthält '+remote.length+'. Bitte nicht synchronisieren. Öffne Sammlung für Details.':'');
    box.textContent=diff?'ACHTUNG: Anzeige '+local+' Sets, Cloud '+remote.length+' Sets. '+missing.length+' Cloud-Sets fehlen lokal. Bitte nicht synchronisieren. Daten wurden nicht verändert.':'Bestand geprüft: '+local+' Sets in der App und '+remote.length+' Sets in der Cloud.';
    if(diff){box.style.borderColor='#b45309';box.style.fontWeight='600'}else{box.style.borderColor='#d3d8df';box.style.fontWeight='normal'}
   }catch(_){box.textContent='Cloud-Bestandsprüfung fehlgeschlagen · keine Änderungen vorgenommen.'}
