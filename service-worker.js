@@ -1,10 +1,10 @@
-const CACHE="brick-city-manager-v50-r60";
+const CACHE="brick-city-manager-v50-r92";
 const ASSETS=["./index.html","./styles.css?v=50.56","./app.js?v=50.56","./app-v3.js?v=50.85","./improvements-v544.js?v=50.56","./customer-value-v545.js?v=50.56","./usability-v546.js?v=50.56","./collection-ops-v547.js?v=50.56","./shared-collections-v547.js?v=50.56","./customer-experience-v548.js?v=50.56","./billing-client-v548.js?v=50.56","./billing-config.js?v=50.56","./supabase-config.js?v=50.56","./seed-data.js","./manifest.webmanifest","./icon.svg?v=50.56","./ursprungsstadt.jpg","./data/set-enrichment.json","./impressum.html","./datenschutz.html","./vendor/supabase.js?v=50.56","./vendor/zxing.js?v=50.56"];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))).then(()=>self.skipWaiting()));
 self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener("fetch",e=>{
  if(e.request.method!=="GET")return;
- if(/\.(?:js|html)$/.test(new URL(e.request.url).pathname)){e.respondWith(fetch(e.request,{cache:"no-store"}).catch(()=>caches.match(e.request)));return;}
+ if(e.request.mode==="navigate"||/\.(?:js|html)$/.test(new URL(e.request.url).pathname)){e.respondWith(fetch(e.request,{cache:"no-store"}).catch(()=>caches.match(e.request)));return;}
  if(e.request.mode==="navigate"){
    e.respondWith(fetch(e.request).then(r=>{const c=r.clone();caches.open(CACHE).then(x=>x.put("./index.html",c));return r}).catch(()=>caches.match("./index.html")));
    return;
