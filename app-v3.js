@@ -87,8 +87,20 @@ async function cloudSessionV3(session){
    // Never replace a nonempty device collection with a differing cloud snapshot.
    const localCollection=Array.isArray(state?.collection)?state.collection:[];
    if(localCollection.length&&JSON.stringify(localCollection)!==JSON.stringify(data.state.collection||[])){
-     cloudStatusV3("Lokale Sammlung geschützt: Cloud-Daten weichen ab. Kein Bestand überschrieben.");
-     return;
+     const remoteCollection=Array.isArray(data.state.collection)?data.state.collection:[];
+     const remoteIds=new Set(remoteCollection.map(x=>String(x.setNumber)));
+     const localOnly=localCollection.filter(x=>!remoteIds.has(String(x.setNumber)));
+     if(localOnly.length){
+       cloudStatusV3("Lokale Sammlung geschützt: "+localOnly.length+" Sets fehlen in der Cloud. Keine Daten überschrieben.");
+       return;
+     }
+     // Cloud contains every locally known set. A smaller device snapshot may safely
+     // adopt the complete cloud set list without writing anything back to the cloud.
+     // Preserve existing device entries when the cloud has the same set numbers,
+     // so local edits and purchase prices are never silently overwritten.
+     const localById=new Map(localCollection.map(x=>[String(x.setNumber),x]));
+     const combined=remoteCollection.map(x=>localById.get(String(x.setNumber))||x);
+     data.state={...data.state,collection:combined};
    }
    cloudApplyingV3=true;state=data.state;migrate();migrateV3();refresh();cloudApplyingV3=false;
    try{localStorage.setItem(cacheKey,JSON.stringify(state))}catch(e){console.warn("Cloud cache quota",e)}
