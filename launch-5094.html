@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#c91a09">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg?v=50.56">
+<link rel="apple-touch-icon" href="./icon.svg?v=50.56">
+<link rel="stylesheet" href="./styles.css?v=50.56">
+<link rel="stylesheet" href="./design-clean-v563.css?v=50.65">
+<link rel="stylesheet" href="./focus-v564.css?v=50.71">
+<link rel="stylesheet" href="./dashboard-simple-v568.css?v=50.71">
+<link rel="stylesheet" href="./launch-polish-v589.css?v=50.89">
+<style>body.themeV39 #home > :not(#homeOverviewTitleV568):not(.homeKpisV549):not(#homeSimpleActionsV568){display:none!important}body.themeV39 #collection .tablewrap{display:none!important}body.themeV39 #collection #collectionGrid{display:grid!important}</style>
+<script>
+/* Login handler registered before application scripts, no collection mutation. */
+(function(){
+ document.addEventListener('click',async function(e){
+  if(!e.target?.closest?.('#cloudLogin'))return;
+  e.preventDefault();e.stopImmediatePropagation();
+  var button=document.getElementById('cloudLogin');
+  var email=document.getElementById('cloudEmail')?.value.trim();
+  var password=document.getElementById('cloudPassword')?.value;
+  if(!email||!password){alert('Bitte E-Mail und Passwort eingeben.');return}
+  button.disabled=true;button.textContent='Anmeldung läuft…';
+  try{
+   var cfg=window.LEGO_SUPABASE;
+   if(!cfg||!window.supabase)throw Error('Cloud-Bibliothek nicht geladen. Bitte neu öffnen.');
+   var client=(typeof cloudV3!=='undefined'&&cloudV3)?cloudV3:window.supabase.createClient(cfg.url,cfg.publishableKey);
+   var response=await client.auth.signInWithPassword({email:email,password:password});
+   if(response.error)throw response.error;
+   if(!response.data?.session)throw Error('Keine gültige Sitzung erhalten.');
+   if(typeof cloudV3!=='undefined'&&!cloudV3)cloudV3=client;
+   if(typeof cloudSessionV3==='function')await cloudSessionV3(response.data.session);
+   alert('Anmeldung erfolgreich. Bitte prüfe den Kontostatus. Deine lokale Sammlung wurde nicht gelöscht.');
+  }catch(error){console.error('LOGIN_FIX',error);alert('Anmeldung fehlgeschlagen: '+String(error?.message||error))}
+  finally{button.disabled=false;button.textContent='Anmelden'}
+ },true);
+})();
+</script>
+<title>Brick City Manager</title><meta name="application-name" content="Brick City Manager"><meta name="apple-mobile-web-app-title" content="Brick City Manager">
+<script>
+(async()=>{
+  const V="50.94-fresh-entry";
+  if(localStorage.getItem("lego-app-shell-version")!==V){
+    try{
+      if("serviceWorker" in navigator){
+        const regs=await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r=>r.unregister()));
+      }
+      if("caches" in window){
+        const keys=await caches.keys();
+        await Promise.all(keys.map(k=>caches.delete(k)));
+      }
+      localStorage.setItem("lego-app-shell-version",V);
+      location.replace(location.pathname+"?v="+V);
+    }catch(e){}
+  }
+})();
+</script><link rel="stylesheet" href="./collection-view-v571.css?v=50.71">
+<link rel="stylesheet" href="./collection-emergency-v573.css?v=50.85"><link rel="stylesheet" href="./valuation-audit-v574.css?v=50.85"></head>
+<body class="themeV39">
+<header><div class="head">
+  <div class="brandV39"><img src="./icon.svg?v=50.56" alt="" class="brandIconV39" decoding="async"><div><h1>Brick City Manager <span class="versionPillV553" id="visibleVersionV553">v50.94</span></h1><small>Sammlung · Einkauf · Stadt · Züge · <b id="appVersion">v50.94</b></small></div></div>
+  <div class="headActions"><button id="globalSearchTopV521" class="iconbtn" title="App durchsuchen">⌕</button><button id="notificationsTopV521" class="iconbtn notifyBtnV521" title="Hinweise">🔔<span id="notificationCountV521"></span></button><button id="userTop" class="iconbtn userbadge" title="Benutzer wechseln">👤</button><button id="scanTop" class="iconbtn" title="Barcode scannen">▣</button><button id="addTop" class="btn">＋ Set</button></div>
+</div></header>
+
+<main>
+<nav class="tabs tabsGroupedV550" aria-label="Hauptnavigation" style="position:static!important;top:auto!important;bottom:auto!important;left:auto!important;right:auto!important;transform:none!important;overflow:visible!important">
+  <button class="tab active" data-tab="home">Start</button>
+  <details class="navGroupV550"><summary>Sammlung</summary><div class="navMenuV550">
+    <button class="tab" data-tab="collection">Meine Sets</button>
+    <button class="tab" data-tab="collector">Serien &amp; Sammlerziele</button>
+    <button class="tab" data-tab="wishlist">Wünsche &amp; Einkäufe</button>
+  </div></details>
+  <details class="navGroupV550"><summary>Stadtplanung</summary><div class="navMenuV550">
+    <button class="tab" data-tab="city">Stadtplan</button>
+    <button class="tab" data-tab="trains">Züge &amp; Schienen</button>
+  </div></details>
+  <details class="navGroupV550"><summary>Werte &amp; Analyse</summary><div class="navMenuV550">
+    <button class="tab premiumTabV520" data-tab="prices">Preise</button>
+    <button class="tab premiumTabV520" data-tab="analysis">Analysen</button>
+  </div></details>
+  <details class="navGroupV550"><summary>Mehr</summary><div class="navMenuV550">
+    <button class="tab" data-tab="users">Konto</button>
+    <button class="tab" data-tab="plans">Tarife</button>
+    <button class="tab" data-tab="settings">Daten &amp; Einstellungen</button>
+    <button class="tab hidden" id="adminTabV36" data-tab="admin">Administration</button>
+  </div></details>
+</nav>
+<style id="navGroupedStylesV550">
+.tabsGroupedV550{display:flex!important;align-items:stretch;gap:8px;overflow:visible!important;flex-wrap:wrap;position:relative;z-index:50}
+.tabsGroupedV550>.tab,.tabsGroupedV550>.navGroupV550>summary{box-sizing:border-box;min-height:44px;display:flex;align-items:center;justify-content:center;padding:10px 15px;border-radius:12px;border:1px solid var(--line,#ddd);background:var(--card,#fff);color:inherit;font-size:14px;font-weight:650;cursor:pointer;white-space:nowrap;list-style:none;box-shadow:none}
+.tabsGroupedV550>.navGroupV550>summary::-webkit-details-marker{display:none}
+.tabsGroupedV550>.navGroupV550>summary:after{content:"⌄";font-size:12px;margin-left:8px;opacity:.6}
+.tabsGroupedV550>.tab.active,.tabsGroupedV550>.navGroupV550:has(.tab.active)>summary{background:var(--red,#c91a09);color:white;border-color:var(--red,#c91a09)}
+.tabsGroupedV550 .navGroupV550{position:relative}
+.tabsGroupedV550 .navMenuV550{position:absolute;top:calc(100% + 5px);left:0;z-index:100;min-width:230px;max-width:min(300px,90vw);padding:7px;border:1px solid var(--line,#ddd);background:var(--card,#fff);border-radius:14px;box-shadow:0 14px 32px #0002;display:grid;gap:3px}
+.tabsGroupedV550 .navMenuV550 .tab{display:block!important;width:100%;text-align:left;border-radius:9px;padding:12px 14px;margin:0;box-shadow:none;background:transparent;color:inherit;font-size:14px;white-space:normal}
+.tabsGroupedV550 .navMenuV550 .tab:hover{background:#9992}
+.tabsGroupedV550 .navMenuV550 .tab.active{background:var(--red,#c91a09);color:#fff}
+.tabsGroupedV550 .navMenuV550 .tab.hidden{display:none!important}
+.tabsGroupedV550 .tab:before{display:none!important}
+@media(max-width:650px){.tabsGroupedV550{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.tabsGroupedV550>.tab,.tabsGroupedV550>.navGroupV550>summary{width:100%;font-size:13px;padding:9px 7px}.tabsGroupedV550>.navGroupV550:last-child{grid-column:span 2}.tabsGroupedV550>.navGroupV550:nth-last-child(-n+2) .navMenuV550{left:auto;right:0}}
+/* v50.56: Mobile navigation must never cover content. */
+@media(max-width:650px){
+  body.themeV39 nav.tabs.tabsGroupedV550{
+    position:relative!important;top:auto!important;bottom:auto!important;
+    left:auto!important;right:auto!important;z-index:12!important;
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    margin:0 0 18px!important;padding:8px!important;
+    gap:7px!important;width:100%!important;max-width:100%!important;
+    overflow:visible!important;transform:none!important;
+    background:#fff!important;border:1px solid #e5e7eb!important;
+    border-radius:17px!important;box-shadow:0 5px 20px #17202b10!important;
+    backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  }
+  body.themeV39 nav.tabs.tabsGroupedV550>.tab,
+  body.themeV39 nav.tabs.tabsGroupedV550>.navGroupV550>summary{
+    display:flex!important;flex-direction:row!important;min-width:0!important;
+    min-height:44px!important;justify-content:center!important;
+    color:#202124!important;font-size:13px!important;line-height:1.25!important;
+    font-weight:700!important;padding:10px 7px!important;
+    background:#f7f7f8!important;border:1px solid #e3e4e8!important;
+    border-radius:11px!important;
+  }
+  body.themeV39 nav.tabs.tabsGroupedV550>.tab.active,
+  body.themeV39 nav.tabs.tabsGroupedV550>.navGroupV550:has(.tab.active)>summary{
+    background:#d51616!important;color:white!important;border-color:#d51616!important;
+  }
+  body.themeV39 nav.tabs.tabsGroupedV550>.navGroupV550{min-width:0!important;position:relative!important}
+  body.themeV39 nav.tabs.tabsGroupedV550>.navGroupV550:last-child{grid-column:span 2}
+  body.themeV39 nav.tabs.tabsGroupedV550>.navGroupV550[open]{
+    grid-column:1/-1!important;
+  }
+  body.themeV39 nav.tabs.tabsGroupedV550>.navGroupV550[open]>.navMenuV550{
+    position:static!important;left:auto!important;right:auto!important;
+    top:auto!important;display:grid!important;min-width:0!important;
+    max-width:none!important;width:100%!important;margin:7px 0 0!important;
+    padding:5px!important;border:1px solid #e7e7e9!important;
+    border-radius:10px!important;box-shadow:none!important;background:#fff!important;
+  }
+  body.themeV39 nav.tabs.tabsGroupedV550 .navMenuV550 .tab{
+    display:block!important;flex:none!important;width:100%!important;
+    min-width:0!important;text-align:left!important;color:#202124!important;
+    background:white!important;font-size:14px!important;padding:11px 12px!important;
+    border-radius:8px!important;
+  }
+  body.themeV39 nav.tabs.tabsGroupedV550 .navMenuV550 .tab.active{
+    color:#fff!important;background:#d51616!important;
+  }
+  body.themeV39 nav.tabs.tabsGroupedV550 .navMenuV550 .tab.hidden{display:none!important}
+  body.themeV39 main{padding-bottom:32px!important}
+}
+/* v50.56: compact, readable collection tools on small screens.
+   The navigation layout is intentionally untouched. */
+@media(max-width:650px){
+  #collection>.toolbar{
+    display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    gap:8px!important;position:relative!important;top:auto!important;
+    padding:10px!important;margin-bottom:12px!important;
+  }
+  #collection>.toolbar #search{grid-column:1/-1!important;width:100%!important;min-width:0!important;font-size:16px!important;min-height:44px!important}
+  #collection>.toolbar #areaFilter{grid-column:1/-1!important;width:100%!important;min-width:0!important;font-size:14px!important;min-height:44px!important}
+  #collection>.toolbar #toggleView,#collection>.toolbar #addBtn{
+    grid-column:auto!important;min-width:0!important;width:100%!important;
+    min-height:44px!important;font-size:13px!important;padding:10px 6px!important;
+  }
+  #collection .tablewrap{max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+  #collection .setgrid{min-width:0!important}
+  #collection .setcard{min-width:0!important}
+}
+.versionPillV553{display:inline-flex;vertical-align:middle;align-items:center;margin-left:5px;padding:3px 7px;border:1px solid #ffffff65;border-radius:8px;background:#ffffff20;color:#fff;font-size:11px;line-height:1.2;font-weight:750;white-space:nowrap}
+@media(max-width:650px){.brandV39 h1{display:flex;align-items:center;flex-wrap:wrap;gap:4px;font-size:14px!important}.brandV39 h1 .versionPillV553{margin-left:0;font-size:10px;padding:3px 5px}}
+</style>
+<script>
+document.addEventListener("click",function(e){
+ const nav=document.querySelector(".tabsGroupedV550");if(!nav)return;
+ const selected=e.target.closest(".tabsGroupedV550 .tab[data-tab]");
+ if(selected){nav.querySelectorAll("details[open]").forEach(d=>d.removeAttribute("open"));return;}
+ const summary=e.target.closest(".tabsGroupedV550 summary");
+ if(summary){nav.querySelectorAll("details[open]").forEach(d=>{if(d!==summary.parentElement)d.removeAttribute("open")});return;}
+ if(!nav.contains(e.target))nav.querySelectorAll("details[open]").forEach(d=>d.removeAttribute("open"));
+});
+</script>
+
+<section id="home" class="panel active homeMinimalV549">
+  <div class="heroV50 homeHeroV549">
+    <div><span class="homeEyebrowV549">DEINE SAMMLUNG. DEINE STADT.</span>
+      <h2>Deine Brick City.</h2>
+      <p>Alles Wichtige auf einen Blick.</p>
+      <div class="heroActionsV50"><button class="btn v50Primary" id="quickAdd">＋ Set hinzufügen</button><button class="btn v50Ghost" id="v50OpenCity">Stadtplan öffnen →</button></div>
+    </div>
+  </div>
+  <h2 id="homeOverviewTitleV568">Meine Sammlung</h2>
+  <div class="cards homeKpisV549" aria-label="Die wichtigsten Kennzahlen">
+    <div class="card"><span>Sammlungswert</span><b id="kValue">0 €</b></div>
+    <div class="card"><span>Investierter Betrag</span><b id="kInvest">0 €</b></div>
+    <div class="card"><span>Anzahl Sets</span><b id="kUnique">0</b></div>
+    <div class="card"><span>Rendite</span><b id="kGainPct">0 %</b><small>Wertentwicklung gegenüber Investition</small></div>
+  </div>
+  <div id="homeSimpleActionsV568"><button class="btn v50Primary" type="button" onclick="switchTab('collection')">Alle Sets ansehen</button><button class="btn secondary" type="button" onclick="document.getElementById('quickAdd').click()">＋ Set hinzufügen</button></div>
+  <div class="commandGridV50 homeFocusV549">
+    <div class="commandCardV50"><span>Dein nächster Schritt</span><b id="v50NextAction">–</b><button class="linkbtnV50" id="v50NextActionBtn">Jetzt öffnen →</button></div>
+  </div>
+  <div class="homeCityPreviewV50 homeCityPreviewV549">
+    <img src="./ursprungsstadt.jpg?v=8" alt="Vorschau deiner Brick City" loading="lazy" decoding="async">
+    <div class="homeCityPreviewShadeV50"></div>
+    <div class="homeCityPreviewContentV50"><span class="eyebrowV50">DEINE STADT</span><h2>Deine Stadt wächst.</h2><p>Entdecke deinen Stadtplan und finde Platz für deine Sets.</p></div>
+  </div>
+  <div class="homeLegacyV549" aria-hidden="true">
+<div class="homeVersionBadgeV508">Brick City Manager <b>v50.56</b></div>
+<div class="commandGridV50"><div class="commandCardV50 commandProgressV50"><span>Stadtfortschritt</span><b id="v50CityPct">0 %</b><div class="commandBarV50"><i id="v50CityBar"></i></div><p id="v50CityText"></p></div><div class="commandCardV50"><b id="v50Unplanned">0</b></div><div class="commandCardV50"><b id="v50Quality">0 %</b><small id="v50QualityText"></small></div></div>
+  <div class="megaAutopilotV530">
+    <div class="megaAutoHeadV530"><div><span class="eyebrowV50">SMART AUTOPILOT</span><h2>Ein Knopf. Deine Sammlung wird aufgeräumt.</h2><p>Der Autopilot ergänzt sichere Online-Daten, bereinigt fehlende Zustände und zeigt dir danach die wichtigsten offenen Baustellen.</p></div><div class="megaAutoScoreV530"><small>GESAMTSTATUS</small><b id="megaAutoScoreV530">0%</b></div></div>
+    <div id="megaAutoMetricsV530" class="megaAutoMetricsV530"></div>
+    <div id="megaAutoActionsV530" class="megaAutoActionsV530"></div>
+    <div class="actions"><button class="btn v50Primary" id="megaAutoRunV530">Autopilot starten</button><button class="btn secondary" id="megaAutoAnalysisV530">Details ansehen</button></div>
+    <div id="megaAutoProgressV530" class="megaAutoProgressV530 hidden"><span></span><i></i></div>
+  </div>
+
+<div class="cards"><div class="card"><b id="kWish">0</b></div><div class="card"><b id="kValue">0 €</b></div><div class="card"><b id="kGain">0 €</b><small id="kGainPct"></small></div></div>
+<div class="heroActionsV50"><button id="v50PlanNext">Nächstes Set einplanen</button><button id="v50Scan">Set scannen</button><button id="v50Showcase">Showcase</button><button id="v50Plans">Tarife</button></div>
+  <div class="card wide">
+    <h2>Schnellstart</h2>
+    <p>Deine bestätigte Sammlung ist als Startbestand enthalten. Neue Käufe kannst du direkt eintragen oder aus der Einkaufsliste übernehmen.</p>
+    <div class="actions"><button class="btn" id="quickAdd">Neues Set</button><button class="btn secondary" id="quickBuy">Kauf erfassen</button><button class="btn secondary" id="quickExport">Backup</button></div>
+  </div>
+<div class="homegrid homegridV515"><div class="card wide"><h2>Zugstatus</h2><div id="homeTrackStats" class="miniStats"></div></div></div>
+  <div class="homeSmartGridV521">
+    <div class="card wide"><div class="sectionHead"><div><span class="eyebrowV50">SERIEN-ZIELE</span><h2>Dein nächster Serienabschluss</h2></div><button class="btn secondary" id="homeGoalsOpenV521">Sammler öffnen</button></div><div id="homeSeriesGoalsV521"></div></div>
+    <div class="card wide"><div class="sectionHead"><div><span class="eyebrowV50">ERFOLGE</span><h2>Sammler-Meilensteine</h2></div></div><div id="homeAchievementsV521" class="achievementGridV521"></div></div>
+  </div>
+  <div class="card wide"><div class="sectionHead"><div><span class="eyebrowV50">EMPFEHLUNGEN</span><h2>Was du als Nächstes tun könntest</h2></div></div><div id="homeRecommendationsV521" class="recommendGridV521"></div></div>
+
+</div>
+</section>
+
+<section id="collection" class="panel">
+  <div class="toolbar"><input id="search" placeholder="Setnummer, Name, Kategorie, Bereich, Lagerort…"><select id="areaFilter"><option value="">Alle Bereiche</option></select><button class="btn secondary" id="toggleView">▦ Raster</button><button class="btn" id="addBtn">＋ Set</button></div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Set</th><th>Name</th><th>Anzahl</th><th>Kaufpreis</th><th>Wert</th><th>Bereich</th><th></th></tr></thead>
+    <tbody id="collectionBody"></tbody>
+  </table></div><div id="collectionGrid" class="setgrid hidden"></div>
+</section>
+
+<section id="wishlist" class="panel">
+  <div class="card" id="classifiedsWatchV554" style="margin-bottom:14px">
+    <h3 style="margin:0 0 7px">🔔 LEGO-Kleinanzeigen-Suche</h3>
+    <p class="hint" style="margin:0 0 10px">Findet Setnummern deiner Wunschliste, die noch nicht in deiner Sammlung sind, und öffnet die passenden Kleinanzeigen-Suchen. Automatische Angebotsüberwachung und Push-Nachrichten sind noch nicht aktiv.</p>
+    <div id="classifiedsMissingV554" style="display:grid;gap:8px"></div>
+    <button class="btn secondary" id="classifiedsRefreshV554" type="button" style="margin-top:9px">Fehlende Sets aktualisieren</button>
+  </div>
+  <div class="toolbar"><button class="btn" id="wishAdd">＋ Wunsch</button><button class="btn secondary" id="purchaseGeneral">＋ Kauf erfassen</button></div><div id="wishCards" class="wishgrid"></div>
+  <div class="tablewrap legacyWishTableV515" aria-hidden="true"><table>
+    <thead><tr><th>Prio</th><th>Set</th><th>Name</th><th>Bereich</th><th>Preis</th><th></th></tr></thead>
+    <tbody id="wishBody"></tbody>
+  </table></div>
+</section>
+
+<section id="collector" class="panel">
+  <div class="collectorHeroV504">
+    <div><span class="eyebrowV50">SAMMLER-KATALOG</span><h2>Welche Serien sind komplett?</h2><p>Vergleiche deine Sammlung mit dem LEGO-Katalog nach Themenwelten und setze fehlende Sets direkt auf die Wunschliste.</p></div>
+    <div class="collectorHeroStatsV504"><div><span>Themen</span><b id="collectorThemeCountV504">–</b></div><div><span>Katalog</span><b id="collectorSetCountV504">–</b></div></div>
+  </div>
+  <div class="collectorToolbarV504">
+    <input id="collectorSearchV504" placeholder="Thema suchen, z. B. Harry Potter, Weihnachten, Icons…">
+    <select id="collectorStatusV504"><option value="all">Alle Sets</option><option value="missing">Nur fehlende</option><option value="owned">Nur vorhanden</option><option value="wishlist">Nur Wunschliste</option></select>
+    <select id="collectorYearV504"><option value="">Alle Jahre</option></select>
+    <select id="collectorSubthemeV505"><option value="">Alle Unterthemen</option></select>
+    <select id="collectorTypeV506"><option value="">Alle Set-Arten</option><option value="main">Hauptsets</option><option value="polybag">Polybag</option><option value="gwp">Gratis-Beigabe / GWP</option></select>
+    <input id="collectorSetSearchV505" placeholder="Setnummer oder Setname filtern…">
+  </div>
+  <div class="collectorFastCompleteV528" id="collectorFastCompleteV528">
+    <div class="collectorSectionTitleV504"><span>Fast komplett</span><small>Themenwelten mit nur noch 1–5 fehlenden Sets</small></div>
+    <div id="collectorFastCompleteGridV528" class="collectorThemeGridV504"></div>
+  </div>
+  <div id="collectorFeaturedV504" class="collectorFeaturedV504"></div>
+  <div id="collectorThemeViewV504" class="collectorThemeViewV504 hidden">
+    <div class="collectorThemeHeadV504"><button class="btn secondary" id="collectorBackV504">← Themen</button><div><span class="eyebrowV50">SERIE</span><h2 id="collectorThemeTitleV504">Thema</h2><p id="collectorThemeMetaV504" class="hint"></p></div><div class="collectorProgressWrapV504"><b id="collectorProgressTextV504">0 %</b><div class="collectorProgressV504"><i id="collectorProgressBarV504"></i></div></div></div>
+    <div id="collectorSetGridV504" class="collectorSetGridV504"></div>
+  </div>
+</section>
+
+<section id="city" class="panel">
+  <div class="card wide">
+    <div class="sectionHead"><div><h2>Verbindliche Ursprungs-Stadt</h2><p class="hint">Tippe auf einen Bereich, um passende Sets zu filtern.</p></div><button class="btn secondary" id="clearCityFilter">Filter löschen</button></div><div class="cityImageWrap"><img src="./ursprungsstadt.jpg?v=8" alt="Ursprungs-Stadt" class="referenceImage" loading="lazy" decoding="async"><button class="hotspot hs-winter" data-area="Weihnachtsdorf">Weihnachtsdorf</button><button class="hotspot hs-station" data-area="Hauptbahnhof">Hauptbahnhof</button><button class="hotspot hs-hogwarts" data-area="Hogwarts">Hogwarts</button><button class="hotspot hs-harbor" data-area="Hafen">Hafen</button><button class="hotspot hs-disney" data-area="Disney">Disney / Springfield</button><button class="hotspot hs-city" data-area="Innenstadt">Innenstadt</button><button class="hotspot hs-world" data-area="Weltpark">Weltpark / Botanik</button></div><div id="citySetResults" class="cityResults"></div>
+    <p class="hint">Diese Zonierung ist die feste Referenz für weitere Planung. Die große zentrale Freifläche bleibt offen.</p>
+  </div>
+  <div class="citygrid">
+    <div class="zone winter">Weihnachtsdorf<br><small>oben links</small></div>
+    <div class="zone station">Hauptbahnhof<br><small>oben Mitte</small></div>
+    <div class="zone magic">Hogwarts<br><small>oben rechts</small></div>
+    <div class="zone harbor">Hafen & Piraten<br><small>unten links / Wasser</small></div>
+    <div class="zone open">Zentrale freie Fläche<br><small>Zugang & Betrieb</small></div>
+    <div class="zone disney">Disney / Springfield<br><small>rechts</small></div>
+    <div class="zone city">Innenstadt<br><small>unten Mitte</small></div>
+    <div class="zone world">Weltpark / Botanik<br><small>unten rechts</small></div>
+  </div><div class="card wide cityPlannerCardV49 cityPlannerCardV50"><div class="sectionHead"><div><span class="eyebrowV50">CITY PLANNER PRO</span><h2>Stadtplanung <span id="cityGridSizeV502">8 × 6</span></h2><p class="hint">Die Modulfläche wächst automatisch mit deiner Sammlung, damit für jedes Set ein Platz verfügbar bleibt.</p></div><div class="actions"><select id="moduleZoneFilterV35"><option value="">Alle Bereiche</option><option value="winter">Weihnachtsdorf</option><option value="station">Hauptbahnhof</option><option value="hogwarts">Hogwarts</option><option value="harbor">Hafen & Piraten</option><option value="disney">Disney / Springfield</option><option value="city">Innenstadt</option><option value="world">Weltpark / Botanik</option></select><button class="btn secondary" id="resetModules">Referenzbelegung</button></div></div><div id="cityPlannerStatsV49" class="miniStats cityPlannerStatsV49"></div><div id="cityCoverageV528" class="cityCoverageV528"></div><div id="cityBlockSuggestionV531" class="cityBlockSuggestionV531"></div><div class="autoCapacityV502"><span>Automatische Modulfläche</span><b id="cityCapacityV502">40 Plätze</b><small id="cityCapacityTextV502">Wird an deine Sammlung angepasst.</small><button class="btn secondary" id="rebalanceCityV503">Alle Sets neu verteilen</button></div><div class="citySuggestionV50"><div><span>Automatischer Planungsvorschlag</span><b id="citySuggestionTitleV50">Noch kein Vorschlag</b><small id="citySuggestionTextV50">Ich suche nach einem noch ungeplanten Set und einem passenden Modul.</small></div><div class="actions"><button class="btn secondary" id="citySuggestionRefreshV50">Neuer Vorschlag</button><button class="btn" id="citySuggestionApplyV50">Vorschlag übernehmen</button></div></div><div class="cityPlannerControlsV49"><label>Set für die Planung<select id="citySetSelectV49"><option value="">Set auswählen…</option></select></label><div class="citySelectedModuleV49"><span>Gewähltes Modul</span><b id="citySelectedModuleV49">Noch keines</b></div><button class="btn" id="cityAssignV49">Auf Modul setzen</button></div><div id="moduleGrid" class="modulegrid"></div><div id="moduleDetail" class="moduleDetail hint">Modul antippen.</div><div class="cityUnplannedHeadV49"><div><h3>Noch nicht eingeplant</h3><p class="hint">Diese Sets haben noch keinen festen Platz in der Stadt.</p></div><span id="cityUnplannedCountV49" class="chip">0</span></div><div id="cityUnplannedV49" class="cityUnplannedV49"></div></div>
+</section>
+
+<section id="trains" class="panel">
+  <div class="card wide">
+    <h2>Zugplan</h2>
+    <div class="railplan">
+      <div class="rail railtop">Hauptbahnhof</div>
+      <div class="rail railleft">Winter-Anschluss</div>
+      <div class="rail railcenter">Zentrale Freifläche</div>
+      <div class="rail railright">Disney / Stadt</div>
+      <div class="rail railbottom">Hafen-Güterabzweig</div>
+    </div>
+    <p class="hint">Großer geschlossener Rundkurs um die zentrale Freifläche; Hauptbahnhof als Knoten. Die exakten Schienenmengen werden weiter verifiziert.</p>
+  </div>
+
+  <div class="card wide">
+    <h2>Schienenbestand</h2><div id="trackSummary" class="miniStats"></div>
+    <div id="trackTable" class="tablewrap"></div>
+  </div>
+
+  <div class="card wide">
+    <h2>Kleinanzeigen-Favoriten</h2>
+    <div id="offerList"></div>
+    <button class="btn secondary" id="addOffer">＋ Angebot</button>
+  </div>
+</section>
+
+<section id="prices" class="panel">
+  <div class="card wide">
+    <div class="sectionHead"><div><h2>Preisvergleich</h2><p class="hint">Vergleich deiner Bestands- und Wunschlisten-Sets mit den aktuell geladenen Marktwerten.</p></div><button class="btn secondary" id="refreshPricesV30">Preise aktualisieren</button></div>
+    <div class="toolbar"><input id="priceSearchV30" placeholder="Setnummer oder Name suchen…"><select id="priceModeV30"><option value="all">Alle</option><option value="collection">Bestand</option><option value="wishlist">Wunschliste</option></select><select id="valuationModeV532"><option value="collector">Bewertung: Sammlerwert</option><option value="condition">Bewertung: zustandsgerecht</option><option value="used">Bewertung: gebraucht</option><option value="new">Bewertung: neu / OVP</option><option value="manual">Bewertung: manuell</option></select><button class="btn secondary" id="auditPricesV532">Alle Werte überprüfen</button></div><div id="priceAuditStatusV532" class="priceAuditStatusV532"></div>
+    <div id="priceSummaryV30" class="miniStats"></div>
+    <div class="tablewrap"><table><thead><tr><th>Set</th><th>Name</th><th>Kaufpreis</th><th>Verwendeter Wert</th><th>Markt neu</th><th>Markt gebraucht</th><th>Gebraucht-Spanne</th><th>Δ €</th><th>Δ %</th><th>Quelle</th><th>Status</th></tr></thead><tbody id="priceTableV30"></tbody></table></div>
+  </div>
+</section>
+<section id="analysis" class="panel"><div class="cards"><div class="card"><span>Sets mit Wert</span><b id="aValued">0</b></div><div class="card"><span>Sets mit Maßen</span><b id="aSized">0</b></div><div class="card"><span>Fläche bekannt</span><b id="aArea">0 m²</b></div><div class="card"><span>Bereiche</span><b id="aZones">0</b></div></div><div class="analysisgrid"><div class="card wide"><h2>Verteilung nach Stadtbereich</h2><div id="areaAnalysis"></div></div><div class="card wide"><h2>Wert / Investment</h2><div id="valueAnalysis"></div></div><div class="card wide"><h2>Sammlungswert im Verlauf</h2><div id="collectionChartV37"></div></div><div class="card wide"><div class="sectionHead"><div><h2>Datenqualität</h2><p class="hint">Fehlende Angaben gezielt finden und direkt ergänzen.</p></div><div class="actions"><button class="btn" id="qualityBulkFillV523">Alle automatisch ergänzen</button><button class="btn secondary" id="qualityReloadV35">Online-Daten neu laden</button></div></div><div id="qualityAnalysis"></div><div class="toolbar"><select id="qualityFilterV35"><option value="all">Alle Probleme</option><option value="value">Ohne Marktwert</option><option value="image">Ohne Bild</option><option value="dims">Maßproblem</option><option value="modelonly">Nur Brickset-Modellmaße</option><option value="nodims">Keine Maße</option><option value="footprint">Ohne verlässliche Stellfläche</option><option value="barcode">Ohne Barcode</option><option value="price">Ohne Kaufpreis</option><option value="condition">Ohne Zustand</option></select></div><div id="qualityAssistantV35"></div></div></div>
+<div class="analysisgrid" id="statsV36">
+  <div class="card wide"><h2>Top 10 wertvollste Sets</h2><div id="topValueV36"></div></div>
+  <div class="card wide"><h2>Top 10 Wertsteigerungen</h2><div id="topGainV36"></div></div>
+  <div class="card wide"><h2>Wert nach Stadtbereich</h2><div id="areaValueV36"></div></div>
+  <div class="card wide"><h2>Datenabdeckung</h2><div id="coverageV36"></div></div>
+</div></section>
+
+<section id="plans" class="panel">
+  <div class="pricingHeroV516">
+    <div>
+      <span class="eyebrowV50">BRICK CITY MANAGER TARIFE</span>
+      <h2>Für jede Sammlung das passende Paket.</h2>
+      <p>Starte kostenlos. Wenn deine Sammlung wächst, wechselst du einfach auf Basic oder Premium.</p>
+    <div class="pricingTrialV520"><button class="btn" id="startTrialV520">7 Tage Pro kostenlos testen</button><small>Keine Zahlung nötig · endet automatisch</small></div></div>
+    <div class="pricingToggleV516" role="group" aria-label="Abrechnung">
+      <button class="active" id="pricingMonthlyV516">Monatlich</button>
+      <button id="pricingYearlyV516">Jährlich <span>2 Monate sparen</span></button>
+    </div>
+  </div>
+
+  <div class="pricingGridV516">
+    <article class="pricingCardV516">
+      <div class="pricingPlanHeadV516"><span>FREE</span><h3>Kostenlos</h3><p>Für den Einstieg und kleinere Sammlungen.</p></div>
+      <div class="pricingPriceV516"><b>0 €</b><small>dauerhaft kostenlos</small></div>
+      <ul>
+        <li>Bis zu 25 Sets verwalten</li>
+        <li>Sammlung & Wunschliste</li>
+        <li>Basis-Suche und Übersicht</li>
+        <li>Eingeschränkter Sammler-Katalog</li>
+        <li>Lokale Datenspeicherung</li>
+      </ul>
+      <button class="btn secondary pricingCtaV516" data-plan="free">Kostenlos starten</button>
+    </article>
+
+    <article class="pricingCardV516 featured">
+      <div class="pricingRibbonV516">BELIEBT</div>
+      <div class="pricingPlanHeadV516"><span>COLLECTOR</span><h3>Collector</h3><p>Für aktive Sammler, die Sammlung, Lagerung und Stadtplanung zentral organisieren möchten.</p></div>
+      <div class="pricingPriceV516"><b id="basicPriceV516">3,99 €</b><small id="basicPeriodV516">pro Monat</small></div>
+      <ul>
+        <li>Unbegrenzt viele Sets</li>
+        <li>Kompletter Sammler-Katalog</li>
+        <li>Themen- & Serienfortschritt</li>
+        <li>Hauptset / Polybag / GWP-Filter</li>
+        <li>Stadtplanung & automatische Modulfläche</li>
+        <li>Cloud-Sicherung</li>
+        <li>CSV- & JSON-Import/Export</li>
+      </ul>
+      <button class="btn pricingCtaV516" data-plan="basic">Collector wählen</button>
+    </article>
+
+    <article class="pricingCardV516 premium">
+      <div class="pricingPlanHeadV516"><span>PRO</span><h3>Pro / Investor</h3><p>Für ambitionierte Sammler und Investoren mit Fokus auf Marktwert, Preisentwicklung und Portfolioanalyse.</p></div>
+      <div class="pricingPriceV516"><b id="premiumPriceV516">6,99 €</b><small id="premiumPeriodV516">pro Monat</small></div>
+      <ul>
+        <li>Alles aus Collector</li>
+        <li>Marktwerte & Preisentwicklung</li>
+        <li>Preisalarme</li>
+        <li>Erweiterte Analyse & Wertentwicklung</li>
+        <li>Automatische Planungsvorschläge</li>
+        <li>Erweiterte Sammler-Serienanalyse</li>
+        <li>Prioritäts-Support</li>
+        <li>Neue Premium-Funktionen zuerst</li>
+      </ul>
+      <button class="btn pricingCtaV516" data-plan="premium">Pro wählen</button>
+    </article>
+  </div>
+
+  <div class="pricingCompareV516">
+    <div class="sectionHead"><div><span class="eyebrowV50">VERGLEICH</span><h2>Was ist wo enthalten?</h2></div></div>
+    <div class="pricingCompareGridV516">
+      <div class="pricingCompareHeadV516"><span>Funktion</span><b>Free</b><b>Collector</b><b>Pro</b></div>
+      <div><span>Sets verwalten</span><b>bis 25</b><b>unbegrenzt</b><b>unbegrenzt</b></div>
+      <div><span>Sammler-Katalog</span><b>Basis</b><b>✓</b><b>✓</b></div>
+      <div><span>Serien-Fortschritt</span><b>–</b><b>✓</b><b>✓</b></div>
+      <div><span>Stadtplanung</span><b>Basis</b><b>✓</b><b>✓</b></div>
+      <div><span>Cloud-Sicherung</span><b>–</b><b>✓</b><b>✓</b></div>
+      <div><span>Marktwerte</span><b>–</b><b>Basis</b><b>✓</b></div>
+      <div><span>Preisalarme</span><b>–</b><b>–</b><b>✓</b></div>
+      <div><span>Erweiterte Analyse</span><b>–</b><b>–</b><b>✓</b></div>
+    </div>
+  </div>
+
+  <div class="pricingNoteV516">
+    <b>Hinweis zum Start:</b>
+    <span>Die Tarifseite ist vorbereitet. Bezahl-Abos sind noch nicht technisch freigeschaltet; Collector und Pro können bis zur Zahlungsanbindung als „demnächst buchbar“ kommuniziert werden.</span>
+  </div>
+</section>
+
+<section id="users" class="panel">
+  <div class="card wide planStatusV519" id="planStatusV519">
+    <div class="sectionHead">
+      <div><span class="eyebrowV50">DEIN TARIF</span><h2><span id="planNameV519">Free</span></h2><p class="hint" id="planDescriptionV519">Bis zu 20 Sets verwalten.</p></div>
+      <div class="actions"><button class="btn secondary" id="startTrialAccountV520">7 Tage Premium testen</button><button class="btn" id="planUpgradeV519">Tarife ansehen</button></div>
+    </div>
+    <div class="planUsageV519">
+      <div><span>Sammlung</span><b id="planUsageTextV519">0 / 20 Sets</b></div>
+      <div class="planUsageBarV519"><i id="planUsageBarV519"></i></div>
+      <small id="planUsageHintV519">Noch 20 Sets verfügbar.</small>
+    </div>
+    <div class="planBillingV520">
+      <div><span>Status</span><b id="planBillingStatusV520">Free</b></div>
+      <div><span>Laufzeit</span><b id="planBillingPeriodV520">–</b></div>
+      <div><span>Nächster Schritt</span><b id="planBillingActionV520">Bei Bedarf upgraden</b></div>
+    </div>
+    <div class="actions"><button class="btn secondary" id="manageSubscriptionV520">Abo verwalten</button><button class="btn secondary" id="showInvoicesV520">Rechnungen</button></div>
+  </div>
+  <div class="card wide" id="cloudAccountCard"><h2>Online-Konto</h2><p class="hint">Mit E-Mail und Passwort anmelden. Deine Daten werden dann deinem persönlichen Cloud-Konto zugeordnet.</p><div id="cloudSignedOut"><div class="form"><label>E-Mail<input id="cloudEmail" type="email" autocomplete="email"></label><label>Passwort<input id="cloudPassword" type="password" minlength="6" autocomplete="current-password"></label></div><div class="actions"><button class="btn" id="cloudLogin">Anmelden</button><button class="btn secondary" id="cloudRegister">Registrieren</button></div></div><div id="cloudSignedIn" class="hidden"><p>Angemeldet als <b id="cloudUserEmail"></b></p><div class="actions"><button class="btn" id="cloudSync">Jetzt synchronisieren</button><button class="btn secondary" id="cloudLogout">Abmelden</button><button class="btn danger" id="cloudDeleteData">Cloud-Daten löschen</button><button class="btn danger" id="cloudDeleteAccount">Konto löschen</button></div><p id="cloudStatus" class="hint"></p><div class="cloudBackupStatusV520"><span>Letzte Cloud-Sicherung</span><b id="cloudBackupTimeV520">Noch keine</b></div></div></div>
+  
+</section>
+<section id="admin" class="panel">
+  <div class="card wide"><div class="sectionHead"><div><h2>Admin & Systemstatus</h2><p class="hint">Nur für den Betreiber sichtbar. Keine Einsicht in fremde Sammlungsinhalte.</p></div><button class="btn secondary" id="adminRefreshV36">Aktualisieren</button></div><div id="adminSummaryV36" class="miniStats"></div><div id="adminCatalogV36"></div><div class="adminBarcodeV43"><div class="sectionHead"><div><h3>Barcode-Lernsystem</h3><p class="hint">Neue Zuordnungen aus Scans zentral prüfen und freigeben.</p></div><button class="btn secondary" id="barcodeAdminRefreshV43">Neu laden</button></div><div id="barcodeAdminStatsV43" class="miniStats"></div><div id="barcodeAdminListV43"></div></div><div id="adminErrorsV36"></div><p id="adminNoteV36" class="hint"></p></div>
+</section>
+<section id="settings" class="panel">
+  <div class="card wide"><h2>Daten & Sicherung</h2><div class="actions">
+    <label class="btn secondary">CSV importieren<input id="csvFile" type="file" accept=".csv,text/csv" hidden></label>
+    <button class="btn" id="exportCsv">Vollständiger CSV-Export</button>
+    <button class="btn secondary" id="exportJson">Backup JSON</button>
+    <label class="btn secondary">Backup laden<input id="jsonFile" type="file" accept=".json" hidden></label>
+  </div><p class="hint">Die App speichert lokal auf deinem Gerät. Regelmäßig ein JSON-Backup exportieren.</p></div>
+  <div class="card wide"><div class="sectionHead"><div><h2>Papierkorb</h2><p class="hint">Gelöschte Sets bleiben 30 Tage wiederherstellbar.</p></div><button class="btn secondary" id="emptyTrashV37">Papierkorb leeren</button></div><div id="trashListV37"></div></div><div class="card wide"><div class="sectionHead"><div><h2>Schnelle Online-Setdatenbank</h2><p class="hint">Setnummer eingeben → direkte Abfrage aus Supabase. Der lokale Katalog dient nur noch als Fallback.</p></div><button class="btn secondary" id="syncFastCatalogV45">Datenbank synchronisieren</button></div><div id="fastCatalogStatusV45" class="miniStats"></div><div id="fastCatalogNoteV45" class="hint"></div></div><div class="card wide"><div class="sectionHead"><div><h2>Online-Katalog, Maße & Marktwerte</h2><p class="hint">Bilder über Rebrickable, Marktwerte primär über BrickEconomy. Zusätzlich vorbereitet: Brickset für Modellmaße und BrickLink als Preis-Fallback.</p></div><button class="btn secondary" id="reloadEnrichment">Neu laden</button></div><div id="catalogSyncStatus" class="miniStats"></div><div id="catalogSyncNote" class="hint"></div><div class="sourceSetupV524"><b>Zusatzquellen vorbereitet</b><span>Brickset benötigt <code>BRICKSET_API_KEY</code>. BrickLink benötigt Consumer Key/Secret und Token/Token Secret. Die Zugangsdaten werden ausschließlich als GitHub Secrets verwendet und nicht an die Browser-App ausgeliefert.</span><small>Hinweis: Brickset liefert drei Modellmaße ohne garantierte Zuordnung zu Breite/Tiefe/Höhe. Brick City Manager speichert diese deshalb als neutrale Modellmaße. BrickLink kann je nach API-Konto eine registrierte Server-IP verlangen.</small></div><div id="catalogRequestStatusV37" class="hint"></div></div><div class="card wide"><div class="sectionHead"><div><h2>Änderungsverlauf & Papierkorb</h2><p class="hint">Gelöschte Sets können wiederhergestellt werden. Der Verlauf zeigt die letzten Änderungen.</p></div><button class="btn secondary" id="purgeTrashV37">Papierkorb leeren</button></div><div id="trashV37"></div><h3>Letzte Änderungen</h3><div id="historyV37"></div></div><div class="card wide"><h2>Barcode-Scanner</h2><p class="hint">Kamera-Scan auf unterstützten Geräten; unbekannte Barcodes können einem neuen Set zugeordnet werden.</p><button class="btn" id="scanSettings">Barcode scannen</button></div><div class="card wide"><h2>Eigene Domain & E-Mail-Absender</h2><p class="hint">Technisch vorbereitet. Für die Aktivierung brauchst du eine registrierte Domain und – für eigene Preisalarm-E-Mails – einen verifizierten Absender bei einem Maildienst.</p><div id="domainStatusV38" class="miniStats"><div class="miniStat"><span>Eigene Domain</span><b>vorbereitet</b></div><div class="miniStat"><span>Eigener Mail-Absender</span><b>optional</b></div></div></div><div class="card wide"><div class="sectionHead"><div><h2>Automatische Datenpflege</h2><p class="hint">Bilder, Marktwerte und Maße werden nachts automatisch im Hintergrund weiter ergänzt.</p></div></div><div id="nightCareStatusV528" class="nightCareStatusV528"><b>✓ Nachtpflege aktiv</b><span>Rebrickable · BrickEconomy · Brickset · BrickLink-Fallback, sofern Zugang vorhanden</span><small>API-Limits werden respektiert; offene Daten werden bei späteren Läufen weiterbearbeitet.</small></div></div><div class="card wide"><div class="sectionHead"><div><h2>Werkzeuge</h2><p class="hint">Schneller Zugriff auf Qualität, Export, Demo und Neuigkeiten.</p></div></div><div class="actions"><button class="btn secondary" id="qualityQuickV521">Datenqualität prüfen</button><button class="btn secondary" id="printCollectionV521">Sammlung drucken / PDF</button><button class="btn secondary" id="demoModeV521">Demo ansehen</button><button class="btn secondary" id="changelogV521">Neu in der App</button><button class="btn secondary" id="feedbackV521">Feedback senden</button></div></div><div class="card wide"><h2>Support & Verkauf</h2><p class="hint">Für den kommerziellen Start vorbereitet. Commercial Launch vorbereitet. Bezahlabos werden über den sicheren Checkout des Zahlungsanbieters abgeschlossen.</p><div class="actions"><a class="btn secondary" href="./impressum.html">Impressum</a><a class="btn secondary" href="./datenschutz.html">Datenschutz</a><a class="btn secondary" href="./agb.html">AGB</a><a class="btn secondary" href="./widerruf.html">Widerruf</a><button class="btn secondary" id="supportContactV520">Support kontaktieren</button></div></div><div class="card wide"><h2>Auf dem iPhone/iPad installieren</h2><p>In Safari öffnen → Teilen → <b>Zum Home-Bildschirm</b>.</p></div>
+</section>
+<div class="legal-note">LEGO® ist eine Marke der LEGO Group. Diese App ist ein unabhängiges Privatprojekt und wird weder von der LEGO Group gesponsert, autorisiert noch unterstützt.<br><a href="./impressum.html">Impressum</a> · <a href="./datenschutz.html">Datenschutz</a> · <a href="./agb.html">AGB</a> · <a href="./widerruf.html">Widerruf</a></div><datalist id="catalogSuggestionsV35"></datalist></main>
+
+<div id="onboardingV38" class="modal"><div class="sheet onboardingSheetV38">
+    <div class="sectionHead"><div><h2>Willkommen beim Brick City Manager</h2><p class="hint">Richte dein Konto in wenigen Schritten ein.</p></div></div>
+    <div class="onboardStepsV38">
+      <label>Profilname<input id="onboardNameV38" maxlength="40" placeholder="z. B. Marc"></label>
+      <div class="onboardChoiceV38"><b>Sammlung starten</b><p class="hint">Du kannst mit leerer Sammlung starten oder anschließend unter Daten CSV/JSON importieren.</p></div>
+      <div class="onboardChoiceV38"><b>Barcode testen</b><p class="hint">Nach Abschluss kannst du direkt ein Set scannen.</p></div>
+      <div class="onboardChoiceV38"><b>Wunschliste</b><p class="hint">Setnummer eingeben – bekannte Online-Daten werden automatisch ergänzt.</p></div>
+    </div>
+    <div class="actions right"><button class="btn secondary" id="onboardLaterV38">Später</button><button class="btn" id="onboardDoneV38">Einrichtung abschließen</button></div>
+  </div></div>
+  <div id="setModal" class="modal"><div class="sheet">
+<h2 id="setTitle">Set hinzufügen</h2><div class="form">
+<label>Setnummer<input id="fSet" list="catalogSuggestionsV35"><small id="fCatalogStatusV35" class="fieldStatus"></small></label><label>Name<input id="fName"></label>
+<label>Anzahl<input id="fQty" type="number" min="1" value="1"></label><label>Kaufpreis je Stück (€)<input id="fPrice" type="number" step="0.01"></label>
+<label>Aktueller Wert je Stück (€)<input id="fValue" type="number" step="0.01"></label><label>Stadtbereich<input id="fArea"></label>
+<label>Kategorie<input id="fCat"></label><label>Breite (cm)<input id="fWidth" type="number" step="0.1"></label>
+<label>Tiefe (cm)<input id="fDepth" type="number" step="0.1"></label><label>Höhe (cm)<input id="fHeight" type="number" step="0.1"></label>
+<label>Bild-URL (optional)<input id="fImage" type="url" placeholder="https://…"></label><label>Modul<input id="fModule" placeholder="z. B. M27"></label><label>Zustand<select id="fCondition"><option>Unbekannt</option><option>Neu / OVP</option><option>Gebraucht vollständig</option><option>Gebraucht unvollständig</option></select></label><label>Bauzustand<select id="fBuild"><option>Unbekannt</option><option>Aufgebaut</option><option>Zerlegt</option><option>OVP</option><option>Teilaufgebaut</option></select></label><label>Lagerort gesamt<input id="fStorage" placeholder="wird aus Raum / Regal / Fach gebildet"></label><label>Raum<input id="fStorageRoom" placeholder="z. B. Keller"></label><label>Regal<input id="fStorageShelf" placeholder="z. B. Regal A"></label><label>Fach / Box<input id="fStorageBin" placeholder="z. B. Fach 3"></label><label>Barcode / EAN<input id="fBarcode"></label><label>Kaufdatum<input id="fPurchaseDate" type="date"></label><label>Verkäufer / Quelle<input id="fSeller"></label><label>Notiz<textarea id="fNote"></textarea></label>
+</div><div class="actions right"><button class="btn secondary" id="cancelSet">Abbrechen</button><button class="btn" id="saveSet" type="button">Speichern</button></div>
+</div></div>
+
+<div id="wishModal" class="modal"><div class="sheet">
+<h2>Wunsch hinzufügen</h2><div class="form">
+<label>Priorität<select id="wPrio"><option>A</option><option>B</option><option>C</option></select></label><label>Setnummer<input id="wSet" list="catalogSuggestionsV35"><small id="wCatalogStatusV35" class="fieldStatus"></small></label>
+<label>Name<input id="wName"></label><label>Stadtbereich<input id="wArea"></label>
+<label>UVP (€)<input id="wRrp" type="number" step="0.01"></label><label>Richtpreis (€)<input id="wPrice" type="number" step="0.01"></label><label>Kaufgrenze (€)<input id="wLimit" type="number" step="0.01"></label><label>Aktuelles Angebot (€)<input id="wOffer" type="number" step="0.01"></label><label>Bild-URL (optional)<input id="wImage" type="url" placeholder="https://…"></label>
+<label>Grund<textarea id="wReason"></textarea></label>
+</div><div class="actions right"><button class="btn secondary" id="cancelWish">Abbrechen</button><button class="btn" id="saveWish">Speichern</button></div>
+</div></div>
+
+<div id="offerModal" class="modal"><div class="sheet">
+<h2>Kleinanzeigen-Angebot</h2><div class="form">
+<label>Titel<input id="oTitle"></label><label>Ort<input id="oLocation"></label>
+<label>Preis (€)<input id="oPrice" type="number" step="0.01"></label><label>Status<select id="oStatus"><option>Beobachten</option><option>Angefragt</option><option>Reserviert</option><option>Gekauft</option><option>Verworfen</option></select></label>
+<label>Gerade<input id="oStraight" type="number" min="0"></label><label>Kurven<input id="oCurve" type="number" min="0"></label><label>Flex<input id="oFlex" type="number" min="0"></label><label>Weichen L / R<input id="oSwitches" placeholder="z. B. 2 / 2"></label><label>Details<textarea id="oDetails"></textarea></label><label>Notiz<textarea id="oNote"></textarea></label>
+</div><div class="actions right"><button class="btn secondary" id="cancelOffer">Abbrechen</button><button class="btn" id="saveOffer">Speichern</button></div>
+</div></div>
+
+
+<div id="detailModal" class="modal"><div class="sheet"><div class="sectionHead"><h2 id="detailTitle">Setdetails</h2><button class="closeX" id="closeDetail">×</button></div><div id="detailContent"></div></div></div>
+<div id="purchaseModal" class="modal"><div class="sheet"><div class="sectionHead"><h2>Kauf erfassen</h2><button class="closeX" id="closePurchaseX">×</button></div><div class="form"><label>Setnummer<input id="pSet"></label><label>Name<input id="pName"></label><label>Anzahl<input id="pQty" type="number" min="1" value="1"></label><label>Preis je Stück (€)<input id="pPrice" type="number" step="0.01"></label><label>Versand (€)<input id="pShipping" type="number" step="0.01"></label><label>Kaufdatum<input id="pDate" type="date"></label><label>Verkäufer / Quelle<input id="pSeller"></label><label>Lagerort gesamt<input id="pStorage"></label><label>Raum<input id="pStorageRoom"></label><label>Regal<input id="pStorageShelf"></label><label>Fach / Box<input id="pStorageBin"></label><label>Zustand<select id="pCondition"><option>Unbekannt</option><option>Neu / OVP</option><option>Gebraucht vollständig</option><option>Gebraucht unvollständig</option></select></label><label>Stadtbereich<input id="pArea"></label><label>Modul<input id="pModule" placeholder="z. B. M27"></label><label>Originalkarton<select id="pBox"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Vollständig?<select id="pComplete"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Notiz<textarea id="pNote"></textarea></label></div><div class="actions right"><button class="btn secondary" id="cancelPurchase">Abbrechen</button><button class="btn" id="savePurchase">Kauf speichern</button></div></div></div>
+<div id="exemplarModalV37" class="modal"><div class="sheet"><div class="sectionHead"><h2 id="exemplarTitleV37">Exemplar bearbeiten</h2><button class="closeX" id="closeExemplarV37">×</button></div><div class="form"><label>Kaufdatum<input id="exDateV37" type="date"></label><label>Verkäufer / Quelle<input id="exSellerV37"></label><label>Zustand<select id="exConditionV37"><option>Unbekannt</option><option>Neu / OVP</option><option>Gebraucht vollständig</option><option>Gebraucht unvollständig</option></select></label><label>Kaufpreis (€)<input id="exPriceV37" type="number" step="0.01"></label><label>Versandanteil (€)<input id="exShippingV37" type="number" step="0.01"></label><label>Originalkarton<select id="exBoxV37"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Vollständig?<select id="exCompleteV37"><option value="">Unbekannt</option><option>Ja</option><option>Nein</option></select></label><label>Lagerort<input id="exStorageV37"></label><label>Notiz<textarea id="exNoteV37"></textarea></label></div><div class="actions right"><button class="btn secondary" id="cancelExemplarV37">Abbrechen</button><button class="btn" id="saveExemplarV37">Speichern</button></div></div></div><div id="scannerModal" class="modal"><div class="sheet"><div class="sectionHead"><h2>Barcode scannen</h2><button class="closeX" id="closeScanner">×</button></div><video id="scannerVideo" playsinline muted></video><p id="scannerStatus" class="hint">Kamera wird vorbereitet…</p><div class="actions"><label class="btn" id="photoBarcodeLabel">📷 Barcode fotografieren<input id="barcodePhoto" type="file" accept="image/*" capture="environment" hidden></label><button class="btn secondary" id="manualBarcode">Barcode manuell eingeben</button></div></div></div>
+<script src="./vendor/supabase.js?v=50.56"></script><script src="./supabase-config.js?v=50.56"></script><script src="./vendor/zxing.js?v=50.56"></script><script src="./billing-config.js?v=50.56"></script><script src="./seed-data.js"></script><script src="./app.js?v=50.93"></script><script src="./app-v3.js?v=50.94"></script><script src="./improvements-v544.js?v=50.56"></script><script src="./customer-value-v545.js?v=50.56"></script><script src="./usability-v546.js?v=50.56"></script><script src="./collection-ops-v547.js?v=50.71"></script><script src="./shared-collections-v547.js?v=50.56"></script><script src="./customer-experience-v548.js?v=50.71"></script><script src="./billing-client-v548.js?v=50.56"></script><script src="./collection-sort-v557.js?v=50.92"></script>
+<script src="./save-protection-v559.js?v=50.90"></script>
+<div class="utilityModalV521" id="onboardingV521" aria-hidden="true"><div class="utilityBoxV521 onboardingBoxV521"><button class="utilityCloseV521" data-close-v521="onboardingV521">×</button><span class="eyebrowV50">WILLKOMMEN</span><h2>Brick City Manager in 3 Schritten</h2><div class="onboardingStepsV521"><div><b>1</b><span><strong>Sammlung starten</strong><small>Füge dein erstes Set hinzu oder importiere deinen Bestand.</small></span></div><div><b>2</b><span><strong>Sammlerwelt wählen</strong><small>Sieh deinen Serienfortschritt und fehlende Sets.</small></span></div><div><b>3</b><span><strong>Stadt planen</strong><small>Ordne deine Sets Modulen und Stadtbereichen zu.</small></span></div></div><div class="actions"><button class="btn" id="onboardingStartV521">Erstes Set hinzufügen</button><button class="btn secondary" id="onboardingDoneV521">Später</button></div></div></div>
+<div class="utilityModalV521" id="globalSearchV521" aria-hidden="true"><div class="utilityBoxV521 searchBoxV521"><button class="utilityCloseV521" data-close-v521="globalSearchV521">×</button><span class="eyebrowV50">GLOBALE SUCHE</span><h2>Alles an einer Stelle finden</h2><input id="globalSearchInputV521" class="globalSearchInputV521" placeholder="Setnummer, Name, Bereich, Wunschliste …" autocomplete="off"><div id="globalSearchResultsV521" class="globalSearchResultsV521"></div></div></div>
+<div class="utilityModalV521" id="notificationsV521" aria-hidden="true"><div class="utilityBoxV521"><button class="utilityCloseV521" data-close-v521="notificationsV521">×</button><span class="eyebrowV50">HINWEISE</span><h2>Was deine Aufmerksamkeit braucht</h2><div id="notificationListV521"></div></div></div>
+<div class="utilityModalV521" id="demoV521" aria-hidden="true"><div class="utilityBoxV521"><button class="utilityCloseV521" data-close-v521="demoV521">×</button><span class="eyebrowV50">DEMO-MODUS</span><h2>So kann eine gepflegte Sammlung aussehen</h2><div class="demoGridV521"><div><span>Sets</span><b>128</b></div><div><span>Serien komplett</span><b>6</b></div><div><span>Stadt geplant</span><b>92 %</b></div><div><span>Datenqualität</span><b>96 %</b></div></div><p class="hint">Diese Vorschau verändert deine eigenen Daten nicht.</p></div></div>
+<div class="utilityModalV521" id="changelogModalV521" aria-hidden="true"><div class="utilityBoxV521"><button class="utilityCloseV521" data-close-v521="changelogModalV521">×</button><span class="eyebrowV50">CHANGELOG</span><h2>Neu in v50.21</h2><div class="changeListV521"><div><b>Globale Suche</b><span>Sammlung und Wunschliste gemeinsam durchsuchen.</span></div><div><b>Serien-Ziele</b><span>Fortschritt und nächste fehlende Sets direkt auf der Startseite.</span></div><div><b>Hinweiszentrale</b><span>Datenqualität, Stadtplanung, Preisalarme und Tarifstatus gebündelt.</span></div><div><b>Onboarding & Demo</b><span>Neue Nutzer finden schneller in die App.</span></div><div><b>Aufgeräumte Statistik</b><span>Top-10-Statistiken erscheinen nur noch in Analyse, nicht mehr bei Züge oder Tarife.</span></div></div></div></div>
+<div class="utilityModalV521" id="feedbackModalV521" aria-hidden="true"><div class="utilityBoxV521"><button class="utilityCloseV521" data-close-v521="feedbackModalV521">×</button><span class="eyebrowV50">FEEDBACK</span><h2>Fehler oder Wunsch melden</h2><select id="feedbackTypeV521"><option>Verbesserungswunsch</option><option>Fehler</option><option>Idee</option></select><textarea id="feedbackTextV521" rows="5" placeholder="Was möchtest du uns mitteilen?"></textarea><div class="actions"><button class="btn" id="saveFeedbackV521">Feedback speichern</button></div><p class="hint" id="feedbackStatusV521">Wird in deiner App gespeichert und kann vor dem Versand noch geprüft werden.</p></div></div>
+<div class="planLimitModalV519" id="planLimitModalV519" aria-hidden="true">
+  <div class="planLimitBoxV519">
+    <button class="planLimitCloseV519" id="planLimitCloseV519" aria-label="Schließen">×</button>
+    <span class="eyebrowV50">SET-LIMIT ERREICHT</span>
+    <h2 id="planLimitTitleV519">Dein Free-Limit ist erreicht.</h2>
+    <p id="planLimitTextV519">Mit Basic kannst du bis zu 50 Sets verwalten.</p>
+    <div class="actions">
+      <button class="btn" id="planLimitUpgradeV519">Tarife ansehen</button>
+      <button class="btn secondary" id="planLimitLaterV519">Später</button>
+    </div>
+  </div>
+</div>
+<div id="checkoutModalV540" class="modal"><div class="sheet checkoutSheetV540">
+<div class="sectionHead"><div><span class="eyebrowV50">SICHERER CHECKOUT</span><h2 id="checkoutTitleV540">Tarif wählen</h2></div><button class="closeX" id="checkoutCloseV540">×</button></div>
+<div id="checkoutSummaryV540" class="checkoutSummaryV540"></div>
+<div class="checkoutLegalV540"><label><input type="checkbox" id="checkoutTermsV540"> Ich akzeptiere die <a href="./agb.html" target="_blank">AGB</a> und habe die <a href="./widerruf.html" target="_blank">Widerrufsbelehrung</a> sowie die <a href="./datenschutz.html" target="_blank">Datenschutzerklärung</a> zur Kenntnis genommen.</label></div>
+<div class="actions right"><button class="btn secondary" id="checkoutCancelV540">Abbrechen</button><button class="btn" id="checkoutPayV540">Zahlungspflichtig bestellen</button></div>
+<p id="checkoutStatusV540" class="hint"></p>
+</div></div><script>
+(function(){
+ const digits=v=>String(v??"").match(/\d{4,7}/)?.[0]||"";
+ const clean=v=>String(v??"").replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
+ function render(){
+  const root=document.getElementById("classifiedsMissingV554");if(!root)return;
+  const data=(typeof state!=="undefined"&&state)?state:null;
+  if(!data){root.textContent="Sammlung wird geladen …";return}
+  const owned=new Set((data.collection||[]).filter(x=>Number(x.quantity??1)>0).map(x=>digits(x.setNumber||x.number)).filter(Boolean));
+  const missing=[...new Map((data.wishlist||[]).filter(x=>{const n=digits(x.setNumber||x.number);return n&&!owned.has(n)}).map(x=>[digits(x.setNumber||x.number),x])).values()];
+  if(!missing.length){root.textContent="Keine fehlenden Sets mit Setnummer auf deiner Wunschliste. Ergänze fehlende Sets dort zuerst.";return}
+  root.replaceChildren();
+  missing.slice(0,60).forEach(x=>{
+   const n=digits(x.setNumber||x.number);const row=document.createElement("div");
+   row.style.cssText="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:9px 0;border-bottom:1px solid #e9e9e9";
+   const label=document.createElement("span");label.textContent=n+" · "+(x.name||"LEGO Set");
+   label.style.cssText="font-size:13px;overflow-wrap:anywhere;flex:1;min-width:125px";
+   const link=document.createElement("a");link.className="btn secondary";link.textContent="Angebote suchen ↗";link.target="_blank";link.rel="noopener noreferrer";
+   link.href="https://www.kleinanzeigen.de/s-lego-"+encodeURIComponent(n)+"/k0";
+   row.append(label,link);root.append(row);
+  });
+  if(missing.length>60){const note=document.createElement("small");note.textContent="Erste 60 von "+missing.length+" fehlenden Sets angezeigt.";root.append(note)}
+ }
+ document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("classifiedsRefreshV554")?.addEventListener("click",render);
+  document.querySelectorAll('[data-tab="wishlist"]').forEach(btn=>btn.addEventListener("click",()=>setTimeout(render,80)));
+  render();
+ });
+})();
+</script>
+<script src="./focus-v564.js?v=50.71"></script>
+<script src="./ui-repair-v569.js?v=50.71"></script>
+<script src="./collection-metrics-v570.js?v=50.71"></script>
+<script src="./stability-ui-v570.js?v=50.71"></script>
+<script src="./collection-view-v571.js?v=50.92"></script>
+<script src="./collection-emergency-v573.js?v=50.92"></script><script src="./valuation-audit-v574.js?v=50.85"></script><script src="./recognition-feedback-v575.js?v=50.85"></script><script src="./catalog-diagnostics-v576.js?v=50.85"></script><script src="./catalog-resilience-v579.js?v=50.85"></script><script src="./instant-set-lookup-v582.js?v=50.85"></script><script src="./collection-integrity-v583.js?v=50.90"></script>
+<script>
+/* Production emergency save: independent of partially initialized app-v3.js */
+(function(){
+ document.addEventListener('click',function(event){
+  if(!event.target?.closest?.('#saveSet'))return;
+  event.preventDefault();event.stopImmediatePropagation();
+  try{
+   if(typeof state==='undefined'||!Array.isArray(state.collection))throw Error('Sammlung nicht geladen');
+   var get=function(id){return document.getElementById(id)?.value??''};
+   var n=String(get('fSet')).trim(),name=String(get('fName')).trim();
+   if(!n||!name)throw Error('Setnummer und Setname fehlen');
+   var key=typeof editing!=='undefined'&&editing?String(editing):n;
+   var index=state.collection.findIndex(function(x){return String(x.setNumber)===key});
+   var old=index>=0?state.collection[index]:null;
+   var numeric=function(id,fallback){var v=String(get(id)).trim().replace(',','.');return v===''?fallback:Number(v)};
+   var item=Object.assign({},old||{},{
+    setNumber:n,name:name,quantity:Math.max(1,numeric('fQty',old?.quantity||1)),
+    purchasePrice:numeric('fPrice',old?.purchasePrice||0),
+    currentValue:numeric('fValue',old?.currentValue||0),
+    cityArea:String(get('fArea')).trim(),category:String(get('fCat')).trim(),
+    imageUrl:String(get('fImage')).trim(),note:String(get('fNote')).trim()
+   });
+   ['Width','Depth','Height'].forEach(function(k){var v=String(get('f'+k)).trim();item[k.toLowerCase()]=v===''?(old?.[k.toLowerCase()]??null):Number(v.replace(',','.'))});
+   if(!Number.isFinite(item.purchasePrice)||!Number.isFinite(item.currentValue))throw Error('Preisangaben ungültig');
+   if(index<0&&typeof canAddNewSetV519==='function'&&!canAddNewSetV519(n)){if(typeof openPlanLimitV519==='function')openPlanLimitV519();return}
+   var storeKey=typeof STORE!=='undefined'?STORE:null;
+   if(!storeKey)throw Error('Speicherschlüssel nicht verfügbar');
+   if(index>=0)state.collection[index]=item;else state.collection.push(item);
+   try{localStorage.setItem(storeKey,JSON.stringify(state))}catch(e){if(index>=0)state.collection[index]=old;else state.collection.pop();throw e}
+   try{if(typeof queueCloudSaveV3==='function')queueCloudSaveV3()}catch(e){console.warn('Cloud sync queued failed',e)}
+   try{if(typeof refresh==='function')refresh()}catch(e){console.warn('Refresh failed',e)}
+   document.getElementById('setModal')?.classList.remove('show');
+   alert('Set '+n+' auf diesem Gerät gespeichert. Cloud-Synchronisierung bitte prüfen.');
+  }catch(error){console.error('SAVE_RESCUE',error);alert('Speichern fehlgeschlagen: '+String(error?.message||error))}
+ },true);
+})();
+</script></body></html>
