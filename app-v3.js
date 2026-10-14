@@ -91,7 +91,7 @@ async function cloudSessionV3(session){
      const remoteIds=new Set(remoteCollection.map(x=>String(x.setNumber)));
      const localOnly=localCollection.filter(x=>!remoteIds.has(String(x.setNumber)));
      if(localOnly.length){
-       cloudStatusV3("Lokale Sammlung geschützt: "+localOnly.length+" Sets fehlen in der Cloud. Keine Daten überschrieben.");
+       cloudStatusV3("Lokale Sammlung geschützt: "+localOnly.length+" Sets fehlen in der Cloud. Kein Bestand überschrieben.");
        return;
      }
      // Cloud contains every locally known set. A smaller device snapshot may safely
