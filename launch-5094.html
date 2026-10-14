@@ -597,4 +597,19 @@ document.addEventListener("click",function(e){
   }catch(error){console.error('SAVE_RESCUE',error);alert('Speichern fehlgeschlagen: '+String(error?.message||error))}
  },true);
 })();
-</script></body></html>
+</script><script>
+/* Build identity from this entrypoint; never touches collection or prices. */
+(function(){
+ const version="v50.94";
+ const show=()=>{
+  for(const id of ["visibleVersionV553","appVersion"]){
+   const el=document.getElementById(id);
+   if(el){el.textContent=version;el.title="Startdatei launch-5094.html · Build 50.94";}
+  }
+ };
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",show);
+ else show();
+ window.addEventListener("load",show);
+})();
+</script>
+</body></html>
