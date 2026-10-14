@@ -28,7 +28,7 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           REBRICKABLE_API_KEY: ${{ secrets.REBRICKABLE_API_KEY }}
           BRICKECONOMY_API_KEY: ${{ secrets.BRICKECONOMY_API_KEY }}
-          MARKET_PRICE_BATCH_SIZE: "2"
+          MARKET_PRICE_BATCH_SIZE: "6"
         run: python scripts/process_catalog_requests.py
       - name: Commit catalog updates
         run: |
