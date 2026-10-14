@@ -24,7 +24,7 @@
   function addedOf(x){
     const vals=[x.addedAt,x.createdAt,x.dateAdded,x.importedAt,x.created_at,x.addedDate]
       .map(v=>v?Date.parse(v):NaN).filter(Number.isFinite);
-    return vals.length?Math.min(...vals):null;
+    return vals.length?Math.max(...vals):null;
   }
   function sortCollection(rows){
     const [field,direction]=mode.split("-");
@@ -33,6 +33,8 @@
     return [...rows].sort((a,b)=>{
       if(field==="added"){
         const av=addedOf(a),bv=addedOf(b);
+        if(av===null&&bv!==null)return 1;
+        if(bv===null&&av!==null)return -1;
         if(av!==null&&bv!==null&&av!==bv)return sign*(av-bv);
         return sign*((order.get(String(a.setNumber))??0)-(order.get(String(b.setNumber))??0));
       }
