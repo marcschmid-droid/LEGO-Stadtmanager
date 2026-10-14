@@ -65,7 +65,7 @@
         cloudStatusV3('Achtung: Cloud-Bestand weicht ab. Lokale Sicherung bleibt erhalten. Bitte Synchronisierung prüfen.');
         const s=syncInfoV547(user);s.dirty=true;storeSyncV547(user,s);
       }else if(collectionSignature(state)===collectionSignature(savedSnapshot)){
-        cloudStatusV3('Cloud-Bestand bestätigt: '+savedSnapshot.collection.length+' Sets · '+new Date().toLocaleTimeString('de-DE'));
+        state.meta=state.meta||{};state.meta.lastCloudBackupAt=new Date().toISOString();try{persistBaseV3()}catch(e){console.warn('Backup timestamp',e)}if(typeof renderCommercialV520==='function')renderCommercialV520();cloudStatusV3('Cloud-Bestand bestätigt: '+savedSnapshot.collection.length+' Sets · '+new Date().toLocaleTimeString('de-DE'));
       }else{
         cloudStatusV3('Zwischenzeitliche Änderungen erkannt: weiterer Abgleich nötig.');
         queueCloudSaveV3();
