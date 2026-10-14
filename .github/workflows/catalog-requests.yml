@@ -1,4 +1,4 @@
-name: Catalog request lookup
+name: Catalog metadata lookup (no paid price calls)
 on:
   workflow_dispatch:
   schedule:
@@ -22,7 +22,7 @@ jobs:
           REBRICKABLE_API_KEY: ${{ secrets.REBRICKABLE_API_KEY }}
 
           REQUESTS_ONLY: "1"
-          BRICKECONOMY_BATCH_SIZE: "2"
+          # No BrickEconomy key here by design: hourly metadata only.\n          # Paid market prices are handled by process-catalog-requests.yml\n          # with quota checks, retries and confirmed catalog persistence.\n          BRICKECONOMY_BATCH_SIZE: "0"
         run: python scripts/enrich_catalog.py
       - name: Commit catalog updates
         run: |
