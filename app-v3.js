@@ -2273,7 +2273,7 @@ function bindCommercialV520(){
 const cloudSaveBaseV520=cloudSaveV3;
 cloudSaveV3=async function(show=false){
  const r=await cloudSaveBaseV520(show);
- if(cloudUserV3){
+ if(cloudUserV3&&!r?.error){
    state.meta=state.meta||{};
    state.meta.lastCloudBackupAt=new Date().toISOString();
    if(typeof persistBaseV3==="function")persistBaseV3();
