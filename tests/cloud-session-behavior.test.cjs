@@ -16,7 +16,7 @@ function setup({remote=[],cached=null,defer=false}={}){
    $:()=>null,updateAccountBadgeV3:()=>{},cloudStatusV3:s=>context.message=s,
    migrate:()=>{},migrateV3:()=>{},refresh:()=>{},persistBaseV3:()=>{},switchTab:()=>{},
    blankStateV3:()=>({collection:[]}),STORE:'legacy',cloudSaveV3:async()=>{},
-   JSON,Set,String,Array
+   JSON,Set,String,Array,Promise,setTimeout,clearTimeout
  };
  vm.createContext(context);vm.runInContext(fn,context);
  const session={user:{id:'user1',email:'test@example.com'}};
