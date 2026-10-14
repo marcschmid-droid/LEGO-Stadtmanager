@@ -46,6 +46,7 @@ async function cloudSessionV3(session){
  $("cloudSignedIn")?.classList.toggle("hidden",!cloudUserV3);
  if($("cloudUserEmail"))$("cloudUserEmail").textContent=cloudUserV3?.email||"";
  updateAccountBadgeV3();
+ updateSyncV28();
  if(!cloudUserV3){
    // A missing or expired session must NEVER erase the device collection.
    cloudStatusV3("Nicht angemeldet. Deine lokale Sammlung bleibt erhalten.");
