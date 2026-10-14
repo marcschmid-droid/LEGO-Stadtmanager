@@ -1,29 +1,35 @@
-const CACHE="brick-city-manager-v50-r92";
-const ASSETS=["./index.html","./styles.css?v=50.56","./app.js?v=50.56","./app-v3.js?v=50.85","./improvements-v544.js?v=50.56","./customer-value-v545.js?v=50.56","./usability-v546.js?v=50.56","./collection-ops-v547.js?v=50.56","./shared-collections-v547.js?v=50.56","./customer-experience-v548.js?v=50.56","./billing-client-v548.js?v=50.56","./billing-config.js?v=50.56","./supabase-config.js?v=50.56","./seed-data.js","./manifest.webmanifest","./icon.svg?v=50.56","./ursprungsstadt.jpg","./data/set-enrichment.json","./impressum.html","./datenschutz.html","./vendor/supabase.js?v=50.56","./vendor/zxing.js?v=50.56"];
-self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))).then(()=>self.skipWaiting()));
-self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-self.addEventListener("fetch",e=>{
- if(e.request.method!=="GET")return;
- if(e.request.mode==="navigate"||/\.(?:js|html)$/.test(new URL(e.request.url).pathname)){e.respondWith(fetch(e.request,{cache:"no-store"}).catch(()=>caches.match(e.request)));return;}
- if(e.request.mode==="navigate"){
-   e.respondWith(fetch(e.request).then(r=>{const c=r.clone();caches.open(CACHE).then(x=>x.put("./index.html",c));return r}).catch(()=>caches.match("./index.html")));
-   return;
- }
- const url=new URL(e.request.url);
- // Authenticated cloud requests must never enter the shared static-asset cache.
- if(url.origin!==self.location.origin)return;
- if(url.pathname.endsWith("/data/all-sets.json")){
-   e.respondWith(caches.match(e.request,{ignoreSearch:true}).then(hit=>{
-     if(hit&&e.request.cache!=="no-store"&&!/\.(?:js|css)$/.test(url.pathname))return hit;
-     return fetch(e.request).then(r=>{const copy=r.clone();caches.open(CACHE).then(x=>x.put(url.origin+url.pathname,copy));return r});
-   }));
-   return;
- }
- // Same-version immutable assets render immediately from cache. Images and data refresh in background.
- const immutable=url.searchParams.get("v")==="50.56";
- e.respondWith(caches.match(e.request).then(hit=>{
-  if(hit&&immutable)return hit;
-  const network=fetch(e.request).then(r=>{if(r.ok){const c=r.clone();return caches.open(CACHE).then(x=>x.put(e.request,c)).then(()=>r)}return r}).catch(()=>hit||Response.error());
-  if(hit){e.waitUntil(network);return hit}return network;
- }));
+/* Brick City Manager: network-first static shell, never cache user data. */
+const CACHE="brick-city-manager-v50-r95";
+const SHELL=["./index.html","./launch-5094.html","./styles.css?v=50.56"];
+self.addEventListener("install",event=>{
+  event.waitUntil((async()=>{
+    const cache=await caches.open(CACHE);
+    await Promise.allSettled(SHELL.map(url=>cache.add(url)));
+    await self.skipWaiting();
+  })());
+});
+self.addEventListener("activate",event=>{
+  event.waitUntil((async()=>{
+    const keys=await caches.keys();
+    await Promise.all(keys.filter(key=>key.startsWith("brick-city-manager-")&&key!==CACHE).map(key=>caches.delete(key)));
+    await self.clients.claim();
+  })());
+});
+self.addEventListener("fetch",event=>{
+  const req=event.request;
+  if(req.method!=="GET")return;
+  const url=new URL(req.url);
+  if(url.origin!==self.location.origin)return;
+  if(req.mode==="navigate"||/\.(?:js|html)$/.test(url.pathname)){
+    event.respondWith(fetch(req,{cache:"no-store"}).then(response=>{
+      if(response.ok&&req.mode==="navigate"){
+        const copy=response.clone();
+        event.waitUntil(caches.open(CACHE).then(cache=>cache.put(req,copy)));
+      }
+      return response;
+    }).catch(async()=>{
+      const cache=await caches.open(CACHE);
+      return (await cache.match(req))||(req.mode==="navigate"?await cache.match("./index.html"):undefined)||Response.error();
+    }));
+  }
 });
