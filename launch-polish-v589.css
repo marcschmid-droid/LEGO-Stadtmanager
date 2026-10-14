@@ -1,0 +1,14 @@
+/* Launch polish v50.89: presentation only; never mutates collection or cloud state. */
+:root{--bcm-focus:#a61b17}
+body.themeV39 .tabsGroupedV550{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:7px!important;padding:9px!important;border:1px solid #e4e7ec!important;border-radius:16px!important;background:#fff!important;box-shadow:0 2px 12px rgba(15,23,42,.05)!important}
+body.themeV39 .tabsGroupedV550>.tab,body.themeV39 .tabsGroupedV550>.navGroupV550>summary{min-height:43px!important;padding:10px 13px!important;border-radius:10px!important;font-size:14px!important;font-weight:650!important;cursor:pointer}
+body.themeV39 .tabsGroupedV550 .navGroupV550{position:relative!important}
+body.themeV39 .tabsGroupedV550 .navGroupV550[open]>.navMenuV550{z-index:30!important;box-shadow:0 12px 30px rgba(15,23,42,.16)!important;border-radius:12px!important;max-height:min(70vh,480px)!important;overflow-y:auto!important}
+body.themeV39 .tabsGroupedV550 .navMenuV550>.tab{min-height:44px!important;text-align:left!important}
+body.themeV39 button:focus-visible,body.themeV39 summary:focus-visible,body.themeV39 input:focus-visible,body.themeV39 select:focus-visible{outline:3px solid var(--bcm-focus)!important;outline-offset:2px!important}
+body.themeV39 #collectionGrid .setcardV538{overflow:hidden!important;min-width:0!important}
+body.themeV39 #collectionGrid .setcardV538 img{object-fit:contain!important;max-width:100%!important}
+body.themeV39 #collectionGrid .setcardV538 .setValueRowV538{display:flex!important;flex-wrap:wrap!important;gap:6px!important}
+@media(max-width:650px){body.themeV39 .tabsGroupedV550{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;padding:7px!important}body.themeV39 .tabsGroupedV550>.tab,body.themeV39 .tabsGroupedV550>.navGroupV550>summary{width:100%!important;display:flex!important;justify-content:center!important;align-items:center!important;text-align:center!important;min-height:46px!important;padding:8px 5px!important;font-size:12px!important;line-height:1.25!important}body.themeV39 .tabsGroupedV550 .navGroupV550[open]>.navMenuV550{position:absolute!important;right:0!important;min-width:210px!important;max-width:calc(100vw - 35px)!important}body.themeV39 #collectionGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}}
+@media(max-width:370px){body.themeV39 .tabsGroupedV550{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(prefers-reduced-motion:reduce){body.themeV39 *,body.themeV39 *::before,body.themeV39 *::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
