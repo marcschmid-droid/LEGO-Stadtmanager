@@ -11,14 +11,16 @@
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
-    "bricksetEnabled": true,
-    "bricksetRequestsThisRun": 31,
-    "errors": [],
-    "lastUpdated": "2026-10-14T03:54:04Z",
+    "bricksetEnabled": false,
+    "bricksetRequestsThisRun": 0,
+    "errors": [
+      "Rebrickable 1036: 404 Client Error: Not Found for url: https://rebrickable.com/api/v3/lego/sets/1036-1/"
+    ],
+    "lastUpdated": "2026-10-14T04:50:31Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
-    "rebrickableRequestsThisRun": 0,
-    "setCount": 36,
+    "rebrickableRequestsThisRun": 2,
+    "setCount": 22,
     "version": 1
   },
   "sets": {
@@ -1287,6 +1289,15 @@
       "subtheme": "Gardens of the World",
       "theme": "Icons",
       "upc": "673419404938",
+      "year": 2025
+    },
+    "1036": {},
+    "10361": {
+      "imageUrl": "https://cdn.rebrickable.com/media/sets/10361-1/161069.jpg",
+      "pieces": 956,
+      "rebrickableName": "Holiday Express Train",
+      "rebrickableUpdated": "2026-10-14T04:50:31Z",
+      "rebrickableUrl": "https://rebrickable.com/sets/10361-1/holiday-express-train/",
       "year": 2025
     },
     "10362": {
