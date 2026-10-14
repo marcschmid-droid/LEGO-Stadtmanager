@@ -49,10 +49,10 @@
       if(remote.error){cloudStatusV3('Cloud nicht lesbar: nichts überschrieben. '+remote.error.message);return}
       const localNums=new Set((state.collection||[]).map(x=>String(x.setNumber)));
       const missingInLocal=(remote.data?.state?.collection||[]).filter(x=>!localNums.has(String(x.setNumber)));
-      if(missingInLocal.length){
+      if(missingInLocal.length || (remote.data?.state?.collection?.length||0) > (state.collection||[]).length){
         const sync=syncInfoV547(user);
         sync.conflict={remote:remote.data.state,revision:remote.data.updated_at||null};
-        cloudStatusV3('STOPP: '+missingInLocal.length+' Cloud-Sets fehlen lokal. Beide Stände gesichert; bitte unter Konto den Konflikt prüfen.');
+        cloudStatusV3('STOPP: Cloud enthält '+(remote.data.state.collection||[]).length+' Sets, lokal sind '+(state.collection||[]).length+' geladen ('+missingInLocal.length+' unterschiedliche Setnummern). Cloud bleibt unverändert; bitte unter Konto den Konflikt prüfen.');
         renderSyncConflictV547();return;
       }
       const savedSnapshot=structuredClone(state);
