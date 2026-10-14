@@ -23,11 +23,17 @@ if not SERVICE.startswith("sb_secret_"):
 
 r=requests.get(
     SUPABASE_URL+"/rest/v1/catalog_requests",
-    params={"select":"set_number,requested_at","order":"requested_at.asc","limit":str(PRICE_BATCH)},
+    params={"select":"set_number,requested_at","order":"requested_at.asc","limit":str(max(PRICE_BATCH * 5, 50))},
     headers=headers,timeout=30
 )
 r.raise_for_status()
 requests_rows=r.json()
+# Skip malformed LEGO set numbers before calling paid APIs. Keep these requests
+# in Supabase for manual correction; do not delete collection or catalog data.
+invalid_rows=[row for row in requests_rows if not str(row.get("set_number","")).strip().split("-",1)[0].isdigit() or len(str(row.get("set_number","")).strip().split("-",1)[0]) < 4]
+for row in invalid_rows:
+    print("CATALOG_REQUEST_INVALID_SKIPPED set="+str(row.get("set_number","")))
+requests_rows=[row for row in requests_rows if row not in invalid_rows][:PRICE_BATCH]
 if not requests_rows:
     print("No pending catalog requests")
     raise SystemExit(0)
