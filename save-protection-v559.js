@@ -74,6 +74,36 @@
     }catch(err){cloudStatusV3('Abgleich unterbrochen. Lokal gesichert; Cloud nicht bestätigt. '+String(err?.message||err))}
     finally{checking=false}
   };
+  // Recover pending writes after transient network failures. Never bypass conflict checks.
+  let retryDelayV559=5000, retryTimerV559=null;
+  function pendingV559(){
+    try{const id=cloudUserV3?.id;if(!id||!navigator.onLine||cloudApplyingV3)return false;
+      const sync=syncInfoV547(id);return Boolean(sync?.dirty&&!sync?.conflict&&sync?.revision!==undefined);
+    }catch(_){return false}
+  }
+  function retryPendingV559(){
+    if(retryTimerV559!==null){clearTimeout(retryTimerV559);retryTimerV559=null}
+    if(!pendingV559())return;
+    retryTimerV559=setTimeout(async()=>{
+      retryTimerV559=null;
+      if(!pendingV559())return;
+      try{await cloudSaveV3(false)}catch(err){console.warn('Cloud retry',err)}
+      if(pendingV559()){
+        retryDelayV559=Math.min(retryDelayV559*2,60000);
+        retryPendingV559();
+      }else retryDelayV559=5000;
+    },retryDelayV559)
+  }
+  const saveWithRetryV559=cloudSaveV3;
+  cloudSaveV3=async function(show=false){
+    const outcome=await saveWithRetryV559(show);
+    if(pendingV559())retryPendingV559();
+    else {retryDelayV559=5000;if(retryTimerV559!==null){clearTimeout(retryTimerV559);retryTimerV559=null}}
+    return outcome;
+  };
+  window.addEventListener('online',()=>{retryDelayV559=500;retryPendingV559()});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){retryDelayV559=500;retryPendingV559()}});
+  setTimeout(retryPendingV559,3000);
   function exportRecovery(){
     if(!cloudUserV3)return alert('Bitte zuerst anmelden.');
     const local=JSON.parse(localStorage.getItem('bcm-recovery-v559:'+cloudUserV3.id)||'[]');
