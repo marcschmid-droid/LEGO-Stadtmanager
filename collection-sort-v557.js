@@ -12,7 +12,7 @@
     ["price-asc","Kaufpreis: niedrigster zuerst"]
   ];
   const values=new Set(options.map(x=>x[0]));
-  let mode="number-asc";
+  let mode="added-desc";
   try{const stored=localStorage.getItem(KEY);if(values.has(stored))mode=stored;}catch(_){}
   const numeric=new Intl.Collator("de",{numeric:true,sensitivity:"base"});
   function dateOf(x){
@@ -35,7 +35,7 @@
         if(av===null&&bv!==null)return 1;
         if(bv===null&&av!==null)return -1;
         if(av!==null&&bv!==null&&av!==bv)return sign*(av-bv);
-        return -numeric.compare(String(a.setNumber||""),String(b.setNumber||""));
+        return (state?.collection?.indexOf(b)??0)-(state?.collection?.indexOf(a)??0);
       }
       if(field==="number")return sign*numeric.compare(String(a.setNumber||""),String(b.setNumber||""));
       const av=field==="date"?dateOf(a):Number(a.purchasePrice);
