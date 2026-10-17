@@ -47,6 +47,16 @@ cloudSessionV3=async function(session){
    renderSyncConflictV547();
    return;
  }
+ // Guard unsent sets against a stale empty remote snapshot.
+ if(data && Array.isArray(local?.collection) && local.collection.length>0 &&
+     (data.state?.collection||[]).length===0 && s.dirty){
+   s.revision=data.updated_at||null;
+   s.conflict=null;
+   applyCloudStateV547(local);
+   cloudStatusV3('Lokale Änderungen wiederhergestellt. Cloud-Übertragung wird geprüft.');
+   queueCloudSaveV3();
+   return;
+ }
  const remoteRevision=data?.updated_at||null;
  if(s.dirty){try{local=JSON.parse(localStorage.getItem(cloudCacheKeyV3(user))||'null')}catch{}}
  if(s.revision===undefined&&local&&((data?.state&&JSON.stringify(local)!==JSON.stringify(data.state))||(!data&&local.collection?.length)))s.dirty=true;
