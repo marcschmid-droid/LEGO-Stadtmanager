@@ -20,9 +20,12 @@ function migrate(){
 }
 function init(){
  const saved=localStorage.getItem(STORE);
- if(saved){try{state=JSON.parse(saved)}catch{}}
+ // In cloud mode, never expose the previous device owner's generic local collection.
+ // Account-scoped state is loaded only after Supabase resolves the authenticated user.
+ if(window.LEGO_SUPABASE){state={collection:[],wishlist:[],trackShopping:[],classifiedOffers:[],meta:{}}}
+ else if(saved){try{state=JSON.parse(saved)}catch{}}
  else {state={collection:[],wishlist:[],trackShopping:[],classifiedOffers:[],meta:{}}}
- migrate();persist();bind();refresh();
+ migrate();if(!window.LEGO_SUPABASE)persist();bind();refresh();
  /* Disable offline service worker until stale-version issue is resolved. Preserve all local collection storage. */
 if("serviceWorker" in navigator)navigator.serviceWorker.getRegistrations().then(regs=>Promise.all(regs.filter(r=>r.scope.includes("/LEGO-Stadtmanager/")).map(r=>r.unregister()))).catch(()=>{});
 }
