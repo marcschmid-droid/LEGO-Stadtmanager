@@ -35,7 +35,7 @@ cloudSessionV3=async function(session){
  if(s.dirty){try{local=JSON.parse(localStorage.getItem(cloudCacheKeyV3(user))||'null')}catch{}}
  if(error){if(local)applyCloudStateV547(local);else applyCloudStateV547(blankStateV3());cloudStatusV3('Cloud nicht erreichbar. Lokale Kopie bleibt erhalten.');renderSyncConflictV547();return}
  // New cloud account: never import an existing device cache without explicit review.
- if(!data && Array.isArray(local?.collection) && local.collection.length>0){
+ if(!data && s.revision===undefined && Array.isArray(local?.collection) && local.collection.length>0){
    s.conflict={remote:blankStateV3(),revision:null};
    applyCloudStateV547(blankStateV3());
    cloudStatusV3('Neues Konto: 0 Sets in der Cloud. Ein alter lokaler Bestand wurde NICHT übernommen. Er bleibt als Sicherheitskopie im gerätebezogenen Cache und kann unter Konto geprüft werden.');
