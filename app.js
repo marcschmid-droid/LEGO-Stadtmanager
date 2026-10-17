@@ -2,7 +2,7 @@ const STORE="lego-stadtmanager-ghpages-v2";
 let state={collection:[],wishlist:[],trackShopping:[],classifiedOffers:[],meta:{}},editing=null;
 const $=x=>document.getElementById(x),esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 const euro=v=>new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR"}).format(Number(v||0));
-const DEFAULT_META={version:"2.1",brickrInvestmentReference:18026.14,confirmedUniqueSets:166,confirmedExemplars:245};
+const DEFAULT_META={version:"2.1"};
 const DEFAULT_TRACKS=[
  {item:"Gerade Schienen",target:42,offerQty:24,confirmedOwned:null,status:"Bestand prüfen",note:"Planwert aus dem bisherigen Zugkonzept; noch nicht geometrisch exakt verifiziert."},
  {item:"Kurvenschienen",target:48,offerQty:16,confirmedOwned:null,status:"Bestand prüfen",note:"Planwert aus dem bisherigen Zugkonzept; noch nicht geometrisch exakt verifiziert."},
