@@ -21,7 +21,7 @@ function migrate(){
 function init(){
  const saved=localStorage.getItem(STORE);
  if(saved){try{state=JSON.parse(saved)}catch{}}
- else if(window.LEGO_SEED_DATA){state=JSON.parse(JSON.stringify(window.LEGO_SEED_DATA))}
+ else {state={collection:[],wishlist:[],trackShopping:[],classifiedOffers:[],meta:{}}}
  migrate();persist();bind();refresh();
  /* Disable offline service worker until stale-version issue is resolved. Preserve all local collection storage. */
 if("serviceWorker" in navigator)navigator.serviceWorker.getRegistrations().then(regs=>Promise.all(regs.filter(r=>r.scope.includes("/LEGO-Stadtmanager/")).map(r=>r.unregister()))).catch(()=>{});
