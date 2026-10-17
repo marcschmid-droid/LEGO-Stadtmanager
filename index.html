@@ -594,4 +594,47 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout
 const observer=new MutationObserver(()=>{if(typeof state!=='undefined'&&Array.isArray(state.collection)&&state.collection.length===0)fix()});
 const start=()=>{const home=document.getElementById('home');if(home)observer.observe(home,{subtree:true,childList:true,characterData:true});fix()};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+})();</script><script id="safeLocalRecoveryV1">(function(){
+'use strict';
+async function showRecovery(){
+ const host=document.getElementById('cloudSignedIn');if(!host||typeof cloudUserV3==='undefined'||!cloudUserV3)return;
+ if(document.getElementById('safeRecoveryPanelV1'))return;
+ let candidates=[];
+ try{
+  const keys=[typeof STORE==='string'?STORE:'lego-stadtmanager-ghpages-v2',typeof cloudCacheKeyV3==='function'?cloudCacheKeyV3(cloudUserV3.id):''];
+  for(const key of keys){if(!key)continue;let v;try{v=JSON.parse(localStorage.getItem(key)||'null')}catch(_){};if(v&&Array.isArray(v.collection)&&v.collection.length)candidates.push({key,items:v.collection})}
+ }catch(_){}
+ if(!candidates.length)return;
+ const panel=document.createElement('section');panel.id='safeRecoveryPanelV1';panel.style.cssText='margin:18px 0;padding:16px;border:1px solid #d97706;border-radius:12px;background:#fff8ed;color:#502b12';
+ const heading=document.createElement('strong');heading.textContent='Lokale LEGO-Sets gefunden';
+ const label=document.createElement('p');label.textContent='Nur nach Prüfung übernehmen: Ein alter Gerätespeicher kann Sets eines anderen Kontos enthalten.';
+ const choice=document.createElement('select');choice.style.cssText='width:100%;padding:12px;margin:10px 0';
+ candidates.forEach((c,i)=>{const opt=document.createElement('option');opt.value=String(i);opt.textContent=c.items.length+' Set(s): '+c.items.slice(0,5).map(x=>x.setNumber).join(', ')+(i===0?' (Gerätespeicher)':' (Kontokopie)');choice.append(opt)});
+ const button=document.createElement('button');button.type='button';button.textContent='Geprüfte Sets in dieses Konto übernehmen';button.className='btn secondary';
+ const info=document.createElement('p');info.setAttribute('role','status');panel.append(heading,label,choice,button,info);host.append(panel);
+ button.addEventListener('click',async()=>{
+   const candidate=candidates[Number(choice.value)];if(!candidate)return;
+   if(!confirm('Sind diese '+candidate.items.length+' Sets tatsächlich für das aktuell angemeldete Testkonto bestimmt? Bestehende Cloud-Daten werden nicht überschrieben.'))return;
+   button.disabled=true;info.textContent='Prüfe Cloud-Bestand…';
+   try{
+    const user=cloudUserV3?.id;if(!user||!cloudV3)throw Error('Keine gültige Anmeldung');
+    const response=await cloudV3.from('user_state').select('state,updated_at').eq('user_id',user).maybeSingle();
+    if(response.error)throw response.error;
+    if((response.data?.state?.collection||[]).length>0)throw Error('Cloud enthält bereits Sets. Wiederherstellung gestoppt.');
+    if(state.collection.length>0)throw Error('In der App sind bereits Sets. Kein automatisches Zusammenführen.');
+    const copy=structuredClone(state);copy.collection=structuredClone(candidate.items);
+    state=copy;
+    const sync=syncInfoV547(user);sync.revision=response.data?.updated_at||null;sync.conflict=null;sync.dirty=true;
+    persist();
+    await cloudSaveV3(true);
+    const verify=await cloudV3.from('user_state').select('state').eq('user_id',user).maybeSingle();
+    if(verify.error)throw verify.error;
+    const count=verify.data?.state?.collection?.length||0;
+    if(count!==candidate.items.length)throw Error('Cloud-Bestätigung unvollständig ('+count+' von '+candidate.items.length+'). Lokale Daten bleiben erhalten.');
+    refresh();info.textContent='Cloud bestätigt: '+count+' Sets im Testkonto.';
+   }catch(e){info.textContent='Nicht abgeschlossen: '+String(e.message||e)}finally{button.disabled=false}
+ });
+}
+document.addEventListener('click',()=>setTimeout(showRecovery,300));
+document.addEventListener('DOMContentLoaded',()=>setTimeout(showRecovery,1500));
 })();</script></body></html>
