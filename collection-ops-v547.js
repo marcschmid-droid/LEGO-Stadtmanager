@@ -10,6 +10,11 @@ async function conflictV547(user){const {data,error}=await readRemoteV547(user);
 cloudSaveV3=async function(){
  const user=cloudUserV3?.id;if(!user||!cloudV3||cloudApplyingV3||opsV547.loading.has(user))return;
  const s=syncInfoV547(user);if(s.conflict){renderSyncConflictV547();return}
+ // Never replace a pending device collection with an empty write.
+ let cachedPending=null;try{cachedPending=JSON.parse(localStorage.getItem(cloudCacheKeyV3(user))||'null')}catch(_){}
+ if(Array.isArray(cachedPending?.collection)&&cachedPending.collection.length>0&&(!Array.isArray(state?.collection)||state.collection.length===0)){
+   cloudStatusV3('STOPP: Auf dem Gerät sind '+cachedPending.collection.length+' Sets zwischengespeichert, die aktuelle Anzeige ist leer. Kein leerer Cloud-Speichervorgang. Bitte Sicherung prüfen.');return;
+ }
  try{localStorage.setItem(cloudCacheKeyV3(user),JSON.stringify(state))}catch(e){cloudStatusV3('Gerätespeicher voll: nur Cloud-Speicherung möglich. Bitte Backup exportieren.')}if(!navigator.onLine){cloudStatusV3('Offline · Änderungen lokal gesichert.');return}
  if(s.revision===undefined){cloudStatusV3('Cloud-Version noch nicht geladen. Bitte anmelden oder erneut synchronisieren.');return}
  if(opsV547.saving.has(user)){opsV547.again.add(user);return}
