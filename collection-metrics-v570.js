@@ -11,7 +11,7 @@
    const recorded=collection.filter(x=>num(x.purchasePrice)!==null);
    const purchases=recorded.reduce((a,x)=>a+(num(x.purchasePrice)??0),0);
    const baseline=num(s?.meta?.investmentBaseline)??num(s?.meta?.brickrInvestmentReference);
-   const investment=baseline!==null?baseline+collection.reduce((a,x)=>a+(Array.isArray(x.exemplars)?x.exemplars:[]).filter(e=>e.addedAfterBaseline).reduce((b,e)=>b+(num(e.price)??0),0),0):recorded.length===collection.length?purchases:null;
+   const investment=count===0?0:baseline!==null?baseline+collection.reduce((a,x)=>a+(Array.isArray(x.exemplars)?x.exemplars:[]).filter(e=>e.addedAfterBaseline).reduce((b,e)=>b+(num(e.price)??0),0),0):recorded.length===collection.length?purchases:null;
    const completeValue=count>0&&valueKnown.length===count;
    const completeInvestment=investment!==null;
    return {count,copies,value:completeValue?value:null,investment:completeInvestment?investment:null,returnPct:completeValue&&completeInvestment&&investment>0?(value-investment)/investment*100:null,valueCovered:valueKnown.length,costCovered:recorded.length};
