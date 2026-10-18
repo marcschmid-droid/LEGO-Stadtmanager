@@ -2472,6 +2472,10 @@ setTimeout(bindUxV521,220);
 
 /* v50.23 data quality bulk repair */
 async function bulkEnrichCollectionV523(){
+ if(!cloudUserV3?.id){alert('Bitte zuerst anmelden. Ohne bestätigtes Konto werden keine Sammlungsdaten ergänzt.');return}
+ const originalCount=state.collection.length;
+ if(!originalCount){alert('Keine Sets in diesem Konto vorhanden.');return}
+ if(!confirm('Nur fehlende Katalogfelder ergänzen? Kaufpreise und bestehende Marktwerte bleiben unverändert.'))return;
  const btn=$("qualityBulkFillV523");
  if(btn){btn.disabled=true;btn.textContent="Daten werden ergänzt…"}
  let changed=0,img=0,value=0,dims=0,barcode=0;
@@ -2511,10 +2515,11 @@ async function bulkEnrichCollectionV523(){
        if(!pV3(x.depth)&&pV3(e.depth)){x.depth=e.depth;touched=true;gotDims=true}
        if(!pV3(x.height)&&pV3(e.height)){x.height=e.height;touched=true;gotDims=true}
        if(gotDims)dims++;
-       x.market={...(x.market||{}),...e};
+       const marketKeep={...(x.market||{})};for(const [k,v] of Object.entries(e)){if((marketKeep[k]===undefined||marketKeep[k]===null||marketKeep[k]==='')&&v!==undefined&&v!==null&&v!=='')marketKeep[k]=v}x.market=marketKeep;
      }
      if(touched)changed++;
    }
+   if(state.collection.length!==originalCount){alert('Abbruch: Setanzahl hat sich während der Ergänzung verändert. Bitte Sammlung prüfen.');return}
    if(changed){persist();refresh()}
    renderQualityAssistantV35();
    const remaining={
