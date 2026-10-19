@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import json, os, time
+import json, os, time, re
 from pathlib import Path
 import requests
 
@@ -30,7 +30,7 @@ r.raise_for_status()
 requests_rows=r.json()
 # Skip malformed LEGO set numbers before calling paid APIs. Keep these requests
 # in Supabase for manual correction; do not delete collection or catalog data.
-invalid_rows=[row for row in requests_rows if not str(row.get("set_number","")).strip().split("-",1)[0].isdigit() or len(str(row.get("set_number","")).strip().split("-",1)[0]) < 4]
+invalid_rows=[row for row in requests_rows if not re.fullmatch(r"[0-9]{4,7}(?:-[0-9]+)?", str(row.get("set_number","")).strip())]
 for row in invalid_rows:
     print("CATALOG_REQUEST_INVALID_SKIPPED set="+str(row.get("set_number","")))
 requests_rows=[row for row in requests_rows if row not in invalid_rows][:PRICE_BATCH]
