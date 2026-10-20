@@ -2,6 +2,10 @@
 import json, os, time, re
 from pathlib import Path
 import requests
+try:
+    from requests_oauthlib import OAuth1
+except ImportError:
+    OAuth1=None
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/"data"/"set-enrichment.json"
@@ -9,6 +13,7 @@ SUPABASE_URL=os.getenv("SUPABASE_URL","https://eeiokqujnpaxgncmcvsi.supabase.co"
 SERVICE=os.getenv("SUPABASE_SERVICE_ROLE_KEY","").strip()
 RB_KEY=os.getenv("REBRICKABLE_API_KEY","").strip()
 BE_KEY=os.getenv("BRICKECONOMY_API_KEY","").strip()
+BL_KEYS=[os.getenv(k,"").strip() for k in ("BRICKLINK_CONSUMER_KEY","BRICKLINK_CONSUMER_SECRET","BRICKLINK_TOKEN_VALUE","BRICKLINK_TOKEN_SECRET")]
 UA="Brick-City-Manager/1.0"
 PRICE_BATCH=max(1,min(10,int(os.getenv("MARKET_PRICE_BATCH_SIZE","2"))))
 MIN_PRICE_QUOTA_RESERVE=max(0,int(os.getenv("BRICKECONOMY_QUOTA_RESERVE","2")))
@@ -105,6 +110,26 @@ def be_usage():
             rr=requests.get("https://www.brickeconomy.com/api/v1/usage",headers=be_headers(),timeout=30)
     rr.raise_for_status()
     return (rr.json() or {}).get("data") or {}
+
+def bricklink_sold_price(n):
+    """Return an actual sold-price average, never an asking price."""
+    if not (OAuth1 and all(BL_KEYS)):
+        print("BRICKLINK_FALLBACK_UNAVAILABLE set="+n+" reason=credentials_missing")
+        return None
+    auth=OAuth1(*BL_KEYS)
+    response=requests.get(
+        f"https://api.bricklink.com/api/store/v1/items/SET/{api_num(n)}/price",
+        params={"guide_type":"sold","new_or_used":"N","currency_code":"EUR"},
+        auth=auth,headers={"Accept":"application/json","User-Agent":UA},timeout=30
+    )
+    response.raise_for_status()
+    body=(response.json() or {}).get("data") or {}
+    raw=body.get("qty_avg_price") or body.get("avg_price")
+    try:
+        value=float(raw)
+        return round(value,2) if value>0 else None
+    except (TypeError,ValueError):
+        return None
 
 def be_set(n):
     """Fetch a set and distinguish daily quota from short-term throttling."""
@@ -224,7 +249,32 @@ for row in requests_rows:
                     row_changed=True
                     print("CATALOG_PRICE_SAVED set="+n)
                 else:
-                    print("CATALOG_PRICE_MISSING set="+n+" source=BrickEconomy returned no current value; keep blank, do not fabricate a price")
+                    print("CATALOG_PRICE_MISSING set="+n+" source=BrickEconomy returned no current value")
+                    # Only a verified BrickLink SOLD average can fill the gap.
+                    # No asking-price estimates or manual purchase-price edits.
+                    try:
+                        fallback=bricklink_sold_price(n)
+                        if fallback is not None:
+                            payload={"set_number":n,"market_new_eur":fallback,
+                                     "source_updated_at":time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())}
+                            saved=requests.post(
+                                SUPABASE_URL+"/rest/v1/catalog_sets",
+                                params={"on_conflict":"set_number"},
+                                headers={**headers,"Content-Type":"application/json",
+                                         "Prefer":"resolution=merge-duplicates,return=minimal"},
+                                json=payload,timeout=30
+                            )
+                            saved.raise_for_status()
+                            e["marketNewEUR"]=fallback
+                            e["marketSourceFallback"]="BrickLink sold 6m"
+                            e["bricklinkUpdated"]=time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())
+                            changed=True
+                            row_changed=True
+                            print("CATALOG_PRICE_SAVED set="+n+" source=BrickLink_sold")
+                        else:
+                            print("CATALOG_PRICE_UNAVAILABLE set="+n+" no verified sold price")
+                    except Exception as fallback_error:
+                        errors.append(f"BrickLink {n}: {fallback_error}")
             except Exception as ex:
                 errors.append(f"BrickEconomy {n}: {ex}")
         if not sets.get(n):
@@ -242,7 +292,9 @@ for row in requests_rows:
     # The real catalog_requests schema has only set_number and requested_at.
     # Acknowledge only when a market price was actually obtained and persisted;
     # metadata-only lookups remain queued for a future price attempt.
-    if row_changed and row.get("requested_at") is not None:
+    if row_changed:  # acknowledgement only after a confirmed price write
+        if row.get("requested_at") is None:
+            continue
         pr=requests.delete(
             SUPABASE_URL+"/rest/v1/catalog_requests",
             params={"set_number":f"eq.{row['set_number']}","requested_at":f"eq.{row['requested_at']}"},
