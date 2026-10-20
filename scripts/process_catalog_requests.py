@@ -33,9 +33,38 @@ requests_rows=r.json()
 invalid_rows=[row for row in requests_rows if not re.fullmatch(r"[0-9]{4,7}(?:-[0-9]+)?", str(row.get("set_number","")).strip()) or str(row.get("set_number","")).strip().split("-",1)[0] in {"1036"}]
 for row in invalid_rows:
     print("CATALOG_REQUEST_INVALID_SKIPPED set="+str(row.get("set_number","")))
-requests_rows=[row for row in requests_rows if row not in invalid_rows][:PRICE_BATCH]
+requests_rows=[row for row in requests_rows if row not in invalid_rows]
+# Repair missing market prices even if the browser failed to enqueue a request.
+# Only the shared price catalog is queried/written; personal collection and
+# purchase prices are never read or modified.
+try:
+    missing_response=requests.get(
+        SUPABASE_URL+"/rest/v1/catalog_sets",
+        params={"select":"set_number,market_new_eur,market_used_eur",
+                "or":"(market_new_eur.is.null,market_used_eur.is.null)",
+                "order":"set_number.asc","limit":"200"},
+        headers=headers,timeout=30
+    )
+    missing_response.raise_for_status()
+    pending={str(row.get("set_number","")).split("-",1)[0] for row in requests_rows}
+    for item in missing_response.json():
+        n=str(item.get("set_number","")).strip().split("-",1)[0]
+        if re.fullmatch(r"[0-9]{4,7}",n) and n not in {"1036"} and n not in pending:
+            requests_rows.append({"set_number":n,"requested_at":None})
+            pending.add(n)
+    print(f"CATALOG_MISSING_PRICE_SCAN found={len(missing_response.json())}")
+except Exception as ex:
+    print(f"CATALOG_MISSING_PRICE_SCAN_ERROR {ex}")
+# Explicit diagnostics for the four sets shown without a value in v50.96.
+# The price catalog may not contain them yet; adding a lookup never adds an
+# owned set or changes its purchase price.
+pending={str(row.get("set_number","")).split("-",1)[0] for row in requests_rows}
+for n in ("40909","11387","76457","11383"):
+    if n not in pending:
+        requests_rows.append({"set_number":n,"requested_at":None})
+requests_rows=requests_rows[:PRICE_BATCH]
 if not requests_rows:
-    print("No pending catalog requests")
+    print("No pending catalog requests or missing market prices")
     raise SystemExit(0)
 
 data=json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {"meta":{},"sets":{}}
@@ -209,7 +238,7 @@ for row in requests_rows:
     # The real catalog_requests schema has only set_number and requested_at.
     # Acknowledge only when a market price was actually obtained and persisted;
     # metadata-only lookups remain queued for a future price attempt.
-    if row_changed:
+    if row_changed and row.get("requested_at") is not None:
         pr=requests.delete(
             SUPABASE_URL+"/rest/v1/catalog_requests",
             params={"set_number":f"eq.{row['set_number']}","requested_at":f"eq.{row['requested_at']}"},
