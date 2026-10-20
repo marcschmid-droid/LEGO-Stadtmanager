@@ -59,10 +59,14 @@ except Exception as ex:
 # The price catalog may not contain them yet; adding a lookup never adds an
 # owned set or changes its purchase price.
 pending={str(row.get("set_number","")).split("-",1)[0] for row in requests_rows}
-for n in ("40909","11387","76457","11383"):
-    if n not in pending:
-        requests_rows.append({"set_number":n,"requested_at":None})
-requests_rows=requests_rows[:PRICE_BATCH]
+# Prioritize the four user-reported missing values before older catalog gaps.
+# Reuse existing request rows to preserve their acknowledgement semantics.
+priority=("40909","11387","76457","11383")
+by_number={str(row.get("set_number","")).split("-",1)[0]:row for row in requests_rows}
+prioritized=[by_number.get(n,{"set_number":n,"requested_at":None}) for n in priority]
+requests_rows=(prioritized+[row for row in requests_rows
+              if str(row.get("set_number","")).split("-",1)[0] not in priority])[:PRICE_BATCH]
+print("CATALOG_PRICE_PRIORITY sets="+",".join(priority))
 if not requests_rows:
     print("No pending catalog requests or missing market prices")
     raise SystemExit(0)
@@ -220,7 +224,7 @@ for row in requests_rows:
                     row_changed=True
                     print("CATALOG_PRICE_SAVED set="+n)
                 else:
-                    print("CATALOG_PRICE_MISSING set="+n)
+                    print("CATALOG_PRICE_MISSING set="+n+" source=BrickEconomy returned no current value; keep blank, do not fabricate a price")
             except Exception as ex:
                 errors.append(f"BrickEconomy {n}: {ex}")
         if not sets.get(n):
