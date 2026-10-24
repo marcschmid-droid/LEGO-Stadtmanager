@@ -2131,7 +2131,7 @@ function renderPricingV516(){
  const basic=$("basicPriceV516"),basicPeriod=$("basicPeriodV516"),premium=$("premiumPriceV516"),premiumPeriod=$("premiumPeriodV516");
  if(basic)basic.textContent=pricingYearlyV516?"39,99 €":"3,99 €";
  if(basicPeriod)basicPeriod.textContent=pricingYearlyV516?"pro Jahr":"pro Monat";
- if(premium)premium.textContent=pricingYearlyV516?"79,99 €":"7,99 €";
+ if(premium)premium.textContent=pricingYearlyV516?"6,99 €":"6,99 €";
  if(premiumPeriod)premiumPeriod.textContent=pricingYearlyV516?"pro Jahr":"pro Monat";
  $("pricingMonthlyV516")?.classList.toggle("active",!pricingYearlyV516);
  $("pricingYearlyV516")?.classList.toggle("active",pricingYearlyV516);
@@ -4010,15 +4010,15 @@ setTimeout(()=>{renderPricingV516();renderPlanStatusV519();},120);
 
 /* v50.40 Commercial Launch */
 let checkoutPlanV540=null;
-function billingPeriodV540(){return pricingYearlyV516?"yearly":"monthly"}
+function billingPeriodV540(){return "monthly"}
 function billingEntryV540(plan){
- const cfg=window.BRICK_BILLING||{},key=plan==="basic"?"collector":"pro",period=billingPeriodV540();
+ const cfg=window.BRICK_BILLING||{},key=plan==="basic"?"basic":"premium",period=billingPeriodV540();
  return {key,period,...(cfg[key]?.[period]||{})};
 }
 function openCommercialCheckoutV540(plan){
  if(plan==="free"){switchTab("collection");return}
  checkoutPlanV540=plan;
- const entry=billingEntryV540(plan),label=plan==="basic"?"Collector":"Pro / Investor",period=entry.period==="yearly"?"Jahr":"Monat";
+ const entry=billingEntryV540(plan),label=plan==="basic"?"Basic":"Premium",period=entry.period==="yearly"?"Jahr":"Monat";
  const title=$("checkoutTitleV540"),sum=$("checkoutSummaryV540"),pay=$("checkoutPayV540"),status=$("checkoutStatusV540"),terms=$("checkoutTermsV540"),m=$("checkoutModalV540");
  if(title)title.textContent=label+" abonnieren";
  if(sum)sum.innerHTML='<div class="checkoutPlanV540"><span>Tarif</span><b>'+label+'</b></div><div class="checkoutPlanV540"><span>Abrechnung</span><b>'+period+'</b></div><div class="checkoutPlanV540"><span>Preis</span><b>'+euro(entry.amount||0)+'</b></div><p class="hint">Der Vertrag wird über den externen Zahlungsanbieter abgeschlossen. Vor dem Absenden siehst du Tarif, Preis und Abrechnungszeitraum.</p>';
