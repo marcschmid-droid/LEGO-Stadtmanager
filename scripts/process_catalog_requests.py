@@ -39,9 +39,12 @@ invalid_rows=[row for row in requests_rows if not re.fullmatch(r"[0-9]{4,7}(?:-[
 for row in invalid_rows:
     print("CATALOG_REQUEST_INVALID_SKIPPED set="+str(row.get("set_number","")))
 requests_rows=[row for row in requests_rows if row not in invalid_rows]
-# Repair missing market prices even if the browser failed to enqueue a request.
-# Only the shared price catalog is queried/written; personal collection and
-# purchase prices are never read or modified.
+# Read-only candidate discovery. Prefer genuinely unpriced sets; do not keep
+# polling sets with a known new price merely because used price is absent.
+# The local enrichment timestamps are a conservative retry throttle.
+existing_data=json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {}
+existing_sets=existing_data.get("sets",{})
+missing_numbers=set()
 try:
     missing_response=requests.get(
         SUPABASE_URL+"/rest/v1/catalog_sets",
@@ -54,23 +57,48 @@ try:
     pending={str(row.get("set_number","")).split("-",1)[0] for row in requests_rows}
     for item in missing_response.json():
         n=str(item.get("set_number","")).strip().split("-",1)[0]
-        if re.fullmatch(r"[0-9]{4,7}",n) and n not in {"1036"} and n not in pending:
+        if not re.fullmatch(r"[0-9]{4,7}",n) or n=="1036":
+            continue
+        # A missing USED value alone is not an unpriced set.
+        if item.get("market_new_eur") is not None or item.get("market_used_eur") is not None:
+            continue
+        missing_numbers.add(n)
+        if n not in pending:
             requests_rows.append({"set_number":n,"requested_at":None})
             pending.add(n)
-    print(f"CATALOG_MISSING_PRICE_SCAN found={len(missing_response.json())}")
+    print(f"CATALOG_MISSING_PRICE_SCAN unpriced={len(missing_numbers)}")
 except Exception as ex:
     print(f"CATALOG_MISSING_PRICE_SCAN_ERROR {ex}")
-# Explicit diagnostics for the four sets shown without a value in v50.96.
-# The price catalog may not contain them yet; adding a lookup never adds an
-# owned set or changes its purchase price.
-pending={str(row.get("set_number","")).split("-",1)[0] for row in requests_rows}
-# Prioritize the four user-reported missing values before older catalog gaps.
-# Reuse existing request rows to preserve their acknowledgement semantics.
+    # Do not blindly spend quota if the catalog state cannot be verified.
+    raise SystemExit(0)
+
 priority=("40909","11387","76457","11383")
 by_number={str(row.get("set_number","")).split("-",1)[0]:row for row in requests_rows}
-prioritized=[by_number.get(n,{"set_number":n,"requested_at":None}) for n in priority]
-requests_rows=(prioritized+[row for row in requests_rows
-              if str(row.get("set_number","")).split("-",1)[0] not in priority])[:PRICE_BATCH]
+for n in priority:
+    if n in missing_numbers and n not in by_number:
+        by_number[n]={"set_number":n,"requested_at":None}
+
+def candidate_ready(n):
+    if not re.fullmatch(r"[0-9]{4,7}",n) or n=="1036":
+        return False
+    old=existing_sets.get(n,{})
+    if old.get("marketNewEUR") is not None or old.get("marketUsedEUR") is not None:
+        return False
+    stamp=old.get("brickeconomyUpdated")
+    if stamp:
+        try:
+            # UTC conversion independent of the runner timezone.
+            import calendar
+            last=calendar.timegm(time.strptime(stamp,"%Y-%m-%dT%H:%M:%SZ"))
+            if time.time()-last < 48*3600:
+                return False
+        except (ValueError,TypeError):
+            pass
+    return True
+
+ordered=sorted(by_number, key=lambda n:(n not in missing_numbers,n not in priority,
+                                         priority.index(n) if n in priority else 999,n))
+requests_rows=[by_number[n] for n in ordered if candidate_ready(n)][:PRICE_BATCH]
 print("CATALOG_PRICE_PRIORITY sets="+",".join(priority))
 if not requests_rows:
     print("No pending catalog requests or missing market prices")
