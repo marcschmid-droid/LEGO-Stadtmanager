@@ -1,0 +1,74 @@
+name: Release smoke check
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'anmelden.html'
+      - 'brick-city-v5096.html'
+      - 'manifest.webmanifest'
+      - '.github/workflows/release-smoke-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-source-and-public-site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check critical release invariants in source
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          home=Path('index.html').read_text()
+          login=Path('anmelden.html').read_text()
+          legacy=Path('brick-city-v5096.html').read_text()
+          manifest=json.loads(Path('manifest.webmanifest').read_text())
+          assert 'id="visibleVersionV553">v50.97' in home, 'Wrong displayed release'
+          assert "const V='v50.96'" not in home, 'Old version lock remains'
+          assert 'Bis zu 20 Sets verwalten' in home, 'Free tier is wrong'
+          assert 'Bis zu 50 Sets verwalten' in home, 'Basic tier is wrong'
+          assert "location.assign('./index.html?v=50.97')" in login, 'Login targets old app'
+          assert 'location.replace(' in legacy and 'index.html' in legacy, 'Legacy app not redirected'
+          assert 'v50.97' in manifest['description'], 'Manifest is outdated'
+          print('Source smoke checks passed')
+          PY
+      - name: Check publicly served Pages files after deployment
+        run: |
+          python3 - <<'PY'
+          import time, urllib.request
+          base='https://marcschmid-droid.github.io/LEGO-Stadtmanager/'
+          errors=[]
+          for attempt in range(18):
+            try:
+              def get(path):
+                request=urllib.request.Request(base+path,headers={'Cache-Control':'no-cache','User-Agent':'BrickCityReleaseCheck/1'})
+                with urllib.request.urlopen(request,timeout=20) as response:
+                  return response.read().decode('utf-8')
+              home=get('index.html?release-smoke='+str(attempt))
+              login=get('anmelden.html?release-smoke='+str(attempt))
+              legacy=get('brick-city-v5096.html?release-smoke='+str(attempt))
+              checks={
+                'published version': 'id="visibleVersionV553">v50.97' in home,
+                'no old version lock': "const V='v50.96'" not in home,
+                'free tier': 'Bis zu 20 Sets verwalten' in home,
+                'basic tier': 'Bis zu 50 Sets verwalten' in home,
+                'login redirect': "location.assign('./index.html?v=50.97')" in login,
+                'legacy redirect': 'location.replace(' in legacy and 'index.html' in legacy,
+              }
+              errors=[key for key,ok in checks.items() if not ok]
+              if not errors:
+                print('Live GitHub Pages smoke checks passed')
+                break
+              print('Attempt',attempt+1,'not yet published:',', '.join(errors),flush=True)
+            except Exception as e:
+              errors=[str(e)]
+              print('Attempt',attempt+1,'failed:',e,flush=True)
+            time.sleep(20)
+          else:
+            raise SystemExit('Live site not verified: '+', '.join(errors))
+          PY
