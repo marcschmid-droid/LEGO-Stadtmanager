@@ -1,5 +1,5 @@
 /* Brick City Manager: network-first static shell, never cache user data. */
-const CACHE="brick-city-manager-v50-r95";
+const CACHE="brick-city-manager-v50-r97";
 const SHELL=["./index.html","./launch-5094.html","./styles.css?v=50.56"];
 self.addEventListener("install",event=>{
   event.waitUntil((async()=>{
