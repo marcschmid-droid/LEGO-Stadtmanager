@@ -16,3 +16,9 @@ body.themeV39 #collection #collectionSummaryV538 {grid-template-columns:repeat(2
 body.themeV39 #collection #collectionSummaryV538>div:nth-child(3){display:none!important}
 body.themeV39 #collection .toolbar {margin-bottom:12px!important}
 @media(max-width:600px){body.themeV39 #home .homeKpisV549{gap:9px!important}body.themeV39 #home .homeKpisV549 .card{padding:15px!important;min-height:120px!important}}
+
+/* Modern mobile homepage hero */
+body.themeV39 #home .homeHeroV549,body.themeV39 #home .heroV50.homeHeroV549{display:flex!important;min-height:210px!important;padding:25px!important;border-radius:22px!important;background:linear-gradient(90deg,rgba(15,20,35,.85),rgba(15,20,35,.1)),url('./ursprungsstadt.jpg?v=8') center/cover!important;align-items:center!important;margin:0 0 17px!important}
+body.themeV39 #home .homeHeroV549 h2{color:white!important;font-size:clamp(27px,5vw,40px)!important;margin:8px 0!important}
+body.themeV39 #home .homeHeroV549 p,body.themeV39 #home .homeHeroV549 span{color:white!important}
+body.themeV39 #home .homeHeroV549 .heroActionsV50{display:none!important}
