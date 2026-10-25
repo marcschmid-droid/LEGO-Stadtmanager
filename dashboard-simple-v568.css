@@ -27,3 +27,31 @@ body.themeV39 #home .homeHeroV549 .heroActionsV50{display:none!important}
 
 /* 2026-10-25 mobile refinement */
 @media(max-width:700px){body.themeV39 #home .homeHeroV549{min-height:170px!important;padding:22px!important;background-position:center center!important}body.themeV39 #home .homeHeroV549 h2{font-size:29px!important}.bcmQuickLinks{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bcmQuickLinks button{min-height:78px;padding:13px!important;font-size:23px}.bcmQuickLinks span{font-size:13px!important}body.themeV39 #home .bcmTariffHero{margin-top:13px!important}}
+
+/* Premium visual system: compact, accessible, mobile-first */
+body.themeV39 nav.tabs.tabsGroupedV550{gap:9px!important}
+body.themeV39 nav.tabs.tabsGroupedV550>.tab,
+body.themeV39 nav.tabs.tabsGroupedV550>.navGroupV550>summary{border-radius:13px!important;font-weight:750!important;letter-spacing:-.01em}
+body.themeV39 #home .homeKpisV549{gap:12px!important}
+body.themeV39 #home .homeKpisV549 .card{border:1px solid #e9e9ee!important;border-radius:17px!important;box-shadow:0 6px 22px #20202b0a!important}
+body.themeV39 #home .homeKpisV549 .card span{font-size:12px!important;color:#6b7280!important;font-weight:650!important}
+body.themeV39 #home .homeKpisV549 .card b{font-variant-numeric:tabular-nums!important;letter-spacing:-.035em!important}
+body.themeV39 #home .bcmQuickLinks button{transition:transform .15s ease,box-shadow .15s ease;border:1px solid #ececf0!important}
+body.themeV39 #home .bcmQuickLinks button:active{transform:scale(.97)}
+body.themeV39 #home .bcmQuickLinks button:focus-visible,
+body.themeV39 nav.tabs.tabsGroupedV550 button:focus-visible,
+body.themeV39 nav.tabs.tabsGroupedV550 summary:focus-visible{outline:3px solid #e23b49!important;outline-offset:3px!important}
+@media(max-width:650px){
+body.themeV39 nav.tabs.tabsGroupedV550{display:flex!important;flex-wrap:wrap!important;gap:6px!important;padding:7px!important}
+body.themeV39 nav.tabs.tabsGroupedV550>.tab,
+body.themeV39 nav.tabs.tabsGroupedV550>.navGroupV550{flex:1 1 calc(33.333% - 8px)!important;min-width:0!important}
+body.themeV39 nav.tabs.tabsGroupedV550>.navGroupV550:last-child{grid-column:auto!important}
+body.themeV39 nav.tabs.tabsGroupedV550>.tab,
+body.themeV39 nav.tabs.tabsGroupedV550>.navGroupV550>summary{min-height:43px!important;font-size:12px!important;padding:8px 5px!important}
+body.themeV39 #home .homeKpisV549{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+body.themeV39 #home .homeKpisV549 .card{min-width:0!important;padding:15px!important}
+body.themeV39 #home .homeHeroV549{min-height:160px!important;background-position:center 43%!important}
+body.themeV39 #home .bcmQuickLinks{margin:12px 0 18px!important}
+body.themeV39 #home .bcmQuickLinks button{min-height:74px!important}
+}
+@media(prefers-reduced-motion:reduce){body.themeV39 #home .bcmQuickLinks button{transition:none!important}}
