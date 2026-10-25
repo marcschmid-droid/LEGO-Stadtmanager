@@ -24,3 +24,6 @@ body.themeV39 #home .homeHeroV549 p,body.themeV39 #home .homeHeroV549 span{color
 body.themeV39 #home .homeHeroV549 .heroActionsV50{display:none!important}
 
 .bcmQuickLinks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:14px 0 23px}.bcmQuickLinks button{border:1px solid #e8e8ec;border-radius:15px;background:#fff;color:#d30817;padding:17px 5px;min-height:73px;font-size:25px;box-shadow:0 4px 15px rgba(25,20,30,.05);cursor:pointer}.bcmQuickLinks span{display:block;color:#343741;font-size:12px;font-weight:750;margin-top:5px}@media(max-width:420px){.bcmQuickLinks{gap:6px}.bcmQuickLinks button{padding:13px 2px;font-size:21px}.bcmQuickLinks span{font-size:10px}}
+
+/* 2026-10-25 mobile refinement */
+@media(max-width:700px){body.themeV39 #home .homeHeroV549{min-height:170px!important;padding:22px!important;background-position:center center!important}body.themeV39 #home .homeHeroV549 h2{font-size:29px!important}.bcmQuickLinks{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.bcmQuickLinks button{min-height:78px;padding:13px!important;font-size:23px}.bcmQuickLinks span{font-size:13px!important}body.themeV39 #home .bcmTariffHero{margin-top:13px!important}}
