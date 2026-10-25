@@ -2,7 +2,7 @@
 // Public configuration only. Never put Stripe secret keys in this file.
 window.BRICK_BILLING = {
   mode: "commercial",
-  serverEnabled: false, // Enable only after verified Stripe webhook, backend deployment, and end-to-end tests.
+  serverEnabled: true, // Pilot only: frontend and backend restrict checkout to designated verified account.
   currency: "EUR",
   basic: {
     monthly: { priceId: "price_1UU5XOBrfEi477jIihFj7jc5", amount: 3.99, paymentLink: "" },
