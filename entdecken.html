@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="de"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Brick City Manager – Deine LEGO-Sammlung. Deine Brick City.</title>
+<meta name="description" content="Brick City Manager: LEGO-Sets verwalten, Wunschlisten pflegen, Marktwerte überblicken und deine eigene Brick City planen. Kostenlos bis 20 Sets starten.">
+<meta name="theme-color" content="#c91919">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Brick City Manager – Deine Sammlung. Deine Brick City.">
+<meta property="og:description" content="Entdecke den digitalen Sammlungsmanager für LEGO-Fans: Sammlung, Wunschliste, Marktwert-Überblick und Stadtplanung.">
+<meta property="og:url" content="https://marcschmid-droid.github.io/LEGO-Stadtmanager/entdecken.html">
+<link rel="icon" href="./icon.svg">
+<style>
+:root{color-scheme:light;--red:#c91919;--ink:#222333;--muted:#686c7c;--bg:#fff8f5;--line:#f1dcd8}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font:16px/1.6 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}
+a{color:inherit}a:focus-visible{outline:3px solid #e8a72e;outline-offset:3px}
+.container{max-width:1120px;margin:auto;padding:0 24px}
+header{background:#fff;border-bottom:1px solid var(--line)}.nav{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 0}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;font-size:19px;font-weight:900;letter-spacing:-.5px}.brand img{width:44px;height:44px;border-radius:12px}
+.button{display:inline-flex;align-items:center;justify-content:center;padding:14px 22px;background:var(--red);color:#fff;text-decoration:none;border-radius:13px;font-weight:800;box-shadow:0 8px 18px #c9191929}
+.button:hover{background:#a81010}.button.secondary{background:#fff;color:var(--red);box-shadow:none;border:1px solid #e7c9c4}
+.hero{padding:92px 0 72px;background:radial-gradient(circle at 82% 18%,#ffd9bc 0,transparent 36%),linear-gradient(145deg,#fff8f5,#fff0e8)}
+.hero-inner{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:50px}
+.eyebrow{display:inline-block;background:#ffe7df;color:#9c1515;border-radius:99px;padding:6px 12px;font-size:12px;letter-spacing:1.4px;font-weight:900;text-transform:uppercase}
+h1{font-size:clamp(40px,5vw,68px);line-height:1.08;letter-spacing:-2.5px;margin:22px 0}h1 em{font-style:normal;color:var(--red)}
+.lead{font-size:20px;color:#525665;max-width:570px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.small{font-size:13px;color:var(--muted);margin-top:18px}.visual{border-radius:32px;padding:24px;background:#fff;box-shadow:0 28px 80px #9e29251d;border:1px solid #f5d7d1}
+.visual-top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eee;padding-bottom:17px;font-weight:800}.dots{color:var(--red);letter-spacing:3px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.kpi{padding:20px;border-radius:18px;background:#fff4f1}.kpi b{font-size:25px;color:var(--red);display:block}.kpi span{font-size:13px;color:#646472}
+.mock-city{margin-top:15px;background:#f8f8fb;border-radius:18px;padding:20px;display:flex;align-items:center;justify-content:center;min-height:140px;gap:7px}.brick{width:44px;height:44px;background:#d92c28;border-radius:5px;box-shadow:inset 0 5px #ed7770,0 8px #a91a16}.brick:nth-child(2){background:#e6ae27;box-shadow:inset 0 5px #f2d179,0 8px #b78414}.brick:nth-child(3){background:#3187bc;box-shadow:inset 0 5px #80b6d6,0 8px #20658e}.brick:nth-child(4){background:#6b9e57;box-shadow:inset 0 5px #9bc68b,0 8px #49723a}
+section.features{padding:76px 0}.section-heading{font-size:clamp(28px,4vw,42px);letter-spacing:-1px;margin:0 0 8px}.sub{color:var(--muted);margin:0 0 28px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:25px;box-shadow:0 9px 30px #a4332010}.card .emoji{font-size:30px}.card h3{margin:15px 0 8px;font-size:19px}.card p{color:var(--muted);margin:0}
+.cta{margin:20px auto 70px;padding:50px;background:#262532;color:white;border-radius:28px;text-align:center}.cta p{color:#e6dce0}.cta h2{font-size:34px;margin:0}
+footer{background:white;border-top:1px solid var(--line);padding:30px 0;color:var(--muted);font-size:13px}
+@media(max-width:780px){.hero-inner{grid-template-columns:1fr}.hero{padding:60px 0}.cards{grid-template-columns:1fr}.nav .button{padding:10px 12px;font-size:13px}.brand{font-size:15px}h1{letter-spacing:-1px}}
+</style></head>
+<body><header><div class="container nav"><a class="brand" href="./entdecken.html"><img src="./icon.svg" alt="">Brick City Manager</a><a class="button" href="./anmelden.html">App starten</a></div></header>
+<main><section class="hero"><div class="container hero-inner">
+<div><span class="eyebrow">Für Sammler entwickelt</span><h1>Deine Sammlung.<br><em>Deine Brick City.</em></h1>
+<p class="lead">Alle deine LEGO-Sets an einem Ort: Sammlung organisieren, Wunschliste pflegen, Marktwerte überblicken und deine eigene Stadt planen.</p>
+<div class="actions"><a class="button" href="./anmelden.html">Jetzt kostenlos starten →</a><a class="button secondary" href="#funktionen">Funktionen entdecken</a></div>
+<p class="small">Kostenloser Einstieg für bis zu 20 Sets · Browser-App für Smartphone und Computer</p></div>
+<div class="visual" aria-label="Symbolische Vorschau auf die Sammlungsverwaltung">
+<div class="visual-top"><span>🏙️ Meine Brick City</span><span class="dots">● ● ●</span></div>
+<div class="kpis"><div class="kpi"><b>📦</b><span>Sammlung verwalten</span></div><div class="kpi"><b>📈</b><span>Marktwerte überblicken</span></div><div class="kpi"><b>❤️</b><span>Wunschliste pflegen</span></div><div class="kpi"><b>🚂</b><span>Stadt &amp; Züge planen</span></div></div>
+<div class="mock-city"><span class="brick"></span><span class="brick"></span><span class="brick"></span><span class="brick"></span></div>
+<p class="small">Symbolische Darstellung – keine Live-Sammlungsdaten</p></div></div></section>
+<section class="features" id="funktionen"><div class="container"><h2 class="section-heading">Mehr Freude am Sammeln.</h2><p class="sub">Die wichtigsten Funktionen an einem Ort.</p>
+<div class="cards">
+<article class="card"><span class="emoji">📦</span><h3>Sammlung verwalten</h3><p>Sets erfassen, ordnen und nach Nummer, Preis oder Datum sortieren.</p></article>
+<article class="card"><span class="emoji">📊</span><h3>Marktwert-Überblick</h3><p>Verfügbare Marktpreise, Kaufpreise und Wertentwicklung übersichtlich vergleichen. Aktualisierungen sind von Datenquellen und Kontingenten abhängig.</p></article>
+<article class="card"><span class="emoji">❤️</span><h3>Wunschliste</h3><p>Deine nächsten Lieblingssets vormerken und Sammlerziele im Blick behalten.</p></article>
+<article class="card"><span class="emoji">🏙️</span><h3>Brick City planen</h3><p>Plane deine eigene LEGO-Stadt und behalte Themenwelten und Stadtbereiche im Blick.</p></article>
+<article class="card"><span class="emoji">🚂</span><h3>Züge &amp; Schienen</h3><p>Auch für Fans von LEGO-Zügen und großen Stadtprojekten entwickelt.</p></article>
+<article class="card"><span class="emoji">🔒</span><h3>Eigenes Konto</h3><p>Persönliche Sammlung mit eigenem Login. Preise und Zusatzfunktionen richten sich nach dem gewählten Tarif.</p></article>
+</div></div></section>
+<section class="container"><div class="cta"><h2>Bereit für deine Brick City?</h2><p>Starte kostenlos und entdecke deinen digitalen Sammlungsmanager.</p><a class="button" href="./anmelden.html">Brick City Manager öffnen →</a></div></section></main>
+<footer><div class="container">Brick City Manager – ein unabhängiges Sammlerprojekt von Marc Schmid. LEGO® ist eine Marke der LEGO Gruppe. Dieses Projekt ist weder von der LEGO Gruppe gesponsert noch mit ihr verbunden. <a href="./anmelden.html">Zur App</a></div></footer></body></html>
