@@ -15,7 +15,7 @@ RB_KEY=os.getenv("REBRICKABLE_API_KEY","").strip()
 BE_KEY=os.getenv("BRICKECONOMY_API_KEY","").strip()
 BL_KEYS=[os.getenv(k,"").strip() for k in ("BRICKLINK_CONSUMER_KEY","BRICKLINK_CONSUMER_SECRET","BRICKLINK_TOKEN_VALUE","BRICKLINK_TOKEN_SECRET")]
 UA="Brick-City-Manager/1.0"
-PRICE_BATCH=max(1,min(10,int(os.getenv("MARKET_PRICE_BATCH_SIZE","2"))))
+PRICE_BATCH=max(1,min(20,int(os.getenv("MARKET_PRICE_BATCH_SIZE","20"))))
 MIN_PRICE_QUOTA_RESERVE=max(0,int(os.getenv("BRICKECONOMY_QUOTA_RESERVE","2")))
 
 if not SERVICE:
@@ -39,66 +39,71 @@ invalid_rows=[row for row in requests_rows if not re.fullmatch(r"[0-9]{4,7}(?:-[
 for row in invalid_rows:
     print("CATALOG_REQUEST_INVALID_SKIPPED set="+str(row.get("set_number","")))
 requests_rows=[row for row in requests_rows if row not in invalid_rows]
-# Read-only candidate discovery. Prefer genuinely unpriced sets; do not keep
-# polling sets with a known new price merely because used price is absent.
-# The local enrichment timestamps are a conservative retry throttle.
+# Read the current, per-account collections WITHOUT changing user_state.
+# The global catalog alone is not the source of truth for owned LEGO sets.
+# Eligible catalog prices are refreshed after 48 h, including already-priced sets.
+from datetime import datetime, timezone
 existing_data=json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {}
 existing_sets=existing_data.get("sets",{})
-missing_numbers=set()
+def epoch(stamp):
+    if not stamp:
+        return 0
+    try:
+        return datetime.fromisoformat(str(stamp).replace("Z","+00:00")).timestamp()
+    except (TypeError, ValueError, OverflowError):
+        return 0
+
 try:
-    missing_response=requests.get(
+    cr=requests.get(
         SUPABASE_URL+"/rest/v1/catalog_sets",
-        params={"select":"set_number,market_new_eur,market_used_eur",
-                "or":"(market_new_eur.is.null,market_used_eur.is.null)",
-                "order":"set_number.asc","limit":"200"},
-        headers=headers,timeout=30
-    )
-    missing_response.raise_for_status()
-    pending={str(row.get("set_number","")).split("-",1)[0] for row in requests_rows}
-    for item in missing_response.json():
-        n=str(item.get("set_number","")).strip().split("-",1)[0]
-        if not re.fullmatch(r"[0-9]{4,7}",n) or n=="1036":
-            continue
-        # A missing USED value alone is not an unpriced set.
-        if item.get("market_new_eur") is not None or item.get("market_used_eur") is not None:
-            continue
-        missing_numbers.add(n)
-        if n not in pending:
-            requests_rows.append({"set_number":n,"requested_at":None})
-            pending.add(n)
-    print(f"CATALOG_MISSING_PRICE_SCAN unpriced={len(missing_numbers)}")
+        params={"select":"set_number,market_new_eur,market_used_eur,source_updated_at",
+                "limit":"1000"},headers=headers,timeout=30)
+    cr.raise_for_status()
+    catalog={str(row["set_number"]).split("-",1)[0]:row for row in cr.json()}
+    ur=requests.get(
+        SUPABASE_URL+"/rest/v1/user_state",
+        params={"select":"state","limit":"1000"},headers=headers,timeout=30)
+    ur.raise_for_status()
+    collection_numbers=set()
+    for user in ur.json():
+        for item in (user.get("state") or {}).get("collection",[]):
+            n=str(item.get("setNumber") or "").strip().split("-",1)[0]
+            if re.fullmatch(r"[0-9]{4,7}",n) and n!="1036":
+                collection_numbers.add(n)
+    print(f"COLLECTION_PRICE_SCAN unique_sets={len(collection_numbers)} catalog={len(catalog)}")
 except Exception as ex:
-    print(f"CATALOG_MISSING_PRICE_SCAN_ERROR {ex}")
-    # Do not blindly spend quota if the catalog state cannot be verified.
-    raise SystemExit(0)
+    print(f"COLLECTION_PRICE_SCAN_ERROR {ex}: no price requests sent")
+    raise SystemExit(1)
 
 priority=("40909","11387","76457","11383")
-by_number={str(row.get("set_number","")).split("-",1)[0]:row for row in requests_rows}
-for n in priority:
-    if n in missing_numbers and n not in by_number:
-        by_number[n]={"set_number":n,"requested_at":None}
-
+request_by_number={str(row.get("set_number","")).split("-",1)[0]:row for row in requests_rows}
+by_number={n:{"set_number":n,"requested_at":None} for n in collection_numbers}
+by_number.update(request_by_number)
+missing_numbers={n for n in by_number if
+                 catalog.get(n,{}).get("market_new_eur") is None and
+                 catalog.get(n,{}).get("market_used_eur") is None}
+now=time.time()
 def candidate_ready(n):
     if not re.fullmatch(r"[0-9]{4,7}",n) or n=="1036":
         return False
-    old=existing_sets.get(n,{})
-    if old.get("marketNewEUR") is not None or old.get("marketUsedEUR") is not None:
-        return False
-    stamp=old.get("brickeconomyUpdated")
-    if stamp:
-        try:
-            # UTC conversion independent of the runner timezone.
-            import calendar
-            last=calendar.timegm(time.strptime(stamp,"%Y-%m-%dT%H:%M:%SZ"))
-            if time.time()-last < 48*3600:
-                return False
-        except (ValueError,TypeError):
-            pass
-    return True
+    db=catalog.get(n,{})
+    has_price=db.get("market_new_eur") is not None or db.get("market_used_eur") is not None
+    # source_updated_at changes ONLY after a stored market-price response.
+    # Existing prices are due every 48h, not on every 4h workflow execution.
+    if has_price:
+        return now-epoch(db.get("source_updated_at")) >= 48*3600
+    # An API response without a price must not burn quota every four hours.
+    return now-epoch(existing_sets.get(n,{}).get("brickeconomyUpdated")) >= 48*3600
 
-ordered=sorted(by_number, key=lambda n:(n not in missing_numbers,n not in priority,
-                                         priority.index(n) if n in priority else 999,n))
-requests_rows=[by_number[n] for n in ordered if candidate_ready(n)][:PRICE_BATCH]
+due=[n for n in by_number if candidate_ready(n)]
+due.sort(key=lambda n:(
+    n not in missing_numbers,
+    n not in priority,
+    priority.index(n) if n in priority else 999,
+    epoch(catalog.get(n,{}).get("source_updated_at")),
+    n))
+requests_rows=[by_number[n] for n in due[:PRICE_BATCH]]
+print(f"COLLECTION_PRICE_DUE due={len(due)} selected={len(requests_rows)} interval_hours=48")
 print("CATALOG_PRICE_PRIORITY sets="+",".join(priority))
 if not requests_rows:
     print("No pending catalog requests or missing market prices")
@@ -159,6 +164,25 @@ def bricklink_sold_price(n):
     except (TypeError,ValueError):
         return None
 
+def price_persisted(n, expected):
+    """Confirm the Supabase market value after the write, never from HTTP 2xx alone."""
+    check=requests.get(
+        SUPABASE_URL+"/rest/v1/catalog_sets",
+        params={"set_number":"eq."+n,
+                "select":"set_number,market_new_eur,market_used_eur,source_updated_at"},
+        headers=headers,timeout=30)
+    check.raise_for_status()
+    rows=check.json()
+    if len(rows)!=1 or not rows[0].get("source_updated_at"):
+        return False
+    for field,value in expected.items():
+        if value is None:
+            continue
+        stored=rows[0].get(field)
+        if stored is None or abs(float(stored)-float(value))>0.011:
+            return False
+    return True
+
 def be_set(n):
     """Fetch a set and distinguish daily quota from short-term throttling."""
     global quota_exhausted, minute_limited
@@ -209,7 +233,7 @@ for row in requests_rows:
     row_changed=False
     try:
         e=sets.setdefault(n,{})
-        if RB_KEY:
+        if RB_KEY and (not e.get("rebrickableName") or not e.get("imageUrl")):
             try:
                 rr=requests.get(
                     f"https://rebrickable.com/api/v3/lego/sets/{api_num(n)}/",
@@ -274,8 +298,12 @@ for row in requests_rows:
                         json=payload,timeout=30
                     )
                     response.raise_for_status()
+                    expected={field:payload[field] for field in ("market_new_eur","market_used_eur")
+                              if j.get("current_value_new" if field=="market_new_eur" else "current_value_used") is not None}
+                    if not price_persisted(n,expected):
+                        raise RuntimeError("PRICE_WRITE_NOT_VERIFIED")
                     row_changed=True
-                    print("CATALOG_PRICE_SAVED set="+n)
+                    print("CATALOG_PRICE_VERIFIED set="+n+" source=BrickEconomy")
                 else:
                     print("CATALOG_PRICE_MISSING set="+n+" source=BrickEconomy returned no current value")
                     # Only a verified BrickLink SOLD average can fill the gap.
@@ -293,12 +321,14 @@ for row in requests_rows:
                                 json=payload,timeout=30
                             )
                             saved.raise_for_status()
+                            if not price_persisted(n,{"market_new_eur":fallback}):
+                                raise RuntimeError("PRICE_WRITE_NOT_VERIFIED")
                             e["marketNewEUR"]=fallback
                             e["marketSourceFallback"]="BrickLink sold 6m"
                             e["bricklinkUpdated"]=time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())
                             changed=True
                             row_changed=True
-                            print("CATALOG_PRICE_SAVED set="+n+" source=BrickLink_sold")
+                            print("CATALOG_PRICE_VERIFIED set="+n+" source=BrickLink_sold")
                         else:
                             print("CATALOG_PRICE_UNAVAILABLE set="+n+" no verified sold price")
                     except Exception as fallback_error:

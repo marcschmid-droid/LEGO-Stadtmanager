@@ -1,0 +1,36 @@
+name: Validate catalog price refresh
+on:
+  pull_request:
+    paths:
+      - 'scripts/process_catalog_requests.py'
+      - '.github/workflows/process-catalog-requests.yml'
+      - '.github/workflows/validate-price-refresh.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check script syntax without API or database writes
+        run: python -m py_compile scripts/process_catalog_requests.py
+      - name: Confirm schedule, limit and 48-hour freshness policy
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          script = Path("scripts/process_catalog_requests.py").read_text()
+          workflow = Path(".github/workflows/process-catalog-requests.yml").read_text()
+          assert "interval_hours=48" in script
+          assert "48*3600" in script
+          assert "source_updated_at" in script
+          assert "COLLECTION_PRICE_SCAN" in script
+          assert "CATALOG_PRICE_VERIFIED" in script
+          assert 'MARKET_PRICE_BATCH_SIZE: "20"' in workflow
+          assert '23 */4 * * *' in workflow
+          assert "BRICKLINK_CONSUMER_KEY" in workflow
+          print("Price refresh static contract OK")
+          PY
