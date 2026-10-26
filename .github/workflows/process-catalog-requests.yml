@@ -32,7 +32,7 @@ jobs:
           BRICKLINK_CONSUMER_SECRET: ${{ secrets.BRICKLINK_CONSUMER_SECRET }}
           BRICKLINK_TOKEN_VALUE: ${{ secrets.BRICKLINK_TOKEN_VALUE }}
           BRICKLINK_TOKEN_SECRET: ${{ secrets.BRICKLINK_TOKEN_SECRET }}
-          MARKET_PRICE_BATCH_SIZE: "10"
+          MARKET_PRICE_BATCH_SIZE: "20"
         run: python scripts/process_catalog_requests.py
       - name: Commit catalog updates
         run: |
