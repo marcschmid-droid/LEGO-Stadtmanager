@@ -164,6 +164,25 @@ def bricklink_sold_price(n):
     except (TypeError,ValueError):
         return None
 
+def price_persisted(n, expected):
+    """Confirm the Supabase market value after the write, never from HTTP 2xx alone."""
+    check=requests.get(
+        SUPABASE_URL+"/rest/v1/catalog_sets",
+        params={"set_number":"eq."+n,
+                "select":"set_number,market_new_eur,market_used_eur,source_updated_at"},
+        headers=headers,timeout=30)
+    check.raise_for_status()
+    rows=check.json()
+    if len(rows)!=1 or not rows[0].get("source_updated_at"):
+        return False
+    for field,value in expected.items():
+        if value is None:
+            continue
+        stored=rows[0].get(field)
+        if stored is None or abs(float(stored)-float(value))>0.011:
+            return False
+    return True
+
 def be_set(n):
     """Fetch a set and distinguish daily quota from short-term throttling."""
     global quota_exhausted, minute_limited
@@ -214,7 +233,7 @@ for row in requests_rows:
     row_changed=False
     try:
         e=sets.setdefault(n,{})
-        if RB_KEY:
+        if RB_KEY and (not e.get("rebrickableName") or not e.get("imageUrl")):
             try:
                 rr=requests.get(
                     f"https://rebrickable.com/api/v3/lego/sets/{api_num(n)}/",
@@ -279,8 +298,12 @@ for row in requests_rows:
                         json=payload,timeout=30
                     )
                     response.raise_for_status()
+                    expected={field:payload[field] for field in ("market_new_eur","market_used_eur")
+                              if j.get("current_value_new" if field=="market_new_eur" else "current_value_used") is not None}
+                    if not price_persisted(n,expected):
+                        raise RuntimeError("PRICE_WRITE_NOT_VERIFIED")
                     row_changed=True
-                    print("CATALOG_PRICE_SAVED set="+n)
+                    print("CATALOG_PRICE_VERIFIED set="+n+" source=BrickEconomy")
                 else:
                     print("CATALOG_PRICE_MISSING set="+n+" source=BrickEconomy returned no current value")
                     # Only a verified BrickLink SOLD average can fill the gap.
@@ -298,12 +321,14 @@ for row in requests_rows:
                                 json=payload,timeout=30
                             )
                             saved.raise_for_status()
+                            if not price_persisted(n,{"market_new_eur":fallback}):
+                                raise RuntimeError("PRICE_WRITE_NOT_VERIFIED")
                             e["marketNewEUR"]=fallback
                             e["marketSourceFallback"]="BrickLink sold 6m"
                             e["bricklinkUpdated"]=time.strftime("%Y-%m-%dT%H:%M:%SZ",time.gmtime())
                             changed=True
                             row_changed=True
-                            print("CATALOG_PRICE_SAVED set="+n+" source=BrickLink_sold")
+                            print("CATALOG_PRICE_VERIFIED set="+n+" source=BrickLink_sold")
                         else:
                             print("CATALOG_PRICE_UNAVAILABLE set="+n+" no verified sold price")
                     except Exception as fallback_error:
