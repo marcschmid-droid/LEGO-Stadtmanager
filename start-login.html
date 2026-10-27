@@ -49,27 +49,11 @@
 </div></header>
 
 <main>
-<nav class="tabs tabsGroupedV550" aria-label="Hauptnavigation" style="position:static!important;top:auto!important;bottom:auto!important;left:auto!important;right:auto!important;transform:none!important;overflow:visible!important">
-  <button class="tab active" data-tab="home">Start</button>
-  <details class="navGroupV550"><summary>Sammlung</summary><div class="navMenuV550">
-    <button class="tab" data-tab="collection">Meine Sets</button>
-    <button class="tab" data-tab="collector">Serien &amp; Sammlerziele</button>
-    <button class="tab" data-tab="wishlist">Wünsche &amp; Einkäufe</button>
-  </div></details>
-  <details class="navGroupV550"><summary>Stadtplanung</summary><div class="navMenuV550">
-    <button class="tab" data-tab="city">Stadtplan</button>
-    <button class="tab" data-tab="trains">Züge &amp; Schienen</button>
-  </div></details>
-  <details class="navGroupV550"><summary>Werte &amp; Analyse</summary><div class="navMenuV550">
-    <button class="tab premiumTabV520" data-tab="prices">Preise</button>
-    <button class="tab premiumTabV520" data-tab="analysis">Analysen</button>
-  </div></details>
-  <details class="navGroupV550"><summary>Mehr</summary><div class="navMenuV550">
-    <button class="tab" data-tab="users">Konto</button>
-    <button class="tab" data-tab="plans">Tarife</button>
-    <button class="tab" data-tab="settings">Daten &amp; Einstellungen</button>
-    <button class="tab hidden" id="adminTabV36" data-tab="admin">Administration</button>
-  </div></details>
+<nav class="tabs tabsGroupedV550" aria-label="Hauptnavigation" style="position:static!important;top:auto!important;bottom:auto!important;overflow:visible!important">
+<button class="tab active" data-tab="home">Übersicht</button>
+<details class="navGroupV550"><summary>Meine Sammlung</summary><div class="navMenuV550"><button class="tab" data-tab="collection">Alle Sets</button><button class="tab" data-tab="collector">Serien &amp; Katalog</button><button class="tab" data-tab="wishlist">Wunschliste &amp; Einkäufe</button></div></details>
+<details class="navGroupV550"><summary>Stadt &amp; Werte</summary><div class="navMenuV550"><button class="tab" data-tab="city">Stadtplan</button><button class="tab" data-tab="trains">Züge</button><button class="tab premiumTabV520" data-tab="prices">Marktpreise</button><button class="tab premiumTabV520" data-tab="analysis">Auswertungen</button></div></details>
+<details class="navGroupV550"><summary>Konto &amp; Mehr</summary><div class="navMenuV550"><button class="tab" data-tab="users">Mein Konto &amp; Abmelden</button><button class="tab" data-tab="plans">Tarife</button><button class="tab" data-tab="settings">Daten &amp; Einstellungen</button><button class="tab hidden" id="adminTabV36" data-tab="admin">Administration</button></div></details>
 </nav>
 <style id="navGroupedStylesV550">
 .tabsGroupedV550{display:flex!important;align-items:stretch;gap:8px;overflow:visible!important;flex-wrap:wrap;position:relative;z-index:50}
@@ -592,4 +576,10 @@ try{const c=client();if(mode==='register'){const {data,error}=await c.auth.signU
 const {data,error}=await c.auth.signInWithPassword({email:address,password:secret});if(error)throw error;if(!data?.session)throw Error('Keine gültige Sitzung erhalten.');if(typeof cloudV3!=='undefined'&&!cloudV3)cloudV3=c;if(typeof cloudSessionV3==='function')await cloudSessionV3(data.session);granted=true;refresh();status.textContent='Anmeldung erfolgreich.'}
 catch(e){console.error('AUTH_FIRST',e);status.textContent=message(e)}finally{busy=false;login.disabled=false;register.disabled=false}}
 document.getElementById('authFirstForm').addEventListener('submit',e=>{e.preventDefault();if(signedIn()){granted=true;refresh();return}run('login')});register.addEventListener('click',()=>run('register'));new MutationObserver(refresh).observe(document.getElementById('cloudAccountCard')||document.body,{subtree:true,attributes:true,attributeFilter:['class','style'],childList:true});refresh();
+})();</script><script id="uxFix20261027">(function(){
+/* Prevent a known mismatched catalog record from being saved as another set. */
+function validateSingapore(){const num=document.getElementById('fSet'),name=document.getElementById('fName'),value=document.getElementById('fValue');if(!num||!name||num.value.trim()!=='21057')return true;if(/taj\s*mahal/i.test(name.value)){name.value='Singapur';if(value)value.value='';const info=document.getElementById('fCatalogStatusV35');if(info)info.textContent='21057 = Singapur. Falscher Katalogname korrigiert; Marktwert bitte neu prüfen.';return false}return true}
+document.addEventListener('click',function(e){if(!e.target.closest('#saveSet'))return;if(!validateSingapore()){e.preventDefault();e.stopImmediatePropagation();alert('Die Setnummer 21057 gehört zu Singapur, nicht zu Taj Mahal. Der falsche Name wurde korrigiert und der nicht verifizierte Marktwert entfernt. Bitte Angaben prüfen und erneut speichern.')}},true);
+document.addEventListener('change',function(e){if(e.target?.id==='fSet'&&e.target.value.trim()==='21057'){setTimeout(validateSingapore,700)}},true);
+const logout=document.getElementById('cloudLogout');if(logout){logout.textContent='Sicher abmelden';logout.title='Nur abmelden – deine Sammlung bleibt gespeichert.'}
 })();</script></body></html>
