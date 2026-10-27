@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="./focus-v564.css?v=50.71">
 <link rel="stylesheet" href="./dashboard-simple-v568.css?v=20261025-quality2">
 <link rel="stylesheet" href="./launch-polish-v589.css?v=50.89">
+<link rel="stylesheet" href="./mobile-save-bar-v598.css?v=20261027-portraitfix1">
 <style>body.themeV39 #home > :not(#homeOverviewTitleV568):not(.homeKpisV549):not(#homeSimpleActionsV568):not(.bcmTariffHero):not(.homeHeroV549):not(.bcmQuickLinks){display:none!important}body.themeV39 #collection .tablewrap{display:none!important}body.themeV39 #collection #collectionGrid{display:grid!important}</style>
 <script>
 /* Login handler registered before application scripts, no collection mutation. */
@@ -578,6 +579,14 @@ document.addEventListener("click",function(e){
      if(checked.error)throw checked.error;
      const match=(checked.data?.state?.collection||[]).find(x=>String(x.setNumber)===String(n));
      if(!match)throw Error('Set fehlt weiterhin in der Cloud');
+     // A matching set number alone is not proof that the latest edit reached the cloud.
+     const same=(a,b)=>Number(a||0)===Number(b||0);
+     if(String(match.name||'')!==String(item.name||'')||
+        !same(match.quantity,item.quantity)||
+        !same(match.purchasePrice,item.purchasePrice)||
+        !same(match.currentValue,item.currentValue)){
+       throw Error('Cloud enthält noch einen älteren Stand dieses Sets');
+     }
      alert('Cloud-Speicherung bestätigt: Set '+n);
    }catch(syncError){alert('Set nur lokal gesichert. Cloud NICHT bestätigt: '+String(syncError?.message||syncError)+'. Bitte Sicherung herunterladen.')}
 
