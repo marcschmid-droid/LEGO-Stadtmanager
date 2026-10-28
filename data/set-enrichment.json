@@ -5,9 +5,9 @@
     "brickeconomyRequestsThisRun": 0,
     "brickeconomyUsage": {
       "quota": 100,
-      "remaining": 80,
+      "remaining": 60,
       "resets_at": "2026-10-29T00:00:00Z",
-      "used_today": 20
+      "used_today": 40
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
@@ -19,7 +19,7 @@
       "BrickEconomy 1036: 400 Client Error: Bad Request for url: https://www.brickeconomy.com/api/v1/set/1036-1?currency=EUR",
       "No metadata for 1036"
     ],
-    "lastUpdated": "2026-10-28T05:05:41Z",
+    "lastUpdated": "2026-10-28T09:10:56Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 2,
@@ -752,13 +752,13 @@
     },
     "10280": {
       "brickeconomyName": "Flower Bouquet",
-      "brickeconomyUpdated": "2026-10-24T13:01:07Z",
+      "brickeconomyUpdated": "2026-10-28T09:10:51Z",
       "ean": "5702016913767",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/10280-1/148035.jpg",
-      "marketNewEUR": 47.97,
+      "marketNewEUR": 48.06,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -1030,7 +1030,7 @@
     },
     "10326": {
       "brickeconomyName": "Natural History Museum",
-      "brickeconomyUpdated": "2026-10-24T13:01:10Z",
+      "brickeconomyUpdated": "2026-10-28T09:10:53Z",
       "bricksetUpdated": "2026-10-12T22:20:05Z",
       "ean": "5702017589886",
       "forecast2yEUR": null,
@@ -1149,13 +1149,13 @@
     },
     "10344": {
       "brickeconomyName": "Lucky Bamboo",
-      "brickeconomyUpdated": "2026-10-24T13:01:12Z",
+      "brickeconomyUpdated": "2026-10-28T09:10:54Z",
       "ean": "5702017814650",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/10344-1/147724.jpg",
-      "marketNewEUR": 24.82,
+      "marketNewEUR": 24.24,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
