@@ -5,9 +5,9 @@
     "brickeconomyRequestsThisRun": 0,
     "brickeconomyUsage": {
       "quota": 100,
-      "remaining": 60,
+      "remaining": 57,
       "resets_at": "2026-10-29T00:00:00Z",
-      "used_today": 40
+      "used_today": 43
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
@@ -19,7 +19,7 @@
       "BrickEconomy 1036: 400 Client Error: Bad Request for url: https://www.brickeconomy.com/api/v1/set/1036-1?currency=EUR",
       "No metadata for 1036"
     ],
-    "lastUpdated": "2026-10-28T09:10:56Z",
+    "lastUpdated": "2026-10-28T17:10:49Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 2,
@@ -3675,7 +3675,7 @@
     },
     "40909": {
       "brickeconomyName": "Restaurants of the World: Italy",
-      "brickeconomyUpdated": "2026-10-26T15:00:14Z",
+      "brickeconomyUpdated": "2026-10-28T17:10:49Z",
       "ean": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40909-1/182053.jpg",
