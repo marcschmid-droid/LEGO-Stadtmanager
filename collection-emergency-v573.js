@@ -6,16 +6,23 @@
  let latestSignature='',queued=false;
  const moneyFormat=new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'});
  function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;show()})}
+ function options(){return {query:$('search')?.value||'',area:$('areaFilter')?.value||'',sort:$('collectionSortV557')?.value||'number-asc',tag:typeof opsV547!=='undefined'?opsV547.tag:'',filter:typeof workflowV546!=='undefined'?workflowV546.filter:null,activityLog:typeof state!=='undefined'?state.activityLog:[]}}
+ function resetFilters(){
+  for(const id of ['search','areaFilter','tagFilterV547','savedSelectV546','filterKindV546'])if($(id))$(id).value='';
+  if(typeof opsV547!=='undefined')opsV547.tag='';
+  if(typeof workflowV546!=='undefined')workflowV546.filter=null;
+  if(typeof renderCollection==='function')renderCollection();else schedule();
+  $('search')?.focus();
+ }
  function show(){
   try{
    const panel=$('collection');if(!panel)return;
    const active=panel.classList.contains('active');
    if(!active)return;
    const collection=typeof state!=='undefined'&&Array.isArray(state?.collection)?state.collection:[];
-   const query=String($('search')?.value||'').trim().toLocaleLowerCase('de');
-   const area=$('areaFilter')?.value||'';
-   const sort=$('collectionSortV557')?.value||'number-asc';
-   const sig=JSON.stringify([collection.map(x=>[x.setNumber,x.name,x.quantity,x.purchasePrice,x.currentValue,x.imageUrl||x.market?.imageUrl,x.cityArea,x.category,x.storage,x.module,x.purchaseDate,x.exemplars?.[0]?.date,x.addedAt,x.createdAt,x.dateAdded,x.importedAt,x.created_at,x.addedDate]),state?.activityLog?.length,query,area,sort]);
+   const settings=options(),queryModel=window.BrickCollectionQuery;
+   const sig=JSON.stringify([collection.map(x=>[x.setNumber,x.name,x.quantity,x.purchasePrice,x.currentValue,x.imageUrl||x.market?.imageUrl,x.cityArea,x.category,x.storage,x.storageRoom,x.storageShelf,x.storageBin,x.module,x.customCategoryV547,x.tagsV547,x.condition,x.box,x.forSaleV546,x.purchaseDate,x.exemplars,x.addedAt,x.createdAt,x.dateAdded,x.importedAt,x.created_at,x.addedDate]),settings]);
+   if($('clearCollectionSearch'))$('clearCollectionSearch').hidden=!settings.query;
    const holder=$('emergencyCollectionV573')||document.createElement('section');
    if(!holder.id){
     holder.id='emergencyCollectionV573';
@@ -25,20 +32,27 @@
    holder.style.setProperty('display','block','important');
    if(sig===latestSignature && holder.childElementCount)return;
    latestSignature=sig;
-   const list=collection.filter(x=>(!area||x.cityArea===area)&&(!query||[x.setNumber,x.name,x.cityArea,x.category,x.storage,x.module].some(v=>String(v||'').toLocaleLowerCase('de').includes(query))));
-   const collator=new Intl.Collator('de',{numeric:true});
-   list.sort((a,b)=>{const number=()=>collator.compare(String(a.setNumber),String(b.setNumber));if(sort==='added-desc'||sort==='added-asc'){const stamp=x=>{const logged=(state?.activityLog||[]).filter(e=>String(e.setNumber||'')===String(x.setNumber||'')&&['add','restore'].includes(e.type)).map(e=>e.at);const values=[...logged,x.addedAt,x.createdAt,x.dateAdded,x.importedAt,x.created_at,x.addedDate].map(v=>v?Date.parse(v):NaN).filter(Number.isFinite);return values.length?Math.max(...values):null};const av=stamp(a),bv=stamp(b);if(av===null&&bv!==null)return 1;if(bv===null&&av!==null)return -1;if(av!==null&&bv!==null&&av!==bv)return (sort==='added-desc'?-1:1)*(av-bv);return (sort==='added-desc'?1:-1)*(collection.indexOf(a)-collection.indexOf(b))}if(sort==='number-desc')return -number();if(sort==='price-desc'||sort==='price-asc'){const av=Number(a.purchasePrice),bv=Number(b.purchasePrice);return (sort==='price-desc'?-1:1)*((Number.isFinite(av)?av:0)-(Number.isFinite(bv)?bv:0))||number()}if(sort==='date-desc'||sort==='date-asc'){const key=x=>Date.parse(x.purchaseDate||x.exemplars?.[0]?.date||'')||0;return (sort==='date-desc'?-1:1)*(key(a)-key(b))||number()}return number()});
-   holder.replaceChildren();
-   const info=document.createElement('p');info.className='emergencyInfoV573';info.textContent=list.length+' von '+collection.length+' gespeicherten Sets';holder.append(info);
+   const list=filteredV3();
+   let summary=holder.querySelector('.collectionResultsV600');
+   if(!summary){
+    summary=document.createElement('div');summary.className='collectionResultsV600';
+    const info=document.createElement('p');info.className='emergencyInfoV573';info.setAttribute('role','status');info.setAttribute('aria-live','polite');summary.append(info);
+    const reset=document.createElement('button');reset.type='button';reset.id='resetCollectionFilters';reset.className='btn secondary';reset.textContent='Filter zurücksetzen';reset.onclick=resetFilters;summary.append(reset);holder.append(summary);
+   }
+   summary.querySelector('.emergencyInfoV573').textContent=list.length+' von '+collection.length+' gespeicherten Sets';
+   summary.querySelector('#resetCollectionFilters').hidden=!(queryModel?.hasFilters(settings)??!!(settings.query.trim()||settings.area||settings.tag||settings.filter?.query||settings.filter?.area||settings.filter?.kind));
+   let content=holder.querySelector('.collectionContentV600');
+   if(!content){content=document.createElement('div');content.className='collectionContentV600';holder.append(content)}
+   content.replaceChildren();
    if(!collection.length){
     const empty=document.createElement('div');empty.className='collectionEmptyV599';
     const heading=document.createElement('h3');heading.textContent='Deine Sammlung beginnt hier.';
     const note=document.createElement('p');note.textContent='Hier erscheinen deine gespeicherten Sets. Füge dein erstes Set hinzu. Wenn du bereits eine Sammlung hast, prüfe unter „Mein Konto“ den Cloud-Status.';
     const button=document.createElement('button');button.className='btn';button.type='button';button.textContent='Set hinzufügen';button.onclick=()=>{if(typeof openSet==='function')openSet()};
-    empty.append(heading,note,button);holder.append(empty);return;
+    empty.append(heading,note,button);content.append(empty);return;
    }
-   if(!list.length){const note=document.createElement('p');note.textContent='Keine Treffer – bitte Suchfeld und Filter zurücksetzen.';holder.append(note);return}
-   const cards=document.createElement('div');cards.className='emergencyListV573';holder.append(cards);
+   if(!list.length){const note=document.createElement('p');note.className='collectionNoResultsV600';note.textContent='Keine passenden Sets gefunden. Versuche weniger Suchbegriffe oder setze die Filter zurück.';content.append(note);return}
+   const cards=document.createElement('div');cards.className='emergencyListV573';content.append(cards);
    const fragment=document.createDocumentFragment();
    for(const x of list){
     const card=document.createElement('button');card.type='button';card.className='emergencySetV573';
@@ -67,6 +81,9 @@
  }
  function init(){
   if(!$('collection'))return;
+  const originalFiltered=filteredV3;
+  filteredV3=function(){return window.BrickCollectionQuery?window.BrickCollectionQuery.select(state.collection,options()):originalFiltered.apply(this,arguments)};
+  $('clearCollectionSearch')?.addEventListener('click',()=>{if($('search'))$('search').value='';if(typeof renderCollection==='function')renderCollection();else schedule();$('search')?.focus()});
   ['search','areaFilter','collectionSortV557'].forEach(id=>{const node=$(id);if(node){node.addEventListener('input',schedule);node.addEventListener('change',schedule)}});
   for(const name of ['refresh','switchTab','persist','renderCollection']){
    const original=window[name];

@@ -5,9 +5,9 @@ const base=process.env.BCM_TEST_BASE||'http://127.0.0.1:8765';
 let activePage;
 const out='/tmp/bcm-visual-review';fs.mkdirSync(out,{recursive:true});
 const fixture={collection:[
- {setNumber:'990001',name:'Stadthaus mit Dachterrasse – Beispiel',quantity:1,purchasePrice:149.99,currentValue:184.5,imageUrl:'https://images.example.invalid/wide.svg',addedAt:'2026-10-29',category:'Stadt',cityArea:'Innenstadt'},
+ {setNumber:'990001',name:'Stadthaus mit Dachterrasse – Beispiel',quantity:1,purchasePrice:149.99,currentValue:184.5,imageUrl:'https://images.example.invalid/wide.svg',addedAt:'2026-10-29',category:'Stadt',cityArea:'Innenstadt',tagsV547:['Favorit'],customCategoryV547:'Architektur',storageRoom:'Keller',storageShelf:'Regal 2',condition:'Neu / OVP'},
  {setNumber:'990002',name:'Bahnhof & Eisenbahn – Beispiel',quantity:2,purchasePrice:120,currentValue:160,imageUrl:'https://images.example.invalid/tall.svg',addedAt:'2026-10-28',category:'Züge',cityArea:'Bahnhof'},
- {setNumber:'990003',name:'Ein sehr langer Beispielname für ein Sammlerstück mit vielen Details und Sonderzeichen',quantity:1,purchasePrice:12500,currentValue:15000,imageUrl:'',addedAt:'2026-10-27'},
+ {setNumber:'990003',name:'Ein sehr langer Beispielname für ein Sammlerstück mit vielen Details und Sonderzeichen',quantity:1,purchasePrice:12500,currentValue:15000,imageUrl:'',addedAt:'2026-10-27',tagsV547:['Favorit'],condition:'Gebraucht vollständig'},
  {setNumber:'990004',name:'Set ohne erfasste Preise – Beispiel',quantity:1,purchasePrice:null,currentValue:null,imageUrl:'',addedAt:'2026-10-26'}
 ],wishlist:[],trackShopping:[],classifiedOffers:[],meta:{onboardingDone:true,cityLayoutVersion:'50.3'},modules:{}};
 function fakeSupabase(fixture){
@@ -78,16 +78,44 @@ async function noOverflow(page,label){
    assert.equal(await page.locator('#addTop').isVisible(),true);
    const geometry=await page.evaluate(()=>({kpi:document.querySelector('.homeKpisV549').getBoundingClientRect().y,plan:document.querySelector('.bcmTariffHero').getBoundingClientRect().y}));
    assert.ok(geometry.kpi<geometry.plan,'KPIs must precede the plan');
-   if(width===390||width===1366)await page.screenshot({path:out+'/'+engine+'-home-'+width+'.png',fullPage:true});
+   if(width===390||width===1366)await page.screenshot({path:out+'/'+engine+'-home-'+width+'.png',fullPage:true,animations:'disabled'});
    await page.locator('.tabsGroupedV550>[data-tab="collection"]').click();
+   await page.locator('#collection').waitFor({state:'visible'});
    await page.waitForFunction(()=>document.querySelectorAll('#emergencyCollectionV573 .emergencySetV573').length===4);
+   await page.locator('.emergencySetV573').first().waitFor({state:'visible'});
+   await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
    await noOverflow(page,engine+' collection '+width);
    assert.equal(await page.locator('.emergencyPricesV573').first().innerText().then(t=>t.includes('Kaufpreis / Stück')&&t.includes('Marktwert / Stück')),true);
    await page.waitForFunction(()=>{const imgs=[...document.querySelectorAll('.emergencyVisualV573 img')];return imgs.length===2&&imgs.every(el=>getComputedStyle(el).objectFit==='contain')});
    const slots=await page.evaluate(()=>[...document.querySelectorAll('.emergencyVisualV573 img')].map(el=>{const r=el.parentElement.getBoundingClientRect();return {w:r.width,h:r.height}}));
    for(const slot of slots)assert.ok(slot.h<=slot.w+1,'Portrait images must not enlarge their slot');
-   if(width===390||width===1366)await page.screenshot({path:out+'/'+engine+'-collection-'+width+'.png',fullPage:true});
+   if(width===390||width===1366)await page.screenshot({path:out+'/'+engine+'-collection-'+width+'.png',fullPage:true,animations:'disabled'});
    if(width===390){
+    const expectCount=count=>page.waitForFunction(n=>document.querySelectorAll('#emergencyCollectionV573 .emergencySetV573').length===n,count);
+    const sortBefore=await page.locator('#collectionSortV557').inputValue();
+    await page.getByRole('searchbox',{name:'Sammlung durchsuchen'}).fill('keller architektur');
+    await expectCount(1);assert.equal(await page.evaluate(()=>filteredV3().length),1);
+    await page.getByRole('button',{name:'Suchfeld leeren',exact:true}).click();await expectCount(4);
+    assert.equal(await page.evaluate(()=>document.activeElement.id),'search');
+    await page.locator('#collectionMoreV564').click();
+    await page.locator('#tagFilterV547').selectOption('Favorit');await expectCount(2);
+    await page.locator('#filterKindV546').selectOption('sealed');await expectCount(1);
+    await page.locator('#resetCollectionFilters').click();await expectCount(4);
+    assert.equal(await page.locator('#tagFilterV547').inputValue(),'');
+    assert.equal(await page.locator('#filterKindV546').inputValue(),'');
+    for(const mode of ['price-asc','price-desc']){
+     await page.locator('#collectionSortV557').selectOption(mode);
+     await page.waitForFunction(()=>document.querySelector('#emergencyCollectionV573 .emergencySetV573:last-child .emergencyBodyV573 > small')?.textContent==='#990004');
+    }
+    await page.locator('#collectionSortV557').selectOption(sortBefore);
+    await page.locator('#collectionMoreV564').click();
+    await page.locator('#search').fill('Kein Treffer nirgendwo');await expectCount(0);
+    await page.getByText('Keine passenden Sets gefunden. Versuche weniger Suchbegriffe oder setze die Filter zurück.').waitFor();
+    await noOverflow(page,engine+' empty filtered collection');
+    await page.locator('#resetCollectionFilters').click();await expectCount(4);
+    await page.locator('#search').fill('stadthaus architektur');await expectCount(1);
+    await page.screenshot({path:out+'/'+engine+'-filtered-collection.png',fullPage:true,animations:'disabled'});
+    await page.locator('#resetCollectionFilters').click();await expectCount(4);
     await page.locator('.emergencySetV573').first().evaluate(el=>el.dataset.idleCheck='kept');
     await page.waitForTimeout(1400);
     assert.equal(await page.locator('.emergencySetV573').first().getAttribute('data-idle-check'),'kept');
@@ -102,7 +130,7 @@ async function noOverflow(page,label){
     await choices.nth(0).check();await choices.nth(1).check();
     await page.locator('#showcaseCreate').click();
     assert.equal(await page.locator('#showcasePreview .showcaseCard').count(),2);
-    await page.screenshot({path:out+'/'+engine+'-showcase-dialog.png',fullPage:true});
+    await page.screenshot({path:out+'/'+engine+'-showcase-dialog.png',fullPage:true,animations:'disabled'});
     await page.locator('#showcasePublish').click();
     await page.getByText('Freigabe gespeichert. Der Link zeigt jetzt diese Auswahl.').waitFor();
     const link=await page.locator('#showcaseLink').inputValue();
@@ -113,7 +141,7 @@ async function noOverflow(page,label){
     await visitor.waitForFunction(()=>document.querySelectorAll('.showcaseCard').length===2);
     await noOverflow(visitor,engine+' public showcase');
     assert.equal(await visitor.locator('input').count(),0);
-    await visitor.screenshot({path:out+'/'+engine+'-showcase.png',fullPage:true});
+    await visitor.screenshot({path:out+'/'+engine+'-showcase.png',fullPage:true,animations:'disabled'});
     await choices.nth(0).uncheck();await choices.nth(2).check();
     await page.locator('#showcaseCreate').click();await page.locator('#showcasePublish').click();
     await page.getByText('Freigabe gespeichert. Der Link zeigt jetzt diese Auswahl.').waitFor();
@@ -141,9 +169,9 @@ async function noOverflow(page,label){
   assert.equal(await page.locator('#sessionPanel').isVisible(),false);
   await page.getByRole('button',{name:'Noch kein Konto? Kostenlos registrieren'}).click();
   assert.equal(await page.locator('#passwordHint').isVisible(),true);
-  await page.screenshot({path:out+'/'+engine+'-registration.png',fullPage:true});
+  await page.screenshot({path:out+'/'+engine+'-registration.png',fullPage:true,animations:'disabled'});
   fs.writeFileSync(out+'/'+engine+'-console.json',JSON.stringify(errors,null,2));
   console.log(engine+': production UI at 320/390/660/768/1366px, four KPIs, image containment, price labels, settings version, authentication modes and unchanged collection passed. Console errors: '+JSON.stringify(errors));
   await browser.close();
  }
-})().catch(async error=>{if(activePage)await activePage.screenshot({path:out+'/failure.png',fullPage:true}).catch(()=>{});console.error(error);process.exit(1)});
+})().catch(async error=>{if(activePage)await activePage.screenshot({path:out+'/failure.png',fullPage:true,animations:'disabled'}).catch(()=>{});console.error(error);process.exit(1)});
