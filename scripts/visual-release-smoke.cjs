@@ -80,7 +80,8 @@ async function noOverflow(page,label){
    await page.locator('.tabsGroupedV550 summary').click();
    const menu=await page.locator('.navMenuV550').boundingBox();
    assert.ok(menu&&menu.x>=-1&&menu.x+menu.width<=width+1,engine+' menu outside viewport at '+width);
-   await page.locator('.tabsGroupedV550 summary').click();
+   await page.locator('.tabsGroupedV550 [data-tab="settings"]').click();
+   assert.equal(await page.locator('#visualVersionV599').isVisible(),true);
   }
   await page.locator('.tabsGroupedV550 summary').click();
   await page.locator('.tabsGroupedV550 [data-tab="settings"]').click();

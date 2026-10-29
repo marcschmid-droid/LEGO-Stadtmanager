@@ -6,7 +6,7 @@ body.themeV39.bcmVisualV599 header { position:relative!important; background:var
 body.themeV39.bcmVisualV599 .head { max-width:1180px; gap:20px; }
 body.themeV39.bcmVisualV599 .brandV39 { gap:12px; min-width:0; }
 body.themeV39.bcmVisualV599 .brandV39 h1 { font-size:21px!important; line-height:1.25; letter-spacing:-.5px; }
-body.themeV39.bcmVisualV599 .brandV39 small { display:block; font-size:12px!important; margin-top:4px; color:#fff!important; opacity:.88; }
+body.themeV39.bcmVisualV599 .brandV39 small { display:block; font-size:12px!important; max-width:none!important; white-space:normal!important; margin-top:4px; color:#fff!important; opacity:.88; }
 body.themeV39.bcmVisualV599 #visibleVersionV553,
 body.themeV39.bcmVisualV599 .brandV39 #appVersion { display:none!important; }
 body.themeV39.bcmVisualV599 .headActions { gap:8px; flex-wrap:nowrap; }
@@ -20,7 +20,7 @@ body.themeV39.bcmVisualV599 :is(button,summary,a,input,select,textarea):focus-vi
 body.themeV39.bcmVisualV599 :is(input,select,textarea) { border-color:#cbd0d8; border-radius:10px; }
 body.themeV39.bcmVisualV599 .card { border:1px solid var(--line); border-radius:16px; box-shadow:none; }
 /* One compact, in-flow navigation row; no content-overlapping bottom bar. */
-body.themeV39.bcmVisualV599 nav.tabs.tabsGroupedV550 { display:grid!important; grid-template-columns:repeat(5,minmax(0,1fr))!important; position:relative!important; z-index:12!important; padding:5px!important; margin:0 0 24px!important; gap:5px!important; border:1px solid var(--line)!important; border-radius:14px!important; background:#fff!important; box-shadow:none!important; overflow:visible!important; }
+body.themeV39.bcmVisualV599 nav.tabs.tabsGroupedV550 { display:grid!important; grid-template-columns:repeat(5,minmax(0,1fr))!important; position:relative!important; z-index:40!important; padding:5px!important; margin:0 0 24px!important; gap:5px!important; border:1px solid var(--line)!important; border-radius:14px!important; background:#fff!important; box-shadow:none!important; overflow:visible!important; }
 body.themeV39.bcmVisualV599 nav.tabs.tabsGroupedV550 > .tab,
 body.themeV39.bcmVisualV599 nav.tabs.tabsGroupedV550 > .navGroupV550 > summary { display:flex!important; flex-direction:row!important; align-items:center!important; justify-content:center!important; gap:8px!important; min-height:46px!important; width:100%!important; min-width:0!important; padding:10px 6px!important; font-size:14px!important; font-weight:700!important; border:0!important; border-radius:10px!important; background:transparent!important; color:#59616e!important; box-shadow:none!important; }
 body.themeV39.bcmVisualV599 nav.tabs.tabsGroupedV550 > .navGroupV550 { grid-column:auto!important; min-width:0; position:relative; }
