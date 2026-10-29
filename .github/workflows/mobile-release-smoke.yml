@@ -1,10 +1,12 @@
 name: Mobile registration and save controls
 on:
   push:
-    branches: [main, design/visual-refresh-5099, fix/one-step-login]
+    branches: [main, design/visual-refresh-5099, fix/one-step-login, feature/showcase]
     paths:
       - 'anmelden.html'
       - 'auth-entry.js'
+      - 'showcase*'
+      - 'schaufenster.html'
       - 'index.html'
       - 'mobile-viewport.js'
       - 'visual-system-v599.css'
