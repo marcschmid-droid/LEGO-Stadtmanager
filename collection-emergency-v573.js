@@ -33,22 +33,26 @@
    if(sig===latestSignature && holder.childElementCount)return;
    latestSignature=sig;
    const list=filteredV3();
-   holder.replaceChildren();
-   const summary=document.createElement('div');summary.className='collectionResultsV600';
-   const info=document.createElement('p');info.className='emergencyInfoV573';info.setAttribute('role','status');info.setAttribute('aria-live','polite');info.textContent=list.length+' von '+collection.length+' gespeicherten Sets';summary.append(info);
-   if(queryModel?.hasFilters(settings)??!!(settings.query.trim()||settings.area||settings.tag||settings.filter?.query||settings.filter?.area||settings.filter?.kind)){
-    const reset=document.createElement('button');reset.type='button';reset.id='resetCollectionFilters';reset.className='btn secondary';reset.textContent='Filter zurücksetzen';reset.onclick=resetFilters;summary.append(reset);
+   let summary=holder.querySelector('.collectionResultsV600');
+   if(!summary){
+    summary=document.createElement('div');summary.className='collectionResultsV600';
+    const info=document.createElement('p');info.className='emergencyInfoV573';info.setAttribute('role','status');info.setAttribute('aria-live','polite');summary.append(info);
+    const reset=document.createElement('button');reset.type='button';reset.id='resetCollectionFilters';reset.className='btn secondary';reset.textContent='Filter zurücksetzen';reset.onclick=resetFilters;summary.append(reset);holder.append(summary);
    }
-   holder.append(summary);
+   summary.querySelector('.emergencyInfoV573').textContent=list.length+' von '+collection.length+' gespeicherten Sets';
+   summary.querySelector('#resetCollectionFilters').hidden=!(queryModel?.hasFilters(settings)??!!(settings.query.trim()||settings.area||settings.tag||settings.filter?.query||settings.filter?.area||settings.filter?.kind));
+   let content=holder.querySelector('.collectionContentV600');
+   if(!content){content=document.createElement('div');content.className='collectionContentV600';holder.append(content)}
+   content.replaceChildren();
    if(!collection.length){
     const empty=document.createElement('div');empty.className='collectionEmptyV599';
     const heading=document.createElement('h3');heading.textContent='Deine Sammlung beginnt hier.';
     const note=document.createElement('p');note.textContent='Hier erscheinen deine gespeicherten Sets. Füge dein erstes Set hinzu. Wenn du bereits eine Sammlung hast, prüfe unter „Mein Konto“ den Cloud-Status.';
     const button=document.createElement('button');button.className='btn';button.type='button';button.textContent='Set hinzufügen';button.onclick=()=>{if(typeof openSet==='function')openSet()};
-    empty.append(heading,note,button);holder.append(empty);return;
+    empty.append(heading,note,button);content.append(empty);return;
    }
-   if(!list.length){const note=document.createElement('p');note.className='collectionNoResultsV600';note.textContent='Keine passenden Sets gefunden. Versuche weniger Suchbegriffe oder setze die Filter zurück.';holder.append(note);return}
-   const cards=document.createElement('div');cards.className='emergencyListV573';holder.append(cards);
+   if(!list.length){const note=document.createElement('p');note.className='collectionNoResultsV600';note.textContent='Keine passenden Sets gefunden. Versuche weniger Suchbegriffe oder setze die Filter zurück.';content.append(note);return}
+   const cards=document.createElement('div');cards.className='emergencyListV573';content.append(cards);
    const fragment=document.createDocumentFragment();
    for(const x of list){
     const card=document.createElement('button');card.type='button';card.className='emergencySetV573';

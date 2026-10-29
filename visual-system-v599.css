@@ -148,7 +148,8 @@ body.themeV39.bcmVisualV599 #collection > .toolbar .collectionSearchV600 { posit
 body.themeV39.bcmVisualV599 #collection > .toolbar .collectionSearchV600 #search { width:100%!important; padding-right:46px; }
 body.themeV39.bcmVisualV599 .collectionSearchV600 input::-webkit-search-cancel-button { -webkit-appearance:none; }
 body.themeV39.bcmVisualV599 #clearCollectionSearch { position:absolute; right:1px; top:1px; width:42px; min-height:42px; border:0; border-radius:9px; background:transparent; color:var(--muted); font-size:25px; cursor:pointer; }
-body.themeV39.bcmVisualV599 #clearCollectionSearch[hidden] { display:none!important; }
+body.themeV39.bcmVisualV599 #clearCollectionSearch[hidden],
+body.themeV39.bcmVisualV599 #resetCollectionFilters[hidden] { display:none!important; }
 body.themeV39.bcmVisualV599 .collectionResultsV600 { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
 body.themeV39.bcmVisualV599 .collectionResultsV600 .emergencyInfoV573 { margin:0!important; }
 body.themeV39.bcmVisualV599 .collectionResultsV600 .btn { font-size:12px; }
