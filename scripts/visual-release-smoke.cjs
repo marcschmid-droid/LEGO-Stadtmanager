@@ -53,7 +53,7 @@ async function noOverflow(page,label){
   await page.evaluate(async()=>{await cloudSessionV3({user:{id:'00000000-0000-4000-8000-000000000001',email:'demo@example.invalid'}});switchTab('home')});
   await page.waitForFunction(()=>document.getElementById('kUnique')?.textContent==='4');
   const collectionBefore=await page.evaluate(()=>JSON.stringify(state.collection));
-  for(const width of [320,390,768,1366]){
+  for(const width of [320,390,660,768,1366]){
    await page.setViewportSize({width,height:width>900?950:844});
    await page.locator('.tabsGroupedV550>[data-tab="home"]').click();
    await noOverflow(page,engine+' home '+width);
@@ -88,7 +88,7 @@ async function noOverflow(page,label){
   assert.equal(await page.locator('#passwordHint').isVisible(),true);
   await page.screenshot({path:out+'/'+engine+'-registration.png',fullPage:true});
   fs.writeFileSync(out+'/'+engine+'-console.json',JSON.stringify(errors,null,2));
-  console.log(engine+': production UI at 320/390/768/1366px, four KPIs, image containment, price labels, settings version, authentication modes and unchanged collection passed. Console errors: '+JSON.stringify(errors));
+  console.log(engine+': production UI at 320/390/660/768/1366px, four KPIs, image containment, price labels, settings version, authentication modes and unchanged collection passed. Console errors: '+JSON.stringify(errors));
   await browser.close();
  }
 })().catch(async error=>{if(activePage)await activePage.screenshot({path:out+'/failure.png',fullPage:true}).catch(()=>{});console.error(error);process.exit(1)});
