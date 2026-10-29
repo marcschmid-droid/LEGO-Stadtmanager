@@ -102,6 +102,7 @@ async function noOverflow(page,label){
     await choices.nth(0).check();await choices.nth(1).check();
     await page.locator('#showcaseCreate').click();
     assert.equal(await page.locator('#showcasePreview .showcaseCard').count(),2);
+    await page.screenshot({path:out+'/'+engine+'-showcase-dialog.png',fullPage:true});
     await page.locator('#showcasePublish').click();
     await page.getByText('Freigabe gespeichert. Der Link zeigt jetzt diese Auswahl.').waitFor();
     const link=await page.locator('#showcaseLink').inputValue();
