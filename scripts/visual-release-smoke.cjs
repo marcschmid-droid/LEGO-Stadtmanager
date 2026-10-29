@@ -78,15 +78,18 @@ async function noOverflow(page,label){
    assert.equal(await page.locator('#addTop').isVisible(),true);
    const geometry=await page.evaluate(()=>({kpi:document.querySelector('.homeKpisV549').getBoundingClientRect().y,plan:document.querySelector('.bcmTariffHero').getBoundingClientRect().y}));
    assert.ok(geometry.kpi<geometry.plan,'KPIs must precede the plan');
-   if(width===390||width===1366)await page.screenshot({path:out+'/'+engine+'-home-'+width+'.png',fullPage:true});
+   if(width===390||width===1366)await page.screenshot({path:out+'/'+engine+'-home-'+width+'.png',fullPage:true,animations:'disabled'});
    await page.locator('.tabsGroupedV550>[data-tab="collection"]').click();
+   await page.locator('#collection').waitFor({state:'visible'});
    await page.waitForFunction(()=>document.querySelectorAll('#emergencyCollectionV573 .emergencySetV573').length===4);
+   await page.locator('.emergencySetV573').first().waitFor({state:'visible'});
+   await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
    await noOverflow(page,engine+' collection '+width);
    assert.equal(await page.locator('.emergencyPricesV573').first().innerText().then(t=>t.includes('Kaufpreis / Stück')&&t.includes('Marktwert / Stück')),true);
    await page.waitForFunction(()=>{const imgs=[...document.querySelectorAll('.emergencyVisualV573 img')];return imgs.length===2&&imgs.every(el=>getComputedStyle(el).objectFit==='contain')});
    const slots=await page.evaluate(()=>[...document.querySelectorAll('.emergencyVisualV573 img')].map(el=>{const r=el.parentElement.getBoundingClientRect();return {w:r.width,h:r.height}}));
    for(const slot of slots)assert.ok(slot.h<=slot.w+1,'Portrait images must not enlarge their slot');
-   if(width===390||width===1366)await page.screenshot({path:out+'/'+engine+'-collection-'+width+'.png',fullPage:true});
+   if(width===390||width===1366)await page.screenshot({path:out+'/'+engine+'-collection-'+width+'.png',fullPage:true,animations:'disabled'});
    if(width===390){
     const expectCount=count=>page.waitForFunction(n=>document.querySelectorAll('#emergencyCollectionV573 .emergencySetV573').length===n,count);
     const sortBefore=await page.locator('#collectionSortV557').inputValue();
@@ -111,7 +114,7 @@ async function noOverflow(page,label){
     await noOverflow(page,engine+' empty filtered collection');
     await page.locator('#resetCollectionFilters').click();await expectCount(4);
     await page.locator('#search').fill('stadthaus architektur');await expectCount(1);
-    await page.screenshot({path:out+'/'+engine+'-filtered-collection.png',fullPage:true});
+    await page.screenshot({path:out+'/'+engine+'-filtered-collection.png',fullPage:true,animations:'disabled'});
     await page.locator('#resetCollectionFilters').click();await expectCount(4);
     await page.locator('.emergencySetV573').first().evaluate(el=>el.dataset.idleCheck='kept');
     await page.waitForTimeout(1400);
@@ -127,7 +130,7 @@ async function noOverflow(page,label){
     await choices.nth(0).check();await choices.nth(1).check();
     await page.locator('#showcaseCreate').click();
     assert.equal(await page.locator('#showcasePreview .showcaseCard').count(),2);
-    await page.screenshot({path:out+'/'+engine+'-showcase-dialog.png',fullPage:true});
+    await page.screenshot({path:out+'/'+engine+'-showcase-dialog.png',fullPage:true,animations:'disabled'});
     await page.locator('#showcasePublish').click();
     await page.getByText('Freigabe gespeichert. Der Link zeigt jetzt diese Auswahl.').waitFor();
     const link=await page.locator('#showcaseLink').inputValue();
@@ -138,7 +141,7 @@ async function noOverflow(page,label){
     await visitor.waitForFunction(()=>document.querySelectorAll('.showcaseCard').length===2);
     await noOverflow(visitor,engine+' public showcase');
     assert.equal(await visitor.locator('input').count(),0);
-    await visitor.screenshot({path:out+'/'+engine+'-showcase.png',fullPage:true});
+    await visitor.screenshot({path:out+'/'+engine+'-showcase.png',fullPage:true,animations:'disabled'});
     await choices.nth(0).uncheck();await choices.nth(2).check();
     await page.locator('#showcaseCreate').click();await page.locator('#showcasePublish').click();
     await page.getByText('Freigabe gespeichert. Der Link zeigt jetzt diese Auswahl.').waitFor();
@@ -166,9 +169,9 @@ async function noOverflow(page,label){
   assert.equal(await page.locator('#sessionPanel').isVisible(),false);
   await page.getByRole('button',{name:'Noch kein Konto? Kostenlos registrieren'}).click();
   assert.equal(await page.locator('#passwordHint').isVisible(),true);
-  await page.screenshot({path:out+'/'+engine+'-registration.png',fullPage:true});
+  await page.screenshot({path:out+'/'+engine+'-registration.png',fullPage:true,animations:'disabled'});
   fs.writeFileSync(out+'/'+engine+'-console.json',JSON.stringify(errors,null,2));
   console.log(engine+': production UI at 320/390/660/768/1366px, four KPIs, image containment, price labels, settings version, authentication modes and unchanged collection passed. Console errors: '+JSON.stringify(errors));
   await browser.close();
  }
-})().catch(async error=>{if(activePage)await activePage.screenshot({path:out+'/failure.png',fullPage:true}).catch(()=>{});console.error(error);process.exit(1)});
+})().catch(async error=>{if(activePage)await activePage.screenshot({path:out+'/failure.png',fullPage:true,animations:'disabled'}).catch(()=>{});console.error(error);process.exit(1)});
