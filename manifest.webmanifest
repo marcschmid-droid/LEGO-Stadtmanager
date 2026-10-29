@@ -5,8 +5,8 @@
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#c91a09",
-  "description": "Brick City Manager v50.98 – Sammlung, Stadtplanung, Marktwerte und Züge.",
+  "theme_color": "#c91919",
+  "description": "Brick City Manager v50.99 – Sammlung, Stadtplanung, Marktwerte und Züge.",
   "icons": [
     {
       "src": "./icon.svg?v=50.43",
