@@ -24,6 +24,15 @@
     const previous=switchTab;
     switchTab=function(...args){const result=previous.apply(this,args);navigation();return result};
   }
-  function init(){accountIcon();navigation()}
+  function placeUndo(){
+    const button=document.getElementById('undoV546');
+    const toolbar=document.querySelector('#collection > .toolbar');
+    if(button&&toolbar&&button.parentElement!==toolbar)toolbar.append(button);
+  }
+  if(typeof renderUndoV546==='function'){
+    const previous=renderUndoV546;
+    renderUndoV546=function(...args){const result=previous.apply(this,args);placeUndo();return result};
+  }
+  function init(){accountIcon();navigation();placeUndo()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();

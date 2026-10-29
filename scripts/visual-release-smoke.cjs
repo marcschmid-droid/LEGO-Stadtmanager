@@ -9,7 +9,7 @@ const fixture={collection:[
  {setNumber:'990002',name:'Bahnhof & Eisenbahn – Beispiel',quantity:2,purchasePrice:120,currentValue:160,imageUrl:'https://images.example.invalid/tall.svg',addedAt:'2026-10-28',category:'Züge',cityArea:'Bahnhof'},
  {setNumber:'990003',name:'Ein sehr langer Beispielname für ein Sammlerstück mit vielen Details und Sonderzeichen',quantity:1,purchasePrice:12500,currentValue:15000,imageUrl:'',addedAt:'2026-10-27'},
  {setNumber:'990004',name:'Set ohne erfasste Preise – Beispiel',quantity:1,purchasePrice:null,currentValue:null,imageUrl:'',addedAt:'2026-10-26'}
-],wishlist:[],trackShopping:[],classifiedOffers:[],meta:{onboardingDone:true},modules:{}};
+],wishlist:[],trackShopping:[],classifiedOffers:[],meta:{onboardingDone:true,cityLayoutVersion:'50.3'},modules:{}};
 function fakeSupabase(fixture){
  const user={id:'00000000-0000-4000-8000-000000000001',email:'demo@example.invalid'};
  const client={auth:{getSession:async()=>({data:{session:null},error:null}),getUser:async()=>({data:{user},error:null}),onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}})},
@@ -34,6 +34,7 @@ async function noOverflow(page,label){
   const browser=await type.launch({headless:true});
   const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
   activePage=page;
+  await page.emulateMedia({reducedMotion:'reduce'});
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.route('**/*',async route=>{
    const url=new URL(route.request().url());
@@ -52,6 +53,8 @@ async function noOverflow(page,label){
   await page.waitForFunction(()=>typeof cloudSessionV3==='function'&&typeof opsV547!=='undefined');
   await page.evaluate(async()=>{await cloudSessionV3({user:{id:'00000000-0000-4000-8000-000000000001',email:'demo@example.invalid'}});switchTab('home')});
   await page.waitForFunction(()=>document.getElementById('kUnique')?.textContent==='4');
+  // Let existing account migrations and scheduled price audits settle before measuring UI-only interactions.
+  await page.waitForTimeout(1800);
   const collectionBefore=await page.evaluate(()=>JSON.stringify(state.collection));
   for(const width of [320,390,660,768,1366]){
    await page.setViewportSize({width,height:width>900?950:844});
@@ -59,6 +62,7 @@ async function noOverflow(page,label){
    await noOverflow(page,engine+' home '+width);
    const kpis=await page.locator('.homeKpisV549 > .card').count();assert.equal(kpis,4);
    assert.equal(await page.locator('#visibleVersionV553').isVisible(),false);
+   assert.equal(await page.locator('#addTop').isVisible(),true);
    const geometry=await page.evaluate(()=>({kpi:document.querySelector('.homeKpisV549').getBoundingClientRect().y,plan:document.querySelector('.bcmTariffHero').getBoundingClientRect().y}));
    assert.ok(geometry.kpi<geometry.plan,'KPIs must precede the plan');
    if(width===390||width===1366)await page.screenshot({path:out+'/'+engine+'-home-'+width+'.png',fullPage:true});
@@ -69,6 +73,8 @@ async function noOverflow(page,label){
    for(const img of await page.locator('.emergencyVisualV573 img').all()){
     await img.waitFor({state:'visible'});
     assert.equal(await img.evaluate(el=>getComputedStyle(el).objectFit),'contain');
+    const slot=await img.evaluate(el=>{const r=el.parentElement.getBoundingClientRect();return {w:r.width,h:r.height}});
+    assert.ok(slot.h<=slot.w+1,'Portrait images must not enlarge their slot');
    }
    if(width===390||width===1366)await page.screenshot({path:out+'/'+engine+'-collection-'+width+'.png',fullPage:true});
    await page.locator('.tabsGroupedV550 summary').click();

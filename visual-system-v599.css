@@ -12,6 +12,7 @@ body.themeV39.bcmVisualV599 .brandV39 #appVersion { display:none!important; }
 body.themeV39.bcmVisualV599 .headActions { gap:8px; flex-wrap:nowrap; }
 body.themeV39.bcmVisualV599 .iconbtn { display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:11px; background:#ffffff14; border:1px solid #ffffff38; box-shadow:none; }
 body.themeV39.bcmVisualV599 .headActions .btn { display:inline-flex; align-items:center; gap:7px; padding:11px 16px; min-height:44px; background:#fff!important; color:var(--red)!important; border:0; border-radius:11px; white-space:nowrap; }
+body.themeV39.bcmVisualV599 .headActions #addTop { display:inline-flex!important; }
 body.themeV39.bcmVisualV599 main { max-width:1180px; padding:22px 24px 40px!important; }
 body.themeV39.bcmVisualV599 .btn { min-height:44px; border-radius:11px; background:var(--red); box-shadow:none; font-weight:700; }
 body.themeV39.bcmVisualV599 .btn.secondary { background:#fff; border:1px solid var(--line); color:var(--text); }
@@ -73,9 +74,9 @@ body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyInfoV573 { font-s
 body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyListV573 { grid-template-columns:repeat(auto-fill,minmax(225px,1fr)); gap:16px; align-items:stretch; }
 body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencySetV573 { display:flex; flex-direction:column; min-width:0; padding:0; color:var(--text); font:inherit; border:1px solid var(--line); border-radius:16px; background:white; box-shadow:0 3px 12px #19233104; transition:border-color .15s ease,box-shadow .15s ease; }
 body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencySetV573:hover { border-color:#d8a19d; box-shadow:0 6px 20px #1923310d; }
-body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyVisualV573 { width:100%; height:auto; aspect-ratio:4/3; padding:20px; background:#fff; border-bottom:1px solid #f0f1f3; display:flex; flex-direction:column; justify-content:center; gap:9px; font-size:12px; color:#858d98; }
+body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyVisualV573 { position:relative; overflow:hidden; flex-shrink:0; --slot-padding:20px; width:100%; height:auto; aspect-ratio:4/3; padding:var(--slot-padding); background:#fff; border-bottom:1px solid #f0f1f3; display:flex; flex-direction:column; justify-content:center; gap:9px; font-size:12px; color:#858d98; }
 body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyVisualV573 > .bcmIcon { width:42px; height:42px; color:#b1b7bf; }
-body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyVisualV573 img { width:100%; height:100%; object-fit:contain; object-position:center; display:block; }
+body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyVisualV573 img { position:absolute; inset:var(--slot-padding); width:calc(100% - 2 * var(--slot-padding)); height:calc(100% - 2 * var(--slot-padding)); object-fit:contain; object-position:center; display:block; }
 body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyBodyV573 { display:flex; flex:1; width:100%; gap:8px; padding:15px; }
 body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyBodyV573 > small { color:var(--muted); font-size:11px; letter-spacing:.03em; }
 body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyTitleV573 { display:block; font-size:14px; line-height:1.4; font-weight:750; min-height:2.8em; overflow-wrap:anywhere; }
@@ -125,10 +126,10 @@ body.themeV39.bcmVisualV599 #visualVersionV599 { display:inline-block; padding:5
   body.themeV39.bcmVisualV599 #collection > .toolbar #addBtn { grid-column:1/-1!important; display:inline-flex; align-items:center; justify-content:center; gap:7px; }
   body.themeV39.bcmVisualV599 #collection > .toolbar select { width:100%; min-width:0; font-size:12px; }
   body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyListV573 { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-  body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyVisualV573 { aspect-ratio:1; padding:13px; }
+  body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyVisualV573 { aspect-ratio:1; --slot-padding:13px; }
   body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyBodyV573 { padding:11px; gap:7px; }
   body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyTitleV573 { font-size:13px; }
-  body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyPricesV573 { gap:5px; }
+  body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyPricesV573 { grid-template-columns:1fr; gap:5px; }
   body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyPricesV573 > span { padding:7px; }
   body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyPricesV573 b { font-size:12px; }
 }
