@@ -77,6 +77,22 @@ async function noOverflow(page,label){
     assert.ok(slot.h<=slot.w+1,'Portrait images must not enlarge their slot');
    }
    if(width===390||width===1366)await page.screenshot({path:out+'/'+engine+'-collection-'+width+'.png',fullPage:true});
+   if(width===390){
+    await page.locator('#showcaseShare').click();
+    const choices=page.locator('.showcaseChoices input');
+    assert.equal(await page.locator('.showcaseChoices input:checked').count(),0);
+    await choices.nth(0).check();await choices.nth(1).check();
+    await page.locator('#showcaseCreate').click();
+    assert.equal(await page.locator('#showcasePreview .showcaseCard').count(),2);
+    const link=await page.locator('#showcaseLink').inputValue();
+    const visitor=await browser.newPage({viewport:{width:390,height:844}});
+    await visitor.goto(link);
+    assert.equal(await visitor.locator('.showcaseCard').count(),2);
+    await noOverflow(visitor,engine+' public showcase');
+    assert.equal(await visitor.locator('input').count(),0);
+    await visitor.screenshot({path:out+'/'+engine+'-showcase.png',fullPage:true});
+    await visitor.close();await page.locator('#showcaseClose').click();
+   }
    await page.locator('.tabsGroupedV550 summary').click();
    const menu=await page.locator('.navMenuV550').boundingBox();
    assert.ok(menu&&menu.x>=-1&&menu.x+menu.width<=width+1,engine+' menu outside viewport at '+width);
