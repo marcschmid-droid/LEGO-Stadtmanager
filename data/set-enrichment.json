@@ -5,9 +5,9 @@
     "brickeconomyRequestsThisRun": 0,
     "brickeconomyUsage": {
       "quota": 100,
-      "remaining": 56,
-      "resets_at": "2026-10-29T00:00:00Z",
-      "used_today": 44
+      "remaining": 100,
+      "resets_at": "2026-10-30T00:00:00Z",
+      "used_today": 0
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
@@ -19,7 +19,7 @@
       "BrickEconomy 1036: 400 Client Error: Bad Request for url: https://www.brickeconomy.com/api/v1/set/1036-1?currency=EUR",
       "No metadata for 1036"
     ],
-    "lastUpdated": "2026-10-28T21:03:18Z",
+    "lastUpdated": "2026-10-29T01:25:14Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 2,
@@ -2915,7 +2915,7 @@
     },
     "40220": {
       "brickeconomyName": "London Bus",
-      "brickeconomyUpdated": "2026-10-26T20:57:26Z",
+      "brickeconomyUpdated": "2026-10-29T01:24:47Z",
       "ean": "5702015595407",
       "forecast2yEUR": 19.31,
       "forecast5yEUR": 26.09,
@@ -2989,7 +2989,7 @@
     },
     "40499": {
       "brickeconomyName": "Santa's Sleigh",
-      "brickeconomyUpdated": "2026-10-26T20:57:28Z",
+      "brickeconomyUpdated": "2026-10-29T01:24:49Z",
       "ean": "5702016995992",
       "forecast2yEUR": 33.91,
       "forecast5yEUR": 37.58,
@@ -3013,7 +3013,7 @@
     },
     "40519": {
       "brickeconomyName": "New York Postcard",
-      "brickeconomyUpdated": "2026-10-26T20:57:29Z",
+      "brickeconomyUpdated": "2026-10-29T01:24:51Z",
       "ean": "5702017165639",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -3061,7 +3061,7 @@
     },
     "40569": {
       "brickeconomyName": "London Postcard",
-      "brickeconomyUpdated": "2026-10-26T20:57:30Z",
+      "brickeconomyUpdated": "2026-10-29T01:24:53Z",
       "ean": "5702017241890",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -3085,7 +3085,7 @@
     },
     "40571": {
       "brickeconomyName": "Christmas Polar Bears",
-      "brickeconomyUpdated": "2026-10-26T20:57:31Z",
+      "brickeconomyUpdated": "2026-10-29T01:24:54Z",
       "ean": "5702017241913",
       "forecast2yEUR": 20.06,
       "forecast5yEUR": 23.77,
@@ -3109,7 +3109,7 @@
     },
     "40573": {
       "brickeconomyName": "Christmas Tree",
-      "brickeconomyUpdated": "2026-10-26T20:57:33Z",
+      "brickeconomyUpdated": "2026-10-29T01:24:56Z",
       "ean": "5702017241937",
       "forecast2yEUR": 37.95,
       "forecast5yEUR": 42.05,
@@ -3133,7 +3133,7 @@
     },
     "40580": {
       "brickeconomyName": "Blacktron Cruiser",
-      "brickeconomyUpdated": "2026-10-26T20:57:34Z",
+      "brickeconomyUpdated": "2026-10-29T01:24:57Z",
       "ean": "5702017422749",
       "forecast2yEUR": 40.59,
       "forecast5yEUR": 52.11,
@@ -3157,7 +3157,7 @@
     },
     "40586": {
       "brickeconomyName": "Moving Truck",
-      "brickeconomyUpdated": "2026-10-26T20:57:35Z",
+      "brickeconomyUpdated": "2026-10-29T01:24:59Z",
       "ean": "5702017423623",
       "forecast2yEUR": 35.49,
       "forecast5yEUR": 45.56,
@@ -3181,7 +3181,7 @@
     },
     "40603": {
       "brickeconomyName": "Wintertime Carriage Ride",
-      "brickeconomyUpdated": "2026-10-26T20:57:36Z",
+      "brickeconomyUpdated": "2026-10-29T01:25:00Z",
       "ean": "5702017471433",
       "forecast2yEUR": 30.29,
       "forecast5yEUR": 39.11,
@@ -3205,7 +3205,7 @@
     },
     "40604": {
       "brickeconomyName": "Christmas Decor Set",
-      "brickeconomyUpdated": "2026-10-26T20:57:37Z",
+      "brickeconomyUpdated": "2026-10-29T01:25:01Z",
       "ean": "5702017471181",
       "forecast2yEUR": 19.81,
       "forecast5yEUR": 21.21,
@@ -3229,7 +3229,7 @@
     },
     "40605": {
       "brickeconomyName": "Lunar New Year VIP Add-On Pack",
-      "brickeconomyUpdated": "2026-10-26T20:57:39Z",
+      "brickeconomyUpdated": "2026-10-29T01:25:02Z",
       "ean": null,
       "forecast2yEUR": 6.0,
       "forecast5yEUR": 6.63,
@@ -3253,7 +3253,7 @@
     },
     "40640": {
       "brickeconomyName": "LEGO Nutcracker",
-      "brickeconomyUpdated": "2026-10-26T20:57:40Z",
+      "brickeconomyUpdated": "2026-10-29T01:25:03Z",
       "ean": "5702017470351",
       "forecast2yEUR": 15.14,
       "forecast5yEUR": 18.0,
@@ -3277,7 +3277,7 @@
     },
     "40679": {
       "brickeconomyName": "Love Gift Box",
-      "brickeconomyUpdated": "2026-10-26T20:57:41Z",
+      "brickeconomyUpdated": "2026-10-29T01:25:05Z",
       "ean": "5702017596006",
       "forecast2yEUR": 15.32,
       "forecast5yEUR": 17.75,
@@ -3301,11 +3301,11 @@
     },
     "40680": {
       "brickeconomyName": "Flower Store",
-      "brickeconomyUpdated": "2026-10-26T20:57:42Z",
+      "brickeconomyUpdated": "2026-10-29T01:25:06Z",
       "ean": "5702017596013",
       "forecast2yEUR": 43.5,
       "forecast5yEUR": 55.74,
-      "growth12mPct": 2.32,
+      "growth12mPct": 2.17,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40680-1/146291.jpg",
       "marketNewEUR": 31.96,
       "marketUsedEUR": 22.0,
@@ -3325,7 +3325,7 @@
     },
     "40689": {
       "brickeconomyName": "Firework Celebrations",
-      "brickeconomyUpdated": "2026-10-26T20:57:43Z",
+      "brickeconomyUpdated": "2026-10-29T01:25:07Z",
       "ean": null,
       "forecast2yEUR": 14.12,
       "forecast5yEUR": 18.22,
@@ -3349,11 +3349,11 @@
     },
     "40692": {
       "brickeconomyName": "Candy Store",
-      "brickeconomyUpdated": "2026-10-26T20:57:44Z",
+      "brickeconomyUpdated": "2026-10-29T01:25:09Z",
       "ean": null,
       "forecast2yEUR": 29.88,
       "forecast5yEUR": 38.59,
-      "growth12mPct": 3.1,
+      "growth12mPct": 1.01,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40692-1/142758.jpg",
       "marketNewEUR": 25.27,
       "marketUsedEUR": 20.98,
@@ -3373,11 +3373,11 @@
     },
     "40698": {
       "brickeconomyName": "Books Are My Passion",
-      "brickeconomyUpdated": "2026-10-26T20:57:46Z",
+      "brickeconomyUpdated": "2026-10-29T01:25:10Z",
       "ean": "5702017598123",
       "forecast2yEUR": 95.94,
       "forecast5yEUR": 112.92,
-      "growth12mPct": 0.25,
+      "growth12mPct": 0.28,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40698-1/147145.jpg",
       "marketNewEUR": 78.08,
       "marketUsedEUR": 64.81,
@@ -3397,7 +3397,7 @@
     },
     "40699": {
       "brickeconomyName": "Retro Record Player",
-      "brickeconomyUpdated": "2026-10-26T20:57:47Z",
+      "brickeconomyUpdated": "2026-10-29T01:25:11Z",
       "ean": "5702017598130",
       "forecast2yEUR": 68.24,
       "forecast5yEUR": 79.43,
@@ -3421,7 +3421,7 @@
     },
     "40700": {
       "brickeconomyName": "Winter Holiday Train",
-      "brickeconomyUpdated": "2026-10-26T20:57:48Z",
+      "brickeconomyUpdated": "2026-10-29T01:25:12Z",
       "ean": "5702017598758",
       "forecast2yEUR": 22.12,
       "forecast5yEUR": 29.52,
@@ -3445,11 +3445,11 @@
     },
     "40712": {
       "brickeconomyName": "Micro Rocket Launchpad",
-      "brickeconomyUpdated": "2026-10-26T20:57:50Z",
+      "brickeconomyUpdated": "2026-10-29T01:25:13Z",
       "ean": "5702017611587",
       "forecast2yEUR": 35.66,
       "forecast5yEUR": 38.93,
-      "growth12mPct": 2.85,
+      "growth12mPct": 3.04,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40712-1/137531.jpg",
       "marketNewEUR": 32.34,
       "marketUsedEUR": 26.84,
