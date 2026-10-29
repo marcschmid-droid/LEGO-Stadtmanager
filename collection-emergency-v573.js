@@ -2,13 +2,15 @@
 (function(){
  'use strict';
  const $=id=>document.getElementById(id);
- const euro=v=>{if(v===undefined||v===null||v==='')return '–';let n=Number(v);return Number.isFinite(n)?new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(n):'–'};
- let latestSignature='',lastPanel=false,busy=false;
+ const euro=v=>{if(v===undefined||v===null||v==='')return '–';let n=Number(v);return Number.isFinite(n)?moneyFormat.format(n):'–'};
+ let latestSignature='',queued=false;
+ const moneyFormat=new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'});
+ function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;show()})}
  function show(){
   try{
    const panel=$('collection');if(!panel)return;
    const active=panel.classList.contains('active');
-   if(!active){lastPanel=false;return}
+   if(!active)return;
    const collection=typeof state!=='undefined'&&Array.isArray(state?.collection)?state.collection:[];
    const query=String($('search')?.value||'').trim().toLocaleLowerCase('de');
    const area=$('areaFilter')?.value||'';
@@ -21,8 +23,8 @@
     (panel.querySelector('.toolbar')||panel.firstElementChild)?.insertAdjacentElement('afterend',holder);
    }
    holder.style.setProperty('display','block','important');
-   if(sig===latestSignature && lastPanel && holder.querySelector('.emergencyListV573'))return;
-   lastPanel=true;latestSignature=sig;
+   if(sig===latestSignature && holder.childElementCount)return;
+   latestSignature=sig;
    const list=collection.filter(x=>(!area||x.cityArea===area)&&(!query||[x.setNumber,x.name,x.cityArea,x.category,x.storage,x.module].some(v=>String(v||'').toLocaleLowerCase('de').includes(query))));
    const collator=new Intl.Collator('de',{numeric:true});
    list.sort((a,b)=>{const number=()=>collator.compare(String(a.setNumber),String(b.setNumber));if(sort==='added-desc'||sort==='added-asc'){const stamp=x=>{const logged=(state?.activityLog||[]).filter(e=>String(e.setNumber||'')===String(x.setNumber||'')&&['add','restore'].includes(e.type)).map(e=>e.at);const values=[...logged,x.addedAt,x.createdAt,x.dateAdded,x.importedAt,x.created_at,x.addedDate].map(v=>v?Date.parse(v):NaN).filter(Number.isFinite);return values.length?Math.max(...values):null};const av=stamp(a),bv=stamp(b);if(av===null&&bv!==null)return 1;if(bv===null&&av!==null)return -1;if(av!==null&&bv!==null&&av!==bv)return (sort==='added-desc'?-1:1)*(av-bv);return (sort==='added-desc'?1:-1)*(collection.indexOf(a)-collection.indexOf(b))}if(sort==='number-desc')return -number();if(sort==='price-desc'||sort==='price-asc'){const av=Number(a.purchasePrice),bv=Number(b.purchasePrice);return (sort==='price-desc'?-1:1)*((Number.isFinite(av)?av:0)-(Number.isFinite(bv)?bv:0))||number()}if(sort==='date-desc'||sort==='date-asc'){const key=x=>Date.parse(x.purchaseDate||x.exemplars?.[0]?.date||'')||0;return (sort==='date-desc'?-1:1)*(key(a)-key(b))||number()}return number()});
@@ -65,9 +67,13 @@
  }
  function init(){
   if(!$('collection'))return;
-  ['search','areaFilter','collectionSortV557'].forEach(id=>{const node=$(id);if(node){node.addEventListener('input',show);node.addEventListener('change',show)}});
-  document.querySelectorAll('[data-tab="collection"]').forEach(node=>node.addEventListener('click',()=>setTimeout(show,70)));
-  setInterval(show,1200);
+  ['search','areaFilter','collectionSortV557'].forEach(id=>{const node=$(id);if(node){node.addEventListener('input',schedule);node.addEventListener('change',schedule)}});
+  for(const name of ['refresh','switchTab','persist','renderCollection']){
+   const original=window[name];
+   if(typeof original==='function')window[name]=function(...args){const out=original.apply(this,args);schedule();return out};
+  }
+  new MutationObserver(schedule).observe($('collection'),{attributes:true,attributeFilter:['class']});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)schedule()});
   show();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
