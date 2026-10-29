@@ -2,6 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs');
 const {chromium,webkit}=require('playwright');
 const base=process.env.BCM_TEST_BASE||'http://127.0.0.1:8765';
+let activePage;
 const out='/tmp/bcm-visual-review';fs.mkdirSync(out,{recursive:true});
 const fixture={collection:[
  {setNumber:'990001',name:'Stadthaus mit Dachterrasse – Beispiel',quantity:1,purchasePrice:149.99,currentValue:184.5,imageUrl:'https://images.example.invalid/wide.svg',addedAt:'2026-10-29',category:'Stadt',cityArea:'Innenstadt'},
@@ -32,6 +33,7 @@ async function noOverflow(page,label){
  for(const [engine,type] of Object.entries({chromium,webkit})){
   const browser=await type.launch({headless:true});
   const page=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  activePage=page;
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
   await page.route('**/*',async route=>{
    const url=new URL(route.request().url());
@@ -89,4 +91,4 @@ async function noOverflow(page,label){
   console.log(engine+': production UI at 320/390/768/1366px, four KPIs, image containment, price labels, settings version, authentication modes and unchanged collection passed. Console errors: '+JSON.stringify(errors));
   await browser.close();
  }
-})().catch(error=>{console.error(error);process.exit(1)});
+})().catch(async error=>{if(activePage)await activePage.screenshot({path:out+'/failure.png',fullPage:true}).catch(()=>{});console.error(error);process.exit(1)});

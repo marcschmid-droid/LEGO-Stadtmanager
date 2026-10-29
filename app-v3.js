@@ -1717,12 +1717,7 @@ function enterShowcaseV50(){
  let x=$("showcaseExitV50");
  if(!x){x=document.createElement("button");x.id="showcaseExitV50";x.className="showcaseExitV50";x.textContent="Showcase beenden";x.onclick=()=>{document.body.classList.remove("showcaseV50");x.remove()};document.body.appendChild(x)}
 }
-function showWhatsNewV50(){
- if(localStorage.getItem("brick-city-manager-v50-welcome"))return;
- const m=document.createElement("div");m.className="v50WelcomeOverlay";m.innerHTML='<div class="v50Welcome"><span class="eyebrowV50">MEILENSTEIN · VERSION 50</span><div class="v50Big50">50</div><h2>Willkommen im City Command Center</h2><p>Version 50 bringt eine neue Startzentrale, automatische Planungsvorschläge, Stadtfortschritt und einen Showcase-Modus.</p><div class="v50WelcomeFeatures"><span>✓ Command Center</span><span>✓ Planner Pro</span><span>✓ Planungsvorschläge</span><span>✓ Showcase</span></div><button class="btn" id="closeV50Welcome">Version 50 starten</button></div>';
- document.body.appendChild(m);
- $("closeV50Welcome").onclick=()=>{localStorage.setItem("brick-city-manager-v50-welcome","1");m.remove()};
-}
+// The retired version-50 splash no longer interrupts the collection UI.
 function bindV50(){
  if($("v50PlanNext"))$("v50PlanNext").onclick=()=>{switchTab("city");setTimeout(()=>{if(!citySuggestionV50)pickSuggestionV50();$("citySuggestionTitleV50")?.scrollIntoView({behavior:"smooth",block:"center"})},100)};
  if($("v50Scan"))$("v50Scan").onclick=()=>scanV3();
@@ -1746,7 +1741,7 @@ const refreshBaseV50=refresh;
 refresh=function(){const r=refreshBaseV50();renderV50();return r};
 bindV50();
 renderV50();
-setTimeout(showWhatsNewV50,450);
+
 
 
 /* v50.2 automatic city capacity */
