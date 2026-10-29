@@ -1,0 +1,30 @@
+name: Mobile registration and save controls
+on:
+  push:
+    branches: [main, growth/collector-onboarding-20261029]
+    paths:
+      - 'anmelden.html'
+      - 'auth-entry.js'
+      - 'index.html'
+      - 'mobile-viewport.js'
+      - 'mobile-save-bar-v598.css'
+      - 'scripts/mobile-release-smoke.cjs'
+      - '.github/workflows/mobile-release-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mobile-browsers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --prefix "$RUNNER_TEMP/bcm-browser" --ignore-scripts --no-audit --no-fund playwright@1.62.1
+      - run: node "$RUNNER_TEMP/bcm-browser/node_modules/playwright/cli.js" install --with-deps chromium webkit
+      - name: Test iPhone portrait and keyboard-sized viewports
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/bcm-http.log 2>&1 &
+          NODE_PATH="$RUNNER_TEMP/bcm-browser/node_modules" node scripts/mobile-release-smoke.cjs

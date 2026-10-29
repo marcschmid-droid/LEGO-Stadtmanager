@@ -8,7 +8,7 @@
     if(!force)return true;
     return originalSnapshotV561(reason,true);
   };
-  let checking=false;
+  let saveInFlight=null;
   function collectionSignature(s){
     const canonical=v=>Array.isArray(v)?v.map(canonical):v&&typeof v==='object'?Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])])):v;
     return JSON.stringify((s?.collection||[]).map(canonical).sort((a,b)=>String(a.setNumber).localeCompare(String(b.setNumber),undefined,{numeric:true})));
@@ -32,15 +32,19 @@
     }catch(err){cloudStatusV3('Speicherbereinigung nicht vollständig: '+String(err?.message||err))}
     renderSyncConflictV547();
   }
-  cloudSaveV3=async function(show=false){
+  async function saveVerified(show=false){
     const user=cloudUserV3?.id;
     if(!user||!cloudV3||cloudApplyingV3)return;
-    if(checking){if(show)cloudStatusV3('Speicherung läuft bereits. Bitte kurz den Status prüfen.');return}
+    // A failed initial load used to leave revision undefined forever. Retry the
+    // account-scoped load on an explicit save; keep all conflict protections.
+    if(show&&syncInfoV547(user).revision===undefined){
+      await cloudSessionV3({user:cloudUserV3});
+      if(cloudUserV3?.id!==user||syncInfoV547(user).revision===undefined||syncInfoV547(user).conflict)return;
+    }
     // A full extra local copy can exhaust iOS storage. Continue with the verified cloud path,
     // but show an explicit warning if a recovery copy could not be written.
     safeRecoveryCopy('Vor Cloud-Abgleich');
     if(!navigator.onLine){cloudStatusV3('Offline: nur lokal gespeichert, Cloud noch NICHT bestätigt.');return}
-    checking=true;
     try{
       // Inspect remote version first. The existing optimistic concurrency write still
       // enforces the revision at commit time; this check also catches missing local sets.
@@ -56,11 +60,13 @@
         renderSyncConflictV547();return;
       }
       const savedSnapshot=structuredClone(state);
-      await initialSave(show);
+      const outcome=await initialSave(show);
+      if(outcome?.error)throw outcome.error;
       if(cloudUserV3?.id!==user)return;
       const sync=syncInfoV547(user);
       if(sync.conflict)return;
       const verified=await cloudV3.from('user_state').select('state').eq('user_id',user).maybeSingle();
+      if(cloudUserV3?.id!==user)return;
       if(verified.error){cloudStatusV3('Cloud geschrieben, Nachprüfung nicht möglich: '+verified.error.message);return}
       if(collectionSignature(savedSnapshot)!==collectionSignature(verified.data?.state)){
         cloudStatusV3('Achtung: Cloud-Bestand weicht ab. Lokale Sicherung bleibt erhalten. Bitte Synchronisierung prüfen.');
@@ -72,7 +78,16 @@
         queueCloudSaveV3();
       }
     }catch(err){cloudStatusV3('Abgleich unterbrochen. Lokal gesichert; Cloud nicht bestätigt. '+String(err?.message||err))}
-    finally{checking=false}
+  }
+  // persist() queues autosave. A manual save can arrive during that request.
+  // It must await the pending write instead of immediately checking stale data.
+  cloudSaveV3=async function(show=false){
+    const user=cloudUserV3?.id;
+    while(saveInFlight)await saveInFlight;
+    if(cloudUserV3?.id!==user)return;
+    const task=saveVerified(show);
+    saveInFlight=task;
+    try{return await task}finally{if(saveInFlight===task)saveInFlight=null}
   };
   // Recover pending writes after transient network failures. Never bypass conflict checks.
   let retryDelayV559=5000, retryTimerV559=null;

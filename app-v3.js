@@ -1015,7 +1015,9 @@ cloudSaveV3=async function(show=false){const r=await cloudSaveCoreV38(show);logS
 async function loadServerAlertsV38(){
  if(!cloudV3||!cloudUserV3)return;
  try{
-   const {data,error}=await cloudV3.from("price_alert_events").select("id,set_number,set_name,market_price,limit_price,created_at,read_at").eq("user_id",cloudUserV3.id).order("created_at",{ascending:false}).limit(20);
+   const user=cloudUserV3.id;
+   const {data,error}=await cloudV3.from("price_alert_events").select("id,set_number,set_name,market_price,limit_price,created_at").eq("user_id",user).order("created_at",{ascending:false}).limit(20);
+   if(cloudUserV3?.id!==user)return;
    if(error||!data)return;
    state.meta=state.meta||{};state.meta.serverPriceAlerts=data;renderWishAlertsV28();
  }catch{}
