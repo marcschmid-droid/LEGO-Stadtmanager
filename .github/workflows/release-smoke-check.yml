@@ -28,14 +28,14 @@ jobs:
           login=Path('anmelden.html').read_text()
           legacy=Path('brick-city-v5096.html').read_text()
           manifest=json.loads(Path('manifest.webmanifest').read_text())
-          assert 'id="visibleVersionV553">v50.98' in home, 'Wrong displayed release'
+          assert 'id="visibleVersionV553">v50.99' in home, 'Wrong displayed release'
           assert "const V='v50.96'" not in home, 'Old version lock remains'
           assert 'Bis zu 20 Sets verwalten' in home, 'Free tier is wrong'
           assert 'Bis zu 50 Sets verwalten' in home, 'Basic tier is wrong'
-          assert 'auth-entry.js?v=50.98' in login, 'Auth script missing'
-          assert "location.assign('./index.html?v=50.98')" in Path('auth-entry.js').read_text(), 'Login targets old app'
+          assert 'auth-entry.js?v=50.99' in login, 'Auth script missing'
+          assert "location.assign('./index.html?v=50.99')" in Path('auth-entry.js').read_text(), 'Login targets old app'
           assert 'location.replace(' in legacy and 'index.html' in legacy, 'Legacy app not redirected'
-          assert 'v50.98' in manifest['description'], 'Manifest is outdated'
+          assert 'v50.99' in manifest['description'], 'Manifest is outdated'
           print('Source smoke checks passed')
           PY
       - name: Check publicly served Pages files after deployment
@@ -54,11 +54,11 @@ jobs:
               login=get('anmelden.html?release-smoke='+str(attempt))
               legacy=get('brick-city-v5096.html?release-smoke='+str(attempt))
               checks={
-                'published version': 'id="visibleVersionV553">v50.98' in home,
+                'published version': 'id="visibleVersionV553">v50.99' in home,
                 'no old version lock': "const V='v50.96'" not in home,
                 'free tier': 'Bis zu 20 Sets verwalten' in home,
                 'basic tier': 'Bis zu 50 Sets verwalten' in home,
-                'login redirect': 'auth-entry.js?v=50.98' in login,
+                'login redirect': 'auth-entry.js?v=50.99' in login,
                 'legacy redirect': 'location.replace(' in legacy and 'index.html' in legacy,
               }
               errors=[key for key,ok in checks.items() if not ok]

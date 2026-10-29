@@ -13,7 +13,7 @@
    const query=String($('search')?.value||'').trim().toLocaleLowerCase('de');
    const area=$('areaFilter')?.value||'';
    const sort=$('collectionSortV557')?.value||'number-asc';
-   const sig=[collection.length,collection[0]?.setNumber,collection[collection.length-1]?.setNumber,query,area,sort].join('|');
+   const sig=JSON.stringify([collection.map(x=>[x.setNumber,x.name,x.quantity,x.purchasePrice,x.currentValue,x.imageUrl||x.market?.imageUrl,x.cityArea,x.category,x.storage,x.module,x.purchaseDate,x.exemplars?.[0]?.date,x.addedAt,x.createdAt,x.dateAdded,x.importedAt,x.created_at,x.addedDate]),state?.activityLog?.length,query,area,sort]);
    const holder=$('emergencyCollectionV573')||document.createElement('section');
    if(!holder.id){
     holder.id='emergencyCollectionV573';
@@ -28,12 +28,19 @@
    list.sort((a,b)=>{const number=()=>collator.compare(String(a.setNumber),String(b.setNumber));if(sort==='added-desc'||sort==='added-asc'){const stamp=x=>{const logged=(state?.activityLog||[]).filter(e=>String(e.setNumber||'')===String(x.setNumber||'')&&['add','restore'].includes(e.type)).map(e=>e.at);const values=[...logged,x.addedAt,x.createdAt,x.dateAdded,x.importedAt,x.created_at,x.addedDate].map(v=>v?Date.parse(v):NaN).filter(Number.isFinite);return values.length?Math.max(...values):null};const av=stamp(a),bv=stamp(b);if(av===null&&bv!==null)return 1;if(bv===null&&av!==null)return -1;if(av!==null&&bv!==null&&av!==bv)return (sort==='added-desc'?-1:1)*(av-bv);return (sort==='added-desc'?1:-1)*(collection.indexOf(a)-collection.indexOf(b))}if(sort==='number-desc')return -number();if(sort==='price-desc'||sort==='price-asc'){const av=Number(a.purchasePrice),bv=Number(b.purchasePrice);return (sort==='price-desc'?-1:1)*((Number.isFinite(av)?av:0)-(Number.isFinite(bv)?bv:0))||number()}if(sort==='date-desc'||sort==='date-asc'){const key=x=>Date.parse(x.purchaseDate||x.exemplars?.[0]?.date||'')||0;return (sort==='date-desc'?-1:1)*(key(a)-key(b))||number()}return number()});
    holder.replaceChildren();
    const info=document.createElement('p');info.className='emergencyInfoV573';info.textContent=list.length+' von '+collection.length+' gespeicherten Sets';holder.append(info);
-   if(!collection.length){const note=document.createElement('p');note.textContent='Keine Sets für dieses Konto geladen. Bitte Cloud-Status unter Konto prüfen. Keine Daten erneut importieren.';holder.append(note);return}
+   if(!collection.length){
+    const empty=document.createElement('div');empty.className='collectionEmptyV599';
+    const heading=document.createElement('h3');heading.textContent='Deine Sammlung beginnt hier.';
+    const note=document.createElement('p');note.textContent='Hier erscheinen deine gespeicherten Sets. Füge dein erstes Set hinzu. Wenn du bereits eine Sammlung hast, prüfe unter „Mein Konto“ den Cloud-Status.';
+    const button=document.createElement('button');button.className='btn';button.type='button';button.textContent='Set hinzufügen';button.onclick=()=>{if(typeof openSet==='function')openSet()};
+    empty.append(heading,note,button);holder.append(empty);return;
+   }
    if(!list.length){const note=document.createElement('p');note.textContent='Keine Treffer – bitte Suchfeld und Filter zurücksetzen.';holder.append(note);return}
    const cards=document.createElement('div');cards.className='emergencyListV573';holder.append(cards);
    const fragment=document.createDocumentFragment();
    for(const x of list){
     const card=document.createElement('button');card.type='button';card.className='emergencySetV573';
+    card.setAttribute('aria-label','Set '+String(x.setNumber||'')+' – '+String(x.name||'LEGO Set')+' – Details öffnen');
     const visual=document.createElement('div');visual.className='emergencyVisualV573';
     const url=x.imageUrl||x.market?.imageUrl;
     if(typeof url==='string'&&/^https?:\/\//i.test(url)){
@@ -41,10 +48,11 @@
     }else visual.textContent='Bild nicht verfügbar';
     const body=document.createElement('div');body.className='emergencyBodyV573';
     const number=document.createElement('small');number.textContent='#'+String(x.setNumber||'');
-    const title=document.createElement('strong');title.textContent=String(x.name||'LEGO Set');
+    const title=document.createElement('strong');title.className='emergencyTitleV573';title.textContent=String(x.name||'LEGO Set');
     const prices=document.createElement('div');prices.className='emergencyPricesV573';
-    const buy=document.createElement('span');buy.textContent='Kauf '+euro(x.purchasePrice);
-    const val=document.createElement('span');val.textContent='Wert '+(Number(x.currentValue)>0?euro(x.currentValue):'Nicht erfasst');
+    const priceCell=(label,value)=>{const cell=document.createElement('span'),caption=document.createElement('small'),amount=document.createElement('b');caption.textContent=label;amount.textContent=value;cell.append(caption,amount);return cell};
+    const buy=priceCell('Kaufpreis / Stück',euro(x.purchasePrice));
+    const val=priceCell('Marktwert / Stück',Number(x.currentValue)>0?euro(x.currentValue):'Nicht erfasst');
     prices.append(buy,val);body.append(number,title,prices);card.append(visual,body);
     card.onclick=()=>{if(typeof showDetailV3==='function')showDetailV3(String(x.setNumber))};
     fragment.append(card)

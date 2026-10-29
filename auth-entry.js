@@ -23,6 +23,7 @@
     $('intro').textContent = mode === 'signup' ? 'Erstelle dein Konto für den Brick City Manager. Bis zu 20 Sets kostenlos verwalten.' : mode === 'reset' ? 'Wir senden dir einen Link, mit dem du ein neues Passwort festlegen kannst.' : mode === 'password' ? 'Vergib ein neues Passwort für dein Brick City Manager Konto.' : 'Melde dich an und öffne deine persönliche Sammlung.';
     $('login').textContent = mode === 'signup' ? 'Kostenloses Konto erstellen' : mode === 'reset' ? 'Link anfordern' : mode === 'password' ? 'Passwort speichern' : 'Anmelden';
     $('passwordRow').hidden = mode === 'reset';
+    $('passwordHint').hidden = mode !== 'signup' && mode !== 'password';
     $('emailRow').hidden = mode === 'password';
     $('password').required = mode !== 'reset';
     $('email').required = mode !== 'password';
@@ -31,6 +32,7 @@
     $('forgot').hidden = mode !== 'login';
     $('open').hidden = !session || mode === 'password';
     $('switch').hidden = !session || mode === 'password';
+    $('sessionPanel').hidden = !session;
     $('sessionInfo').textContent = session ? 'Angemeldet als ' + (session.user?.email || 'dein Konto') : '';
   }
   function friendly(error) {
@@ -100,7 +102,7 @@
     const { data, error } = await api().auth.getUser();
     if (error || !data?.user) { session = null; render(); message('Die Sitzung ist abgelaufen. Bitte melde dich erneut an.', true); return; }
     sessionStorage.setItem('brick-login-entry-5096', 'allow');
-    location.assign('./index.html?v=50.98');
+    location.assign('./index.html?v=50.99');
   }));
   render();
   (async () => {

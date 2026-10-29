@@ -1,12 +1,17 @@
 name: Mobile registration and save controls
 on:
   push:
-    branches: [main, growth/collector-onboarding-20261029]
+    branches: [main, design/visual-refresh-5099]
     paths:
       - 'anmelden.html'
       - 'auth-entry.js'
       - 'index.html'
       - 'mobile-viewport.js'
+      - 'visual-system-v599.css'
+      - 'visual-system-v599.js'
+      - 'collection-emergency-v573.js'
+      - 'assets/ui-icons.svg'
+      - 'scripts/visual-release-smoke.cjs'
       - 'mobile-save-bar-v598.css'
       - 'scripts/mobile-release-smoke.cjs'
       - '.github/workflows/mobile-release-smoke.yml'
@@ -28,3 +33,10 @@ jobs:
         run: |
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/bcm-http.log 2>&1 &
           NODE_PATH="$RUNNER_TEMP/bcm-browser/node_modules" node scripts/mobile-release-smoke.cjs
+          NODE_PATH="$RUNNER_TEMP/bcm-browser/node_modules" node scripts/visual-release-smoke.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-review-50-99
+          path: /tmp/bcm-visual-review/
+          retention-days: 3
