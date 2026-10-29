@@ -5,9 +5,9 @@
     "brickeconomyRequestsThisRun": 0,
     "brickeconomyUsage": {
       "quota": 100,
-      "remaining": 40,
+      "remaining": 20,
       "resets_at": "2026-10-30T00:00:00Z",
-      "used_today": 60
+      "used_today": 80
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
@@ -19,7 +19,7 @@
       "BrickEconomy 1036: 400 Client Error: Bad Request for url: https://www.brickeconomy.com/api/v1/set/1036-1?currency=EUR",
       "No metadata for 1036"
     ],
-    "lastUpdated": "2026-10-29T13:26:04Z",
+    "lastUpdated": "2026-10-29T17:14:28Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 2,
@@ -2021,7 +2021,7 @@
     },
     "21046": {
       "brickeconomyName": "Empire State Building",
-      "brickeconomyUpdated": "2026-10-27T13:13:08Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:07Z",
       "ean": "5702016368338",
       "forecast2yEUR": 218.27,
       "forecast5yEUR": 273.13,
@@ -2045,7 +2045,7 @@
     },
     "21047": {
       "brickeconomyName": "Las Vegas",
-      "brickeconomyUpdated": "2026-10-27T13:13:10Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:08Z",
       "ean": "5702016348897",
       "forecast2yEUR": 129.09,
       "forecast5yEUR": 172.37,
@@ -2096,7 +2096,7 @@
     },
     "21056": {
       "brickeconomyName": "Taj Mahal",
-      "brickeconomyUpdated": "2026-10-27T13:13:11Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:09Z",
       "ean": "5702016914139",
       "forecast2yEUR": 146.32,
       "forecast5yEUR": 180.74,
@@ -2120,7 +2120,7 @@
     },
     "21057": {
       "brickeconomyName": "Singapore",
-      "brickeconomyUpdated": "2026-10-27T13:13:13Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:10Z",
       "ean": "5702017152332",
       "forecast2yEUR": 67.42,
       "forecast5yEUR": 79.28,
@@ -2144,7 +2144,7 @@
     },
     "21060": {
       "brickeconomyName": "Himeji Castle",
-      "brickeconomyUpdated": "2026-10-27T13:13:14Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:12Z",
       "ean": "5702017417721",
       "forecast2yEUR": 167.91,
       "forecast5yEUR": 190.22,
@@ -2168,7 +2168,7 @@
     },
     "21061": {
       "brickeconomyName": "Notre Dame Cathedral",
-      "brickeconomyUpdated": "2026-10-27T13:13:16Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:13Z",
       "ean": "5702017582412",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -2192,13 +2192,13 @@
     },
     "21062": {
       "brickeconomyName": "Trevi Fountain",
-      "brickeconomyUpdated": "2026-10-27T13:13:17Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:14Z",
       "ean": "5702017816753",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/21062-1/151344.jpg",
-      "marketNewEUR": 133.56,
+      "marketNewEUR": 151.49,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -2216,13 +2216,13 @@
     },
     "21063": {
       "brickeconomyName": "Neuschwanstein Castle",
-      "brickeconomyUpdated": "2026-10-27T13:13:19Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:15Z",
       "ean": "5702017816760",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/21063-1/158219.jpg",
-      "marketNewEUR": 245.02,
+      "marketNewEUR": 243.88,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -2240,7 +2240,7 @@
     },
     "21064": {
       "brickeconomyName": "Paris – City of Love",
-      "brickeconomyUpdated": "2026-10-27T13:13:20Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:17Z",
       "ean": "5702018063668",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -2264,7 +2264,7 @@
     },
     "21310": {
       "brickeconomyName": "Old Fishing Store",
-      "brickeconomyUpdated": "2026-10-27T13:13:21Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:18Z",
       "ean": "5702016041057",
       "forecast2yEUR": 429.49,
       "forecast5yEUR": 502.78,
@@ -2288,7 +2288,7 @@
     },
     "21316": {
       "brickeconomyName": "The Flintstones",
-      "brickeconomyUpdated": "2026-10-27T13:13:22Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:19Z",
       "ean": "5702016396300",
       "forecast2yEUR": 150.8,
       "forecast5yEUR": 201.63,
@@ -2312,7 +2312,7 @@
     },
     "21317": {
       "brickeconomyName": "Steamboat Willie",
-      "brickeconomyUpdated": "2026-10-27T13:13:23Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:20Z",
       "ean": "5702016501995",
       "forecast2yEUR": 149.32,
       "forecast5yEUR": 181.35,
@@ -2336,7 +2336,7 @@
     },
     "21318": {
       "brickeconomyName": "Treehouse",
-      "brickeconomyUpdated": "2026-10-27T13:13:25Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:22Z",
       "ean": "5702016554205",
       "forecast2yEUR": 215.19,
       "forecast5yEUR": 238.42,
@@ -2384,7 +2384,7 @@
     },
     "21324": {
       "brickeconomyName": "123 Sesame Street",
-      "brickeconomyUpdated": "2026-10-27T13:13:26Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:23Z",
       "ean": "5702016819953",
       "forecast2yEUR": 223.41,
       "forecast5yEUR": 294.01,
@@ -2408,7 +2408,7 @@
     },
     "21325": {
       "brickeconomyName": "Medieval Blacksmith",
-      "brickeconomyUpdated": "2026-10-27T13:13:27Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:24Z",
       "ean": "5702016911985",
       "forecast2yEUR": 170.37,
       "forecast5yEUR": 182.1,
@@ -2939,7 +2939,7 @@
     },
     "40236": {
       "brickeconomyName": "Romantic Valentine Picnic",
-      "brickeconomyUpdated": "2026-10-27T13:13:28Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:25Z",
       "ean": "5702015866996",
       "growth12mPct": 1.24,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40236-1.jpg",
@@ -3517,11 +3517,11 @@
     },
     "40766": {
       "brickeconomyName": "Tribute to Jane Austen's Books",
-      "brickeconomyUpdated": "2026-10-27T13:13:30Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:27Z",
       "ean": "5702017832081",
       "forecast2yEUR": 60.01,
       "forecast5yEUR": 68.12,
-      "growth12mPct": 0.91,
+      "growth12mPct": 0.99,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40766-1/157865.jpg",
       "marketNewEUR": 54.56,
       "marketUsedEUR": 37.35,
@@ -4439,7 +4439,7 @@
     },
     "76386": {
       "brickeconomyName": "Hogwarts: Polyjuice Potion Mistake",
-      "brickeconomyUpdated": "2026-10-27T13:13:29Z",
+      "brickeconomyUpdated": "2026-10-29T17:14:26Z",
       "bricksetUpdated": "2026-10-12T22:20:07Z",
       "depth": 6,
       "ean": "5702016913507",
