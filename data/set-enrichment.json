@@ -5,9 +5,9 @@
     "brickeconomyRequestsThisRun": 0,
     "brickeconomyUsage": {
       "quota": 100,
-      "remaining": 100,
+      "remaining": 80,
       "resets_at": "2026-10-30T00:00:00Z",
-      "used_today": 0
+      "used_today": 20
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
@@ -19,7 +19,7 @@
       "BrickEconomy 1036: 400 Client Error: Bad Request for url: https://www.brickeconomy.com/api/v1/set/1036-1?currency=EUR",
       "No metadata for 1036"
     ],
-    "lastUpdated": "2026-10-29T01:25:14Z",
+    "lastUpdated": "2026-10-29T05:06:49Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 2,
@@ -59,7 +59,7 @@
     },
     "10199": {
       "brickeconomyName": "Winter Village Toy Shop",
-      "brickeconomyUpdated": "2026-10-27T01:11:52Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:34Z",
       "ean": "5702014534759",
       "forecast2yEUR": 240.42,
       "forecast5yEUR": 281.39,
@@ -83,7 +83,7 @@
     },
     "10211": {
       "brickeconomyName": "Grand Emporium",
-      "brickeconomyUpdated": "2026-10-27T01:11:55Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:36Z",
       "ean": "5702014102118",
       "forecast2yEUR": 481.13,
       "forecast5yEUR": 565.85,
@@ -107,7 +107,7 @@
     },
     "10214": {
       "brickeconomyName": "Tower Bridge",
-      "brickeconomyUpdated": "2026-10-27T01:11:57Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:37Z",
       "ean": "4516793140787",
       "forecast2yEUR": 256.07,
       "forecast5yEUR": 283.85,
@@ -131,7 +131,7 @@
     },
     "10216": {
       "brickeconomyName": "Winter Village Bakery",
-      "brickeconomyUpdated": "2026-10-27T01:11:58Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:37Z",
       "ean": null,
       "forecast2yEUR": 328.79,
       "forecast5yEUR": 366.88,
@@ -155,7 +155,7 @@
     },
     "10218": {
       "brickeconomyName": "Pet Shop",
-      "brickeconomyUpdated": "2026-10-27T01:12:00Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:38Z",
       "ean": "5334999106685",
       "forecast2yEUR": 299.85,
       "forecast5yEUR": 355.58,
@@ -179,7 +179,7 @@
     },
     "10222": {
       "brickeconomyName": "Winter Village Post Office",
-      "brickeconomyUpdated": "2026-10-27T01:12:02Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:39Z",
       "ean": null,
       "forecast2yEUR": 475.23,
       "forecast5yEUR": 568.6,
@@ -203,7 +203,7 @@
     },
     "10224": {
       "brickeconomyName": "Town Hall",
-      "brickeconomyUpdated": "2026-10-27T01:12:03Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:39Z",
       "ean": "4516793143450",
       "forecast2yEUR": 1132.99,
       "forecast5yEUR": 1380.56,
@@ -227,7 +227,7 @@
     },
     "10229": {
       "brickeconomyName": "Winter Village Cottage",
-      "brickeconomyUpdated": "2026-10-27T01:12:04Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:40Z",
       "ean": "5702014842281",
       "forecast2yEUR": 392.22,
       "forecast5yEUR": 482.86,
@@ -251,7 +251,7 @@
     },
     "10232": {
       "brickeconomyName": "Palace Cinema",
-      "brickeconomyUpdated": "2026-10-27T01:12:05Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:41Z",
       "ean": "4516790127507",
       "forecast2yEUR": 365.3,
       "forecast5yEUR": 446.08,
@@ -275,7 +275,7 @@
     },
     "10235": {
       "brickeconomyName": "Winter Village Market",
-      "brickeconomyUpdated": "2026-10-27T01:12:07Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:42Z",
       "ean": "6900743190010",
       "forecast2yEUR": 258.08,
       "forecast5yEUR": 311.37,
@@ -299,7 +299,7 @@
     },
     "10243": {
       "brickeconomyName": "Parisian Restaurant",
-      "brickeconomyUpdated": "2026-10-27T01:12:08Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:43Z",
       "ean": "6900743189120",
       "forecast2yEUR": 370.27,
       "forecast5yEUR": 468.81,
@@ -323,7 +323,7 @@
     },
     "10245": {
       "brickeconomyName": "Santa's Workshop",
-      "brickeconomyUpdated": "2026-10-27T01:12:09Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:44Z",
       "ean": "5702015122696",
       "forecast2yEUR": 185.2,
       "forecast5yEUR": 209.28,
@@ -347,7 +347,7 @@
     },
     "10246": {
       "brickeconomyName": "Detective's Office",
-      "brickeconomyUpdated": "2026-10-27T01:12:11Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:44Z",
       "bricksetUpdated": "2026-10-12T22:19:52Z",
       "ean": "5702015348386",
       "forecast2yEUR": 465.78,
@@ -376,7 +376,7 @@
     },
     "10249": {
       "brickeconomyName": "Winter Toy Shop",
-      "brickeconomyUpdated": "2026-10-27T01:12:12Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:45Z",
       "ean": "0755835697238",
       "forecast2yEUR": 194.57,
       "forecast5yEUR": 220.17,
@@ -400,7 +400,7 @@
     },
     "10251": {
       "brickeconomyName": "Brick Bank",
-      "brickeconomyUpdated": "2026-10-27T01:12:14Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:46Z",
       "bricksetUpdated": "2026-10-12T22:19:53Z",
       "ean": "5702015591058",
       "forecast2yEUR": 767.79,
@@ -429,7 +429,7 @@
     },
     "10254": {
       "brickeconomyName": "Winter Holiday Train",
-      "brickeconomyUpdated": "2026-10-27T01:12:15Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:47Z",
       "ean": "5702015591065",
       "forecast2yEUR": 196.48,
       "forecast5yEUR": 211.93,
@@ -453,7 +453,7 @@
     },
     "10255": {
       "brickeconomyName": "Assembly Square",
-      "brickeconomyUpdated": "2026-10-27T01:12:16Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:47Z",
       "bricksetUpdated": "2026-10-12T22:19:54Z",
       "ean": "5702015865272",
       "forecast2yEUR": 394.07,
@@ -482,7 +482,7 @@
     },
     "10258": {
       "brickeconomyName": "London Bus",
-      "brickeconomyUpdated": "2026-10-27T01:12:17Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:48Z",
       "bricksetUpdated": "2026-10-12T22:19:55Z",
       "ean": "0067341926437",
       "forecast2yEUR": 153.49,
@@ -3469,7 +3469,7 @@
     },
     "40746": {
       "brickeconomyName": "Santa's Delivery Truck",
-      "brickeconomyUpdated": "2026-10-27T01:11:49Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:33Z",
       "ean": "5702017598574",
       "forecast2yEUR": 18.98,
       "forecast5yEUR": 21.03,
@@ -3493,7 +3493,7 @@
     },
     "40763": {
       "brickeconomyName": "Children's Day Teddy Bear",
-      "brickeconomyUpdated": "2026-10-27T01:11:53Z",
+      "brickeconomyUpdated": "2026-10-29T05:06:35Z",
       "ean": "5702017830230",
       "forecast2yEUR": 13.55,
       "forecast5yEUR": 14.09,
