@@ -1,7 +1,7 @@
 name: Mobile registration and save controls
 on:
   push:
-    branches: [main, design/visual-refresh-5099]
+    branches: [main, design/visual-refresh-5099, fix/one-step-login]
     paths:
       - 'anmelden.html'
       - 'auth-entry.js'

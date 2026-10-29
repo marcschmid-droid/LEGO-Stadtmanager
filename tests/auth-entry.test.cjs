@@ -1,19 +1,19 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const tick=()=>new Promise(setImmediate);
-async function setup({signupSession=null,loginError=null}={}){
- const elements=new Map(),calls=[];let authEvent;
+async function setup({signupSession=null,loginError=null,loginSession={user:{email:'test@example.invalid'}},verifiedUser={email:'test@example.invalid'}}={}){
+ const elements=new Map(),calls=[],redirects=[],storage=[];let authEvent;
  const get=id=>{if(!elements.has(id))elements.set(id,{value:'',hidden:false,disabled:false,listeners:{},classList:{toggle(){}},addEventListener(e,f){this.listeners[e]=f},reportValidity:()=>true});return elements.get(id)};
  const auth={onAuthStateChange:f=>authEvent=f,getSession:async()=>({data:{session:null}}),
  signUp:async input=>{calls.push(input);authEvent('SIGNED_IN',signupSession);return {data:{session:signupSession}}},
- signInWithPassword:async()=>({error:loginError,data:{session:{user:{email:'test@example.invalid'}}}}),
- resetPasswordForEmail:async()=>({}),resend:async input=>{calls.push(input);return {}},getUser:async()=>({data:{user:null}})};
+ signInWithPassword:async()=>({error:loginError,data:{session:loginSession}}),
+ resetPasswordForEmail:async()=>({}),resend:async input=>{calls.push(input);return {}},getUser:async()=>({data:{user:verifiedUser}})};
  const context={window:{LEGO_SUPABASE:{url:'https://example.invalid',publishableKey:'public'},supabase:{createClient:()=>({auth})}},
- location:{search:'',href:'https://example.invalid/anmelden.html',hash:'',assign:()=>{}},
+ location:{search:'',href:'https://example.invalid/anmelden.html',hash:'',assign:url=>redirects.push(url)},
  document:{getElementById:get,querySelectorAll:()=>[get('login'),get('register')]},
- URL,URLSearchParams,setTimeout:f=>queueMicrotask(f),sessionStorage:{setItem(){}},console};
+ URL,URLSearchParams,setTimeout:f=>queueMicrotask(f),sessionStorage:{setItem:(key,value)=>storage.push([key,value])},console};
  vm.createContext(context);vm.runInContext(fs.readFileSync('auth-entry.js','utf8'),context);await tick();
  get('email').value='test@example.invalid';get('password').value='test-password-only';
- return {get,calls,submit:async()=>{get('form').listeners.submit({preventDefault(){}});await tick()},click:async id=>{get(id).listeners.click();await tick()}};
+ return {get,calls,redirects,storage,submit:async()=>{get('form').listeners.submit({preventDefault(){}});await tick()},click:async id=>{get(id).listeners.click();await tick()}};
 }
 test('Bestätigungshinweis bleibt nach Registrierung ohne Sitzung sichtbar',async()=>{
  const x=await setup();await x.click('register');await x.submit();
@@ -31,4 +31,22 @@ test('nach Registrierung kann direkt zurück zur Anmeldung gewechselt werden',as
 test('unbestätigte E-Mail zeigt eine verständliche Anleitung',async()=>{
  const x=await setup({loginError:{message:'Email not confirmed'}});await x.submit();
  assert.match(x.get('status').textContent,/bestätige zuerst/);assert.equal(x.get('resend').hidden,false);
+});
+
+test('Anmelden öffnet die Sammlung direkt nach gültiger Benutzerprüfung',async()=>{
+ const x=await setup();await x.submit();
+ assert.deepEqual(x.redirects,['./index.html?v=50.99']);
+ assert.deepEqual(x.storage,[['brick-login-entry-5096','allow']]);
+});
+test('fehlgeschlagene Anmeldung leitet nicht weiter',async()=>{
+ const x=await setup({loginError:{message:'Invalid login credentials'}});await x.submit();
+ assert.deepEqual(x.redirects,[]);assert.deepEqual(x.storage,[]);
+ assert.match(x.get('status').textContent,/Passwort stimmt nicht/);
+});
+test('fehlende Sitzung oder ungültiger Benutzer öffnet keine Sammlung',async()=>{
+ for(const options of [{loginSession:null},{verifiedUser:null}]){
+  const x=await setup(options);await x.submit();
+  assert.deepEqual(x.redirects,[]);assert.deepEqual(x.storage,[]);
+  assert.equal(x.get('status').textContent.includes('erneut an'),true);
+ }
 });

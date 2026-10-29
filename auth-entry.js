@@ -80,7 +80,8 @@
         const { data, error } = await api().auth.signInWithPassword({ email, password });
         if (error) throw error;
         session = data?.session || null;
-        render(); message('Du bist angemeldet. Öffne jetzt deine Sammlung.');
+        if (!session) throw Error('Keine gültige Sitzung erhalten. Bitte melde dich erneut an.');
+        await openCollection();
       }
     });
   });
@@ -98,12 +99,14 @@
     const { error } = await api().auth.signOut(); if (error) throw error;
     session = null; mode = 'login'; $('email').value = ''; $('password').value = ''; render(); message('Du bist abgemeldet.');
   }));
-  $('open').addEventListener('click', () => run(async () => {
+  async function openCollection() {
     const { data, error } = await api().auth.getUser();
     if (error || !data?.user) { session = null; render(); message('Die Sitzung ist abgelaufen. Bitte melde dich erneut an.', true); return; }
     sessionStorage.setItem('brick-login-entry-5096', 'allow');
+    message('Anmeldung erfolgreich. Deine Sammlung wird geöffnet …');
     location.assign('./index.html?v=50.99');
-  }));
+  }
+  $('open').addEventListener('click', () => run(openCollection));
   render();
   (async () => {
     try {
