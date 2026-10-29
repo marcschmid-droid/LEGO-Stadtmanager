@@ -42,7 +42,7 @@
 </script>
 <title>Brick City Manager</title><meta name="application-name" content="Brick City Manager"><meta name="apple-mobile-web-app-title" content="Brick City Manager">
 <script>/* No automatic reload: prevent login splash and stale navigation fallback. */</script><link rel="stylesheet" href="./collection-view-v571.css?v=50.71">
-<link rel="stylesheet" href="./collection-emergency-v573.css?v=50.85"><link rel="stylesheet" href="./valuation-audit-v574.css?v=50.85"><style>#collection #stableCollectionV571,#collection #collectionGrid,#collection .tablewrap{display:none!important}#collection #emergencyCollectionV573{display:block!important}</style><link rel="stylesheet" href="./visual-system-v599.css?v=50.99"><link rel="stylesheet" href="./showcase.css?v=2"></head>
+<link rel="stylesheet" href="./collection-emergency-v573.css?v=50.85"><link rel="stylesheet" href="./valuation-audit-v574.css?v=50.85"><style>#collection #stableCollectionV571,#collection #collectionGrid,#collection .tablewrap{display:none!important}#collection #emergencyCollectionV573{display:block!important}</style><link rel="stylesheet" href="./visual-system-v599.css?v=search-1"><link rel="stylesheet" href="./showcase.css?v=2"></head>
 <body class="themeV39 bcmVisualV599">
 <header><div class="head">
   <div class="brandV39"><img src="./icon.svg?v=50.56" alt="" class="brandIconV39" decoding="async"><div><h1>Brick City Manager <span class="versionPillV553" id="visibleVersionV553">v50.99</span></h1><small>Deine Sammlung. Dein Überblick. <b id="appVersion">v50.99</b></small></div></div>
@@ -217,7 +217,7 @@ document.addEventListener("click",function(e){
 </section>
 
 <section id="collection" class="panel">
-  <div class="toolbar"><input id="search" placeholder="Setnummer, Name, Kategorie, Bereich, Lagerort…"><select id="areaFilter"><option value="">Alle Bereiche</option></select><button class="btn secondary" id="toggleView">▦ Raster</button><button class="btn" id="addBtn"><svg class="bcmIcon" aria-hidden="true" focusable="false"><use href="./assets/ui-icons.svg#plus"></use></svg><span>Set hinzufügen</span></button></div>
+  <div class="toolbar"><div class="collectionSearchV600"><input id="search" type="search" aria-label="Sammlung durchsuchen" placeholder="Setnummer, Name, Tag oder Lagerort" title="Mehrere Suchbegriffe grenzen die Treffer ein." autocomplete="off" enterkeyhint="search"><button id="clearCollectionSearch" type="button" aria-label="Suchfeld leeren" title="Suchfeld leeren" hidden>×</button></div><select id="areaFilter" aria-label="Stadtbereich filtern"><option value="">Alle Bereiche</option></select><button class="btn secondary" id="toggleView">▦ Raster</button><button class="btn" id="addBtn"><svg class="bcmIcon" aria-hidden="true" focusable="false"><use href="./assets/ui-icons.svg#plus"></use></svg><span>Set hinzufügen</span></button></div>
   <div class="tablewrap"><table>
     <thead><tr><th>Set</th><th>Name</th><th>Anzahl</th><th>Kaufpreis</th><th>Wert</th><th>Bereich</th><th></th></tr></thead>
     <tbody id="collectionBody"></tbody>
@@ -539,7 +539,7 @@ document.addEventListener("click",function(e){
 <script src="./collection-metrics-v570.js?v=50.96-zeroaccount2"></script>
 <script src="./stability-ui-v570.js?v=managed-1"></script>
 
-<script src="./collection-emergency-v573.js?v=managed-1"></script><script src="./valuation-audit-v574.js?v=50.85"></script><script src="./recognition-feedback-v575.js?v=50.85"></script><script src="./catalog-diagnostics-v576.js?v=50.85"></script><script src="./catalog-resilience-v579.js?v=50.85"></script><script src="./instant-set-lookup-v582.js?v=50.85"></script><script src="./collection-integrity-v583.js?v=50.90"></script>
+<script src="./collection-query.js?v=1"></script><script src="./collection-emergency-v573.js?v=search-1"></script><script src="./valuation-audit-v574.js?v=50.85"></script><script src="./recognition-feedback-v575.js?v=50.85"></script><script src="./catalog-diagnostics-v576.js?v=50.85"></script><script src="./catalog-resilience-v579.js?v=50.85"></script><script src="./instant-set-lookup-v582.js?v=50.85"></script><script src="./collection-integrity-v583.js?v=50.90"></script>
 <script src="./set-save-model.js?v=50.98"></script>
 <script>
 /* Production emergency save: independent of partially initialized app-v3.js */
