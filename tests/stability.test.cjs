@@ -21,5 +21,7 @@ test('Sammlung im Code darf nicht auf 36 Sets beschränkt sein',()=>{
 test('Startseite hat vier gewünschte Kennzahlen',()=>{
  const s=fs.readFileSync('index.html','utf8');
  for(const k of ['kValue','kInvest','kUnique','kGainPct'])assert.match(s,new RegExp('id="'+k+'"'));
- assert.match(s,/ui-repair-v569\.js/);
+ assert.match(s,/stability-ui-v570\.js/);
+ assert.doesNotMatch(s,/<script src="\.\/ui-repair-v569\.js/);
+ assert.doesNotMatch(s,/<script src="\.\/collection-view-v571\.js/);
 });
