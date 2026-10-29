@@ -22,7 +22,7 @@ const base=process.env.BCM_TEST_BASE||'http://127.0.0.1:8765';
   assert.equal(await page.locator('#open').isVisible(),false);
   await page.getByRole('button',{name:'Zurück zur Anmeldung',exact:true}).click();
   assert.equal(await page.locator('#login').textContent(),'Anmelden');
-  await page.route('**/index.html*',route=>route.fulfill({contentType:'text/html',body:'<!doctype html><h1>Sammlung geöffnet</h1>'}));
+  await page.route('**/index.html*',route=>route.fulfill({contentType:'text/html; charset=utf-8',body:'<!doctype html><meta charset="utf-8"><h1>Sammlung geöffnet</h1>'}));
   await page.getByLabel('Passwort',{exact:true}).fill('browser-test-only-123');
   await page.getByRole('button',{name:'Anmelden',exact:true}).click();
   await page.waitForURL('**/index.html?v=50.99');
