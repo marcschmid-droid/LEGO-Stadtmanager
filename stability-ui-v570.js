@@ -3,7 +3,7 @@
  'use strict';
  function paint(){
   if(typeof state==='undefined'||!window.BrickCollectionMetrics)return;
-  const m=window.BrickCollectionMetrics.metrics(state);
+  const m=window.BrickCollectionMetrics.metrics(state,typeof setValuationV603==='function'?setValuationV603:undefined);
   const fmt=n=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
   const show=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
   show('kUnique',String(m.count));

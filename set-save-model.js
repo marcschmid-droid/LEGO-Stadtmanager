@@ -25,6 +25,7 @@
       fStorageRoom:'storageRoom', fStorageShelf:'storageShelf', fStorageBin:'storageBin',
       fBarcode:'barcode', fPurchaseDate:'purchaseDate', fSeller:'seller' };
     for (const [id,key] of Object.entries(fields)) if (get(id) !== undefined && get(id) !== null) item[key] = text(id);
+    if (get('fApplyConditionAllV603') === true && item.condition && Array.isArray(item.exemplars)) item.exemplars = item.exemplars.map(e => ({...e,condition:item.condition}));
     if (item.module) item.module = item.module.toUpperCase();
     return item;
   }

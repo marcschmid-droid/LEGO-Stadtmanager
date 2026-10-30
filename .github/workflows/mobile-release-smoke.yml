@@ -1,7 +1,7 @@
 name: Mobile registration and save controls
 on:
   push:
-    branches: [main, design/visual-refresh-5099, fix/one-step-login, feature/showcase, feature/managed-showcase, improve/collection-search, design/collection-polish]
+    branches: [main, design/visual-refresh-5099, fix/one-step-login, feature/showcase, feature/managed-showcase, improve/collection-search, design/collection-polish, improve/collection-reliability]
     paths:
       - 'anmelden.html'
       - 'auth-entry.js'
@@ -14,8 +14,15 @@ on:
       - 'focus-v564.js'
       - 'collection-emergency-v573.js'
       - 'collection-query.js'
+      - 'collection-valuation.js'
+      - 'sync-status-v603.js'
+      - 'set-save-model.js'
+      - 'app-v3.js'
+      - 'save-protection-v559.js'
+      - 'collection-metrics-v570.js'
       - 'assets/ui-icons.svg'
       - 'scripts/visual-release-smoke.cjs'
+      - 'scripts/reliability-smoke.cjs'
       - 'mobile-save-bar-v598.css'
       - 'scripts/mobile-release-smoke.cjs'
       - '.github/workflows/mobile-release-smoke.yml'
@@ -38,6 +45,7 @@ jobs:
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/bcm-http.log 2>&1 &
           NODE_PATH="$RUNNER_TEMP/bcm-browser/node_modules" node scripts/mobile-release-smoke.cjs
           NODE_PATH="$RUNNER_TEMP/bcm-browser/node_modules" node scripts/visual-release-smoke.cjs
+          NODE_PATH="$RUNNER_TEMP/bcm-browser/node_modules" node scripts/reliability-smoke.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

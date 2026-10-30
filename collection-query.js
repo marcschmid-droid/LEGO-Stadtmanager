@@ -16,7 +16,10 @@
   if(!filter)return true;
   if(filter.query&&!matchesQuery(item,filter.query))return false;
   if(filter.area&&item.cityArea!==filter.area)return false;
-  if(filter.kind==='sealed'&&item.condition!=='Neu / OVP')return false;
+  if(filter.kind==='sealed'){
+   const copies=Array.isArray(item.exemplars)?item.exemplars:[],quantity=Number(item.quantity)||1;
+   if(copies.length>quantity||!/^Neu\s*\/\s*OVP$/i.test(item.condition||'')&&copies.length<quantity||copies.some(e=>!/^Neu\s*\/\s*OVP$/i.test(e.condition??item.condition??'')))return false;
+  }
   if(filter.kind==='nobox'&&!(item.box==='Nein'||(Array.isArray(item.exemplars)&&item.exemplars.length&&item.exemplars.every(e=>e.box==='Nein'))))return false;
   return !(filter.kind==='sale'&&!item.forSaleV546);
  }
