@@ -195,7 +195,7 @@ body.themeV39.bcmVisualV599 .legal-note a { display:inline-block; margin-top:7px
  body.themeV39.bcmVisualV599 #collectionEssentialsV564 > strong,body.themeV39.bcmVisualV599 #cityEssentialsV564 > strong { font-size:20px; }
  body.themeV39.bcmVisualV599 #collectionEssentialsV564 button,body.themeV39.bcmVisualV599 #cityEssentialsV564 button { padding:8px; font-size:11px; gap:5px; }
  body.themeV39.bcmVisualV599 #collection > .toolbar { grid-template-columns:repeat(2,minmax(0,1fr))!important; grid-template-areas:'search search' 'area sort' 'share undo'; padding:10px!important; }
- body.themeV39.bcmVisualV599 #collection > .toolbar select { font-size:12px!important; padding-left:9px; padding-right:20px; }
+ body.themeV39.bcmVisualV599 #collection > .toolbar select { font-size:12px!important; padding-left:8px; padding-right:16px; }
  body.themeV39.bcmVisualV599 #collection > .toolbar :is(#showcaseShare,#undoV546) { padding:10px; }
  body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyVisualV573 { aspect-ratio:4/3; --slot-padding:12px; }
  body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyBodyV573 { padding:11px; gap:8px; }

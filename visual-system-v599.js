@@ -7,7 +7,7 @@
     const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
     svg.setAttribute('class','bcmIcon');svg.setAttribute('width','20');svg.setAttribute('height','20');svg.setAttribute('aria-hidden','true');
     const use=document.createElementNS('http://www.w3.org/2000/svg','use');
-    use.setAttribute('href','./assets/ui-icons.svg#user');svg.append(use);
+    use.setAttribute('href','./assets/ui-icons.svg?v=graphic-1#user');svg.append(use);
     button.replaceChildren(svg);
   }
   function navigation(){
@@ -39,7 +39,7 @@
     const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
     svg.setAttribute('class','bcmIcon');svg.setAttribute('width','20');svg.setAttribute('height','20');svg.setAttribute('aria-hidden','true');
     const use=document.createElementNS('http://www.w3.org/2000/svg','use');
-    use.setAttribute('href','./assets/ui-icons.svg#'+icon);svg.append(use);
+    use.setAttribute('href','./assets/ui-icons.svg?v=graphic-1#'+icon);svg.append(use);
     const caption=document.createElement('span');caption.textContent=label;
     button.replaceChildren(svg,caption);button.dataset.visualAction='true';
     button.setAttribute('aria-label',accessibleLabel);

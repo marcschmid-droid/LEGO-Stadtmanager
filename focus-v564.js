@@ -5,7 +5,7 @@
   if(!collection||!city)return;
   if(!document.getElementById('collectionEssentialsV564')){
    const bar=document.createElement('div');bar.id='collectionEssentialsV564';
-   bar.innerHTML='<strong>Meine Sammlung</strong><button class="btn secondary" type="button" id="collectionMoreV564" aria-expanded="false"><svg class="bcmIcon" width="16" height="16" aria-hidden="true"><use href="./assets/ui-icons.svg#sliders"></use></svg><span>Filter & Extras</span></button>';
+   bar.innerHTML='<strong>Meine Sammlung</strong><button class="btn secondary" type="button" id="collectionMoreV564" aria-expanded="false"><svg class="bcmIcon" width="16" height="16" aria-hidden="true"><use href="./assets/ui-icons.svg?v=graphic-1#sliders"></use></svg><span>Filter & Extras</span></button>';
    collection.insertBefore(bar,collection.firstChild);
    bar.querySelector('button').onclick=()=>{const open=collection.classList.toggle('bcm-expanded');bar.querySelector('button span').textContent=open?'Weniger anzeigen':'Filter & Extras';bar.querySelector('button').setAttribute('aria-expanded',String(open))};
   }
@@ -15,7 +15,7 @@
    if(cityCard)cityCard.classList.add('bcm-primary-city');
    if(planner)planner.classList.add('bcm-primary-city');
    const bar=document.createElement('div');bar.id='cityEssentialsV564';
-   bar.innerHTML='<strong>Meine Stadt</strong><button class="btn secondary" type="button" id="cityMoreV564" aria-expanded="false"><svg class="bcmIcon" width="16" height="16" aria-hidden="true"><use href="./assets/ui-icons.svg#sliders"></use></svg><span>Planung & Extras</span></button>';
+   bar.innerHTML='<strong>Meine Stadt</strong><button class="btn secondary" type="button" id="cityMoreV564" aria-expanded="false"><svg class="bcmIcon" width="16" height="16" aria-hidden="true"><use href="./assets/ui-icons.svg?v=graphic-1#sliders"></use></svg><span>Planung & Extras</span></button>';
    city.insertBefore(bar,city.firstChild);
    bar.querySelector('button').onclick=()=>{const open=city.classList.toggle('bcm-expanded');bar.querySelector('button span').textContent=open?'Weniger anzeigen':'Planung & Extras';bar.querySelector('button').setAttribute('aria-expanded',String(open))};
   }

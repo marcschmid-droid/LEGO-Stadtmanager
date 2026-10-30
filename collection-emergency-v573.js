@@ -17,7 +17,7 @@
  function placeholder(visual,label){
   const empty=document.createElement('span');empty.className='emergencyImageEmptyV601';
   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','bcmIcon');svg.setAttribute('width','34');svg.setAttribute('height','34');svg.setAttribute('aria-hidden','true');
-  const use=document.createElementNS('http://www.w3.org/2000/svg','use');use.setAttribute('href','./assets/ui-icons.svg#box');svg.append(use);
+  const use=document.createElementNS('http://www.w3.org/2000/svg','use');use.setAttribute('href','./assets/ui-icons.svg?v=graphic-1#box');svg.append(use);
   const caption=document.createElement('span');caption.textContent=label;empty.append(svg,caption);visual.append(empty);
  }
  function show(){
