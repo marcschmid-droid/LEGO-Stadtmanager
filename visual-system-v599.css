@@ -203,3 +203,17 @@ body.themeV39.bcmVisualV599 .legal-note a { display:inline-block; margin-top:7px
  body.themeV39.bcmVisualV599 .emergencyQuantityV601 { right:8px; top:8px; padding:4px 6px; }
  body.themeV39.bcmVisualV599 .legal-note { margin-top:26px; font-size:10.5px!important; }
 }
+
+/* Conditions, price provenance and an account-scoped save receipt. */
+.conditionChipV603{display:inline-flex;align-items:center;justify-self:start;max-width:100%;padding:4px 8px;border-radius:7px;background:#edf5ef;color:#245c37;font-size:11px;font-weight:650;line-height:1.35;overflow-wrap:anywhere}
+.conditionChipV603[data-kind="unknown"]{background:#f4f0e7;color:#73551d}
+.conditionChipV603[data-kind="mixed"]{background:#edf1f8;color:#354e76}
+.priceSourceV603{display:block;color:#626b78;font-size:11px;line-height:1.4;margin-top:8px;overflow-wrap:anywhere;white-space:normal}
+.saveStatusV603{box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:10px;width:min(1240px,calc(100% - 32px));margin:8px auto;padding:8px 12px;border:1px solid #e3e7ec;border-radius:10px;background:#fff;color:#566171;font-size:12px;line-height:1.4}
+.saveStatusV603>span{min-width:0;overflow-wrap:anywhere}.saveStatusV603 .btn{min-height:36px;padding:7px 10px;font-size:12px;flex-shrink:0}
+.saveStatusV603[data-status="confirmed"]{border-color:#bed8c6;color:#245c37;background:#f4faf6}
+.saveStatusV603[data-status="error"],.saveStatusV603[data-status="storage-error"],.saveStatusV603[data-status="conflict"]{border-color:#e2c2b9;color:#8c3727;background:#fff7f4}
+.saveStatusV603[data-status="offline"],.saveStatusV603[data-status="pending"]{border-color:#e7d7b2;background:#fffbf2;color:#73551d}
+.copyValuationV603{display:grid;gap:8px}.copyValuationV603>div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px;background:#f7f8fa;border-radius:9px}.copyValuationV603 small{grid-column:1/-1;overflow-wrap:anywhere;color:#626b78}.copyValuationV603 strong{white-space:normal;overflow-wrap:anywhere}
+#fApplyConditionAllV603{width:auto;min-height:20px}.applyConditionV603{align-self:center;display:flex!important;align-items:center;gap:8px;font-size:12px}#setSaveFeedbackV603:empty{display:none}
+@media(max-width:650px){.saveStatusV603{width:calc(100% - 24px);font-size:11px;padding:7px 9px}.saveStatusV603 .btn{font-size:11px;max-width:110px}.copyValuationV603>div{font-size:12px}}

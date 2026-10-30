@@ -15,6 +15,9 @@ jobs:
       - name: JavaScript Syntax pruefen
         run: |
           node --check app-v3.js
+          node --check collection-valuation.js
+          node --check sync-status-v603.js
+          node --check save-protection-v559.js
           node --check collection-metrics-v570.js
           node --check customer-experience-v548.js
           node --check focus-v564.js

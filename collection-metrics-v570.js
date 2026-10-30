@@ -2,12 +2,14 @@
 (function(root){
  'use strict';
  function num(v){if(v===null||v===undefined||String(v).trim()==='')return null;const n=typeof v==='number'?v:Number(String(v??'').replace(/\s/g,'').replace(',','.'));return Number.isFinite(n)&&n>=0?n:null}
- function metrics(s){
+ const valuation=typeof module==='object'&&module.exports?require('./collection-valuation.js'):root.BrickCollectionValuation;
+ function metrics(s,resolve){
    const collection=Array.isArray(s?.collection)?s.collection:[];
    const count=collection.length;
    const copies=collection.reduce((a,x)=>a+(num(x.quantity)??1),0);
-   const valueKnown=collection.filter(x=>num(x.currentValue)!==null);
-   const value=valueKnown.reduce((a,x)=>a+(num(x.currentValue)??0)*(num(x.quantity)??1),0);
+   const valuations=collection.map(x=>resolve?resolve(x):valuation.summarize(x));
+   const valueKnown=valuations.filter(x=>x.complete);
+   const value=valueKnown.reduce((a,x)=>a+x.total,0);
    const recorded=collection.filter(x=>num(x.purchasePrice)!==null);
    const purchases=recorded.reduce((a,x)=>a+(num(x.purchasePrice)??0),0);
    const baseline=num(s?.meta?.investmentBaseline)??num(s?.meta?.brickrInvestmentReference);

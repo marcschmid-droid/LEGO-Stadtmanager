@@ -27,7 +27,8 @@
    if(!active)return;
    const collection=typeof state!=='undefined'&&Array.isArray(state?.collection)?state.collection:[];
    const settings=options(),queryModel=window.BrickCollectionQuery;
-   const sig=JSON.stringify([collection.map(x=>[x.setNumber,x.name,x.quantity,x.purchasePrice,x.currentValue,x.imageUrl||x.market?.imageUrl,x.cityArea,x.category,x.storage,x.storageRoom,x.storageShelf,x.storageBin,x.module,x.customCategoryV547,x.tagsV547,x.condition,x.box,x.forSaleV546,x.purchaseDate,x.exemplars,x.addedAt,x.createdAt,x.dateAdded,x.importedAt,x.created_at,x.addedDate]),settings]);
+   const valuations=new Map(collection.map(x=>[x,setValuationV603(x)]));
+   const sig=JSON.stringify([collection.map(x=>[x.setNumber,x.name,x.quantity,x.purchasePrice,x.currentValue,x.valueSource,x.valueCheckedAt,valuations.get(x),x.imageUrl||x.market?.imageUrl,x.cityArea,x.category,x.storage,x.storageRoom,x.storageShelf,x.storageBin,x.module,x.customCategoryV547,x.tagsV547,x.condition,x.box,x.forSaleV546,x.purchaseDate,x.exemplars,x.addedAt,x.createdAt,x.dateAdded,x.importedAt,x.created_at,x.addedDate]),settings]);
    if($('clearCollectionSearch'))$('clearCollectionSearch').hidden=!settings.query;
    const holder=$('emergencyCollectionV573')||document.createElement('section');
    if(!holder.id){
@@ -75,9 +76,20 @@
     const title=document.createElement('strong');title.className='emergencyTitleV573';title.textContent=String(x.name||'LEGO Set');
     const prices=document.createElement('div');prices.className='emergencyPricesV573';
     const priceCell=(label,value)=>{const cell=document.createElement('span'),caption=document.createElement('small'),amount=document.createElement('b');caption.textContent=label;amount.textContent=value;cell.append(caption,amount);return cell};
-    const buy=priceCell('Kaufpreis / Stück',euro(x.purchasePrice));
-    const val=priceCell('Marktwert / Stück',Number(x.currentValue)>0?euro(x.currentValue):'Nicht erfasst');
-    prices.append(buy,val);body.append(number,title,prices);card.append(visual,body);
+    const valuation=valuations.get(x);
+    const buy=priceCell('Kaufpreis / Stück',x.purchasePrice===null||x.purchasePrice===undefined?'–':euro(Number(x.purchasePrice)/valuation.quantity));
+    const totalPrice=valuation.mixed||valuation.variedPrices;
+    const val=priceCell(valuation.priceLabel,valuation.complete?euro(totalPrice?valuation.total:valuation.average):'Werte fehlen');
+    const condition=document.createElement('span');condition.className='conditionChipV603';condition.textContent=valuation.conditionLabel;
+    condition.dataset.kind=valuation.mixed?'mixed':window.BrickCollectionValuation.conditionType(valuation.conditionLabel);
+    const provenance=document.createElement('small');provenance.className='priceSourceV603';
+    const source=valuation.manual?'Manuell geschätzt':valuation.source||'Quelle offen';
+    const date=valuation.at?new Date(valuation.at).toLocaleDateString('de-DE'):'Stand offen';
+    provenance.textContent=source+' · '+date;
+    provenance.title=(valuation.source||'Keine Preisquelle hinterlegt')+(valuation.complete?'':' · '+valuation.knownCount+' von '+valuation.quantity+' Exemplaren bewertet');
+    if(!valuation.complete)provenance.textContent=valuation.knownCount+' von '+valuation.quantity+' bewertet · '+provenance.textContent;
+    prices.append(buy,val);body.append(number,title,condition,prices,provenance);card.append(visual,body);
+    card.setAttribute('aria-label',card.getAttribute('aria-label')+' · '+valuation.conditionLabel+' · '+valuation.priceLabel+': '+(valuation.complete?euro(totalPrice?valuation.total:valuation.average):'Werte fehlen'));
     card.onclick=()=>{if(typeof showDetailV3==='function')showDetailV3(String(x.setNumber))};
     fragment.append(card)
    }

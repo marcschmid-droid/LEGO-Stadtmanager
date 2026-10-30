@@ -7,9 +7,12 @@
  function audit(){
   const data=(typeof state!=='undefined'&&Array.isArray(state.collection))?state.collection:[];
   const rows=data.map(x=>{
-   const current=number(x.currentValue),paid=number(x.purchasePrice);
+   const valuation=typeof setValuationV603==='function'?setValuationV603(x):null;
+   const current=valuation?(valuation.complete?valuation.average:null):number(x.currentValue),paid=number(x.purchasePrice);
    let reason='';
-   if(current===null||current<=0)reason='Marktwert fehlt oder 0 €';
+   if(valuation?.mismatch)reason='Anzahl der Exemplare prüfen';
+   else if(valuation&&!valuation.complete)reason='Marktwerte fehlen: '+valuation.knownCount+' von '+valuation.quantity+' Exemplaren bewertet';
+   else if(current===null||current<=0)reason='Marktwert fehlt oder 0 €';
    else if(paid===null||paid<0)reason='Kaufpreis fehlt';
    else if(paid>0&&current>paid*8)reason='Wert auffällig hoch – prüfen';
    return {x,current,paid,reason};
