@@ -14,6 +14,12 @@
   if(typeof renderCollection==='function')renderCollection();else schedule();
   $('search')?.focus();
  }
+ function placeholder(visual,label){
+  const empty=document.createElement('span');empty.className='emergencyImageEmptyV601';
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('class','bcmIcon');svg.setAttribute('width','34');svg.setAttribute('height','34');svg.setAttribute('aria-hidden','true');
+  const use=document.createElementNS('http://www.w3.org/2000/svg','use');use.setAttribute('href','./assets/ui-icons.svg?v=graphic-1#box');svg.append(use);
+  const caption=document.createElement('span');caption.textContent=label;empty.append(svg,caption);visual.append(empty);
+ }
  function show(){
   try{
    const panel=$('collection');if(!panel)return;
@@ -60,8 +66,10 @@
     const visual=document.createElement('div');visual.className='emergencyVisualV573';
     const url=x.imageUrl||x.market?.imageUrl;
     if(typeof url==='string'&&/^https?:\/\//i.test(url)){
-     const img=document.createElement('img');img.alt='Set '+String(x.setNumber||'');img.loading='lazy';img.src=url;img.onerror=()=>{img.remove();visual.textContent='Bild nicht verfügbar'};visual.append(img)
-    }else visual.textContent='Bild nicht verfügbar';
+     const img=document.createElement('img');img.alt='Set '+String(x.setNumber||'');img.loading='lazy';img.src=url;img.onerror=()=>{img.remove();placeholder(visual,'Bild nicht verfügbar')};visual.append(img)
+    }else placeholder(visual,'Kein Bild hinterlegt');
+    const quantity=Number(x.quantity);
+    if(Number.isInteger(quantity)&&quantity>1){const badge=document.createElement('span');badge.className='emergencyQuantityV601';badge.textContent=quantity+'×';badge.setAttribute('aria-label',quantity+' Exemplare in deiner Sammlung');card.setAttribute('aria-label','Set '+String(x.setNumber||'')+' – '+String(x.name||'LEGO Set')+' – '+quantity+' Exemplare – Details öffnen');visual.append(badge)}
     const body=document.createElement('div');body.className='emergencyBodyV573';
     const number=document.createElement('small');number.textContent='#'+String(x.setNumber||'');
     const title=document.createElement('strong');title.className='emergencyTitleV573';title.textContent=String(x.name||'LEGO Set');
