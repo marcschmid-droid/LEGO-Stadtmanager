@@ -22,7 +22,7 @@ function fakeClient(){
 (async()=>{
  for(const [engine,type] of Object.entries({chromium,webkit})){
   const browser=await type.launch({headless:true}),context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce'});
-  const page=await context.newPage();let remote={state:structuredClone(fixture),updated_at:'2026-10-30T10:00:00Z'},writes=0,errors=[],dialogs=[];
+  const page=await context.newPage();page.setDefaultTimeout(20000);let remote={state:structuredClone(fixture),updated_at:'2026-10-30T10:00:00Z'},writes=0,errors=[],dialogs=[];
   await page.exposeFunction('__reliabilityBackend',async request=>{
    if(request.table!=='user_state')return {data:request.table==='showcase_links'?null:[],error:null};
    if(request.operation!=='read'){
@@ -45,7 +45,7 @@ function fakeClient(){
    await page.evaluate(async()=>{await cloudSessionV3({user:{id:'00000000-0000-4000-8000-000000000001',email:'demo@example.invalid'}});switchTab('collection')});
    await page.locator('.emergencySetV573').waitFor({state:'visible'});
   };
-  await page.goto(base+'/index.html');await signIn();await page.waitForTimeout(1800);
+  await page.goto(base+'/index.html');await signIn();await page.waitForTimeout(1800);console.log(engine+': signed in');
   assert.equal(await page.locator('.conditionChipV603').textContent(),'Gemischter Zustand');
   assert.match(await page.locator('.emergencyPricesV573').textContent(),/65,00/);
   assert.match(await page.locator('.priceSourceV603').textContent(),/Manuell/);
@@ -67,7 +67,7 @@ function fakeClient(){
   // An edited set closes without a success alert. Its receipt is based on verified cloud contents.
   await page.evaluate(()=>editSet('990011'));await page.locator('#fName').fill('Vor Offline-Test');
   await page.locator('#saveSet').click();await page.locator('#setModal').waitFor({state:'hidden'});
-  await page.waitForFunction(()=>window.BrickSaveStatus.get().status==='confirmed');
+  await page.waitForFunction(()=>window.BrickSaveStatus.get().status==='confirmed');console.log(engine+': cloud confirmed');
   assert.equal(remote.state.collection[0].name,'Vor Offline-Test');
   assert.equal(dialogs.length,0,'successful edits must not show blocking alerts');
   await context.setOffline(true);const beforeWrites=writes;
@@ -78,11 +78,11 @@ function fakeClient(){
   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem(cloudCacheKeyV3(cloudUserV3.id))).collection[0].name),'Offline geändert');
   await page.screenshot({path:out+'/'+engine+'-pending-offline-390.png',fullPage:true,animations:'disabled'});
   await context.setOffline(false);await page.reload();await signIn();
-  await page.waitForFunction(()=>window.BrickSaveStatus.get().status==='confirmed');
+  await page.waitForFunction(()=>window.BrickSaveStatus.get().status==='confirmed');console.log(engine+': cloud confirmed');
   assert.equal(remote.state.collection[0].name,'Offline geändert');
   assert.equal(remote.state.collection[0].quantity,3);assert.equal(remote.state.collection[0].purchasePrice,40);
   assert.equal(dialogs.length,0);assert.deepEqual(errors,[]);
   console.log(engine+': copy values, visible sources, explicit conditions, popup-free saves, offline edits and reconnect verified');
   await browser.close();
  }
-})().catch(error=>{console.error(error);process.exitCode=1});
+})().catch(error=>{console.error(error);process.exit(1)});

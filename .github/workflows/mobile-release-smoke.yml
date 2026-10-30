@@ -45,7 +45,7 @@ jobs:
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/bcm-http.log 2>&1 &
           NODE_PATH="$RUNNER_TEMP/bcm-browser/node_modules" node scripts/mobile-release-smoke.cjs
           NODE_PATH="$RUNNER_TEMP/bcm-browser/node_modules" node scripts/visual-release-smoke.cjs
-          node scripts/reliability-smoke.cjs
+          NODE_PATH="$RUNNER_TEMP/bcm-browser/node_modules" node scripts/reliability-smoke.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
