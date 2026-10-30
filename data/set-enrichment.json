@@ -19,7 +19,7 @@
       "BrickEconomy 1036: 400 Client Error: Bad Request for url: https://www.brickeconomy.com/api/v1/set/1036-1?currency=EUR",
       "No metadata for 1036"
     ],
-    "lastUpdated": "2026-10-30T09:12:59Z",
+    "lastUpdated": "2026-10-30T13:11:18Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 2,
@@ -3679,7 +3679,20 @@
       "ean": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40909-1/182053.jpg",
-      "marketNewEUR": null,
+      "manualMarketNewEstimate": {
+        "basis": "asking-prices",
+        "condition": "new/sealed",
+        "currency": "EUR",
+        "note": "Manuelle Schätzung aus Angeboten, kein Durchschnitt bestätigter Verkäufe. Kein Gebrauchtwert abgeleitet.",
+        "recordedAt": "2026-10-30T13:11:18Z",
+        "sources": [
+          "https://www.ebay.de/b/Lego-Pizzeria/19006/bn_7005408661",
+          "https://www.lego.com/de-de/product/restaurants-of-the-world-italy-40909"
+        ],
+        "value": 25
+      },
+      "manualUpdated": "2026-10-30T13:11:18Z",
+      "marketNewEUR": 25,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
