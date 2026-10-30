@@ -217,3 +217,5 @@ body.themeV39.bcmVisualV599 .legal-note a { display:inline-block; margin-top:7px
 .copyValuationV603{display:grid;gap:8px}.copyValuationV603>div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px;background:#f7f8fa;border-radius:9px}.copyValuationV603 small{grid-column:1/-1;overflow-wrap:anywhere;color:#626b78}.copyValuationV603 strong{white-space:normal;overflow-wrap:anywhere}
 #fApplyConditionAllV603{width:auto;min-height:20px}.applyConditionV603{align-self:center;display:flex!important;align-items:center;gap:8px;font-size:12px}#setSaveFeedbackV603:empty{display:none}
 @media(max-width:650px){.saveStatusV603{width:calc(100% - 24px);font-size:11px;padding:7px 9px}.saveStatusV603 .btn{font-size:11px;max-width:110px}.copyValuationV603>div{font-size:12px}}
+
+.saveStatusV603 button[hidden]{display:none!important}

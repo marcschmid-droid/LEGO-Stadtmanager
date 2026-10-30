@@ -52,7 +52,13 @@ function fakeClient(){
   assert.equal(await page.evaluate(()=>state.collection[0].condition),'Unbekannt');
   for(const width of [320,390]){
    await page.setViewportSize({width,height:844});
-   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+   await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+   const size=await page.evaluate(()=>({viewport:innerWidth,scroll:document.documentElement.scrollWidth}));
+   if(size.scroll>size.viewport+1){
+    console.error(engine+' overflow '+width,JSON.stringify(await page.evaluate(()=>[...document.querySelectorAll('body *')].filter(el=>el.getBoundingClientRect().width&&el.getBoundingClientRect().right>innerWidth+1).slice(0,15).map(el=>({tag:el.tagName,id:el.id,cls:el.className,right:el.getBoundingClientRect().right})))));
+    await page.screenshot({path:out+'/'+engine+'-overflow-'+width+'.png',fullPage:true});
+   }
+   assert.ok(size.scroll<=size.viewport+1,engine+' overflow '+JSON.stringify(size));
   }
   await page.setViewportSize({width:390,height:844});
   await page.locator('.emergencySetV573').click();
