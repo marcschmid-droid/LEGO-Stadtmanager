@@ -301,7 +301,7 @@ function applyEnrichmentV3(){
    if(!x.imageUrl&&e.imageUrl){x.imageUrl=e.imageUrl;changed=true}
    if(!x.barcode&&(e.ean||e.upc)){x.barcode=e.ean||e.upc;changed=true}
    const mv=chooseMarketV3(x,e);
-   if(mv>0&&x.marketAuto!==false&&pV3(x.currentValue)!==mv){x.currentValue=mv;x.valueSource="BrickEconomy";changed=true}
+   if(mv>0&&x.marketAuto!==false&&pV3(x.currentValue)!==mv){x.currentValue=mv;x.valueSource=marketChoiceV532(x,e).source;changed=true}
    x.market={...(x.market||{}),...e};
  }
  for(const w of state.wishlist){
@@ -3165,7 +3165,14 @@ function valuationModeV532(){
  state.meta=state.meta||{};
  return state.meta.valuationModeV532||"condition";
 }
+function manualNewEstimateV602(e={}){
+ const estimate=e.manualMarketNewEstimate;
+ return estimate&&estimate.currency==="EUR"&&estimate.basis==="asking-prices"&&
+   Number(estimate.value)>0&&Math.abs(Number(estimate.value)-Number(e.marketNewEUR))<0.005
+   ? estimate:null;
+}
 function marketSourceV532(e={},kind=""){
+ if(kind==="new"&&manualNewEstimateV602(e))return "Manuelle Schätzung · Neu / OVP · Angebotspreise";
  if(kind==="new"){
    if(pV3(e.marketNewEUR))return e.bricklinkUpdated&&e.marketSourceFallback?"BrickLink · neu":"BrickEconomy · neu / OVP";
  }
@@ -3388,6 +3395,12 @@ function collectorValueV533(x,e={}){
 
 const marketChoiceBaseV533=marketChoiceV532;
 marketChoiceV532=function(x,e={},mode=valuationModeV532()){
+ const condition=nV3(x?.condition||x?.buildStatus||"");
+ const wantsNew=condition.includes("neu")||condition.includes("ovp");
+ if(manualNewEstimateV602(e)&&mode!=="manual"&&mode!=="new"&&
+    (mode==="used"||!wantsNew)&&!pV3(e.marketUsedEUR)&&!pV3(e.marketUsedHighEUR)){
+   return {value:0,kind:"none",source:"Keine Gebrauchtbewertung",reason:"Nur manuelle Neu/OVP-Schätzung vorhanden; kein Gebrauchtwert abgeleitet"};
+ }
  if(mode==="collector"){
    const r=collectorValueV533(x,e);
    const source=r.kind==="new"?marketSourceV532(e,"new"):r.kind==="used"?marketSourceV532(e,"used"):"Keine Marktdaten";
@@ -3494,7 +3507,7 @@ function enrichmentForV536(x){return enrichmentV3?.sets?.[setKeyV536(x?.setNumbe
 function quoteSourcesV536(x){
  const e=enrichmentForV536(x),out=[];
  const used=pV3(e.marketUsedEUR),high=pV3(e.marketUsedHighEUR),low=pV3(e.marketUsedLowEUR),nu=pV3(e.marketNewEUR);
- if(used||high||low||nu)out.push({source:"BrickEconomy",used,newv:nu,low,high,updated:e.brickeconomyUpdated||e.updatedAt||""});
+ if(used||high||low||nu)out.push({source:manualNewEstimateV602(e)?marketSourceV532(e,"new"):"BrickEconomy",used,newv:nu,low,high,updated:manualNewEstimateV602(e)?.recordedAt||e.brickeconomyUpdated||e.updatedAt||""});
  const blu=pV3(e.bricklinkUsedEUR||e.bricklinkUsedAvgEUR||e.bricklinkAvgUsedEUR);
  const bln=pV3(e.bricklinkNewEUR||e.bricklinkNewAvgEUR||e.bricklinkAvgNewEUR);
  const bll=pV3(e.bricklinkUsedLowEUR),blh=pV3(e.bricklinkUsedHighEUR);
@@ -4444,13 +4457,16 @@ async function immediateMarketPriceV584(setNumber){
      updatedAt:data.source_updated_at||new Date().toISOString(),
      marketSource:"BrickEconomy"
    };
+   const estimate=manualNewEstimateV602({...enrichmentV3?.sets?.[n],...x.market,
+     manualMarketNewEstimate:enrichmentV3?.sets?.[n]?.manualMarketNewEstimate||x.market.manualMarketNewEstimate});
+   if(estimate){x.market.manualMarketNewEstimate=estimate;x.market.marketSource=marketSourceV532(x.market,"new");}
    if(!x.imageUrl&&data.image_url)x.imageUrl=data.image_url;
    if(!Number(x.currentValue||0)){
      const condition=String(x.condition||"").toLowerCase();
      const preferred=condition.includes("neu")||condition.includes("ovp")
        ? Number(data.market_new_eur||0)
-       : Number(data.market_used_eur||0)||Number(data.market_new_eur||0);
-     if(preferred>0){x.currentValue=preferred;x.valueSource="BrickEconomy";}
+       : Number(data.market_used_eur||0)||(estimate?0:Number(data.market_new_eur||0));
+     if(preferred>0){x.currentValue=preferred;x.valueSource=estimate?marketSourceV532(x.market,"new"):"BrickEconomy";}
    }
    persist();refresh();
    return true;
