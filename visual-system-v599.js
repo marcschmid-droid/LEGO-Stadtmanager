@@ -33,6 +33,26 @@
     const previous=renderUndoV546;
     renderUndoV546=function(...args){const result=previous.apply(this,args);placeUndo();return result};
   }
-  function init(){accountIcon();navigation();placeUndo()}
+  function actionIcon(id,icon,label,accessibleLabel){
+    const button=document.getElementById(id);
+    if(!button||button.dataset.visualAction)return;
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('class','bcmIcon');svg.setAttribute('aria-hidden','true');
+    const use=document.createElementNS('http://www.w3.org/2000/svg','use');
+    use.setAttribute('href','./assets/ui-icons.svg#'+icon);svg.append(use);
+    const caption=document.createElement('span');caption.textContent=label;
+    button.replaceChildren(svg,caption);button.dataset.visualAction='true';
+    button.setAttribute('aria-label',accessibleLabel);
+  }
+  function toolbarIcons(){
+    actionIcon('showcaseShare','share','Teilen','Sammlung teilen');actionIcon('undoV546','undo','Rückgängig','Letzte Änderung rückgängig machen');
+    const share=document.getElementById('showcaseShare'),undo=document.getElementById('undoV546');
+    if(share&&undo&&share.parentElement===undo.parentElement&&undo.previousElementSibling!==share)share.parentElement.append(undo);
+  }
+  function init(){
+    accountIcon();navigation();placeUndo();toolbarIcons();
+    const toolbar=document.querySelector('#collection > .toolbar');
+    if(toolbar)new MutationObserver(toolbarIcons).observe(toolbar,{childList:true});
+  }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();

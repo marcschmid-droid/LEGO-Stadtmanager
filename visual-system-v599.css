@@ -155,3 +155,51 @@ body.themeV39.bcmVisualV599 .collectionResultsV600 .emergencyInfoV573 { margin:0
 body.themeV39.bcmVisualV599 .collectionResultsV600 .btn { font-size:12px; }
 body.themeV39.bcmVisualV599 .collectionNoResultsV600 { padding:24px; border:1px dashed var(--line); border-radius:14px; background:white; color:var(--muted); line-height:1.6; }
 @media(max-width:650px){body.themeV39.bcmVisualV599 #collection > .toolbar .collectionSearchV600 { grid-column:1/-1; width:100%; }}
+/* Compact collection workspace with one primary add action in the page header. */
+body.themeV39.bcmVisualV599 #collectionEssentialsV564,
+body.themeV39.bcmVisualV599 #cityEssentialsV564 { gap:10px; margin:0 0 16px; align-items:center; }
+body.themeV39.bcmVisualV599 #collectionEssentialsV564 > strong,
+body.themeV39.bcmVisualV599 #cityEssentialsV564 > strong { font-size:22px; font-weight:750; letter-spacing:-.5px; }
+body.themeV39.bcmVisualV599 #collectionEssentialsV564 button,
+body.themeV39.bcmVisualV599 #cityEssentialsV564 button { display:inline-flex; align-items:center; gap:7px; min-height:44px; padding:9px 11px; font-size:12px; font-weight:600; }
+body.themeV39.bcmVisualV599 #collectionEssentialsV564 button .bcmIcon,
+body.themeV39.bcmVisualV599 #cityEssentialsV564 button .bcmIcon { width:16px; height:16px; }
+body.themeV39.bcmVisualV599 #collection > .toolbar { display:grid!important; grid-template-columns:minmax(0,1.6fr) minmax(0,.9fr) minmax(0,1.2fr) auto auto!important; grid-template-areas:'search area sort share undo'; padding:12px!important; gap:8px!important; margin-bottom:16px!important; border-color:#e1e4ea; border-radius:16px; }
+body.themeV39.bcmVisualV599 #collection > .toolbar .collectionSearchV600 { grid-area:search!important; }
+body.themeV39.bcmVisualV599 #collection > .toolbar #areaFilter { grid-area:area!important; width:100%!important; }
+body.themeV39.bcmVisualV599 #collection > .toolbar #collectionSortV557 { grid-area:sort!important; width:100%!important; }
+body.themeV39.bcmVisualV599 #collection > .toolbar #showcaseShare { grid-area:share!important; }
+body.themeV39.bcmVisualV599 #collection > .toolbar #undoV546 { grid-area:undo!important; }
+body.themeV39.bcmVisualV599 #collection > .toolbar #addBtn { display:none!important; }
+body.themeV39.bcmVisualV599 #collection > .toolbar :is(#showcaseShare,#undoV546) { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-width:0; min-height:44px; margin:0; padding:10px 12px; font-size:12px!important; line-height:1.25; white-space:nowrap; font-weight:650; border-color:#e2e5eb; }
+body.themeV39.bcmVisualV599 #collection > .toolbar .btn .bcmIcon { width:17px; height:17px; }
+body.themeV39.bcmVisualV599 #undoV546:disabled { opacity:.45; cursor:default; }
+body.themeV39.bcmVisualV599 .collectionResultsV600 { gap:8px; margin:0 0 12px; min-height:24px; }
+body.themeV39.bcmVisualV599 .collectionResultsV600 .emergencyInfoV573 { font-size:12px!important; color:#5f6876; }
+body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencySetV573 { border-color:#e3e6eb; border-radius:16px; box-shadow:0 2px 8px #17202b03; }
+body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyVisualV573 { background:linear-gradient(145deg,#fff,#f8f9fb); border-bottom-color:#eef0f3; }
+body.themeV39.bcmVisualV599 .emergencyImageEmptyV601 { display:flex; flex-direction:column; align-items:center; gap:10px; color:#657181; font-size:11px; text-align:center; line-height:1.4; }
+body.themeV39.bcmVisualV599 .emergencyImageEmptyV601 .bcmIcon { width:34px; height:34px; color:#acb5c2; }
+body.themeV39.bcmVisualV599 .emergencyQuantityV601 { position:absolute; right:10px; top:10px; z-index:1; min-width:28px; padding:5px 7px; background:#fff; border:1px solid #e3e6eb; border-radius:8px; font-size:11px; line-height:1.1; font-weight:750; color:#4c5666; box-shadow:0 2px 4px #17202b05; }
+body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyBodyV573 > small { align-self:flex-start; width:auto; padding:4px 6px; background:#f1f3f6; border-radius:6px; font-size:10px; font-weight:600; letter-spacing:.025em; }
+body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyTitleV573 { font-weight:650; line-height:1.45; }
+body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyPricesV573 small { color:#5d6674; font-size:10px; opacity:1; }
+body.themeV39.bcmVisualV599 #home .homeKpisV549 .card::after { display:none!important; }
+body.themeV39.bcmVisualV599 #home .homeKpisV549 .card > span { text-transform:none!important; letter-spacing:0!important; }
+body.themeV39.bcmVisualV599 .legal-note { margin:32px 0 0; padding-top:16px; border-top:1px solid #e0e4ea; color:#626d7c; font-size:11px!important; line-height:1.6; }
+body.themeV39.bcmVisualV599 .legal-note a { display:inline-block; margin-top:7px; color:#626c7a; text-underline-offset:3px; }
+@media(max-width:1050px){
+ body.themeV39.bcmVisualV599 #collection > .toolbar { grid-template-columns:repeat(4,minmax(0,1fr))!important; grid-template-areas:'search search search search' 'area sort share undo'; }
+}
+@media(max-width:650px){
+ body.themeV39.bcmVisualV599 #collectionEssentialsV564 > strong,body.themeV39.bcmVisualV599 #cityEssentialsV564 > strong { font-size:20px; }
+ body.themeV39.bcmVisualV599 #collectionEssentialsV564 button,body.themeV39.bcmVisualV599 #cityEssentialsV564 button { padding:8px; font-size:11px; gap:5px; }
+ body.themeV39.bcmVisualV599 #collection > .toolbar { grid-template-columns:repeat(2,minmax(0,1fr))!important; grid-template-areas:'search search' 'area sort' 'share undo'; padding:10px!important; }
+ body.themeV39.bcmVisualV599 #collection > .toolbar select { font-size:12px!important; padding-left:9px; padding-right:20px; }
+ body.themeV39.bcmVisualV599 #collection > .toolbar :is(#showcaseShare,#undoV546) { padding:10px; }
+ body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyVisualV573 { aspect-ratio:4/3; --slot-padding:12px; }
+ body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyBodyV573 { padding:11px; gap:8px; }
+ body.themeV39.bcmVisualV599 .emergencyImageEmptyV601 { font-size:10px; gap:7px; }
+ body.themeV39.bcmVisualV599 .emergencyQuantityV601 { right:8px; top:8px; padding:4px 6px; }
+ body.themeV39.bcmVisualV599 .legal-note { margin-top:26px; font-size:10.5px!important; }
+}

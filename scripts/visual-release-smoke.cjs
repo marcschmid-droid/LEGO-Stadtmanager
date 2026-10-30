@@ -85,12 +85,23 @@ async function noOverflow(page,label){
    await page.locator('.emergencySetV573').first().waitFor({state:'visible'});
    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
    await noOverflow(page,engine+' collection '+width);
+   assert.equal(await page.locator('#addBtn').isVisible(),false);
+   assert.equal(await page.locator('#showcaseShare').isVisible(),true);
+   assert.equal(await page.locator('.emergencyImageEmptyV601 .bcmIcon').count(),2);
+   assert.equal(await page.locator('.emergencyQuantityV601').textContent(),'2×');
+   if(width===390){
+    const layout=await page.evaluate(()=>({toolbar:document.querySelector('#collection > .toolbar').getBoundingClientRect().height,firstCard:document.querySelector('.emergencySetV573').getBoundingClientRect().top}));
+    assert.ok(layout.toolbar<=190,'Collection toolbar should stay compact on phones');
+    assert.ok(layout.firstCard<600,'Sets should be visible in the first phone viewport');
+   }
    assert.equal(await page.locator('.emergencyPricesV573').first().innerText().then(t=>t.includes('Kaufpreis / Stück')&&t.includes('Marktwert / Stück')),true);
    await page.waitForFunction(()=>{const imgs=[...document.querySelectorAll('.emergencyVisualV573 img')];return imgs.length===2&&imgs.every(el=>getComputedStyle(el).objectFit==='contain')});
    const slots=await page.evaluate(()=>[...document.querySelectorAll('.emergencyVisualV573 img')].map(el=>{const r=el.parentElement.getBoundingClientRect();return {w:r.width,h:r.height}}));
    for(const slot of slots)assert.ok(slot.h<=slot.w+1,'Portrait images must not enlarge their slot');
    if(width===390||width===1366)await page.screenshot({path:out+'/'+engine+'-collection-'+width+'.png',fullPage:true,animations:'disabled'});
    if(width===390){
+    await page.locator('#addTop').click();await page.locator('#setModal').waitFor({state:'visible'});
+    await page.locator('#cancelSet').click();await page.locator('#setModal').waitFor({state:'hidden'});
     const expectCount=count=>page.waitForFunction(n=>document.querySelectorAll('#emergencyCollectionV573 .emergencySetV573').length===n,count);
     const sortBefore=await page.locator('#collectionSortV557').inputValue();
     await page.getByRole('searchbox',{name:'Sammlung durchsuchen'}).fill('keller architektur');
