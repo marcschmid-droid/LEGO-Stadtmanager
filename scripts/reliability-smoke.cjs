@@ -112,7 +112,7 @@ function fakeClient(){
    assert.ok(accountSize.scroll<=accountSize.width+1,engine+' account overflow '+JSON.stringify(accountSize));
   }
   await page.screenshot({path:out+'/'+engine+'-account-605.png',fullPage:true,animations:'disabled'});
-  await page.route('**/release-version.json',route=>route.fulfill({contentType:'application/json',body:'{"build":606}'}));
+  await page.route('**/release-version.json',route=>route.fulfill({contentType:'application/json',body:'{"build":607}'}));
   await page.evaluate(()=>window.BrickExperienceV605.checkUpdates());
   await page.locator('#updateNoticeV605').waitFor({state:'visible'});
   assert.match(await page.locator('#updateNoticeV605').textContent(),/Sicher neu laden/);

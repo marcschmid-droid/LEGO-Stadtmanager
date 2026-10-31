@@ -1,7 +1,7 @@
 /* Collection guidance, account layout and opt-in updates. No automatic user-data writes. */
 (function(){
  'use strict';
- const BUILD='605',byId=id=>document.getElementById(id);
+ const BUILD='606',byId=id=>document.getElementById(id);
  const button=(label,action)=>{const b=document.createElement('button');b.type='button';b.className='btn secondary';b.textContent=label;b.onclick=action;return b};
  function metrics(){return window.BrickCollectionMetrics.metrics(state,typeof setValuationV603==='function'?setValuationV603:undefined)}
  function missingValues(){

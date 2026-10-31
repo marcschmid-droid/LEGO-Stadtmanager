@@ -16,6 +16,7 @@ jobs:
         run: |
           node --check app-v3.js
           node --check experience-v605.js
+          node --check gallery-v606.js
           node --check collection-ops-v547.js
           node --check improvements-v544.js
           node --check collection-valuation.js
