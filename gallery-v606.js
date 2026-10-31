@@ -12,7 +12,8 @@
  function draw(){
   scheduled=false;
   const home=document.getElementById('home');if(!home||typeof state==='undefined')return;
-  const item=selectHighlight(state.collection,state.meta?.favoriteSets),favorite=item&&(state.meta?.favoriteSets||[]).map(String).includes(String(item.setNumber));
+  const favorites=Array.isArray(state.meta?.favoriteSets)?state.meta.favoriteSets:[];
+  const item=selectHighlight(state.collection,favorites),favorite=item&&favorites.map(String).includes(String(item.setNumber));
   let box=document.getElementById('collectionHighlightV606');
   if(!item){if(box)box.remove();signature='';return}
   const url=imageFor(item),condition=typeof setValuationV603==='function'?setValuationV603(item).conditionLabel:item.condition||'Zustand offen';
@@ -32,7 +33,7 @@
  }
  function schedule(){if(!scheduled){scheduled=true;queueMicrotask(draw)}}
  function init(){
-  for(const name of ['refresh','switchTab']){const previous=window[name];if(typeof previous==='function')window[name]=function(...args){const result=previous.apply(this,args);schedule();return result}}
+  for(const name of ['refresh','switchTab','toggleFavoriteV521']){const previous=window[name];if(typeof previous==='function')window[name]=function(...args){const result=previous.apply(this,args);schedule();return result}}
   draw();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();

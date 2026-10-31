@@ -61,8 +61,8 @@ body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyPricesV573 b{font
  body.themeV39.bcmVisualV599 .brandV39 h1{font-size:18px!important}
  body.themeV39.bcmVisualV599 .brandV39 small{display:none!important}
  body.themeV39.bcmVisualV599 .brandIconV39{width:32px;height:32px}
- body.themeV39.bcmVisualV599 .headActions .iconbtn{height:38px;width:36px}
- body.themeV39.bcmVisualV599 .headActions .btn{min-height:40px;padding:9px 13px;font-size:12px}
+ body.themeV39.bcmVisualV599 .headActions .iconbtn{height:44px;width:44px;min-width:44px}
+ body.themeV39.bcmVisualV599 .headActions .btn{min-height:44px;padding:9px 10px;font-size:12px}
  body.themeV39.bcmVisualV599 main{padding:16px 12px 30px!important}
  body.themeV39.bcmVisualV599 nav.tabs.tabsGroupedV550{margin-bottom:18px!important;border-radius:16px!important}
  body.themeV39.bcmVisualV599 #home .homeHeroV549{min-height:114px!important;padding:19px!important;border-radius:18px!important;margin-bottom:22px!important;background-size:auto,auto 100%!important}
