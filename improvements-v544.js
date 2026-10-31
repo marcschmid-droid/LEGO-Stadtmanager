@@ -8,6 +8,12 @@ function backupRowsV544(){
  if(cached?.raw===raw)return cached.rows;
  try{const rows=JSON.parse(raw);backupCacheV544.set(key,{raw,rows});return rows}catch{return []}
 }
+function compactCheckpointsV605(){
+ // Atomic replacement only: never remove the active account cache to make room.
+ if(!cloudUserV3?.id)return;
+ const rows=backupRowsV544();
+ if(rows.length>2){try{localStorage.setItem(backupKeyV544(),JSON.stringify(rows.slice(0,2)))}catch(_){/* Existing checkpoints remain if replacement fails. */}}
+}
 function snapshotV544(reason='Automatische Sicherung',force=false){
  if(cloudApplyingV3)return false;
  const rows=[...backupRowsV544()],now=Date.now();

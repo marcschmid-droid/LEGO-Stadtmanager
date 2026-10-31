@@ -33,6 +33,7 @@ cloudSessionV3=async function(session){
  clearTimeout(cloudSaveTimerV3);const epoch=++opsV547.epoch;opsV547.loading.clear();cloudUserV3=session?.user||null;opsV547.selected.clear();opsV547.tag='';workflowV546.filter=null;
  $('cloudSignedOut')?.classList.toggle('hidden',!!cloudUserV3);$('cloudSignedIn')?.classList.toggle('hidden',!cloudUserV3);if($('cloudUserEmail'))$('cloudUserEmail').textContent=cloudUserV3?.email||'';updateAccountBadgeV3();
  if(!cloudUserV3){applyCloudStateV547(blankStateV3());cloudStatusV3('');switchTab('users');return}
+ if(typeof compactCheckpointsV605==='function')compactCheckpointsV605();
  const user=cloudUserV3.id,s=syncInfoV547(user);opsV547.loading.add(user);cloudStatusV3('Cloud-Version wird geladen…');
  const cached=localStorage.getItem(cloudCacheKeyV3(user));let local;try{local=cached?JSON.parse(cached):null}catch{}
  applyCloudStateV547(local||blankStateV3());

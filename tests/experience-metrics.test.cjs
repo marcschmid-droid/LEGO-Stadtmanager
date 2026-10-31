@@ -23,3 +23,10 @@ function snapshotSetup(maxRows=2){
 test('rotating checkpoints retain current state and one previous state',()=>{const x=snapshotSetup();assert.equal(x.c.snapshotV544('Manual',true),true);assert.equal(x.rows().length,2);assert.deepEqual(x.rows()[0].state.collection,['current']);assert.deepEqual(x.rows()[1].state.collection,['old1'])});
 test('quota retries a smaller checkpoint atomically',()=>{const x=snapshotSetup(1);assert.equal(x.c.snapshotV544('Manual',true),true);assert.equal(x.rows().length,1);assert.deepEqual(x.rows()[0].state.collection,['current'])});
 test('persistent quota reports failure and preserves prior checkpoints',()=>{const x=snapshotSetup(0);assert.equal(x.c.snapshotV544('Manual',true),false);assert.equal(x.rows().length,3);assert.match(x.c.reliabilityV544.backupError,/Speicher|speicher/)});
+
+test('existing checkpoint compaction affects only the active backup key',()=>{
+ const storage=new Map([['backups:a',JSON.stringify([1,2,3,4,5])],['cache:a','active collection'],['backups:b','other account']]);
+ const c={cloudUserV3:{id:'a'},JSON,backupRowsV544:()=>JSON.parse(storage.get('backups:a')),backupKeyV544:()=>'backups:a',localStorage:{setItem:(k,v)=>storage.set(k,v)}};
+ const source=fs.readFileSync('improvements-v544.js','utf8').split('function compactCheckpointsV605')[1].split('function snapshotV544')[0];vm.createContext(c);vm.runInContext('function compactCheckpointsV605'+source,c);c.compactCheckpointsV605();
+ assert.deepEqual(JSON.parse(storage.get('backups:a')),[1,2]);assert.equal(storage.get('cache:a'),'active collection');assert.equal(storage.get('backups:b'),'other account');
+});
