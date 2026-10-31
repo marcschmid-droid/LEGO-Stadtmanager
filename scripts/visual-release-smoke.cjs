@@ -72,13 +72,19 @@ async function noOverflow(page,label){
   for(const width of [320,390,660,768,1366]){
    await page.setViewportSize({width,height:width>900?950:844});
    await page.locator('.tabsGroupedV550>[data-tab="home"]').click();
+   await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
    await noOverflow(page,engine+' home '+width);
    const kpis=await page.locator('.homeKpisV549 > .card').count();assert.equal(kpis,4);
    assert.equal(await page.locator('#visibleVersionV553').isVisible(),false);
    assert.equal(await page.locator('#addTop').isVisible(),true);
+   assert.equal(await page.locator('#collectionHighlightV606').isVisible(),true);
+   assert.match(await page.locator('#highlightTitleV606').textContent(),/Stadthaus/);
+   assert.equal(await page.locator('.highlightVisualV606 img').evaluate(el=>getComputedStyle(el).objectFit),'contain');
+   if(width<651)assert.ok(await page.locator('body>header').evaluate(el=>el.getBoundingClientRect().height)<130,'Mobile header should remain compact');
    const geometry=await page.evaluate(()=>({kpi:document.querySelector('.homeKpisV549').getBoundingClientRect().y,plan:document.querySelector('.bcmTariffHero').getBoundingClientRect().y}));
    assert.ok(geometry.kpi<geometry.plan,'KPIs must precede the plan');
    if(width===390||width===1366)await page.screenshot({path:out+'/'+engine+'-home-'+width+'.png',fullPage:true,animations:'disabled'});
+   if(width===390){await page.locator('.highlightContentV606 button').click();await page.locator('#detailModal').waitFor({state:'visible'});await page.locator('#closeDetail').click()}
    await page.locator('.tabsGroupedV550>[data-tab="collection"]').click();
    await page.locator('#collection').waitFor({state:'visible'});
    await page.waitForFunction(()=>document.querySelectorAll('#emergencyCollectionV573 .emergencySetV573').length===4);
