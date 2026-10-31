@@ -88,6 +88,42 @@ function fakeClient(){
   assert.equal(remote.state.collection[0].name,'Offline geändert');
   assert.equal(remote.state.collection[0].quantity,3);assert.equal(remote.state.collection[0].purchasePrice,40);
   assert.equal(dialogs.length,0);assert.deepEqual(errors,[]);
+  // Partial valuation and direct copy editor use the actual production dashboard.
+  await page.evaluate(()=>{state.collection[0].exemplars[0].condition='Unbekannt';refresh();switchTab('home')});
+  await page.waitForFunction(()=>document.getElementById('kValueCoverageV605').textContent.includes('2 von 3'));
+  assert.match(await page.locator('#kValue').textContent(),/44/);
+  assert.equal(await page.locator('#kGainPct').textContent(),'–');
+  assert.match(await page.locator('#kCopiesV605').textContent(),/1 Set · 3 Exemplare/);
+  await page.locator('#missingValuesV605').click();await page.locator('#missingDialogV605').waitFor({state:'visible'});
+  assert.equal(await page.locator('.missingRowV605').count(),1);
+  await page.locator('.missingRowV605 button').click();
+  assert.equal(await page.locator('#exConditionV37').inputValue(),'Unbekannt');
+  await page.evaluate(()=>closeExemplarV37());
+  await page.evaluate(()=>switchTab('users'));
+  assert.equal(await page.locator('#accountBackupsV605').getAttribute('open'),null);
+  assert.equal(await page.locator('#saveProtectionV559').evaluate(el=>el.parentElement.id),'accountBackupsV605');
+  for(const width of [320,390]){
+   await page.setViewportSize({width,height:844});await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),engine+' account overflow');
+  }
+  await page.screenshot({path:out+'/'+engine+'-account-605.png',fullPage:true,animations:'disabled'});
+  await page.route('**/release-version.json',route=>route.fulfill({contentType:'application/json',body:'{"build":606}'}));
+  await page.evaluate(()=>window.BrickExperienceV605.checkUpdates());
+  await page.locator('#updateNoticeV605').waitFor({state:'visible'});
+  assert.match(await page.locator('#updateNoticeV605').textContent(),/Sicher neu laden/);
+  // Actual conflict button recovers with confirmed external export, without a cloud write.
+  const writesBeforeAdoption=writes;
+  await page.evaluate(()=>{
+   const sync=syncInfoV547();sync.conflict={remote:structuredClone(state),revision:sync.revision};
+   snapshotV544=()=>false;window.__exportedV605=0;downloadValueV545=()=>window.__exportedV605++;
+   window.confirm=()=>true;renderSyncConflictV547();
+  });
+  await page.locator('#syncRemoteV547').click();
+  await page.waitForFunction(()=>syncInfoV547().conflict===null);
+  assert.equal(await page.evaluate(()=>window.__exportedV605),1);
+  assert.equal(writes,writesBeforeAdoption,'cloud adoption must not write user_state');
+  assert.equal(await page.evaluate(()=>state.collection[0].exemplars[0].condition),'Neu / OVP');
+  assert.deepEqual(errors,[]);
   console.log(engine+': copy values, visible sources, explicit conditions, popup-free saves, offline edits and reconnect verified');
   await browser.close();
  }

@@ -103,10 +103,15 @@ async function adoptCloudConflictV604(user,conflict){
  if(typeof window!=='undefined')window.BrickSaveStatus?.set('loaded','Aktueller Cloud-Stand übernommen.',user);
  renderSyncConflictV547();return true;
 }
-function renderSyncConflictV547(){const box=cardV544('users','syncConflictV547','Synchronisierung & Gerätekonflikte');if(!box)return;const c=cloudUserV3?syncInfoV547().conflict:null;box.innerHTML='<h2>Synchronisierung & Gerätekonflikte</h2>'+(c?'<p>Auf einem anderen Gerät wurde zwischenzeitlich gespeichert. Beide Stände bleiben erhalten, bis du eine Auswahl triffst.</p><div class="actions"><button class="btn secondary" id="syncBothV547">Beide Stände herunterladen</button><button class="btn secondary" id="syncRemoteV547">Cloud-Stand übernehmen</button><button class="btn secondary" id="syncLocalV547">Meinen Stand bewusst speichern</button></div>':'<p class="hint">Cloud-Schreibvorgänge prüfen die zuletzt geladene Version. Änderungen eines anderen Geräts werden nicht automatisch überschrieben.</p>');if(!c)return;
+function conflictOverviewV605(local,remote){
+ const summary=s=>({sets:(s?.collection||[]).length,copies:(s?.collection||[]).reduce((n,x)=>n+(Number(x.quantity)>0?Number(x.quantity):1),0)});
+ const a=summary(local),b=summary(remote);
+ return '<div class="conflictCountsV605"><div><b>Auf diesem Gerät</b><small>'+a.sets+' verschiedene Sets · '+a.copies+' Exemplare</small></div><div><b>In der Cloud</b><small>'+b.sets+' verschiedene Sets · '+b.copies+' Exemplare</small></div></div>';
+}
+function renderSyncConflictV547(){const box=cardV544('users','syncConflictV547','Synchronisierung & Gerätekonflikte');if(!box)return;const c=cloudUserV3?syncInfoV547().conflict:null;box.innerHTML='<h2>Synchronisierung & Gerätekonflikte</h2>'+(c?'<p>Es liegen unterschiedliche Speicherstände vor. Lade bei Unsicherheit zuerst beide Stände herunter. Die Übernahme lädt die Cloud; dein Gerätestand überschreibt die Cloud nur auf ausdrücklichen Wunsch.</p>'+conflictOverviewV605(state,c.remote)+'<div class="actions"><button class="btn secondary" id="syncBothV547">Beide Stände herunterladen</button><button class="btn secondary" id="syncRemoteV547">Cloud-Stand übernehmen</button><button class="btn secondary" id="syncLocalV547">Meinen Stand bewusst speichern</button></div>':'<p class="hint">Cloud-Schreibvorgänge prüfen die zuletzt geladene Version. Änderungen eines anderen Geräts werden nicht automatisch überschrieben.</p>');if(!c)return;
  $('syncBothV547').onclick=()=>downloadValueV545(JSON.stringify({local:state,remote:c.remote},null,2),'Brick-City-Konflikt.json','application/json');
  const resolve=async local=>{
- if(!confirm(local?'Den lokalen Bestand mit allen Sets in die Cloud übertragen? Bitte nur fortfahren, wenn du die Konfliktdatei bereits heruntergeladen hast.':'Den Cloud-Stand übernehmen? Bitte vorher beide Stände herunterladen.'))return;
+ if(local&&!confirm('Den lokalen Bestand mit allen Sets in die Cloud übertragen? Bitte nur fortfahren, wenn du die Konfliktdatei bereits heruntergeladen hast.'))return;
  const user=cloudUserV3?.id;if(!user)return;
  const sync=syncInfoV547(user);
  if(local){

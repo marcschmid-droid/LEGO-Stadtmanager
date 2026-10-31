@@ -6,8 +6,17 @@
  function metrics(s,resolve){
    const collection=Array.isArray(s?.collection)?s.collection:[];
    const count=collection.length;
-   const copies=collection.reduce((a,x)=>a+(num(x.quantity)??1),0);
+
    const valuations=collection.map(x=>resolve?resolve(x):valuation.summarize(x));
+   const copies=valuations.reduce((sum,v)=>sum+v.quantity,0);
+   const pricedCopies=valuations.reduce((sum,v)=>sum+(v.mismatch?0:v.knownCount),0);
+   const partialValue=valuations.reduce((sum,v)=>sum+(v.mismatch?0:v.knownTotal),0);
+   const issues=[];
+   valuations.forEach((v,i)=>{
+    const item=collection[i];
+    if(v.mismatch){issues.push({setNumber:String(item.setNumber),index:null,reason:'Stückzahl und Exemplare prüfen'});return}
+    v.rows.filter(row=>row.value===null).forEach(row=>issues.push({setNumber:String(item.setNumber),index:row.index,reason:row.kind==='unknown'?'Zustand fehlt':'Marktwert fehlt'}));
+   });
    const valueKnown=valuations.filter(x=>x.complete);
    const value=valueKnown.reduce((a,x)=>a+x.total,0);
    const recorded=collection.filter(x=>num(x.purchasePrice)!==null);
@@ -16,7 +25,7 @@
    const investment=count===0?0:baseline!==null?baseline+collection.reduce((a,x)=>a+(Array.isArray(x.exemplars)?x.exemplars:[]).filter(e=>e.addedAfterBaseline).reduce((b,e)=>b+(num(e.price)??0),0),0):recorded.length===collection.length?purchases:null;
    const completeValue=count>0&&valueKnown.length===count;
    const completeInvestment=investment!==null;
-   return {count,copies,value:completeValue?value:null,investment:completeInvestment?investment:null,returnPct:completeValue&&completeInvestment&&investment>0?(value-investment)/investment*100:null,valueCovered:valueKnown.length,costCovered:recorded.length};
+   return {count,copies,pricedCopies,missingCopies:copies-pricedCopies,partialValue:pricedCopies?partialValue:null,issues,value:completeValue?value:null,investment:completeInvestment?investment:null,returnPct:completeValue&&completeInvestment&&investment>0?(value-investment)/investment*100:null,valueCovered:valueKnown.length,costCovered:recorded.length};
  }
  root.BrickCollectionMetrics={metrics};
 })(typeof module==='object'&&module.exports?module.exports:window);

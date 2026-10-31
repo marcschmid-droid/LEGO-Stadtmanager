@@ -7,7 +7,11 @@
   const fmt=n=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
   const show=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
   show('kUnique',String(m.count));
-  show('kValue',m.value===null?'Werte fehlen':fmt(m.value));
+  show('kValue',m.value===null?(m.partialValue===null?'Noch keine Bewertung':fmt(m.partialValue)):fmt(m.value));
+  show('kValueCoverageV605',m.value===null?(m.pricedCopies+' von '+m.copies+' Exemplaren bewertet · Teilbetrag'):'Alle Exemplare bewertet');
+  show('kCopiesV605',(m.count===1?'1 Set':m.count+' verschiedene Sets')+' · '+m.copies+(m.copies===1?' Exemplar':' Exemplare'));
+  const missing=document.getElementById('missingValuesV605');
+  if(missing){missing.hidden=!m.issues.length;missing.textContent=m.missingCopies+(m.missingCopies===1?' Exemplar prüfen →':' Exemplare prüfen →')}
   show('kInvest',m.investment===null?'Kaufpreise fehlen':fmt(m.investment));
   show('kGainPct',m.returnPct===null?'–':new Intl.NumberFormat('de-DE',{maximumFractionDigits:1}).format(m.returnPct)+' %');
 
