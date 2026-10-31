@@ -104,7 +104,12 @@ function fakeClient(){
   assert.equal(await page.locator('#saveProtectionV559').evaluate(el=>el.parentElement.id),'accountBackupsV605');
   for(const width of [320,390]){
    await page.setViewportSize({width,height:844});await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
-   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),engine+' account overflow');
+   const accountSize=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
+   if(accountSize.scroll>accountSize.width+1){
+    console.error(engine+' account overflow '+width,JSON.stringify(await page.evaluate(()=>[...document.querySelectorAll('body *')].filter(el=>el.getBoundingClientRect().width&&el.getBoundingClientRect().right>innerWidth+1).slice(0,15).map(el=>({id:el.id,tag:el.tagName,cls:el.className,right:el.getBoundingClientRect().right})))));
+    await page.screenshot({path:out+'/'+engine+'-account-overflow-'+width+'.png',fullPage:true,animations:'disabled'});
+   }
+   assert.ok(accountSize.scroll<=accountSize.width+1,engine+' account overflow '+JSON.stringify(accountSize));
   }
   await page.screenshot({path:out+'/'+engine+'-account-605.png',fullPage:true,animations:'disabled'});
   await page.route('**/release-version.json',route=>route.fulfill({contentType:'application/json',body:'{"build":606}'}));
