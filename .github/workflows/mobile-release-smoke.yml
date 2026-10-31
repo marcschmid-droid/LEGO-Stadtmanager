@@ -1,7 +1,7 @@
 name: Mobile registration and save controls
 on:
   push:
-    branches: [main, design/visual-refresh-5099, fix/one-step-login, feature/showcase, feature/managed-showcase, improve/collection-search, design/collection-polish, improve/collection-reliability]
+    branches: [main, design/visual-refresh-5099, fix/one-step-login, feature/showcase, feature/managed-showcase, improve/collection-search, design/collection-polish, improve/collection-reliability, improve/daily-experience]
     paths:
       - 'anmelden.html'
       - 'auth-entry.js'
@@ -16,6 +16,10 @@ on:
       - 'collection-query.js'
       - 'collection-valuation.js'
       - 'sync-status-v603.js'
+      - 'experience-v605.js'
+      - 'release-version.json'
+      - 'improvements-v544.js'
+      - 'collection-ops-v547.js'
       - 'set-save-model.js'
       - 'app-v3.js'
       - 'save-protection-v559.js'

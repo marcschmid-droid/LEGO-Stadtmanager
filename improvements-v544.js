@@ -8,13 +8,24 @@ function backupRowsV544(){
  if(cached?.raw===raw)return cached.rows;
  try{const rows=JSON.parse(raw);backupCacheV544.set(key,{raw,rows});return rows}catch{return []}
 }
+function compactCheckpointsV605(){
+ // Atomic replacement only: never remove the active account cache to make room.
+ if(!cloudUserV3?.id)return;
+ const rows=backupRowsV544();
+ if(rows.length>2){try{localStorage.setItem(backupKeyV544(),JSON.stringify(rows.slice(0,2)))}catch(_){/* Existing checkpoints remain if replacement fails. */}}
+}
 function snapshotV544(reason='Automatische Sicherung',force=false){
  if(cloudApplyingV3)return false;
  const rows=[...backupRowsV544()],now=Date.now();
  if(!force&&rows.length&&now-Date.parse(rows[0].createdAt)<900000)return true;
  try{
   rows.unshift({createdAt:new Date(now).toISOString(),reason,state:structuredClone(state)});
-  localStorage.setItem(backupKeyV544(),JSON.stringify(rows.slice(0,5)));
+  // Keep at most two checkpoints; a shorter replacement is atomic in localStorage.
+  try{localStorage.setItem(backupKeyV544(),JSON.stringify(rows.slice(0,2)))}
+  catch(error){
+   if(error?.name!=='QuotaExceededError'&&!/quota/i.test(String(error?.message)))throw error;
+   localStorage.setItem(backupKeyV544(),JSON.stringify(rows.slice(0,1)));
+  }
   reliabilityV544.backupError='';return true;
  }catch{reliabilityV544.backupError='Sicherung fehlgeschlagen: Gerätespeicher voll. Bitte eine Datei exportieren.';return false}
 }
@@ -38,7 +49,7 @@ function cardV544(panel,id,title){
 function renderBackupsV544(){
  const box=cardV544('settings','backupsV544','Sicherung & Wiederherstellung');if(!box)return;
  const rows=backupRowsV544();
- box.innerHTML='<h2>Sicherung & Wiederherstellung</h2><p class="hint">Fünf lokale Wiederherstellungspunkte pro Konto. Automatisch bei Änderungen, höchstens alle 15 Minuten. Für eine unabhängige Sicherung exportiere eine Datei.</p><div class="actions"><button class="btn" id="backupNowV544">Jetzt sichern</button><button class="btn secondary" id="backupExportV544">Datei exportieren</button><label class="btn secondary">Datei wiederherstellen<input id="backupFileV544" type="file" accept=".json,application/json" hidden></label></div><p role="status">'+esc(reliabilityV544.backupError||(!navigator.onLine?'Offline · Änderungen werden lokal gespeichert.':'Online · Cloud-Status im Konto prüfen.'))+'</p><div class="backupRowsV544">'+rows.map((r,i)=>'<div><span>'+esc(new Date(r.createdAt).toLocaleString('de-DE')+' · '+r.reason)+'</span><button class="btn secondary" data-backup-v544="'+i+'">Wiederherstellen</button></div>').join('')+'</div>';
+ box.innerHTML='<h2>Sicherung & Wiederherstellung</h2><p class="hint">Bis zu zwei lokale Wiederherstellungspunkte pro Konto. Automatisch bei Änderungen, höchstens alle 15 Minuten. Für eine unabhängige Sicherung exportiere eine Datei.</p><div class="actions"><button class="btn" id="backupNowV544">Jetzt sichern</button><button class="btn secondary" id="backupExportV544">Datei exportieren</button><label class="btn secondary">Datei wiederherstellen<input id="backupFileV544" type="file" accept=".json,application/json" hidden></label></div><p role="status">'+esc(reliabilityV544.backupError||(!navigator.onLine?'Offline · Änderungen werden lokal gespeichert.':'Online · Cloud-Status im Konto prüfen.'))+'</p><div class="backupRowsV544">'+rows.map((r,i)=>'<div><span>'+esc(new Date(r.createdAt).toLocaleString('de-DE')+' · '+r.reason)+'</span><button class="btn secondary" data-backup-v544="'+i+'">Wiederherstellen</button></div>').join('')+'</div>';
  $('backupNowV544').onclick=()=>{snapshotV544('Manuell',true);renderBackupsV544()};$('backupExportV544').onclick=downloadBackupV544;
  box.querySelectorAll('[data-backup-v544]').forEach(b=>b.onclick=()=>restoreBackupV544(rows[Number(b.dataset.backupV544)].state));
  $('backupFileV544').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());restoreBackupV544(data.state||data)}catch{alert('Datei konnte nicht gelesen werden.')}};
