@@ -236,3 +236,10 @@ body.themeV39.bcmVisualV599 .legal-note a { display:inline-block; margin-top:7px
 .conflictCountsV605>div{background:#f5f6f8;border-radius:12px;padding:12px;min-width:0;overflow-wrap:anywhere}
 .conflictCountsV605 b,.conflictCountsV605 small{display:block}
 @media(max-width:420px){.missingRowV605{align-items:stretch;flex-direction:column}.missingRowV605 button{align-self:flex-start}}
+/* Account fields must wrap on Safari too, including long email addresses. */
+#users .card,#users .sectionHead>div,#users details{min-width:0;max-width:100%}
+#users .btn{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+#cloudUserEmail{font-size:16px!important;line-height:1.5;overflow-wrap:anywhere;word-break:break-word}
+#cloudAccountCard .cloudBackupStatusV520 b{font-size:13px!important;line-height:1.5}
+#users .planBillingV520 b{font-size:14px!important;line-height:1.5;overflow-wrap:anywhere}
+#cloudAccountCard>.syncbox{display:none!important}
