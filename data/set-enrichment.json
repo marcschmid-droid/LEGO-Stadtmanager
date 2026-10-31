@@ -5,9 +5,9 @@
     "brickeconomyRequestsThisRun": 0,
     "brickeconomyUsage": {
       "quota": 100,
-      "remaining": 40,
+      "remaining": 20,
       "resets_at": "2026-11-01T00:00:00Z",
-      "used_today": 60
+      "used_today": 80
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
@@ -19,7 +19,7 @@
       "BrickEconomy 1036: 400 Client Error: Bad Request for url: https://www.brickeconomy.com/api/v1/set/1036-1?currency=EUR",
       "No metadata for 1036"
     ],
-    "lastUpdated": "2026-10-31T13:14:56Z",
+    "lastUpdated": "2026-10-31T16:57:08Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 2,
@@ -1381,13 +1381,13 @@
     },
     "11024": {
       "brickeconomyName": "Gray Baseplate",
-      "brickeconomyUpdated": "2026-10-29T13:25:37Z",
+      "brickeconomyUpdated": "2026-10-31T16:56:54Z",
       "ean": "5702017185279",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/11024-1/98179.jpg",
-      "marketNewEUR": 12.84,
+      "marketNewEUR": 12.68,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -1405,7 +1405,7 @@
     },
     "11025": {
       "brickeconomyName": "Blue Baseplate",
-      "brickeconomyUpdated": "2026-10-29T13:25:38Z",
+      "brickeconomyUpdated": "2026-10-31T16:56:54Z",
       "ean": "5702017185286",
       "forecast2yEUR": 9.6,
       "forecast5yEUR": 11.79,
@@ -1429,7 +1429,7 @@
     },
     "11026": {
       "brickeconomyName": "White Baseplate",
-      "brickeconomyUpdated": "2026-10-29T13:25:40Z",
+      "brickeconomyUpdated": "2026-10-31T16:56:55Z",
       "ean": "5702017185217",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -1453,7 +1453,7 @@
     },
     "11371": {
       "brickeconomyName": "Shopping Street",
-      "brickeconomyUpdated": "2026-10-29T13:25:41Z",
+      "brickeconomyUpdated": "2026-10-31T16:56:56Z",
       "bricksetUpdated": "2026-10-12T22:20:10Z",
       "ean": "5702018032046",
       "forecast2yEUR": null,
@@ -1482,14 +1482,14 @@
     },
     "11375": {
       "brickeconomyName": "Ferrari F2004 & Michael Schumacher",
-      "brickeconomyUpdated": "2026-10-29T13:25:43Z",
+      "brickeconomyUpdated": "2026-10-31T16:56:57Z",
       "bricksetUpdated": "2026-10-12T22:20:11Z",
       "ean": "5702018063583",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/11375-1/168716.jpg",
-      "marketNewEUR": 65.99,
+      "marketNewEUR": 66.87,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -1555,7 +1555,7 @@
     },
     "21008": {
       "brickeconomyName": "Burj Khalifa",
-      "brickeconomyUpdated": "2026-10-29T13:25:44Z",
+      "brickeconomyUpdated": "2026-10-31T16:56:58Z",
       "ean": "5702014802599",
       "forecast2yEUR": 105.39,
       "forecast5yEUR": 114.37,
@@ -1579,7 +1579,7 @@
     },
     "21018": {
       "brickeconomyName": "United Nations Headquarters",
-      "brickeconomyUpdated": "2026-10-29T13:25:46Z",
+      "brickeconomyUpdated": "2026-10-31T16:56:59Z",
       "ean": "5702014973114",
       "forecast2yEUR": 132.5,
       "forecast5yEUR": 159.76,
@@ -1603,7 +1603,7 @@
     },
     "21019": {
       "brickeconomyName": "The Eiffel Tower",
-      "brickeconomyUpdated": "2026-10-29T13:25:47Z",
+      "brickeconomyUpdated": "2026-10-31T16:56:59Z",
       "ean": "4513448462928",
       "forecast2yEUR": 136.28,
       "forecast5yEUR": 173.21,
@@ -1649,7 +1649,7 @@
     },
     "21023": {
       "brickeconomyName": "Flatiron Building, New York",
-      "brickeconomyUpdated": "2026-10-29T13:25:48Z",
+      "brickeconomyUpdated": "2026-10-31T16:57:00Z",
       "bricksetUpdated": "2026-10-12T22:20:14Z",
       "ean": "6900743189946",
       "forecast2yEUR": 101.2,
@@ -1678,7 +1678,7 @@
     },
     "21024": {
       "brickeconomyName": "Louvre",
-      "brickeconomyUpdated": "2026-10-29T13:25:50Z",
+      "brickeconomyUpdated": "2026-10-31T16:57:01Z",
       "bricksetUpdated": "2026-10-12T22:20:14Z",
       "ean": "5702015354288",
       "forecast2yEUR": 175.86,
@@ -1707,7 +1707,7 @@
     },
     "21027": {
       "brickeconomyName": "Berlin",
-      "brickeconomyUpdated": "2026-10-29T13:25:51Z",
+      "brickeconomyUpdated": "2026-10-31T16:57:02Z",
       "bricksetUpdated": "2026-10-12T22:20:15Z",
       "ean": null,
       "forecast2yEUR": 239.28,
@@ -1736,7 +1736,7 @@
     },
     "21028": {
       "brickeconomyName": "New York City",
-      "brickeconomyUpdated": "2026-10-29T13:25:53Z",
+      "brickeconomyUpdated": "2026-10-31T16:57:03Z",
       "bricksetUpdated": "2026-10-12T22:20:16Z",
       "ean": "0743138282213",
       "forecast2yEUR": 47.48,
@@ -1765,7 +1765,7 @@
     },
     "21029": {
       "brickeconomyName": "Buckingham Palace",
-      "brickeconomyUpdated": "2026-10-29T13:25:54Z",
+      "brickeconomyUpdated": "2026-10-31T16:57:03Z",
       "bricksetUpdated": "2026-10-12T22:20:17Z",
       "ean": "0044968699432",
       "forecast2yEUR": 157.5,
@@ -1794,14 +1794,14 @@
     },
     "21034": {
       "brickeconomyName": "London",
-      "brickeconomyUpdated": "2026-10-29T13:25:55Z",
+      "brickeconomyUpdated": "2026-10-31T16:57:04Z",
       "bricksetUpdated": "2026-10-12T22:20:18Z",
       "ean": "0780116962446",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/21034-1/33552.jpg",
-      "marketNewEUR": 33.91,
+      "marketNewEUR": 34.33,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -1823,7 +1823,7 @@
     },
     "21036": {
       "brickeconomyName": "Arc de Triomphe",
-      "brickeconomyUpdated": "2026-10-29T13:25:57Z",
+      "brickeconomyUpdated": "2026-10-31T16:57:05Z",
       "bricksetUpdated": "2026-10-12T22:20:18Z",
       "ean": "5702015865357",
       "forecast2yEUR": 150.18,
@@ -1852,7 +1852,7 @@
     },
     "21037": {
       "brickeconomyName": "LEGO House",
-      "brickeconomyUpdated": "2026-10-29T13:25:58Z",
+      "brickeconomyUpdated": "2026-10-31T16:57:06Z",
       "bricksetUpdated": "2026-10-12T22:20:19Z",
       "ean": "5702015867481",
       "forecast2yEUR": 91.57,
@@ -1881,7 +1881,7 @@
     },
     "21041": {
       "brickeconomyName": "Great Wall of China",
-      "brickeconomyUpdated": "2026-10-29T13:25:59Z",
+      "brickeconomyUpdated": "2026-10-31T16:57:06Z",
       "bricksetUpdated": "2026-10-12T22:20:19Z",
       "ean": "5702016111873",
       "forecast2yEUR": 106.71,
@@ -1910,7 +1910,7 @@
     },
     "21042": {
       "brickeconomyName": "Statue of Liberty",
-      "brickeconomyUpdated": "2026-10-29T13:26:01Z",
+      "brickeconomyUpdated": "2026-10-31T16:57:07Z",
       "bricksetUpdated": "2026-10-12T22:20:20Z",
       "ean": "5702016111859",
       "forecast2yEUR": 110.46,
