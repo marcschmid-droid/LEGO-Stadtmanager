@@ -5,9 +5,9 @@
     "brickeconomyRequestsThisRun": 0,
     "brickeconomyUsage": {
       "quota": 100,
-      "remaining": 40,
-      "resets_at": "2026-10-31T00:00:00Z",
-      "used_today": 60
+      "remaining": 100,
+      "resets_at": "2026-11-01T00:00:00Z",
+      "used_today": 0
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
@@ -19,7 +19,7 @@
       "BrickEconomy 1036: 400 Client Error: Bad Request for url: https://www.brickeconomy.com/api/v1/set/1036-1?currency=EUR",
       "No metadata for 1036"
     ],
-    "lastUpdated": "2026-10-30T13:21:42Z",
+    "lastUpdated": "2026-10-31T01:26:19Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 2,
@@ -1511,11 +1511,11 @@
     },
     "11383": {
       "brickeconomyName": "Mayor Manor",
-      "brickeconomyUpdated": "2026-10-28T21:02:56Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:03Z",
       "ean": "5702018063644",
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/11383-1/177489.jpg",
-      "marketNewEUR": 101.39,
+      "marketNewEUR": 102.71,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -1533,7 +1533,7 @@
     },
     "11387": {
       "brickeconomyName": "Holiday House",
-      "brickeconomyUpdated": "2026-10-28T21:02:53Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:01Z",
       "ean": "5702018069851",
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/11387-1/181332.jpg",
@@ -2432,7 +2432,7 @@
     },
     "21326": {
       "brickeconomyName": "Winnie the Pooh",
-      "brickeconomyUpdated": "2026-10-28T21:02:58Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:04Z",
       "ean": "5702016915648",
       "forecast2yEUR": 179.37,
       "forecast5yEUR": 213.4,
@@ -2456,7 +2456,7 @@
     },
     "21330": {
       "brickeconomyName": "Home Alone",
-      "brickeconomyUpdated": "2026-10-28T21:02:59Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:06Z",
       "ean": "5702017006178",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -2480,7 +2480,7 @@
     },
     "21335": {
       "brickeconomyName": "Motorized Lighthouse",
-      "brickeconomyUpdated": "2026-10-28T21:03:01Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:07Z",
       "ean": "5702017189925",
       "forecast2yEUR": 376.24,
       "forecast5yEUR": 469.59,
@@ -2504,7 +2504,7 @@
     },
     "21338": {
       "brickeconomyName": "A-Frame Cabin",
-      "brickeconomyUpdated": "2026-10-28T21:03:02Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:07Z",
       "ean": "5702017417448",
       "forecast2yEUR": 215.24,
       "forecast5yEUR": 261.9,
@@ -2528,7 +2528,7 @@
     },
     "21339": {
       "brickeconomyName": "BTS Dynamite",
-      "brickeconomyUpdated": "2026-10-28T21:03:03Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:08Z",
       "ean": "5702017417462",
       "forecast2yEUR": 86.3,
       "forecast5yEUR": 95.62,
@@ -2552,7 +2552,7 @@
     },
     "21341": {
       "brickeconomyName": "Hocus Pocus: The Sanderson Sister Cottage",
-      "brickeconomyUpdated": "2026-10-28T21:03:04Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:10Z",
       "ean": "5702017452142",
       "forecast2yEUR": 332.44,
       "forecast5yEUR": 415.75,
@@ -2576,7 +2576,7 @@
     },
     "21343": {
       "brickeconomyName": "Viking Village",
-      "brickeconomyUpdated": "2026-10-28T21:03:05Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:11Z",
       "ean": "5702017497884",
       "forecast2yEUR": 159.24,
       "forecast5yEUR": 195.74,
@@ -2600,7 +2600,7 @@
     },
     "21344": {
       "brickeconomyName": "Orient Express",
-      "brickeconomyUpdated": "2026-10-28T21:03:07Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:11Z",
       "ean": "5702017497891",
       "forecast2yEUR": 460.8,
       "forecast5yEUR": 566.75,
@@ -2624,13 +2624,13 @@
     },
     "21345": {
       "brickeconomyName": "Polaroid Camera",
-      "brickeconomyUpdated": "2026-10-28T21:03:08Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:13Z",
       "ean": "5702017599113",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/21345-1/134647.jpg",
-      "marketNewEUR": 65.54,
+      "marketNewEUR": 67.09,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -2648,7 +2648,7 @@
     },
     "21347": {
       "brickeconomyName": "Red London Telephone Box",
-      "brickeconomyUpdated": "2026-10-28T21:03:09Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:14Z",
       "ean": "5702017599137",
       "forecast2yEUR": 105.73,
       "forecast5yEUR": 112.46,
@@ -2672,7 +2672,7 @@
     },
     "21352": {
       "brickeconomyName": "Magic of Disney",
-      "brickeconomyUpdated": "2026-10-28T21:03:10Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:14Z",
       "ean": "5702017599748",
       "forecast2yEUR": 92.68,
       "forecast5yEUR": 99.5,
@@ -2696,7 +2696,7 @@
     },
     "21353": {
       "brickeconomyName": "The Botanical Garden",
-      "brickeconomyUpdated": "2026-10-28T21:03:11Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:15Z",
       "ean": "5702017599786",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
@@ -2720,13 +2720,13 @@
     },
     "21359": {
       "brickeconomyName": "Italian Riviera",
-      "brickeconomyUpdated": "2026-10-28T21:03:12Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:16Z",
       "ean": "5702017829272",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/21359-1/158935.jpg",
-      "marketNewEUR": 247.89,
+      "marketNewEUR": 250.16,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -2744,13 +2744,13 @@
     },
     "21370": {
       "brickeconomyName": "E.T. the Extra-Terrestrial",
-      "brickeconomyUpdated": "2026-10-28T21:03:14Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:16Z",
       "ean": "5702018066324",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/21370-1/177091.jpg",
-      "marketNewEUR": 109.43,
+      "marketNewEUR": 107.51,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -2795,7 +2795,7 @@
     },
     "30645": {
       "brickeconomyName": "Snowman",
-      "brickeconomyUpdated": "2026-10-28T21:03:15Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:17Z",
       "ean": "5702017421513",
       "forecast2yEUR": 13.2,
       "forecast5yEUR": 17.27,
@@ -2819,7 +2819,7 @@
     },
     "30716": {
       "brickeconomyName": "Cute Easter Bunny",
-      "brickeconomyUpdated": "2026-10-28T21:03:17Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:18Z",
       "ean": null,
       "forecast2yEUR": 8.96,
       "forecast5yEUR": 10.5,
@@ -2891,7 +2891,7 @@
     },
     "40082": {
       "brickeconomyName": "Christmas Tree Stand",
-      "brickeconomyUpdated": "2026-10-28T21:03:18Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:19Z",
       "ean": null,
       "forecast2yEUR": 47.86,
       "forecast5yEUR": 56.89,
@@ -5111,7 +5111,7 @@
     },
     "76457": {
       "brickeconomyName": "Hogsmeade Village - Collectors' Edition",
-      "brickeconomyUpdated": "2026-10-28T21:02:55Z",
+      "brickeconomyUpdated": "2026-10-31T01:26:02Z",
       "ean": "5702017824314",
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/76457-1/160018.jpg",
