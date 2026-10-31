@@ -85,3 +85,9 @@ body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyPricesV573 b{font
 }
 @media(max-width:359px){body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencyListV573{grid-template-columns:1fr}.collectionHighlightV606{grid-template-columns:1fr}.highlightVisualV606{aspect-ratio:2/1}}
 @media(prefers-reduced-motion:reduce){body.themeV39.bcmVisualV599 #emergencyCollectionV573 .emergencySetV573{transition:none;transform:none!important}}
+/* Remove historic title spacing; keep missing-value labels readable in small KPI cards. */
+body.themeV39.bcmVisualV599 #home .homeHeroV549:before{display:none!important}
+body.themeV39.bcmVisualV599 #home .homeHeroV549 h2{padding-right:0!important}
+body.themeV39.bcmVisualV599 #home .homeKpisV549 .card b[data-valuation-state="missing"]{font-size:16px!important;letter-spacing:-.15px!important;line-height:1.4!important;overflow-wrap:normal}
+body.themeV39.bcmVisualV599 #home #missingValuesV605{font-size:11px;padding:0;min-height:36px}
+@media(max-width:650px){body.themeV39.bcmVisualV599 #home .homeHeroV549>div{width:82%}body.themeV39.bcmVisualV599 #home .homeHeroV549 .homeEyebrowV549{letter-spacing:.07em}}

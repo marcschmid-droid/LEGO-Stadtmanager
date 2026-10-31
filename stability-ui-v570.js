@@ -13,6 +13,8 @@
   const missing=document.getElementById('missingValuesV605');
   if(missing){missing.hidden=!m.issues.length;missing.textContent=m.missingCopies+(m.missingCopies===1?' Exemplar prüfen →':' Exemplare prüfen →')}
   show('kInvest',m.investment===null?'Kaufpreise fehlen':fmt(m.investment));
+  document.getElementById('kInvest')?.setAttribute('data-valuation-state',m.investment===null?'missing':'known');
+  document.getElementById('kValue')?.setAttribute('data-valuation-state',m.value===null&&m.partialValue===null?'missing':'known');
   show('kGainPct',m.returnPct===null?'–':new Intl.NumberFormat('de-DE',{maximumFractionDigits:1}).format(m.returnPct)+' %');
 
  }
