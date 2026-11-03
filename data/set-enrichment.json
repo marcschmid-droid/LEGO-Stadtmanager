@@ -5,9 +5,9 @@
     "brickeconomyRequestsThisRun": 0,
     "brickeconomyUsage": {
       "quota": 100,
-      "remaining": 34,
+      "remaining": 14,
       "resets_at": "2026-11-04T00:00:00Z",
-      "used_today": 66
+      "used_today": 86
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
@@ -19,7 +19,7 @@
       "BrickEconomy 1036: 400 Client Error: Bad Request for url: https://www.brickeconomy.com/api/v1/set/1036-1?currency=EUR",
       "No metadata for 1036"
     ],
-    "lastUpdated": "2026-11-03T17:18:45Z",
+    "lastUpdated": "2026-11-03T21:08:28Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 2,
@@ -752,13 +752,13 @@
     },
     "10280": {
       "brickeconomyName": "Flower Bouquet",
-      "brickeconomyUpdated": "2026-11-01T16:56:41Z",
+      "brickeconomyUpdated": "2026-11-03T21:08:24Z",
       "ean": "5702016913767",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/10280-1/148035.jpg",
-      "marketNewEUR": 47.81,
+      "marketNewEUR": 48.02,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -1030,7 +1030,7 @@
     },
     "10326": {
       "brickeconomyName": "Natural History Museum",
-      "brickeconomyUpdated": "2026-11-01T16:56:42Z",
+      "brickeconomyUpdated": "2026-11-03T21:08:25Z",
       "bricksetUpdated": "2026-10-12T22:20:05Z",
       "ean": "5702017589886",
       "forecast2yEUR": null,
@@ -1149,13 +1149,13 @@
     },
     "10344": {
       "brickeconomyName": "Lucky Bamboo",
-      "brickeconomyUpdated": "2026-11-01T16:56:42Z",
+      "brickeconomyUpdated": "2026-11-03T21:08:27Z",
       "ean": "5702017814650",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/10344-1/147724.jpg",
-      "marketNewEUR": 23.84,
+      "marketNewEUR": 24.11,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -1173,7 +1173,7 @@
     },
     "10350": {
       "brickeconomyName": "Tudor Corner",
-      "brickeconomyUpdated": "2026-11-01T16:56:37Z",
+      "brickeconomyUpdated": "2026-11-03T21:08:20Z",
       "bricksetUpdated": "2026-10-07T03:36:58Z",
       "ean": "5702017813219",
       "footprintDepth": 25.0,
@@ -1183,7 +1183,7 @@
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/10350-1/149051.jpg",
-      "marketNewEUR": 200.01,
+      "marketNewEUR": 201.57,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -1206,7 +1206,7 @@
     },
     "10352": {
       "brickeconomyName": "The Simpsons: Krusty Burger",
-      "brickeconomyUpdated": "2026-11-01T16:56:38Z",
+      "brickeconomyUpdated": "2026-11-03T21:08:22Z",
       "bricksetUpdated": "2026-10-07T03:36:59Z",
       "ean": "5702017829128",
       "footprintDepth": 20.0,
@@ -1239,7 +1239,7 @@
     },
     "10354": {
       "brickeconomyName": "The Lord of the Rings: The Shire",
-      "brickeconomyUpdated": "2026-11-01T16:56:39Z",
+      "brickeconomyUpdated": "2026-11-03T21:08:23Z",
       "bricksetUpdated": "2026-10-07T03:37:00Z",
       "ean": "5702017829135",
       "footprintDepth": 27.0,
@@ -1306,7 +1306,7 @@
     "1036": {},
     "10361": {
       "brickeconomyName": "Holiday Express Train",
-      "brickeconomyUpdated": "2026-11-01T16:56:36Z",
+      "brickeconomyUpdated": "2026-11-03T21:08:19Z",
       "ean": "5702017829197",
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/10361-1/161069.jpg",
@@ -1627,11 +1627,11 @@
     },
     "21020": {
       "brickeconomyName": "Trevi Fountain",
-      "brickeconomyUpdated": "2026-11-01T13:15:52Z",
+      "brickeconomyUpdated": "2026-11-03T21:08:15Z",
       "ean": "0658109695322",
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/21020-1/13035.jpg",
-      "marketNewEUR": 139.89,
+      "marketNewEUR": 140.8,
       "marketUsedEUR": 43.99,
       "marketUsedHighEUR": 52.79,
       "marketUsedLowEUR": 39.59,
@@ -2069,12 +2069,12 @@
     },
     "21054": {
       "brickeconomyName": "The White House",
-      "brickeconomyUpdated": "2026-11-01T16:56:35Z",
+      "brickeconomyUpdated": "2026-11-03T21:08:17Z",
       "bricksetUpdated": "2026-10-14T03:52:06Z",
       "ean": "5702016617368",
       "growth12mPct": 2.55,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/21054-1/64201.jpg",
-      "marketNewEUR": 149.58,
+      "marketNewEUR": 158.33,
       "marketUsedEUR": 65.76,
       "marketUsedHighEUR": 78.92,
       "marketUsedLowEUR": 61.45,
@@ -3594,7 +3594,7 @@
     },
     "40809": {
       "brickeconomyName": "Festive Gingerbread House",
-      "brickeconomyUpdated": "2026-11-01T13:15:51Z",
+      "brickeconomyUpdated": "2026-11-03T21:08:14Z",
       "bricksetUpdated": "2026-10-14T03:52:04Z",
       "ean": "5702017830995",
       "growth12mPct": null,
@@ -3621,7 +3621,7 @@
     },
     "40820": {
       "brickeconomyName": "Up-Scaled Santa Minifigure",
-      "brickeconomyUpdated": "2026-11-01T13:15:50Z",
+      "brickeconomyUpdated": "2026-11-03T21:08:12Z",
       "bricksetUpdated": "2026-10-14T03:52:03Z",
       "ean": "5702017831015",
       "growth12mPct": null,
@@ -3675,8 +3675,8 @@
     },
     "40909": {
       "brickeconomyName": "Restaurants of the World: Italy",
-      "brickeconomyUpdated": "2026-11-03T17:18:29Z",
-      "ean": null,
+      "brickeconomyUpdated": "2026-11-03T21:08:12Z",
+      "ean": "5702018071892",
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40909-1/182053.jpg",
       "manualMarketNewEstimate": {
@@ -3705,7 +3705,7 @@
       "rrpEUR": null,
       "subtheme": "Restaurants of the World",
       "theme": "Promotional",
-      "upc": null,
+      "upc": "673419426336",
       "year": 2026
     },
     "43020": {
