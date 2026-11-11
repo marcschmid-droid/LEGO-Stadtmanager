@@ -5,9 +5,9 @@
     "brickeconomyRequestsThisRun": 0,
     "brickeconomyUsage": {
       "quota": 100,
-      "remaining": 60,
-      "resets_at": "2026-11-11T00:00:00Z",
-      "used_today": 40
+      "remaining": 100,
+      "resets_at": "2026-11-12T00:00:00Z",
+      "used_today": 0
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
@@ -19,7 +19,7 @@
       "BrickEconomy 1036: 400 Client Error: Bad Request for url: https://www.brickeconomy.com/api/v1/set/1036-1?currency=EUR",
       "No metadata for 1036"
     ],
-    "lastUpdated": "2026-11-10T21:51:27Z",
+    "lastUpdated": "2026-11-11T06:48:10Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 2,
@@ -203,7 +203,7 @@
     },
     "10224": {
       "brickeconomyName": "Town Hall",
-      "brickeconomyUpdated": "2026-11-07T20:20:04Z",
+      "brickeconomyUpdated": "2026-11-11T06:47:47Z",
       "ean": "4516793143450",
       "forecast2yEUR": 1132.99,
       "forecast5yEUR": 1380.56,
@@ -227,7 +227,7 @@
     },
     "10229": {
       "brickeconomyName": "Winter Village Cottage",
-      "brickeconomyUpdated": "2026-11-07T20:20:05Z",
+      "brickeconomyUpdated": "2026-11-11T06:47:49Z",
       "ean": "5702014842281",
       "forecast2yEUR": 392.22,
       "forecast5yEUR": 482.86,
@@ -251,11 +251,11 @@
     },
     "10232": {
       "brickeconomyName": "Palace Cinema",
-      "brickeconomyUpdated": "2026-11-07T20:20:06Z",
+      "brickeconomyUpdated": "2026-11-11T06:47:51Z",
       "ean": "4516790127507",
       "forecast2yEUR": 365.3,
       "forecast5yEUR": 446.08,
-      "growth12mPct": null,
+      "growth12mPct": 3.13,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/10232-1/10987.jpg",
       "marketNewEUR": 349.66,
       "marketUsedEUR": 219.76,
@@ -275,7 +275,7 @@
     },
     "10235": {
       "brickeconomyName": "Winter Village Market",
-      "brickeconomyUpdated": "2026-11-07T20:20:08Z",
+      "brickeconomyUpdated": "2026-11-11T06:47:52Z",
       "ean": "6900743190010",
       "forecast2yEUR": 258.08,
       "forecast5yEUR": 311.37,
@@ -299,7 +299,7 @@
     },
     "10243": {
       "brickeconomyName": "Parisian Restaurant",
-      "brickeconomyUpdated": "2026-11-07T20:20:09Z",
+      "brickeconomyUpdated": "2026-11-11T06:47:54Z",
       "ean": "6900743189120",
       "forecast2yEUR": 370.27,
       "forecast5yEUR": 468.81,
@@ -323,11 +323,11 @@
     },
     "10245": {
       "brickeconomyName": "Santa's Workshop",
-      "brickeconomyUpdated": "2026-11-07T20:20:10Z",
+      "brickeconomyUpdated": "2026-11-11T06:47:55Z",
       "ean": "5702015122696",
       "forecast2yEUR": 185.2,
       "forecast5yEUR": 209.28,
-      "growth12mPct": 1.06,
+      "growth12mPct": 1.5,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/10245-1/13501.jpg",
       "marketNewEUR": 201.52,
       "marketUsedEUR": 123.25,
@@ -347,7 +347,7 @@
     },
     "10246": {
       "brickeconomyName": "Detective's Office",
-      "brickeconomyUpdated": "2026-11-07T20:20:11Z",
+      "brickeconomyUpdated": "2026-11-11T06:47:56Z",
       "bricksetUpdated": "2026-10-12T22:19:52Z",
       "ean": "5702015348386",
       "forecast2yEUR": 465.78,
@@ -376,7 +376,7 @@
     },
     "10249": {
       "brickeconomyName": "Winter Toy Shop",
-      "brickeconomyUpdated": "2026-11-07T20:20:12Z",
+      "brickeconomyUpdated": "2026-11-11T06:47:58Z",
       "ean": "0755835697238",
       "forecast2yEUR": 194.57,
       "forecast5yEUR": 220.17,
@@ -400,7 +400,7 @@
     },
     "10251": {
       "brickeconomyName": "Brick Bank",
-      "brickeconomyUpdated": "2026-11-07T20:20:13Z",
+      "brickeconomyUpdated": "2026-11-11T06:47:58Z",
       "bricksetUpdated": "2026-10-12T22:19:53Z",
       "ean": "5702015591058",
       "forecast2yEUR": 767.79,
@@ -429,7 +429,7 @@
     },
     "10254": {
       "brickeconomyName": "Winter Holiday Train",
-      "brickeconomyUpdated": "2026-11-07T20:20:14Z",
+      "brickeconomyUpdated": "2026-11-11T06:48:00Z",
       "ean": "5702015591065",
       "forecast2yEUR": 196.48,
       "forecast5yEUR": 211.93,
@@ -453,7 +453,7 @@
     },
     "10255": {
       "brickeconomyName": "Assembly Square",
-      "brickeconomyUpdated": "2026-11-07T20:20:16Z",
+      "brickeconomyUpdated": "2026-11-11T06:48:01Z",
       "bricksetUpdated": "2026-10-12T22:19:54Z",
       "ean": "5702015865272",
       "forecast2yEUR": 394.07,
@@ -482,7 +482,7 @@
     },
     "10258": {
       "brickeconomyName": "London Bus",
-      "brickeconomyUpdated": "2026-11-07T20:20:17Z",
+      "brickeconomyUpdated": "2026-11-11T06:48:02Z",
       "bricksetUpdated": "2026-10-12T22:19:55Z",
       "ean": "0067341926437",
       "forecast2yEUR": 153.49,
@@ -511,7 +511,7 @@
     },
     "10259": {
       "brickeconomyName": "Winter Village Station",
-      "brickeconomyUpdated": "2026-11-07T20:20:18Z",
+      "brickeconomyUpdated": "2026-11-11T06:48:03Z",
       "ean": "5702015865302",
       "forecast2yEUR": 229.49,
       "forecast5yEUR": 269.02,
@@ -535,7 +535,7 @@
     },
     "10260": {
       "brickeconomyName": "Downtown Diner",
-      "brickeconomyUpdated": "2026-11-07T20:20:19Z",
+      "brickeconomyUpdated": "2026-11-11T06:48:05Z",
       "bricksetUpdated": "2026-10-12T22:19:56Z",
       "ean": "5702016111842",
       "forecast2yEUR": 489.07,
@@ -564,7 +564,7 @@
     },
     "10263": {
       "brickeconomyName": "Winter Village Fire Station",
-      "brickeconomyUpdated": "2026-11-07T20:20:20Z",
+      "brickeconomyUpdated": "2026-11-11T06:48:06Z",
       "ean": "5702016111811",
       "forecast2yEUR": 160.26,
       "forecast5yEUR": 193.06,
@@ -588,7 +588,7 @@
     },
     "10264": {
       "brickeconomyName": "Corner Garage",
-      "brickeconomyUpdated": "2026-11-07T20:20:21Z",
+      "brickeconomyUpdated": "2026-11-11T06:48:07Z",
       "ean": "5702016368253",
       "forecast2yEUR": 363.62,
       "forecast5yEUR": 463.5,
@@ -612,7 +612,7 @@
     },
     "10266": {
       "brickeconomyName": "NASA Apollo 11 Lunar Lander",
-      "brickeconomyUpdated": "2026-11-07T20:20:22Z",
+      "brickeconomyUpdated": "2026-11-11T06:48:08Z",
       "bricksetUpdated": "2026-10-12T22:19:58Z",
       "ean": "5702016368277",
       "forecast2yEUR": 120.03,
@@ -641,12 +641,12 @@
     },
     "10267": {
       "brickeconomyName": "Gingerbread House",
-      "brickeconomyUpdated": "2026-11-07T23:43:41Z",
+      "brickeconomyUpdated": "2026-11-11T06:48:09Z",
       "bricksetUpdated": "2026-10-12T22:19:59Z",
       "ean": "5702016368284",
       "forecast2yEUR": 167.82,
       "forecast5yEUR": 208.33,
-      "growth12mPct": 2.14,
+      "growth12mPct": 1.49,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/10267-1/13993.jpg",
       "marketNewEUR": 149.58,
       "marketUsedEUR": 109.16,
@@ -670,12 +670,12 @@
     },
     "10270": {
       "brickeconomyName": "Bookshop",
-      "brickeconomyUpdated": "2026-11-07T23:43:42Z",
+      "brickeconomyUpdated": "2026-11-11T06:48:10Z",
       "bricksetUpdated": "2026-10-12T22:19:59Z",
       "ean": "5702016667974",
       "forecast2yEUR": 276.53,
       "forecast5yEUR": 345.09,
-      "growth12mPct": null,
+      "growth12mPct": 1.39,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/10270-1/18774.jpg",
       "marketNewEUR": 233.87,
       "marketUsedEUR": 172.44,
@@ -3675,7 +3675,7 @@
     },
     "40909": {
       "brickeconomyName": "Restaurants of the World: Italy",
-      "brickeconomyUpdated": "2026-11-10T21:51:06Z",
+      "brickeconomyUpdated": "2026-11-11T06:47:47Z",
       "ean": "5702018071892",
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40909-1/182053.jpg",
