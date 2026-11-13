@@ -5,9 +5,9 @@
     "brickeconomyRequestsThisRun": 0,
     "brickeconomyUsage": {
       "quota": 100,
-      "remaining": 100,
+      "remaining": 80,
       "resets_at": "2026-11-14T00:00:00Z",
-      "used_today": 0
+      "used_today": 20
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
@@ -19,7 +19,7 @@
       "BrickEconomy 1036: 400 Client Error: Bad Request for url: https://www.brickeconomy.com/api/v1/set/1036-1?currency=EUR",
       "No metadata for 1036"
     ],
-    "lastUpdated": "2026-11-13T01:13:48Z",
+    "lastUpdated": "2026-11-13T12:23:52Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 2,
@@ -1627,9 +1627,9 @@
     },
     "21020": {
       "brickeconomyName": "Trevi Fountain",
-      "brickeconomyUpdated": "2026-11-10T02:48:26Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:50Z",
       "ean": "0658109695322",
-      "growth12mPct": null,
+      "growth12mPct": 2.14,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/21020-1/13035.jpg",
       "marketNewEUR": 144.9,
       "marketUsedEUR": 42.13,
@@ -2069,7 +2069,7 @@
     },
     "21054": {
       "brickeconomyName": "The White House",
-      "brickeconomyUpdated": "2026-11-10T02:48:27Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:51Z",
       "bricksetUpdated": "2026-10-14T03:52:06Z",
       "ean": "5702016617368",
       "growth12mPct": 2.55,
@@ -3594,7 +3594,7 @@
     },
     "40809": {
       "brickeconomyName": "Festive Gingerbread House",
-      "brickeconomyUpdated": "2026-11-09T18:56:35Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:49Z",
       "bricksetUpdated": "2026-10-14T03:52:04Z",
       "ean": "5702017830995",
       "growth12mPct": null,
@@ -3621,7 +3621,7 @@
     },
     "40820": {
       "brickeconomyName": "Up-Scaled Santa Minifigure",
-      "brickeconomyUpdated": "2026-11-09T18:56:33Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:44Z",
       "bricksetUpdated": "2026-10-14T03:52:03Z",
       "ean": "5702017831015",
       "growth12mPct": null,
@@ -3648,7 +3648,7 @@
     },
     "40874": {
       "brickeconomyName": "Santa's Holiday Countdown",
-      "brickeconomyUpdated": "2026-11-09T18:56:33Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:46Z",
       "bricksetUpdated": "2026-10-14T03:52:02Z",
       "ean": "5702018071403",
       "growth12mPct": null,
@@ -3675,7 +3675,7 @@
     },
     "40909": {
       "brickeconomyName": "Restaurants of the World: Italy",
-      "brickeconomyUpdated": "2026-11-13T01:13:26Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:25Z",
       "ean": "5702018071892",
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/40909-1/182053.jpg",
@@ -3950,7 +3950,7 @@
     },
     "5009325": {
       "brickeconomyName": "The Simpsons Living Room",
-      "brickeconomyUpdated": "2026-11-09T18:56:34Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:47Z",
       "bricksetUpdated": "2026-10-14T03:52:01Z",
       "ean": "5702018021804",
       "forecast2yEUR": 51.0,
@@ -4864,7 +4864,7 @@
     },
     "76426": {
       "brickeconomyName": "Hogwarts Castle Boathouse",
-      "brickeconomyUpdated": "2026-11-09T18:56:20Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:26Z",
       "bricksetUpdated": "2026-10-14T03:51:52Z",
       "ean": "5702017583099",
       "forecast2yEUR": 86.98,
@@ -4893,7 +4893,7 @@
     },
     "76428": {
       "brickeconomyName": "Hagrid's Hut: An Unexpected Visit",
-      "brickeconomyUpdated": "2026-11-09T18:56:21Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:27Z",
       "bricksetUpdated": "2026-10-14T03:51:52Z",
       "ean": "5702017583105",
       "forecast2yEUR": 77.89,
@@ -4922,7 +4922,7 @@
     },
     "76430": {
       "brickeconomyName": "Hogwarts Owlery",
-      "brickeconomyUpdated": "2026-11-09T18:56:22Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:29Z",
       "bricksetUpdated": "2026-10-14T03:51:53Z",
       "ean": "5702017583129",
       "forecast2yEUR": 66.98,
@@ -4951,12 +4951,12 @@
     },
     "76432": {
       "brickeconomyName": "Forbidden Forest: Magical Creatures",
-      "brickeconomyUpdated": "2026-11-09T18:56:23Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:31Z",
       "bricksetUpdated": "2026-10-14T03:51:54Z",
       "ean": "5702017599502",
       "forecast2yEUR": 34.29,
       "forecast5yEUR": 39.86,
-      "growth12mPct": 3.12,
+      "growth12mPct": 3.3,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/76432-1/133007.jpg",
       "marketNewEUR": 30.8,
       "marketUsedEUR": 25.56,
@@ -4980,7 +4980,7 @@
     },
     "76437": {
       "brickeconomyName": "The Burrow - Collectors' Edition",
-      "brickeconomyUpdated": "2026-11-09T18:56:24Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:32Z",
       "bricksetUpdated": "2026-10-07T03:36:26Z",
       "ean": "5702017590417",
       "footprintDepth": 23.0,
@@ -5013,7 +5013,7 @@
     },
     "76438": {
       "brickeconomyName": "Harry Potter Advent Calendar 2024",
-      "brickeconomyUpdated": "2026-11-09T18:56:25Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:34Z",
       "ean": "5702017582993",
       "forecast2yEUR": 66.45,
       "forecast5yEUR": 84.56,
@@ -5061,14 +5061,14 @@
     },
     "76444": {
       "brickeconomyName": "Diagon Alley: Wizarding Shops",
-      "brickeconomyUpdated": "2026-11-09T18:56:26Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:35Z",
       "bricksetUpdated": "2026-10-14T03:51:55Z",
       "ean": "5702017812823",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/76444-1/148676.jpg",
-      "marketNewEUR": 151.54,
+      "marketNewEUR": 151.44,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -5090,14 +5090,14 @@
     },
     "76445": {
       "brickeconomyName": "Hogwarts Castle: Herbology Class",
-      "brickeconomyUpdated": "2026-11-09T18:56:27Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:36Z",
       "bricksetUpdated": "2026-10-14T03:51:56Z",
       "ean": "5702017812830",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/76445-1/155680.jpg",
-      "marketNewEUR": 39.83,
+      "marketNewEUR": 39.92,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -5119,14 +5119,14 @@
     },
     "76451": {
       "brickeconomyName": "Privet Drive: Aunt Marge's Visit",
-      "brickeconomyUpdated": "2026-11-09T18:56:28Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:38Z",
       "bricksetUpdated": "2026-10-14T03:51:57Z",
       "ean": "5702017812892",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/76451-1/155721.jpg",
-      "marketNewEUR": 69.93,
+      "marketNewEUR": 70.55,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -5148,7 +5148,7 @@
     },
     "76453": {
       "brickeconomyName": "Malfoy Manor",
-      "brickeconomyUpdated": "2026-11-09T18:56:28Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:39Z",
       "bricksetUpdated": "2026-10-14T03:51:58Z",
       "ean": "5702017812915",
       "forecast2yEUR": 195.99,
@@ -5199,7 +5199,7 @@
     },
     "77012": {
       "brickeconomyName": "Fighter Plane Chase",
-      "brickeconomyUpdated": "2026-11-09T18:56:30Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:41Z",
       "bricksetUpdated": "2026-10-14T03:51:59Z",
       "ean": "5702017190457",
       "forecast2yEUR": 51.18,
@@ -5228,7 +5228,7 @@
     },
     "77013": {
       "brickeconomyName": "Escape from the Lost Tomb",
-      "brickeconomyUpdated": "2026-11-09T18:56:31Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:42Z",
       "bricksetUpdated": "2026-10-14T03:52:00Z",
       "ean": "5702017190464",
       "forecast2yEUR": 60.33,
@@ -5257,7 +5257,7 @@
     },
     "77015": {
       "brickeconomyName": "Temple of the Golden Idol",
-      "brickeconomyUpdated": "2026-11-09T18:56:32Z",
+      "brickeconomyUpdated": "2026-11-13T12:23:43Z",
       "bricksetUpdated": "2026-10-14T03:52:01Z",
       "ean": "5702017190488",
       "forecast2yEUR": 202.43,
