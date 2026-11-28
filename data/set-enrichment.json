@@ -5,9 +5,9 @@
     "brickeconomyRequestsThisRun": 0,
     "brickeconomyUsage": {
       "quota": 100,
-      "remaining": 80,
+      "remaining": 60,
       "resets_at": "2026-11-29T00:00:00Z",
-      "used_today": 20
+      "used_today": 40
     },
     "bricklinkEnabled": false,
     "bricklinkRequestsThisRun": 0,
@@ -19,7 +19,7 @@
       "BrickEconomy 1036: 400 Client Error: Bad Request for url: https://www.brickeconomy.com/api/v1/set/1036-1?currency=EUR",
       "No metadata for 1036"
     ],
-    "lastUpdated": "2026-11-28T08:06:49Z",
+    "lastUpdated": "2026-11-28T16:59:39Z",
     "rateLimited": false,
     "rebrickableEnabled": true,
     "rebrickableRequestsThisRun": 2,
@@ -3587,7 +3587,7 @@
     },
     "40782": {
       "brickeconomyName": "Tropical Rainforest Diorama",
-      "brickeconomyUpdated": "2026-11-24T02:57:54Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:17Z",
       "bricksetUpdated": "2026-10-12T05:28:13Z",
       "ean": null,
       "forecast2yEUR": 35.25,
@@ -3776,13 +3776,13 @@
     },
     "43020": {
       "brickeconomyName": "FIFA World Cup Official Trophy",
-      "brickeconomyUpdated": "2026-11-24T02:57:56Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:18Z",
       "ean": "5702018069608",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/43020-1/165343.jpg",
-      "marketNewEUR": 165.41,
+      "marketNewEUR": 165.29,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -3800,7 +3800,7 @@
     },
     "43179": {
       "brickeconomyName": "Mickey Mouse and Minnie Mouse",
-      "brickeconomyUpdated": "2026-11-24T02:57:58Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:19Z",
       "ean": "5702016669381",
       "forecast2yEUR": 209.19,
       "forecast5yEUR": 233.52,
@@ -3824,7 +3824,7 @@
     },
     "43212": {
       "brickeconomyName": "Disney Celebration Train",
-      "brickeconomyUpdated": "2026-11-24T02:57:59Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:21Z",
       "bricksetUpdated": "2026-10-12T22:19:22Z",
       "ean": "5702017424798",
       "forecast2yEUR": 37.93,
@@ -3877,7 +3877,7 @@
     },
     "43230": {
       "brickeconomyName": "Walt Disney Tribute Camera",
-      "brickeconomyUpdated": "2026-11-24T02:58:00Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:22Z",
       "bricksetUpdated": "2026-10-07T03:36:06Z",
       "ean": "5702017462530",
       "footprintDepth": 19.0,
@@ -3910,7 +3910,7 @@
     },
     "43242": {
       "brickeconomyName": "Snow White and the Seven Dwarfs' Cottage",
-      "brickeconomyUpdated": "2026-11-24T02:58:02Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:23Z",
       "bricksetUpdated": "2026-10-13T03:38:36Z",
       "ean": "5702017591032",
       "forecast2yEUR": 348.17,
@@ -3939,7 +3939,7 @@
     },
     "43247": {
       "brickeconomyName": "Young Simba the Lion King",
-      "brickeconomyUpdated": "2026-11-24T02:58:03Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:24Z",
       "ean": "5702017591940",
       "forecast2yEUR": 113.7,
       "forecast5yEUR": 125.97,
@@ -3963,13 +3963,13 @@
     },
     "43269": {
       "brickeconomyName": "101 Dalmatians Puppy",
-      "brickeconomyUpdated": "2026-11-24T02:58:03Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:25Z",
       "ean": "5702017814582",
       "forecast2yEUR": null,
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/43269-1/155014.jpg",
-      "marketNewEUR": 122.03,
+      "marketNewEUR": 122.69,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
@@ -3987,7 +3987,7 @@
     },
     "43302": {
       "brickeconomyName": "Main Street, U.S.A.",
-      "brickeconomyUpdated": "2026-11-24T02:58:05Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:26Z",
       "bricksetUpdated": "2026-10-13T03:38:38Z",
       "ean": "5702018066904",
       "forecast2yEUR": null,
@@ -4045,7 +4045,7 @@
     },
     "60051": {
       "brickeconomyName": "High-Speed Passenger Train",
-      "brickeconomyUpdated": "2026-11-24T02:58:06Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:28Z",
       "ean": "0746550693353",
       "forecast2yEUR": 222.93,
       "forecast5yEUR": 248.71,
@@ -4069,7 +4069,7 @@
     },
     "60205": {
       "brickeconomyName": "Tracks",
-      "brickeconomyUpdated": "2026-11-24T02:58:07Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:28Z",
       "ean": "5702016199055",
       "forecast2yEUR": 20.97,
       "forecast5yEUR": 22.02,
@@ -4093,7 +4093,7 @@
     },
     "60238": {
       "brickeconomyName": "Switch Tracks",
-      "brickeconomyUpdated": "2026-11-24T02:58:08Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:29Z",
       "ean": "5702016364675",
       "forecast2yEUR": 21.21,
       "forecast5yEUR": 22.83,
@@ -4117,7 +4117,7 @@
     },
     "60304": {
       "brickeconomyName": "Road Plates",
-      "brickeconomyUpdated": "2026-11-24T02:58:09Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:30Z",
       "bricksetUpdated": "2026-10-13T03:38:41Z",
       "ean": "5702016912289",
       "forecast2yEUR": null,
@@ -4194,7 +4194,7 @@
     },
     "60381": {
       "brickeconomyName": "Advent Calendar",
-      "brickeconomyUpdated": "2026-11-24T15:00:03Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:34Z",
       "bricksetUpdated": "2026-10-13T03:38:42Z",
       "ean": "5702017415581",
       "forecast2yEUR": 42.16,
@@ -4247,7 +4247,7 @@
     },
     "6755": {
       "brickeconomyName": "Sheriff's Lock-Up",
-      "brickeconomyUpdated": "2026-11-24T15:00:00Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:31Z",
       "ean": "5702010967551",
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/6755-1/12169.jpg",
@@ -4269,7 +4269,7 @@
     },
     "6761": {
       "brickeconomyName": "Bandit's Secret Hide-Out",
-      "brickeconomyUpdated": "2026-11-24T15:00:02Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:33Z",
       "ean": "5702010967612",
       "growth12mPct": 6.57,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/6761-1/9666.jpg",
@@ -4291,7 +4291,7 @@
     },
     "6766": {
       "brickeconomyName": "Rapid River Village",
-      "brickeconomyUpdated": "2026-11-24T15:00:04Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:35Z",
       "ean": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/6766-1/11584.jpg",
@@ -4337,7 +4337,7 @@
     },
     "71006": {
       "brickeconomyName": "The Simpsons House",
-      "brickeconomyUpdated": "2026-11-24T15:00:05Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:36Z",
       "ean": "0698887888943",
       "forecast2yEUR": 586.21,
       "forecast5yEUR": 738.43,
@@ -4361,7 +4361,7 @@
     },
     "71016": {
       "brickeconomyName": "Kwik-E-Mart",
-      "brickeconomyUpdated": "2026-11-24T15:00:07Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:37Z",
       "ean": "8944444885477",
       "forecast2yEUR": 786.46,
       "forecast5yEUR": 1037.87,
@@ -4414,7 +4414,7 @@
     },
     "72046": {
       "brickeconomyName": "Game Boy",
-      "brickeconomyUpdated": "2026-11-24T15:00:08Z",
+      "brickeconomyUpdated": "2026-11-28T16:59:38Z",
       "bricksetUpdated": "2026-10-07T03:36:14Z",
       "ean": "5702017816616",
       "footprintDepth": 3.0,
@@ -4424,7 +4424,7 @@
       "forecast5yEUR": null,
       "growth12mPct": null,
       "imageUrl": "https://cdn.rebrickable.com/media/sets/72046-1/159075.jpg",
-      "marketNewEUR": 49.81,
+      "marketNewEUR": 48.83,
       "marketUsedEUR": null,
       "marketUsedHighEUR": null,
       "marketUsedLowEUR": null,
